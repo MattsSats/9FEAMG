@@ -1,4 +1,7 @@
-// Repacks src/app.html into the bundled index.html (the shell, runtime, React and fonts stay as they are).
+// Repacks the app into the bundled index.html (the shell, runtime, React and fonts stay as they are).
+//   src/app.html  markup + styles, with a /*LOGIC*/ placeholder
+//   src/logic.js  app logic, spliced into the placeholder
+// Season numbers live in data/season.js and load at runtime, so editing them needs no rebuild.
 // Usage: node build.js
 const fs = require("fs");
 const path = require("path");
@@ -6,7 +9,9 @@ const path = require("path");
 const OPEN = '<script type="__bundler/template">';
 const out = path.join(__dirname, "index.html");
 const html = fs.readFileSync(out, "utf8");
-const app = fs.readFileSync(path.join(__dirname, "src", "app.html"), "utf8");
+const logic = fs.readFileSync(path.join(__dirname, "src", "logic.js"), "utf8");
+const app = fs.readFileSync(path.join(__dirname, "src", "app.html"), "utf8")
+  .split("/*LOGIC*/").join(logic);
 
 const start = html.indexOf(OPEN);
 if (start === -1) throw new Error("template script tag not found in index.html");
