@@ -126,7 +126,7 @@ window.SEASON = {
     4: [
       ['Matt', 'The Steelers D gave Matt 6.00 on Thursday. He trails DLin 10.20–6.00 but is projected to win by 3.49. Matt would like the projection read aloud.'],
       ['ASG', 'ASG is 3–0 and still projected to lose to Andy by 8.95. Respect remains pending.'],
-      ['Kurt', 'Kurt hung 135.9 last week and leads Jerger 14.10–0.00 after Thursday. Jerger would like to talk about something else.'],
+      ['Kurt', 'Kurt and Jerger are both 1–2, and the loser falls to 1–3. Yahoo has Jerger by 4.71. Kurt hung 135.9 last week and would like a word with the projection.'],
       ['Mr. G', 'Pablo is projected for 93.17, lowest in the league. Mr. G is projected for 118.23, highest. The group-chat victory lap is already drafted.'],
       ['Colin', 'Colin has made 20 adds this season. The waiver wire has asked for a restraining order.']
     ]
