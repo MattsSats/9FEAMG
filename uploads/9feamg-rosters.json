@@ -1,0 +1,1290 @@
+{
+  "asOf": "2026-10-01T23:18:00-05:00",
+  "source": "Signed-in Yahoo Fantasy league 935526 team roster pages (full reconcile)",
+  "week": 4,
+  "baseline": "yahoo-live",
+  "baselineAvailable": true,
+  "baselineNote": "Full overwrite from Yahoo team pages Oct 1 2026 ~11:18 PM CT. Site team ids preserved; yahooUrlId is Yahoo /f1/935526/{id}. Player sets matched prior txn-applied list; slots/NFL/names refreshed from Yahoo.",
+  "teams": [
+    {
+      "id": "1",
+      "path": "/live/team/1",
+      "name": "Andy",
+      "team": "it's gibbing time",
+      "yahooUrlId": "7",
+      "players": [
+        {
+          "name": "Trevor Lawrence",
+          "pos": "QB",
+          "slot": "starter",
+          "nfl": "Jax"
+        },
+        {
+          "name": "Jahmyr Gibbs",
+          "pos": "RB",
+          "slot": "starter",
+          "nfl": "Det"
+        },
+        {
+          "name": "Javonte Williams",
+          "pos": "RB",
+          "slot": "starter",
+          "nfl": "Dal"
+        },
+        {
+          "name": "Drake London",
+          "pos": "WR",
+          "slot": "starter",
+          "nfl": "Atl"
+        },
+        {
+          "name": "Jaylen Waddle",
+          "pos": "WR",
+          "slot": "starter",
+          "nfl": "Den"
+        },
+        {
+          "name": "Isaiah Likely",
+          "pos": "TE",
+          "slot": "starter",
+          "nfl": "NYG"
+        },
+        {
+          "name": "D'Andre Swift",
+          "pos": "WRT",
+          "slot": "starter",
+          "nfl": "Chi"
+        },
+        {
+          "name": "Mark Andrews",
+          "pos": "TE",
+          "slot": "bench",
+          "nfl": "Bal"
+        },
+        {
+          "name": "DJ Moore",
+          "pos": "WR",
+          "slot": "bench",
+          "nfl": "Buf"
+        },
+        {
+          "name": "Tre Tucker",
+          "pos": "WR",
+          "slot": "bench",
+          "nfl": "LV"
+        },
+        {
+          "name": "Kalif Raymond",
+          "pos": "WR",
+          "slot": "bench",
+          "nfl": "Chi"
+        },
+        {
+          "name": "Noah Fant",
+          "pos": "TE",
+          "slot": "bench",
+          "nfl": "NO"
+        },
+        {
+          "name": "Rams",
+          "pos": "DEF",
+          "slot": "bench",
+          "nfl": "LAR"
+        },
+        {
+          "name": "Isiah Pacheco",
+          "pos": "RB",
+          "slot": "IR",
+          "nfl": "Det"
+        },
+        {
+          "name": "Chase McLaughlin",
+          "pos": "K",
+          "slot": "starter",
+          "nfl": "TB"
+        },
+        {
+          "name": "Ravens",
+          "pos": "DEF",
+          "slot": "starter",
+          "nfl": "Bal"
+        }
+      ]
+    },
+    {
+      "id": "2",
+      "path": "/live/team/2",
+      "name": "Tristan",
+      "team": "Squirtle Squad",
+      "yahooUrlId": "1",
+      "players": [
+        {
+          "name": "Lamar Jackson",
+          "pos": "QB",
+          "slot": "starter",
+          "nfl": "Bal"
+        },
+        {
+          "name": "Bijan Robinson",
+          "pos": "RB",
+          "slot": "starter",
+          "nfl": "Atl"
+        },
+        {
+          "name": "Ashton Jeanty",
+          "pos": "RB",
+          "slot": "starter",
+          "nfl": "LV"
+        },
+        {
+          "name": "Mike Evans",
+          "pos": "WR",
+          "slot": "starter",
+          "nfl": "SF"
+        },
+        {
+          "name": "KC Concepcion Jr.",
+          "pos": "WR",
+          "slot": "starter",
+          "nfl": "Cle"
+        },
+        {
+          "name": "Sam LaPorta",
+          "pos": "TE",
+          "slot": "starter",
+          "nfl": "Det"
+        },
+        {
+          "name": "Aaron Jones Sr.",
+          "pos": "WRT",
+          "slot": "starter",
+          "nfl": "Min"
+        },
+        {
+          "name": "Ladd McConkey",
+          "pos": "WR",
+          "slot": "bench",
+          "nfl": "LAC"
+        },
+        {
+          "name": "Deebo Samuel Sr.",
+          "pos": "WR",
+          "slot": "bench",
+          "nfl": "SF"
+        },
+        {
+          "name": "Bhayshul Tuten",
+          "pos": "RB",
+          "slot": "bench",
+          "nfl": "Jax"
+        },
+        {
+          "name": "Rome Odunze",
+          "pos": "WR",
+          "slot": "bench",
+          "nfl": "Chi"
+        },
+        {
+          "name": "Blake Corum",
+          "pos": "RB",
+          "slot": "bench",
+          "nfl": "LAR"
+        },
+        {
+          "name": "Josh Jacobs",
+          "pos": "RB",
+          "slot": "bench",
+          "nfl": "GB"
+        },
+        {
+          "name": "A.J. Brown",
+          "pos": "WR",
+          "slot": "IR",
+          "nfl": "NE"
+        },
+        {
+          "name": "Evan McPherson",
+          "pos": "K",
+          "slot": "starter",
+          "nfl": "Cin"
+        },
+        {
+          "name": "Bears",
+          "pos": "DEF",
+          "slot": "starter",
+          "nfl": "Chi"
+        }
+      ]
+    },
+    {
+      "id": "3",
+      "path": "/live/team/3",
+      "name": "Colin",
+      "team": "C Lambs Biggest Hater",
+      "yahooUrlId": "5",
+      "players": [
+        {
+          "name": "Joe Burrow",
+          "pos": "QB",
+          "slot": "starter",
+          "nfl": "Cin"
+        },
+        {
+          "name": "Kyren Williams",
+          "pos": "RB",
+          "slot": "starter",
+          "nfl": "LAR"
+        },
+        {
+          "name": "Kyle Monangai",
+          "pos": "RB",
+          "slot": "starter",
+          "nfl": "Chi"
+        },
+        {
+          "name": "Ja'Marr Chase",
+          "pos": "WR",
+          "slot": "starter",
+          "nfl": "Cin"
+        },
+        {
+          "name": "Rashee Rice",
+          "pos": "WR",
+          "slot": "starter",
+          "nfl": "KC"
+        },
+        {
+          "name": "Brock Bowers",
+          "pos": "TE",
+          "slot": "starter",
+          "nfl": "LV"
+        },
+        {
+          "name": "Davante Adams",
+          "pos": "WRT",
+          "slot": "starter",
+          "nfl": "LAR"
+        },
+        {
+          "name": "Alvin Kamara",
+          "pos": "RB",
+          "slot": "bench",
+          "nfl": "NO"
+        },
+        {
+          "name": "Patrick Mahomes",
+          "pos": "QB",
+          "slot": "bench",
+          "nfl": "KC"
+        },
+        {
+          "name": "Denzel Boston",
+          "pos": "WR",
+          "slot": "bench",
+          "nfl": "Cle"
+        },
+        {
+          "name": "Dontayvion Wicks",
+          "pos": "WR",
+          "slot": "bench",
+          "nfl": "Phi"
+        },
+        {
+          "name": "Woody Marks",
+          "pos": "RB",
+          "slot": "bench",
+          "nfl": "Hou"
+        },
+        {
+          "name": "Rachaad White",
+          "pos": "RB",
+          "slot": "bench",
+          "nfl": "Was"
+        },
+        {
+          "name": "Travis Etienne Jr.",
+          "pos": "RB",
+          "slot": "IR",
+          "nfl": "NO"
+        },
+        {
+          "name": "Zach Charbonnet",
+          "pos": "RB",
+          "slot": "IR",
+          "nfl": "Sea"
+        },
+        {
+          "name": "Spencer Shrader",
+          "pos": "K",
+          "slot": "starter",
+          "nfl": "Ind"
+        },
+        {
+          "name": "Bills",
+          "pos": "DEF",
+          "slot": "starter",
+          "nfl": "Buf"
+        }
+      ]
+    },
+    {
+      "id": "4",
+      "path": "/live/team/4",
+      "name": "DLin",
+      "team": "Toilet Bowl King",
+      "yahooUrlId": "9",
+      "players": [
+        {
+          "name": "Jared Goff",
+          "pos": "QB",
+          "slot": "starter",
+          "nfl": "Det"
+        },
+        {
+          "name": "Jonathan Taylor",
+          "pos": "RB",
+          "slot": "starter",
+          "nfl": "Ind"
+        },
+        {
+          "name": "Cam Skattebo",
+          "pos": "RB",
+          "slot": "starter",
+          "nfl": "NYG"
+        },
+        {
+          "name": "George Pickens",
+          "pos": "WR",
+          "slot": "starter",
+          "nfl": "Dal"
+        },
+        {
+          "name": "Tee Higgins",
+          "pos": "WR",
+          "slot": "starter",
+          "nfl": "Cin"
+        },
+        {
+          "name": "Harold Fannin Jr.",
+          "pos": "TE",
+          "slot": "starter",
+          "nfl": "Cle"
+        },
+        {
+          "name": "Michael Wilson",
+          "pos": "WRT",
+          "slot": "starter",
+          "nfl": "Ari"
+        },
+        {
+          "name": "Jalen Hurts",
+          "pos": "QB",
+          "slot": "bench",
+          "nfl": "Phi"
+        },
+        {
+          "name": "Jake Ferguson",
+          "pos": "TE",
+          "slot": "bench",
+          "nfl": "Dal"
+        },
+        {
+          "name": "Stefon Diggs",
+          "pos": "WR",
+          "slot": "bench",
+          "nfl": "Was"
+        },
+        {
+          "name": "Brian Thomas Jr.",
+          "pos": "WR",
+          "slot": "bench",
+          "nfl": "Jax"
+        },
+        {
+          "name": "Kenny Gainwell",
+          "pos": "RB",
+          "slot": "bench",
+          "nfl": "TB"
+        },
+        {
+          "name": "De'Von Achane",
+          "pos": "RB",
+          "slot": "IR",
+          "nfl": "Mia"
+        },
+        {
+          "name": "Rico Dowdle",
+          "pos": "RB",
+          "slot": "IR",
+          "nfl": "Pit"
+        },
+        {
+          "name": "Tyler Loop",
+          "pos": "K",
+          "slot": "starter",
+          "nfl": "Bal"
+        },
+        {
+          "name": "Packers",
+          "pos": "DEF",
+          "slot": "starter",
+          "nfl": "GB"
+        }
+      ]
+    },
+    {
+      "id": "5",
+      "path": "/live/team/5",
+      "name": "Pablo",
+      "team": "He was #1",
+      "yahooUrlId": "10",
+      "players": [
+        {
+          "name": "C.J. Stroud",
+          "pos": "QB",
+          "slot": "starter",
+          "nfl": "Hou"
+        },
+        {
+          "name": "Derrick Henry",
+          "pos": "RB",
+          "slot": "starter",
+          "nfl": "Bal"
+        },
+        {
+          "name": "Tony Pollard",
+          "pos": "RB",
+          "slot": "starter",
+          "nfl": "Ten"
+        },
+        {
+          "name": "Tetairoa McMillan",
+          "pos": "WR",
+          "slot": "starter",
+          "nfl": "Car"
+        },
+        {
+          "name": "Quentin Johnston",
+          "pos": "WR",
+          "slot": "starter",
+          "nfl": "LAC"
+        },
+        {
+          "name": "Dalton Schultz",
+          "pos": "TE",
+          "slot": "starter",
+          "nfl": "Hou"
+        },
+        {
+          "name": "Breece Hall",
+          "pos": "WRT",
+          "slot": "starter",
+          "nfl": "NYJ"
+        },
+        {
+          "name": "Kyle Pitts Sr.",
+          "pos": "TE",
+          "slot": "bench",
+          "nfl": "Atl"
+        },
+        {
+          "name": "Caleb Williams",
+          "pos": "QB",
+          "slot": "bench",
+          "nfl": "Chi"
+        },
+        {
+          "name": "Puka Nacua",
+          "pos": "WR",
+          "slot": "bench",
+          "nfl": "LAR"
+        },
+        {
+          "name": "Juwan Johnson",
+          "pos": "TE",
+          "slot": "bench",
+          "nfl": "NO"
+        },
+        {
+          "name": "Geno Smith",
+          "pos": "QB",
+          "slot": "bench",
+          "nfl": "NYJ"
+        },
+        {
+          "name": "Cairo Santos",
+          "pos": "K",
+          "slot": "bench",
+          "nfl": "Chi"
+        },
+        {
+          "name": "Brandon Aubrey",
+          "pos": "K",
+          "slot": "starter",
+          "nfl": "Dal"
+        },
+        {
+          "name": "Texans",
+          "pos": "DEF",
+          "slot": "starter",
+          "nfl": "Hou"
+        }
+      ]
+    },
+    {
+      "id": "6",
+      "path": "/live/team/6",
+      "name": "ASG",
+      "team": "11 Shots In",
+      "yahooUrlId": "3",
+      "players": [
+        {
+          "name": "Josh Allen",
+          "pos": "QB",
+          "slot": "starter",
+          "nfl": "Buf"
+        },
+        {
+          "name": "Bucky Irving",
+          "pos": "RB",
+          "slot": "starter",
+          "nfl": "TB"
+        },
+        {
+          "name": "Omarion Hampton",
+          "pos": "RB",
+          "slot": "starter",
+          "nfl": "LAC"
+        },
+        {
+          "name": "Jaxon Smith-Njigba",
+          "pos": "WR",
+          "slot": "starter",
+          "nfl": "Sea"
+        },
+        {
+          "name": "Matthew Golden",
+          "pos": "WR",
+          "slot": "starter",
+          "nfl": "GB"
+        },
+        {
+          "name": "Tyler Warren",
+          "pos": "TE",
+          "slot": "starter",
+          "nfl": "Ind"
+        },
+        {
+          "name": "George Kittle",
+          "pos": "WRT",
+          "slot": "starter",
+          "nfl": "SF"
+        },
+        {
+          "name": "TreVeyon Henderson",
+          "pos": "RB",
+          "slot": "bench",
+          "nfl": "NE"
+        },
+        {
+          "name": "Dalton Kincaid",
+          "pos": "TE",
+          "slot": "bench",
+          "nfl": "Buf"
+        },
+        {
+          "name": "Carnell Tate",
+          "pos": "WR",
+          "slot": "bench",
+          "nfl": "Ten"
+        },
+        {
+          "name": "Matthew Stafford",
+          "pos": "QB",
+          "slot": "bench",
+          "nfl": "LAR"
+        },
+        {
+          "name": "Mike Washington Jr.",
+          "pos": "RB",
+          "slot": "bench",
+          "nfl": "LV"
+        },
+        {
+          "name": "Ollie Gordon II",
+          "pos": "RB",
+          "slot": "bench",
+          "nfl": "Mia"
+        },
+        {
+          "name": "Jason Myers",
+          "pos": "K",
+          "slot": "starter",
+          "nfl": "Sea"
+        },
+        {
+          "name": "Eagles",
+          "pos": "DEF",
+          "slot": "starter",
+          "nfl": "Phi"
+        }
+      ]
+    },
+    {
+      "id": "7",
+      "path": "/live/team/7",
+      "name": "Mr. G",
+      "team": "Definitely not a Boomer",
+      "yahooUrlId": "6",
+      "players": [
+        {
+          "name": "Tyler Shough",
+          "pos": "QB",
+          "slot": "starter",
+          "nfl": "NO"
+        },
+        {
+          "name": "Chase Brown",
+          "pos": "RB",
+          "slot": "starter",
+          "nfl": "Cin"
+        },
+        {
+          "name": "Jeremiyah Love",
+          "pos": "RB",
+          "slot": "starter",
+          "nfl": "Ari"
+        },
+        {
+          "name": "Amon-Ra St. Brown",
+          "pos": "WR",
+          "slot": "starter",
+          "nfl": "Det"
+        },
+        {
+          "name": "Nico Collins",
+          "pos": "WR",
+          "slot": "starter",
+          "nfl": "Hou"
+        },
+        {
+          "name": "Kenyon Sadiq",
+          "pos": "TE",
+          "slot": "starter",
+          "nfl": "NYJ"
+        },
+        {
+          "name": "Parker Washington",
+          "pos": "WRT",
+          "slot": "starter",
+          "nfl": "Jax"
+        },
+        {
+          "name": "DK Metcalf",
+          "pos": "WR",
+          "slot": "bench",
+          "nfl": "Pit"
+        },
+        {
+          "name": "Drake Maye",
+          "pos": "QB",
+          "slot": "bench",
+          "nfl": "NE"
+        },
+        {
+          "name": "Luther Burden III",
+          "pos": "WR",
+          "slot": "bench",
+          "nfl": "Chi"
+        },
+        {
+          "name": "Rhamondre Stevenson",
+          "pos": "RB",
+          "slot": "bench",
+          "nfl": "NE"
+        },
+        {
+          "name": "Kyler Murray",
+          "pos": "QB",
+          "slot": "bench",
+          "nfl": "Min"
+        },
+        {
+          "name": "Dallas Goedert",
+          "pos": "TE",
+          "slot": "IR",
+          "nfl": "Phi"
+        },
+        {
+          "name": "Eddy Pineiro",
+          "pos": "K",
+          "slot": "starter",
+          "nfl": "SF"
+        },
+        {
+          "name": "Seahawks",
+          "pos": "DEF",
+          "slot": "starter",
+          "nfl": "Sea"
+        }
+      ]
+    },
+    {
+      "id": "8",
+      "path": "/live/team/8",
+      "name": "Matt",
+      "team": "There is no 2nd best",
+      "yahooUrlId": "8",
+      "players": [
+        {
+          "name": "Jordan Love",
+          "pos": "QB",
+          "slot": "starter",
+          "nfl": "GB"
+        },
+        {
+          "name": "Christian McCaffrey",
+          "pos": "RB",
+          "slot": "starter",
+          "nfl": "SF"
+        },
+        {
+          "name": "Chuba Hubbard",
+          "pos": "RB",
+          "slot": "starter",
+          "nfl": "Car"
+        },
+        {
+          "name": "Justin Jefferson",
+          "pos": "WR",
+          "slot": "starter",
+          "nfl": "Min"
+        },
+        {
+          "name": "Garrett Wilson",
+          "pos": "WR",
+          "slot": "starter",
+          "nfl": "NYJ"
+        },
+        {
+          "name": "Trey McBride",
+          "pos": "TE",
+          "slot": "starter",
+          "nfl": "Ari"
+        },
+        {
+          "name": "Christian Watson",
+          "pos": "WRT",
+          "slot": "starter",
+          "nfl": "GB"
+        },
+        {
+          "name": "DeVonta Smith",
+          "pos": "WR",
+          "slot": "bench",
+          "nfl": "Phi"
+        },
+        {
+          "name": "Quinshon Judkins",
+          "pos": "RB",
+          "slot": "bench",
+          "nfl": "Cle"
+        },
+        {
+          "name": "Chris Godwin Jr.",
+          "pos": "WR",
+          "slot": "bench",
+          "nfl": "TB"
+        },
+        {
+          "name": "Josh Downs",
+          "pos": "WR",
+          "slot": "bench",
+          "nfl": "Ind"
+        },
+        {
+          "name": "Wan'Dale Robinson",
+          "pos": "WR",
+          "slot": "bench",
+          "nfl": "NYG"
+        },
+        {
+          "name": "Xavier Worthy",
+          "pos": "WR",
+          "slot": "bench",
+          "nfl": "KC"
+        },
+        {
+          "name": "Jayden Daniels",
+          "pos": "QB",
+          "slot": "IR",
+          "nfl": "Was"
+        },
+        {
+          "name": "Cameron Dicker",
+          "pos": "K",
+          "slot": "starter",
+          "nfl": "LAC"
+        },
+        {
+          "name": "Steelers",
+          "pos": "DEF",
+          "slot": "starter",
+          "nfl": "Pit"
+        }
+      ]
+    },
+    {
+      "id": "9",
+      "path": "/live/team/9",
+      "name": "Jerger",
+      "team": "#1 Y! Fan",
+      "yahooUrlId": "2",
+      "players": [
+        {
+          "name": "Bryce Young",
+          "pos": "QB",
+          "slot": "starter",
+          "nfl": "Car"
+        },
+        {
+          "name": "James Cook III",
+          "pos": "RB",
+          "slot": "starter",
+          "nfl": "Buf"
+        },
+        {
+          "name": "David Montgomery",
+          "pos": "RB",
+          "slot": "starter",
+          "nfl": "Hou"
+        },
+        {
+          "name": "CeeDee Lamb",
+          "pos": "WR",
+          "slot": "starter",
+          "nfl": "Dal"
+        },
+        {
+          "name": "Malik Nabers",
+          "pos": "WR",
+          "slot": "starter",
+          "nfl": "NYG"
+        },
+        {
+          "name": "Travis Kelce",
+          "pos": "TE",
+          "slot": "starter",
+          "nfl": "KC"
+        },
+        {
+          "name": "Chris Olave",
+          "pos": "WRT",
+          "slot": "starter",
+          "nfl": "NO"
+        },
+        {
+          "name": "Tucker Kraft",
+          "pos": "TE",
+          "slot": "bench",
+          "nfl": "GB"
+        },
+        {
+          "name": "Jalen Coker",
+          "pos": "WR",
+          "slot": "bench",
+          "nfl": "Car"
+        },
+        {
+          "name": "Justin Herbert",
+          "pos": "QB",
+          "slot": "bench",
+          "nfl": "LAC"
+        },
+        {
+          "name": "J.K. Dobbins",
+          "pos": "RB",
+          "slot": "bench",
+          "nfl": "Den"
+        },
+        {
+          "name": "Jameson Williams",
+          "pos": "WR",
+          "slot": "bench",
+          "nfl": "Det"
+        },
+        {
+          "name": "Braelon Allen",
+          "pos": "RB",
+          "slot": "bench",
+          "nfl": "NYJ"
+        },
+        {
+          "name": "Harrison Butker",
+          "pos": "K",
+          "slot": "starter",
+          "nfl": "KC"
+        },
+        {
+          "name": "Vikings",
+          "pos": "DEF",
+          "slot": "starter",
+          "nfl": "Min"
+        }
+      ]
+    },
+    {
+      "id": "10",
+      "path": "/live/team/10",
+      "name": "Kurt",
+      "team": "Average Sports Enthusiast",
+      "yahooUrlId": "4",
+      "players": [
+        {
+          "name": "Brock Purdy",
+          "pos": "QB",
+          "slot": "starter",
+          "nfl": "SF"
+        },
+        {
+          "name": "Saquon Barkley",
+          "pos": "RB",
+          "slot": "starter",
+          "nfl": "Phi"
+        },
+        {
+          "name": "Kenneth Walker III",
+          "pos": "RB",
+          "slot": "starter",
+          "nfl": "KC"
+        },
+        {
+          "name": "Zay Flowers",
+          "pos": "WR",
+          "slot": "starter",
+          "nfl": "Bal"
+        },
+        {
+          "name": "Jordan Addison",
+          "pos": "WR",
+          "slot": "starter",
+          "nfl": "Min"
+        },
+        {
+          "name": "Colston Loveland",
+          "pos": "TE",
+          "slot": "starter",
+          "nfl": "Chi"
+        },
+        {
+          "name": "Jaylen Warren",
+          "pos": "WRT",
+          "slot": "starter",
+          "nfl": "Pit"
+        },
+        {
+          "name": "Dak Prescott",
+          "pos": "QB",
+          "slot": "bench",
+          "nfl": "Dal"
+        },
+        {
+          "name": "Terry McLaurin",
+          "pos": "WR",
+          "slot": "bench",
+          "nfl": "Was"
+        },
+        {
+          "name": "Emeka Egbuka",
+          "pos": "WR",
+          "slot": "bench",
+          "nfl": "TB"
+        },
+        {
+          "name": "Courtland Sutton",
+          "pos": "WR",
+          "slot": "bench",
+          "nfl": "Den"
+        },
+        {
+          "name": "Jacory Croskey-Merritt",
+          "pos": "RB",
+          "slot": "bench",
+          "nfl": "Was"
+        },
+        {
+          "name": "Alec Pierce",
+          "pos": "WR",
+          "slot": "IR",
+          "nfl": "Ind"
+        },
+        {
+          "name": "Harrison Mevis",
+          "pos": "K",
+          "slot": "starter",
+          "nfl": "LAR"
+        },
+        {
+          "name": "Broncos",
+          "pos": "DEF",
+          "slot": "starter",
+          "nfl": "Den"
+        }
+      ]
+    }
+  ],
+  "appliedTransactions": [
+    {
+      "date": "2026-09-30",
+      "manager": "Colin",
+      "add": [
+        "Rachaad White",
+        "RB",
+        "WAS"
+      ],
+      "drop": [
+        "T.J. Hockenson",
+        "TE",
+        "MIN"
+      ],
+      "note": "Yahoo transaction supplied by parent"
+    },
+    {
+      "date": "2026-09-30",
+      "manager": "Colin",
+      "add": [
+        "Bills",
+        "DEF",
+        "BUF"
+      ],
+      "drop": [
+        "\u2014",
+        "DEF",
+        "\u2014"
+      ],
+      "note": "Yahoo transaction supplied by parent"
+    },
+    {
+      "date": "2026-09-30",
+      "manager": "Colin",
+      "add": [
+        "Alvin Kamara",
+        "RB",
+        "NO"
+      ],
+      "drop": [
+        "J. Coleman",
+        "RB",
+        "DEN"
+      ],
+      "note": "Yahoo display: Jonah Coleman; companion site abbreviates as J. Coleman; IR"
+    },
+    {
+      "date": "2026-09-30",
+      "manager": "Colin",
+      "add": [
+        "Woody Marks",
+        "RB",
+        "HOU"
+      ],
+      "drop": [
+        "Bengals",
+        "DEF",
+        "CIN"
+      ],
+      "note": "Yahoo transaction supplied by parent"
+    },
+    {
+      "date": "2026-09-30",
+      "manager": "Colin",
+      "add": [
+        "Spencer Shrader",
+        "K",
+        "IND"
+      ],
+      "drop": [
+        "Ka'imi Fairbairn",
+        "K",
+        "HOU"
+      ],
+      "note": "Yahoo transaction supplied by parent"
+    },
+    {
+      "date": "2026-09-30",
+      "manager": "Andy",
+      "add": [
+        "Kalif Raymond",
+        "WR",
+        "CHI"
+      ],
+      "drop": [
+        "J. Price",
+        "RB",
+        "SEA"
+      ],
+      "note": "Yahoo display: Jadarian Price; companion site abbreviates as J. Price"
+    },
+    {
+      "date": "2026-09-30",
+      "manager": "Andy",
+      "add": [
+        "Will Reichard",
+        "K",
+        "MIN"
+      ],
+      "drop": [
+        "Cam Little",
+        "K",
+        "JAX"
+      ],
+      "note": "Yahoo transaction supplied by parent"
+    },
+    {
+      "date": "2026-09-30",
+      "manager": "Andy",
+      "add": [
+        "Ravens",
+        "DEF",
+        "BAL"
+      ],
+      "drop": [
+        "Panthers",
+        "DEF",
+        "CAR"
+      ],
+      "note": "Yahoo transaction supplied by parent; Panthers drop shown Sep 29"
+    },
+    {
+      "date": "2026-09-30",
+      "manager": "Mr. G",
+      "add": null,
+      "drop": [
+        "O. Gadsden",
+        "TE",
+        "LAC"
+      ],
+      "note": "Yahoo display: Oronde Gadsden; companion site abbreviates as O. Gadsden"
+    },
+    {
+      "date": "2026-09-30",
+      "manager": "Tristan",
+      "add": [
+        "Bears",
+        "DEF",
+        "CHI"
+      ],
+      "drop": [
+        "Chiefs",
+        "DEF",
+        "KC"
+      ],
+      "note": "Yahoo transaction supplied by parent"
+    },
+    {
+      "date": "2026-09-30",
+      "manager": "ASG",
+      "add": [
+        "Ollie Gordon II",
+        "RB",
+        "MIA"
+      ],
+      "drop": [
+        "M. Lemon",
+        "WR",
+        "PHI"
+      ],
+      "note": "Yahoo display: Makai Lemon; companion site abbreviates as M. Lemon"
+    },
+    {
+      "date": "2026-09-30",
+      "manager": "Jerger",
+      "add": [
+        "Braelon Allen",
+        "RB",
+        "NYJ"
+      ],
+      "drop": [
+        "RJ Harvey",
+        "RB",
+        "DEN"
+      ],
+      "note": "Yahoo transaction supplied by parent"
+    },
+    {
+      "when": "2026-10-01T07:04:00-05:00",
+      "manager": "Andy",
+      "team": "it's gibbing time",
+      "action": "drop",
+      "player": "Michael Pittman Jr.",
+      "via": "Waivers",
+      "appliedAt": "2026-10-01T23:15:00-05:00"
+    },
+    {
+      "when": "2026-10-01T07:04:00-05:00",
+      "manager": "Andy",
+      "team": "it's gibbing time",
+      "action": "add",
+      "player": "Noah Fant",
+      "pos": "TE",
+      "via": "Free Agency",
+      "appliedAt": "2026-10-01T23:15:00-05:00"
+    },
+    {
+      "when": "2026-10-01T08:11:00-05:00",
+      "manager": "Andy",
+      "team": "it's gibbing time",
+      "action": "drop",
+      "player": "Will Reichard",
+      "via": "Waivers",
+      "appliedAt": "2026-10-01T23:15:00-05:00"
+    },
+    {
+      "when": "2026-10-01T08:11:00-05:00",
+      "manager": "Andy",
+      "team": "it's gibbing time",
+      "action": "add",
+      "player": "Chase McLaughlin",
+      "pos": "K",
+      "nfl": "TB",
+      "via": "Free Agency",
+      "appliedAt": "2026-10-01T23:15:00-05:00"
+    },
+    {
+      "when": "2026-10-01T12:49:00-05:00",
+      "manager": "Tristan",
+      "team": "Squirtle Squad",
+      "action": "drop",
+      "player": "Marvin Harrison Jr.",
+      "via": "Waivers",
+      "appliedAt": "2026-10-01T23:15:00-05:00"
+    },
+    {
+      "when": "2026-10-01T12:49:00-05:00",
+      "manager": "Tristan",
+      "team": "Squirtle Squad",
+      "action": "add",
+      "player": "KC Concepcion Jr.",
+      "pos": "WR",
+      "nfl": "IND",
+      "via": "Free Agency",
+      "appliedAt": "2026-10-01T23:15:00-05:00"
+    },
+    {
+      "when": "2026-10-01T18:17:00-05:00",
+      "manager": "DLin",
+      "team": "Toilet Bowl King",
+      "action": "add",
+      "player": "Kenny Gainwell",
+      "pos": "RB",
+      "nfl": "TB",
+      "via": "Free Agency",
+      "appliedAt": "2026-10-01T23:15:00-05:00"
+    }
+  ],
+  "gaps": [],
+  "reconcileDiffsVsPrior": [
+    {
+      "note": "After Oct 1 txn apply, full Yahoo team-page pull matched player sets for all 10 teams. Diffs were naming expansions (e.g. DJ Moore, Dontayvion Wicks) and live starter/bench/IR slots + NFL abbreviations from Yahoo. Colin remains at 17 with 2 IR. Andy has 2 DEF (Ravens starter + Rams bench)."
+    }
+  ]
+}
