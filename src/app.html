@@ -1,0 +1,967 @@
+<!DOCTYPE html>
+<html><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="4d9a34e8-5c99-45e5-a32e-2e3385af54a0"></script>
+
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<style>/* vietnamese */
+@font-face {
+  font-family: 'Big Shoulders Display';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("9bb58593-b9ef-46d5-aae4-3273410fed46") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Big Shoulders Display';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("81ed2f7d-e11b-4cb0-a219-8c0d0e941674") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Big Shoulders Display';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("b5acf735-005b-4382-9c5c-5a4a4ade8fed") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Big Shoulders Display';
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url("9bb58593-b9ef-46d5-aae4-3273410fed46") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Big Shoulders Display';
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url("81ed2f7d-e11b-4cb0-a219-8c0d0e941674") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Big Shoulders Display';
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url("b5acf735-005b-4382-9c5c-5a4a4ade8fed") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Big Shoulders Display';
+  font-style: normal;
+  font-weight: 900;
+  font-display: swap;
+  src: url("9bb58593-b9ef-46d5-aae4-3273410fed46") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Big Shoulders Display';
+  font-style: normal;
+  font-weight: 900;
+  font-display: swap;
+  src: url("81ed2f7d-e11b-4cb0-a219-8c0d0e941674") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Big Shoulders Display';
+  font-style: normal;
+  font-weight: 900;
+  font-display: swap;
+  src: url("b5acf735-005b-4382-9c5c-5a4a4ade8fed") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Instrument Sans';
+  font-style: normal;
+  font-weight: 400;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("b1155c11-7d03-4585-a0f5-4add906f170f") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Instrument Sans';
+  font-style: normal;
+  font-weight: 400;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("0aa8427d-051e-41b4-badf-88c810993377") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Instrument Sans';
+  font-style: normal;
+  font-weight: 500;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("b1155c11-7d03-4585-a0f5-4add906f170f") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Instrument Sans';
+  font-style: normal;
+  font-weight: 500;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("0aa8427d-051e-41b4-badf-88c810993377") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Instrument Sans';
+  font-style: normal;
+  font-weight: 600;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("b1155c11-7d03-4585-a0f5-4add906f170f") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Instrument Sans';
+  font-style: normal;
+  font-weight: 600;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("0aa8427d-051e-41b4-badf-88c810993377") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Instrument Sans';
+  font-style: normal;
+  font-weight: 700;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("b1155c11-7d03-4585-a0f5-4add906f170f") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Instrument Sans';
+  font-style: normal;
+  font-weight: 700;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("0aa8427d-051e-41b4-badf-88c810993377") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("ac1382a0-e005-417f-a68f-b9a37cb4a7b9") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("079cb14e-8906-4f7e-b025-d83aa0294e2d") format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* greek */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("a622f3cc-7911-4305-8ce0-b00152fb80f6") format('woff2');
+  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("8fe17688-ed7a-4361-96a3-1f503d19f878") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("649eff48-7aad-4f29-8173-e7883916d963") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("43c61445-16f9-4815-aa6d-68d33df3be56") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("ac1382a0-e005-417f-a68f-b9a37cb4a7b9") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("079cb14e-8906-4f7e-b025-d83aa0294e2d") format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* greek */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("a622f3cc-7911-4305-8ce0-b00152fb80f6") format('woff2');
+  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("8fe17688-ed7a-4361-96a3-1f503d19f878") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("649eff48-7aad-4f29-8173-e7883916d963") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("43c61445-16f9-4815-aa6d-68d33df3be56") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("ac1382a0-e005-417f-a68f-b9a37cb4a7b9") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("079cb14e-8906-4f7e-b025-d83aa0294e2d") format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* greek */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("a622f3cc-7911-4305-8ce0-b00152fb80f6") format('woff2');
+  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("8fe17688-ed7a-4361-96a3-1f503d19f878") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("649eff48-7aad-4f29-8173-e7883916d963") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("43c61445-16f9-4815-aa6d-68d33df3be56") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+</style>
+<style>
+:root{--page:#0B0A09;--bg:#141311;--surface:#1D1C19;--surface2:#282621;--line:#302E28;--ink:#F3F0E8;--muted:#A6A195;--accent:#E4572E;--accentInk:#FF7A52;--pos:#72C690;--neg:#FF7A52;--onAccent:#141311}
+:root[data-theme="light"]{--page:#E2DED4;--bg:#F7F5F0;--surface:#FFFFFF;--surface2:#EFECE5;--line:#E0DBD0;--ink:#191815;--muted:#5F5B52;--accent:#E4572E;--accentInk:#B23B15;--pos:#25784A;--neg:#B23B15;--onAccent:#141311}
+html,body{margin:0;background:var(--page);color:var(--ink);font-family:'Instrument Sans',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+*{box-sizing:border-box}
+a{color:var(--accentInk);text-decoration:none}
+a:hover{text-decoration:underline}
+button{font-family:inherit;color:inherit}
+::-webkit-scrollbar{display:none}
+</style>
+</helmet>
+<div style="min-height:100vh;background:var(--page);display:flex;justify-content:center">
+<div style="width:100%;max-width:440px;min-height:100vh;background:var(--bg);position:relative;padding-bottom:104px">
+
+<div style="position:sticky;top:0;z-index:20;background:var(--bg);display:flex;align-items:center;justify-content:space-between;padding:14px 20px 12px;border-bottom:1px solid var(--line)">
+  <div style="display:flex;align-items:baseline;gap:8px">
+    <span style="font-family:'Big Shoulders Display';font-weight:900;font-size:26px;letter-spacing:.02em;line-height:1">9FEAMG</span>
+    <span style="font-family:'JetBrains Mono';font-size:11px;color:var(--accentInk);letter-spacing:.06em">2026</span>
+  </div>
+  <button sc-camel-on-click="{{ toggleTheme }}" style="background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:0 14px;font-family:'JetBrains Mono';font-size:11px;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;min-height:34px">{{ themeLabel }}</button>
+</div>
+
+<sc-if value="{{ tabGameday }}" hint-placeholder-val="{{ true }}">
+<div style="padding:22px 20px 0">
+  <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:48px;line-height:.9;text-transform:uppercase">Gameday</div>
+  <div style="font-size:14px;color:var(--muted);margin-top:8px">9 Fantasy Experts &amp; Mr. Glenn</div>
+</div>
+<div style="display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px;padding:18px 20px 0">
+  <sc-for list="{{ weekChips }}" as="w" hint-placeholder-count="5">
+    <button sc-camel-on-click="{{ w.pick }}" style="min-height:48px;border-radius:10px;border:1px solid {{ w.border }};background:{{ w.bg }};color:{{ w.fg }};cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:4px 0">
+      <span style="font-family:'Big Shoulders Display';font-weight:800;font-size:20px;line-height:1">{{ w.label }}</span>
+      <span style="font-family:'JetBrains Mono';font-size:9px;letter-spacing:.1em;font-weight:600;opacity:.85">{{ w.sub }}</span>
+    </button>
+  </sc-for>
+</div>
+<div style="padding:12px 20px 0;font-family:'JetBrains Mono';font-size:11px;color:var(--muted)">{{ weekStatus }}</div>
+
+<sc-if value="{{ isW5 }}" hint-placeholder-val="{{ false }}">
+  <div style="margin:20px;padding:44px 24px;border:1px dashed var(--line);border-radius:16px;text-align:center">
+    <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:32px;text-transform:uppercase">Not yet</div>
+    <div style="font-size:14px;color:var(--muted);margin-top:8px;text-wrap:pretty">Week 5 matchups post once Week 4 goes final. Plenty of time to set a lineup, Pablo.</div>
+  </div>
+</sc-if>
+
+<sc-if value="{{ hasWeek }}" hint-placeholder-val="{{ true }}">
+  <div sc-camel-on-click="{{ hero.open }}" style="margin:16px 20px 0;background:var(--surface);border:1px solid var(--line);border-radius:20px;overflow:hidden;cursor:pointer">
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:14px 16px 0">
+      <span style="font-family:'JetBrains Mono';font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--accentInk);font-weight:600">{{ heroLabel }}</span>
+      <span style="font-family:'JetBrains Mono';font-size:11px;color:var(--muted)">Lineups ›</span>
+    </div>
+    <div style="display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);align-items:center;gap:8px;padding:18px 16px 8px">
+      <div style="display:flex;flex-direction:column;align-items:flex-start;gap:8px">
+        <div style="width:44px;height:44px;border-radius:50%;background:{{ hero.a.color }};color:#141311;display:flex;align-items:center;justify-content:center;font-family:'Big Shoulders Display';font-weight:800;font-size:18px">{{ hero.a.init }}</div>
+        <div><div style="font-weight:700;font-size:17px">{{ hero.a.m }}</div><div style="font-family:'JetBrains Mono';font-size:11px;color:var(--muted);margin-top:2px">{{ hero.a.rec }}</div></div>
+      </div>
+      <div style="font-family:'JetBrains Mono';font-size:11px;color:var(--muted);letter-spacing:.1em">VS</div>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px;text-align:right">
+        <div style="width:44px;height:44px;border-radius:50%;background:{{ hero.b.color }};color:#141311;display:flex;align-items:center;justify-content:center;font-family:'Big Shoulders Display';font-weight:800;font-size:18px">{{ hero.b.init }}</div>
+        <div><div style="font-weight:700;font-size:17px">{{ hero.b.m }}</div><div style="font-family:'JetBrains Mono';font-size:11px;color:var(--muted);margin-top:2px">{{ hero.b.rec }}</div></div>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);align-items:end;gap:8px;padding:0 16px">
+      <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:64px;line-height:.9;color:{{ hero.a.scoreColor }}">{{ hero.a.score }}</div>
+      <div style="font-family:'JetBrains Mono';font-size:10px;color:var(--muted);text-align:center;padding-bottom:10px;letter-spacing:.08em;text-transform:uppercase">{{ hero.mid }}</div>
+      <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:64px;line-height:.9;text-align:right;color:{{ hero.b.scoreColor }}">{{ hero.b.score }}</div>
+    </div>
+    <div style="display:flex;justify-content:space-between;padding:8px 16px 0;font-family:'JetBrains Mono';font-size:11px;color:var(--muted)"><span>{{ hero.a.status }}</span><span>{{ hero.b.status }}</span></div>
+    <div style="height:6px;margin:14px 16px 0;border-radius:3px;background:var(--surface2);display:flex;overflow:hidden">
+      <div style="width:{{ hero.share }};background:var(--accent)"></div>
+    </div>
+    <div style="padding:16px;font-size:15px;line-height:1.4;text-wrap:pretty;border-top:1px solid var(--line);margin-top:16px">{{ heroCaption }}</div>
+  </div>
+
+  <sc-if value="{{ showBooth }}" hint-placeholder-val="{{ true }}">
+    <div style="padding:28px 20px 0">
+      <div style="display:flex;align-items:baseline;justify-content:space-between">
+        <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:26px;text-transform:uppercase">The Booth</div>
+        <div style="font-family:'JetBrains Mono';font-size:10px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase">On the record</div>
+      </div>
+      <div style="display:flex;flex-direction:column;margin-top:10px">
+        <sc-for list="{{ booth }}" as="b" hint-placeholder-count="3">
+          <div style="display:grid;grid-template-columns:32px minmax(0,1fr);gap:12px;padding:12px 0;border-top:1px solid var(--line)">
+            <div style="width:32px;height:32px;border-radius:50%;background:{{ b.color }};color:#141311;display:flex;align-items:center;justify-content:center;font-family:'Big Shoulders Display';font-weight:800;font-size:13px">{{ b.init }}</div>
+            <div style="font-size:15px;line-height:1.4;text-wrap:pretty;padding-top:5px">{{ b.text }}</div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </sc-if>
+
+  <div style="padding:28px 20px 0">
+    <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:26px;text-transform:uppercase">All matchups</div>
+    <div style="display:flex;flex-direction:column;gap:10px;margin-top:12px">
+      <sc-for list="{{ matchups }}" as="mu" hint-placeholder-count="4">
+        <div style="background:var(--surface);border:1px solid var(--line);border-radius:16px;overflow:hidden">
+          <div style="display:grid;grid-template-columns:32px minmax(0,1fr) auto;gap:12px;align-items:center;padding:14px 16px 6px">
+            <div style="width:32px;height:32px;border-radius:50%;background:{{ mu.a.color }};color:#141311;display:flex;align-items:center;justify-content:center;font-family:'Big Shoulders Display';font-weight:800;font-size:13px">{{ mu.a.init }}</div>
+            <div><div style="font-weight:600;font-size:15px">{{ mu.a.m }}</div><div style="font-family:'JetBrains Mono';font-size:11px;color:var(--muted);margin-top:1px">{{ mu.a.rec }} · {{ mu.a.status }}</div></div>
+            <div style="font-family:'Big Shoulders Display';font-weight:800;font-size:30px;color:{{ mu.a.scoreColor }}">{{ mu.a.score }}</div>
+          </div>
+          <div style="display:grid;grid-template-columns:32px minmax(0,1fr) auto;gap:12px;align-items:center;padding:6px 16px 14px">
+            <div style="width:32px;height:32px;border-radius:50%;background:{{ mu.b.color }};color:#141311;display:flex;align-items:center;justify-content:center;font-family:'Big Shoulders Display';font-weight:800;font-size:13px">{{ mu.b.init }}</div>
+            <div><div style="font-weight:600;font-size:15px">{{ mu.b.m }}</div><div style="font-family:'JetBrains Mono';font-size:11px;color:var(--muted);margin-top:1px">{{ mu.b.rec }} · {{ mu.b.status }}</div></div>
+            <div style="font-family:'Big Shoulders Display';font-weight:800;font-size:30px;color:{{ mu.b.scoreColor }}">{{ mu.b.score }}</div>
+          </div>
+          <button sc-camel-on-click="{{ mu.open }}" style="width:100%;display:flex;justify-content:space-between;align-items:center;min-height:44px;padding:0 16px;border:0;border-top:1px solid var(--line);background:transparent;cursor:pointer;font-family:'JetBrains Mono';font-size:11px">
+            <span style="color:var(--muted)">{{ mu.gap }}</span><span style="color:var(--accentInk);font-weight:600">Lineups ›</span>
+          </button>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+</sc-if>
+</sc-if>
+
+<sc-if value="{{ tabSeason }}" hint-placeholder-val="{{ false }}">
+<div style="padding:22px 20px 0">
+  <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:48px;line-height:.9;text-transform:uppercase">Season</div>
+  <div style="font-family:'JetBrains Mono';font-size:11px;color:var(--muted);margin-top:10px">Through week 3 · 3 of 14 weeks final</div>
+</div>
+<div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;padding:18px 20px 0">
+  <sc-for list="{{ seasonTiles }}" as="t" hint-placeholder-count="4">
+    <div style="background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:14px">
+      <div style="font-family:'JetBrains Mono';font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)">{{ t.label }}</div>
+      <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:40px;line-height:1;margin-top:8px;color:{{ t.color }}">{{ t.value }}</div>
+      <div style="display:flex;align-items:center;gap:6px;margin-top:8px;font-size:13px"><span style="width:8px;height:8px;border-radius:50%;background:{{ t.dot }};flex:none"></span><span style="color:var(--muted)">{{ t.sub }}</span></div>
+    </div>
+  </sc-for>
+</div>
+
+<div style="padding:30px 20px 0">
+  <div style="display:flex;align-items:baseline;justify-content:space-between">
+    <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:26px;text-transform:uppercase">Standings</div>
+    <div style="font-family:'JetBrains Mono';font-size:11px;color:var(--muted)">Luck = W − xW</div>
+  </div>
+  <div style="display:grid;grid-template-columns:22px minmax(0,1fr) 40px 52px 48px;gap:8px;padding:14px 0 8px;font-family:'JetBrains Mono';font-size:10px;letter-spacing:.08em;color:var(--muted);border-bottom:1px solid var(--line)">
+    <span>#</span><span>MANAGER</span><span style="text-align:right">W–L</span><span style="text-align:right">PF</span><span style="text-align:right">LUCK</span>
+  </div>
+  <sc-for list="{{ standings }}" as="s" hint-placeholder-count="10">
+    <div sc-camel-on-click="{{ s.open }}" style="display:grid;grid-template-columns:22px minmax(0,1fr) 40px 52px 48px;gap:8px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line);cursor:pointer">
+      <span style="font-family:'Big Shoulders Display';font-weight:800;font-size:18px;color:var(--muted)">{{ s.rank }}</span>
+      <div style="display:flex;align-items:center;gap:10px;min-width:0">
+        <div style="width:28px;height:28px;border-radius:50%;background:{{ s.color }};color:#141311;display:flex;align-items:center;justify-content:center;font-family:'Big Shoulders Display';font-weight:800;font-size:12px;flex:none">{{ s.init }}</div>
+        <div style="min-width:0"><div style="font-weight:600;font-size:15px">{{ s.m }}</div><div style="font-family:'JetBrains Mono';font-size:10px;color:var(--muted);margin-top:1px">PA {{ s.pa }} · Max {{ s.max }}</div></div>
+      </div>
+      <span style="text-align:right;font-family:'JetBrains Mono';font-size:13px;font-weight:600">{{ s.wl }}</span>
+      <span style="text-align:right;font-family:'JetBrains Mono';font-size:13px">{{ s.pf }}</span>
+      <span style="text-align:right;font-family:'JetBrains Mono';font-size:13px;font-weight:600;color:{{ s.luckColor }}">{{ s.luck }}</span>
+    </div>
+    <sc-if value="{{ s.cut }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;align-items:center;gap:10px;padding:8px 0;font-family:'JetBrains Mono';font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--accentInk)"><span style="flex:1;height:2px;background:var(--accent)"></span><span>Playoff line · top 6 of 10</span><span style="flex:1;height:2px;background:var(--accent)"></span></div>
+    </sc-if>
+  </sc-for>
+</div>
+
+<div style="padding:30px 20px 0">
+  <div style="display:flex;align-items:baseline;justify-content:space-between">
+    <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:26px;text-transform:uppercase">Points for vs against</div>
+    <div style="font-family:'JetBrains Mono';font-size:11px;color:var(--muted)">{{ hlHint }}</div>
+  </div>
+  <div style="margin-top:12px;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:14px 14px 10px">
+    <div style="position:relative;height:300px;margin:0 4px 0 22px;border-left:1px solid var(--line);border-bottom:1px solid var(--line)">
+      <div style="position:absolute;left:{{ scatterMidX }};top:0;bottom:0;border-left:1px dashed var(--line)"></div>
+      <div style="position:absolute;top:{{ scatterMidY }};left:0;right:0;border-top:1px dashed var(--line)"></div>
+      <span style="position:absolute;right:6px;top:6px;font-family:'JetBrains Mono';font-size:9px;letter-spacing:.08em;color:var(--muted);text-align:right">GOOD, CURSED</span>
+      <span style="position:absolute;right:6px;bottom:6px;font-family:'JetBrains Mono';font-size:9px;letter-spacing:.08em;color:var(--pos)">GOOD AND LUCKY</span>
+      <span style="position:absolute;left:6px;top:6px;font-family:'JetBrains Mono';font-size:9px;letter-spacing:.08em;color:var(--neg)">BAD AND CURSED</span>
+      <span style="position:absolute;left:6px;bottom:6px;font-family:'JetBrains Mono';font-size:9px;letter-spacing:.08em;color:var(--muted)">BAD, LUCKY</span>
+      <sc-for list="{{ scatter }}" as="d" hint-placeholder-count="10">
+        <button sc-camel-on-click="{{ d.pick }}" style="position:absolute;left:{{ d.x }};top:{{ d.y }};transform:translate(-50%,-50%);width:30px;height:30px;border-radius:50%;border:2px solid {{ d.ring }};background:{{ d.color }};color:#141311;font-family:'Big Shoulders Display';font-weight:800;font-size:12px;cursor:pointer;opacity:{{ d.op }};padding:0;display:flex;align-items:center;justify-content:center;z-index:{{ d.z }}">{{ d.init }}</button>
+      </sc-for>
+      <span style="position:absolute;left:-22px;top:50%;transform:translateY(-50%) rotate(-90deg);font-family:'JetBrains Mono';font-size:9px;color:var(--muted);letter-spacing:.08em;white-space:nowrap">PA ↑</span>
+    </div>
+    <div style="display:flex;justify-content:space-between;margin:6px 4px 0 22px;font-family:'JetBrains Mono';font-size:9px;color:var(--muted)"><span>{{ pfMin }}</span><span>PF →</span><span>{{ pfMax }}</span></div>
+  </div>
+</div>
+
+<div style="padding:30px 20px 0">
+  <div style="display:flex;align-items:baseline;justify-content:space-between">
+    <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:26px;text-transform:uppercase">Luck</div>
+    <div style="font-family:'JetBrains Mono';font-size:11px;color:var(--muted)">W − xW</div>
+  </div>
+  <div style="display:flex;flex-direction:column;gap:6px;margin-top:12px">
+    <sc-for list="{{ luckBars }}" as="lb" hint-placeholder-count="10">
+      <div sc-camel-on-click="{{ lb.pick }}" style="display:grid;grid-template-columns:60px minmax(0,1fr) minmax(0,1fr) 44px;align-items:center;gap:0;cursor:pointer;opacity:{{ lb.op }}">
+        <span style="font-size:13px;font-weight:600">{{ lb.m }}</span>
+        <div style="height:18px;display:flex;justify-content:flex-end;border-right:1px solid var(--muted)"><div style="width:{{ lb.neg }};background:var(--neg);border-radius:4px 0 0 4px"></div></div>
+        <div style="height:18px;display:flex"><div style="width:{{ lb.pos }};background:var(--pos);border-radius:0 4px 4px 0"></div></div>
+        <span style="font-family:'JetBrains Mono';font-size:12px;font-weight:600;text-align:right;color:{{ lb.color }}">{{ lb.v }}</span>
+      </div>
+    </sc-for>
+  </div>
+</div>
+
+<div style="padding:30px 20px 0">
+  <div style="display:flex;align-items:baseline;justify-content:space-between">
+    <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:26px;text-transform:uppercase">Points left on bench</div>
+    <div style="font-family:'JetBrains Mono';font-size:11px;color:var(--muted)">PF of Max PF</div>
+  </div>
+  <div style="display:flex;flex-direction:column;gap:8px;margin-top:12px">
+    <sc-for list="{{ benchBars }}" as="bb" hint-placeholder-count="10">
+      <div sc-camel-on-click="{{ bb.pick }}" style="display:grid;grid-template-columns:60px minmax(0,1fr) 44px;gap:10px;align-items:center;cursor:pointer;opacity:{{ bb.op }}">
+        <span style="font-size:13px;font-weight:600">{{ bb.m }}</span>
+        <div style="height:18px;display:flex;border-radius:4px;overflow:hidden;background:var(--surface2)">
+          <div style="width:{{ bb.pf }};background:{{ bb.color }}"></div>
+          <div style="width:{{ bb.bench }};background:repeating-linear-gradient(135deg,var(--accent) 0 3px,transparent 3px 6px)"></div>
+        </div>
+        <span style="font-family:'JetBrains Mono';font-size:12px;font-weight:600;text-align:right;color:var(--accentInk)">{{ bb.v }}</span>
+      </div>
+    </sc-for>
+  </div>
+  <div style="display:flex;gap:16px;margin-top:10px;font-family:'JetBrains Mono';font-size:10px;color:var(--muted)">
+    <span style="display:flex;align-items:center;gap:6px"><span style="width:10px;height:10px;border-radius:2px;background:var(--muted)"></span>Scored</span>
+    <span style="display:flex;align-items:center;gap:6px"><span style="width:10px;height:10px;border-radius:2px;background:repeating-linear-gradient(135deg,var(--accent) 0 3px,transparent 3px 6px)"></span>Left on bench</span>
+  </div>
+</div>
+
+<div style="padding:30px 20px 0">
+  <div style="display:flex;align-items:baseline;justify-content:space-between">
+    <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:26px;text-transform:uppercase">Weekly scores</div>
+    <div style="font-family:'JetBrains Mono';font-size:11px;color:var(--muted)">Hotter = lower</div>
+  </div>
+  <div style="display:grid;grid-template-columns:64px repeat(4,minmax(0,1fr)) 36px;gap:4px;padding:12px 0 6px;font-family:'JetBrains Mono';font-size:10px;color:var(--muted);letter-spacing:.06em">
+    <span></span><span style="text-align:center">W1</span><span style="text-align:center">W2</span><span style="text-align:center">W3</span><span style="text-align:center">W4</span><span style="text-align:center">5–14</span>
+  </div>
+  <div style="display:flex;flex-direction:column;gap:4px">
+    <sc-for list="{{ heat }}" as="h" hint-placeholder-count="10">
+      <div style="display:grid;grid-template-columns:64px repeat(4,minmax(0,1fr)) 36px;gap:4px;align-items:center">
+        <span style="font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ h.m }}</span>
+        <sc-for list="{{ h.cells }}" as="c" hint-placeholder-count="3">
+          <div style="height:38px;border-radius:8px;background:{{ c.bg }};color:{{ c.fg }};display:flex;align-items:center;justify-content:center;gap:4px;font-family:'JetBrains Mono';font-size:12px;font-weight:600">{{ c.v }}<span style="font-size:9px;opacity:.75">{{ c.r }}</span></div>
+        </sc-for>
+        <div style="height:38px;border-radius:8px;border:1px dashed var(--accent);display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono';font-size:10px;font-weight:600;color:var(--accentInk);letter-spacing:.06em">LIVE</div>
+        <div style="height:38px;border-radius:8px;background:var(--surface2)"></div>
+      </div>
+    </sc-for>
+  </div>
+</div>
+
+<div style="margin:30px 20px 0;padding:18px;background:var(--surface);border:1px solid var(--line);border-radius:16px">
+  <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:22px;text-transform:uppercase">How to read this</div>
+  <div style="display:flex;flex-direction:column;gap:14px;margin-top:14px">
+    <div><div style="font-family:'JetBrains Mono';font-size:11px;font-weight:600;color:var(--accentInk);letter-spacing:.06em">xW · EXPECTED WINS</div><div style="font-size:14px;line-height:1.45;margin-top:4px;color:var(--muted);text-wrap:pretty">Each week every score is ranked against the whole league. Beating 7 of 9 teams earns 0.78 xW, no matter who you actually played.</div></div>
+    <div><div style="font-family:'JetBrains Mono';font-size:11px;font-weight:600;color:var(--accentInk);letter-spacing:.06em">LUCK</div><div style="font-size:14px;line-height:1.45;margin-top:4px;color:var(--muted)">Real wins minus xW. Positive means your schedule has been kind.</div></div>
+    <div><div style="font-family:'JetBrains Mono';font-size:11px;font-weight:600;color:var(--accentInk);letter-spacing:.06em">MAX PF</div><div style="font-size:14px;line-height:1.45;margin-top:4px;color:var(--muted)">The best legal lineup from your roster each week, bench included.</div></div>
+    <div><div style="font-family:'JetBrains Mono';font-size:11px;font-weight:600;color:var(--accentInk);letter-spacing:.06em">BENCH POINTS</div><div style="font-size:14px;line-height:1.45;margin-top:4px;color:var(--muted)">Max PF minus actual PF. Points you left sitting.</div></div>
+  </div>
+</div>
+</sc-if>
+
+<sc-if value="{{ tabTeams }}" hint-placeholder-val="{{ false }}">
+<div style="padding:22px 20px 0">
+  <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:48px;line-height:.9;text-transform:uppercase">Teams</div>
+</div>
+<div style="display:flex;gap:10px;padding:18px 20px 4px;overflow-x:auto">
+  <sc-for list="{{ teamPicker }}" as="p" hint-placeholder-count="10">
+    <button sc-camel-on-click="{{ p.pick }}" style="flex:none;display:flex;flex-direction:column;align-items:center;gap:6px;background:transparent;border:0;padding:0;cursor:pointer;min-width:48px">
+      <div style="width:48px;height:48px;border-radius:50%;background:{{ p.color }};color:#141311;display:flex;align-items:center;justify-content:center;font-family:'Big Shoulders Display';font-weight:800;font-size:17px;outline:{{ p.ring }};outline-offset:3px;opacity:{{ p.op }}">{{ p.init }}</div>
+      <span style="font-size:11px;font-weight:600;color:{{ p.fg }}">{{ p.m }}</span>
+    </button>
+  </sc-for>
+</div>
+
+<div style="margin:16px 20px 0;padding:20px;border-radius:20px;background:var(--surface);border:1px solid var(--line)">
+  <div style="display:flex;gap:14px;align-items:center">
+    <div style="width:64px;height:64px;border-radius:50%;background:{{ team.color }};color:#141311;display:flex;align-items:center;justify-content:center;font-family:'Big Shoulders Display';font-weight:900;font-size:26px;flex:none">{{ team.init }}</div>
+    <div style="min-width:0">
+      <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:34px;line-height:.95;text-transform:uppercase">{{ team.m }}</div>
+      <div style="font-size:14px;color:var(--muted);margin-top:4px">{{ team.teamName }}</div>
+    </div>
+  </div>
+  <div style="font-family:'JetBrains Mono';font-size:12px;margin-top:14px;padding-top:14px;border-top:1px solid var(--line)">{{ team.line }}</div>
+  <sc-if value="{{ showBooth }}" hint-placeholder-val="{{ true }}">
+    <div style="font-size:15px;line-height:1.4;margin-top:10px;color:var(--accentInk);text-wrap:pretty">{{ team.roast }}</div>
+  </sc-if>
+</div>
+
+<div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;padding:10px 20px 0">
+  <sc-for list="{{ team.stats }}" as="st" hint-placeholder-count="8">
+    <div style="background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px 14px">
+      <div style="font-family:'JetBrains Mono';font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)">{{ st.label }}</div>
+      <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:30px;line-height:1;margin-top:6px;color:{{ st.color }}">{{ st.value }}</div>
+      <div style="font-size:12px;color:var(--muted);margin-top:4px">{{ st.sub }}</div>
+    </div>
+  </sc-for>
+</div>
+
+<div style="padding:28px 20px 0">
+  <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:26px;text-transform:uppercase">Game log</div>
+  <div style="margin-top:8px">
+    <sc-for list="{{ team.log }}" as="g" hint-placeholder-count="4">
+      <div sc-camel-on-click="{{ g.open }}" style="display:grid;grid-template-columns:30px minmax(0,1fr) auto 26px;gap:10px;align-items:center;padding:12px 0;border-top:1px solid var(--line);cursor:pointer">
+        <span style="font-family:'Big Shoulders Display';font-weight:800;font-size:18px;color:var(--muted)">W{{ g.w }}</span>
+        <div style="min-width:0">
+          <div style="display:flex;align-items:center;gap:6px;font-weight:600;font-size:15px"><span style="font-size:13px;color:var(--muted);font-weight:400">vs</span><span style="width:8px;height:8px;border-radius:50%;background:{{ g.color }}"></span>{{ g.opp }}</div>
+          <div style="font-family:'JetBrains Mono';font-size:10px;color:var(--muted);margin-top:2px">{{ g.sub }}</div>
+        </div>
+        <span style="font-family:'JetBrains Mono';font-size:13px;font-weight:600">{{ g.score }}</span>
+        <span style="width:26px;height:26px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-family:'Big Shoulders Display';font-weight:800;font-size:15px;background:{{ g.rbg }};color:{{ g.rfg }}">{{ g.r }}</span>
+      </div>
+    </sc-for>
+  </div>
+</div>
+
+<div style="padding:28px 20px 0">
+  <div style="display:flex;align-items:baseline;justify-content:space-between">
+    <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:26px;text-transform:uppercase">Week 4 lineup</div>
+    <div style="font-family:'JetBrains Mono';font-size:11px;color:var(--muted)">Proj {{ team.proj }}</div>
+  </div>
+  <div style="margin-top:8px;background:var(--surface);border:1px solid var(--line);border-radius:16px;overflow:hidden">
+    <sc-for list="{{ team.starters }}" as="pl" hint-placeholder-count="9">
+      <div style="display:grid;grid-template-columns:44px minmax(0,1fr) auto;gap:10px;align-items:center;padding:11px 14px;border-bottom:1px solid var(--line)">
+        <span style="font-family:'JetBrains Mono';font-size:10px;font-weight:600;color:var(--accentInk);letter-spacing:.06em">{{ pl.slot }}</span>
+        <div><div style="font-weight:600;font-size:15px">{{ pl.name }}</div><div style="font-family:'JetBrains Mono';font-size:10px;color:var(--muted);margin-top:1px">{{ pl.meta }}</div></div>
+        <span style="font-family:'Big Shoulders Display';font-weight:800;font-size:20px;color:{{ pl.ptsColor }}">{{ pl.pts }}</span>
+      </div>
+    </sc-for>
+    <div style="padding:12px 14px 4px;font-family:'JetBrains Mono';font-size:10px;letter-spacing:.1em;color:var(--muted)">BENCH · {{ team.benchCount }}</div>
+    <sc-for list="{{ team.bench }}" as="pl" hint-placeholder-count="6">
+      <div style="display:grid;grid-template-columns:44px minmax(0,1fr) auto;gap:10px;align-items:center;padding:8px 14px">
+        <span style="font-family:'JetBrains Mono';font-size:10px;color:var(--muted)">{{ pl.slot }}</span>
+        <div style="font-size:14px;color:var(--muted)">{{ pl.name }} <span style="font-family:'JetBrains Mono';font-size:10px">{{ pl.meta }}</span></div>
+        <span style="font-family:'JetBrains Mono';font-size:12px;color:var(--muted)">{{ pl.pts }}</span>
+      </div>
+    </sc-for>
+    <div style="height:8px"></div>
+  </div>
+</div>
+</sc-if>
+
+<sc-if value="{{ tabDraft }}" hint-placeholder-val="{{ false }}">
+<div style="padding:22px 20px 0">
+  <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:48px;line-height:.9;text-transform:uppercase">Draft</div>
+  <div style="font-family:'JetBrains Mono';font-size:11px;color:var(--muted);margin-top:10px">Sep 6 · 10-team snake · 15 rounds · Half-PPR</div>
+</div>
+<div style="margin:16px 20px 0;padding:16px;border-radius:16px;border:1px dashed var(--line);display:flex;justify-content:space-between;align-items:center;gap:12px">
+  <div><div style="font-family:'JetBrains Mono';font-size:10px;letter-spacing:.1em;color:var(--muted)">ARCHIVED · READ ONLY</div><div style="font-size:14px;margin-top:4px;text-wrap:pretty">Draft-night tool with ADP values and Yahoo grades, saved for next season.</div></div>
+  <button style="flex:none;min-height:44px;padding:0 16px;border-radius:999px;border:0;background:var(--accent);color:var(--onAccent);font-weight:700;font-size:14px;cursor:pointer">Open tool</button>
+</div>
+<div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;padding:10px 20px 0">
+  <sc-for list="{{ draftFirsts }}" as="f" hint-placeholder-count="4">
+    <div style="background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px 14px">
+      <div style="font-family:'JetBrains Mono';font-size:10px;letter-spacing:.1em;color:var(--muted)">{{ f.label }}</div>
+      <div style="font-weight:700;font-size:16px;margin-top:6px">{{ f.player }}</div>
+      <div style="display:flex;align-items:center;gap:6px;margin-top:4px;font-family:'JetBrains Mono';font-size:11px;color:var(--muted)">{{ f.pick }} <span style="width:7px;height:7px;border-radius:50%;background:{{ f.color }}"></span>{{ f.m }}</div>
+    </div>
+  </sc-for>
+</div>
+<div style="padding:24px 20px 0">
+  <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));padding:4px;background:var(--surface);border:1px solid var(--line);border-radius:12px;gap:4px">
+    <sc-for list="{{ draftModes }}" as="dm" hint-placeholder-count="2">
+      <button sc-camel-on-click="{{ dm.pick }}" style="min-height:40px;border:0;border-radius:9px;background:{{ dm.bg }};color:{{ dm.fg }};font-weight:600;font-size:14px;cursor:pointer">{{ dm.label }}</button>
+    </sc-for>
+  </div>
+  <div style="display:flex;gap:6px;overflow-x:auto;margin-top:12px;padding-bottom:2px">
+    <sc-for list="{{ draftChips }}" as="dc" hint-placeholder-count="15">
+      <button sc-camel-on-click="{{ dc.pick }}" style="flex:none;min-width:44px;min-height:44px;padding:0 10px;border-radius:10px;border:1px solid {{ dc.border }};background:{{ dc.bg }};color:{{ dc.fg }};font-family:'Big Shoulders Display';font-weight:800;font-size:17px;cursor:pointer">{{ dc.label }}</button>
+    </sc-for>
+  </div>
+  <div style="display:flex;justify-content:space-between;align-items:baseline;margin-top:18px">
+    <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:24px;text-transform:uppercase">{{ draftTitle }}</div>
+    <div style="font-family:'JetBrains Mono';font-size:11px;color:var(--muted)">{{ draftSub }}</div>
+  </div>
+  <div style="margin-top:6px">
+    <sc-for list="{{ draftPicks }}" as="dp" hint-placeholder-count="10">
+      <div style="display:grid;grid-template-columns:44px minmax(0,1fr) auto;gap:10px;align-items:center;padding:11px 0;border-top:1px solid var(--line)">
+        <span style="font-family:'JetBrains Mono';font-size:12px;font-weight:600;color:var(--accentInk)">{{ dp.pick }}</span>
+        <div style="min-width:0"><div style="font-weight:600;font-size:15px">{{ dp.player }}</div><div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);margin-top:2px"><span style="width:7px;height:7px;border-radius:50%;background:{{ dp.color }}"></span>{{ dp.who }}</div></div>
+        <span style="font-family:'JetBrains Mono';font-size:11px;color:var(--muted)">{{ dp.meta }}</span>
+      </div>
+    </sc-for>
+  </div>
+</div>
+</sc-if>
+
+<sc-if value="{{ tabWire }}" hint-placeholder-val="{{ false }}">
+<div style="padding:22px 20px 0">
+  <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:48px;line-height:.9;text-transform:uppercase">Wire</div>
+  <div style="font-family:'JetBrains Mono';font-size:11px;color:var(--muted);margin-top:10px">Adds, drops, trades and FAAB · through Oct 1</div>
+</div>
+<div style="padding:16px 20px 0">
+  <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));padding:4px;background:var(--surface);border:1px solid var(--line);border-radius:12px;gap:4px">
+    <sc-for list="{{ wireModes }}" as="wm" hint-placeholder-count="2">
+      <button sc-camel-on-click="{{ wm.pick }}" style="min-height:40px;border:0;border-radius:9px;background:{{ wm.bg }};color:{{ wm.fg }};font-weight:600;font-size:14px;cursor:pointer">{{ wm.label }}</button>
+    </sc-for>
+  </div>
+</div>
+<sc-if value="{{ showBooth }}" hint-placeholder-val="{{ true }}">
+  <div style="margin:14px 20px 0;padding:16px;border-radius:16px;background:var(--accent);color:var(--onAccent);font-size:15px;line-height:1.4;font-weight:500;text-wrap:pretty">{{ wireRoast }}</div>
+</sc-if>
+
+<sc-if value="{{ wireSeason }}" hint-placeholder-val="{{ false }}">
+  <div style="padding:24px 20px 0">
+    <div style="display:flex;justify-content:space-between;align-items:baseline">
+      <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:24px;text-transform:uppercase">Activity vs record</div>
+      <div style="font-family:'JetBrains Mono';font-size:11px;color:var(--muted)">Adds</div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:8px;margin-top:12px">
+      <sc-for list="{{ activity }}" as="a" hint-placeholder-count="10">
+        <div style="display:grid;grid-template-columns:60px minmax(0,1fr) 30px 36px;gap:10px;align-items:center">
+          <span style="font-size:13px;font-weight:600">{{ a.m }}</span>
+          <div style="height:14px;border-radius:4px;background:var(--surface2);overflow:hidden"><div style="height:100%;width:{{ a.w }};background:{{ a.color }};border-radius:4px"></div></div>
+          <span style="font-family:'JetBrains Mono';font-size:12px;font-weight:600;text-align:right">{{ a.n }}</span>
+          <span style="font-family:'JetBrains Mono';font-size:11px;color:var(--muted);text-align:right">{{ a.rec }}</span>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+</sc-if>
+
+<div style="padding:24px 20px 0">
+  <sc-for list="{{ wireDays }}" as="d" hint-placeholder-count="3">
+    <div style="font-family:'JetBrains Mono';font-size:11px;font-weight:600;letter-spacing:.1em;color:var(--accentInk);padding:16px 0 6px">{{ d.label }}</div>
+    <sc-for list="{{ d.moves }}" as="mv" hint-placeholder-count="3">
+      <div style="display:grid;grid-template-columns:32px minmax(0,1fr);gap:12px;padding:12px 0;border-top:1px solid var(--line)">
+        <div style="width:32px;height:32px;border-radius:50%;background:{{ mv.color }};color:#141311;display:flex;align-items:center;justify-content:center;font-family:'Big Shoulders Display';font-weight:800;font-size:13px">{{ mv.init }}</div>
+        <div style="min-width:0">
+          <div style="display:flex;justify-content:space-between;gap:8px"><span style="font-weight:700;font-size:14px">{{ mv.m }}</span><span style="font-family:'JetBrains Mono';font-size:11px;color:var(--muted)">{{ mv.time }}</span></div>
+          <div style="display:flex;flex-direction:column;gap:6px;margin-top:6px">
+            <sc-for list="{{ mv.lines }}" as="ln" hint-placeholder-count="2">
+              <div style="display:grid;grid-template-columns:18px minmax(0,1fr);gap:6px;align-items:baseline">
+                <span style="font-family:'JetBrains Mono';font-weight:700;font-size:14px;color:{{ ln.color }}">{{ ln.sign }}</span>
+                <div><div style="font-size:15px;font-weight:{{ ln.weight }};color:{{ ln.fg }}">{{ ln.player }}</div><div style="font-family:'JetBrains Mono';font-size:10px;color:var(--muted);margin-top:1px">{{ ln.meta }}</div></div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </div>
+    </sc-for>
+  </sc-for>
+</div>
+
+<div style="margin:24px 20px 0;padding:18px;background:var(--surface);border:1px solid var(--line);border-radius:16px">
+  <div style="display:flex;justify-content:space-between;align-items:baseline">
+    <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:22px;text-transform:uppercase">FAAB left</div>
+    <div style="font-family:'JetBrains Mono';font-size:11px;color:var(--muted)">$100 budget</div>
+  </div>
+  <div style="display:flex;flex-direction:column;gap:8px;margin-top:12px">
+    <sc-for list="{{ faab }}" as="fb" hint-placeholder-count="10">
+      <div style="display:grid;grid-template-columns:60px minmax(0,1fr) 44px;gap:10px;align-items:center">
+        <span style="font-size:13px;font-weight:600">{{ fb.m }}</span>
+        <div style="height:8px;border-radius:4px;background:var(--surface2);overflow:hidden"><div style="height:100%;width:{{ fb.w }};background:{{ fb.color }}"></div></div>
+        <span style="font-family:'JetBrains Mono';font-size:12px;font-weight:600;text-align:right">{{ fb.left }}</span>
+      </div>
+    </sc-for>
+  </div>
+</div>
+</sc-if>
+
+<sc-if value="{{ sheetOpen }}" hint-placeholder-val="{{ false }}">
+  <div style="position:fixed;inset:0;z-index:50;display:flex;justify-content:center;align-items:flex-end">
+    <div sc-camel-on-click="{{ closeSheet }}" style="position:absolute;inset:0;background:rgba(0,0,0,.55)"></div>
+    <div style="position:relative;width:100%;max-width:440px;max-height:86vh;overflow-y:auto;background:var(--bg);border-radius:22px 22px 0 0;border-top:1px solid var(--line);padding-bottom:28px">
+      <div style="position:sticky;top:0;background:var(--bg);padding:10px 16px 12px;border-bottom:1px solid var(--line);z-index:2">
+        <div style="width:40px;height:4px;border-radius:2px;background:var(--line);margin:0 auto 10px"></div>
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <span style="font-family:'JetBrains Mono';font-size:11px;letter-spacing:.1em;color:var(--accentInk);font-weight:600">{{ sheet.title }}</span>
+          <button sc-camel-on-click="{{ closeSheet }}" style="min-width:44px;min-height:36px;border:1px solid var(--line);border-radius:999px;background:var(--surface);cursor:pointer;font-size:13px;font-weight:600">Close</button>
+        </div>
+        <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px;margin-top:12px">
+          <div><div style="display:flex;align-items:center;gap:8px"><span style="width:10px;height:10px;border-radius:50%;background:{{ sheet.a.color }}"></span><span style="font-weight:700;font-size:16px">{{ sheet.a.m }}</span></div><div style="font-family:'Big Shoulders Display';font-weight:900;font-size:40px;line-height:1;margin-top:4px;color:{{ sheet.a.scoreColor }}">{{ sheet.a.score }}</div></div>
+          <div style="text-align:right"><div style="display:flex;align-items:center;gap:8px;justify-content:flex-end"><span style="font-weight:700;font-size:16px">{{ sheet.b.m }}</span><span style="width:10px;height:10px;border-radius:50%;background:{{ sheet.b.color }}"></span></div><div style="font-family:'Big Shoulders Display';font-weight:900;font-size:40px;line-height:1;margin-top:4px;color:{{ sheet.b.scoreColor }}">{{ sheet.b.score }}</div></div>
+        </div>
+      </div>
+      <div style="padding:6px 16px 0">
+        <div style="display:grid;grid-template-columns:minmax(0,1fr) 38px 40px 38px minmax(0,1fr);gap:6px;padding:8px 0 2px;font-family:'JetBrains Mono';font-size:9px;letter-spacing:.08em;color:var(--muted)"><span></span><span style="text-align:right">{{ sheet.ptsLabel }}</span><span></span><span>{{ sheet.ptsLabel }}</span><span></span></div>
+        <sc-for list="{{ sheet.rows }}" as="r" hint-placeholder-count="9">
+          <div style="display:grid;grid-template-columns:minmax(0,1fr) 38px 40px 38px minmax(0,1fr);gap:6px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)">
+            <div style="min-width:0"><div style="font-weight:600;font-size:14px;line-height:1.2">{{ r.a.name }}</div><div style="font-family:'JetBrains Mono';font-size:10px;color:var(--muted);margin-top:2px">{{ r.a.meta }}</div></div>
+            <span style="font-family:'Big Shoulders Display';font-weight:800;font-size:19px;text-align:right;color:{{ r.a.ptsColor }}">{{ r.a.pts }}</span>
+            <span style="font-family:'JetBrains Mono';font-size:10px;font-weight:600;text-align:center;color:var(--accentInk);background:var(--surface);border-radius:6px;padding:4px 0">{{ r.slot }}</span>
+            <span style="font-family:'Big Shoulders Display';font-weight:800;font-size:19px;text-align:left;color:{{ r.b.ptsColor }}">{{ r.b.pts }}</span>
+            <div style="min-width:0;text-align:right"><div style="font-weight:600;font-size:14px;line-height:1.2">{{ r.b.name }}</div><div style="font-family:'JetBrains Mono';font-size:10px;color:var(--muted);margin-top:2px">{{ r.b.meta }}</div></div>
+          </div>
+        </sc-for>
+        <div style="font-family:'JetBrains Mono';font-size:10px;color:var(--muted);padding-top:12px;text-wrap:pretty">{{ sheet.note }}</div>
+      </div>
+    </div>
+  </div>
+</sc-if>
+
+<div style="position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:440px;z-index:30;background:var(--bg);border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(5,minmax(0,1fr));padding:6px 8px 18px">
+  <sc-for list="{{ tabs }}" as="tb" hint-placeholder-count="5">
+    <button sc-camel-on-click="{{ tb.pick }}" style="min-height:52px;border:0;background:transparent;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;color:{{ tb.fg }}">
+      <span style="width:18px;height:3px;border-radius:2px;background:{{ tb.bar }}"></span>
+      <span style="font-family:'Big Shoulders Display';font-weight:800;font-size:16px;text-transform:uppercase;letter-spacing:.03em">{{ tb.label }}</span>
+    </button>
+  </sc-for>
+</div>
+
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script="" data-props="{&quot;theme&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;dark&quot;,&quot;light&quot;],&quot;default&quot;:&quot;dark&quot;,&quot;tsType&quot;:&quot;'dark'|'light'&quot;},&quot;trashTalk&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;},&quot;startTab&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Gameday&quot;,&quot;Season&quot;,&quot;Teams&quot;,&quot;Draft&quot;,&quot;Wire&quot;],&quot;default&quot;:&quot;Gameday&quot;,&quot;tsType&quot;:&quot;string&quot;}}">
+const MGR=['ASG','Tristan','Andy','Matt','Kurt','Jerger','Mr. G','Colin','DLin','Pablo'];
+const HUE={ASG:35,Tristan:250,Andy:150,Matt:305,Kurt:95,Jerger:205,'Mr. G':0,Colin:125,DLin:340,Pablo:65};
+const INIT={ASG:'AS',Tristan:'TR',Andy:'AN',Matt:'MA',Kurt:'KU',Jerger:'JJ','Mr. G':'MG',Colin:'CO',DLin:'DL',Pablo:'PA'};
+const col=m=>`oklch(0.76 0.12 ${HUE[m]})`;
+const SC={ASG:[123.1,154.5,95.4],Tristan:[144.4,104.1,121.6],Andy:[139.3,76.0,128.0],Matt:[107.9,105.6,114.5],Kurt:[100.6,89.4,135.9],Jerger:[124.1,92.6,102.1],'Mr. G':[135.2,84.4,75.1],Colin:[65.7,100.1,124.1],DLin:[99.8,100.6,82.5],Pablo:[112.7,70.9,86.4]};
+const ST=[['ASG',3,0,373.0,236.5,420.9,1.11],['Tristan',3,0,370.1,307.7,396.9,0.56],['Andy',2,1,343.3,353.8,411.9,0.11],['Matt',1,2,328.0,310.3,398.9,-0.78],['Kurt',1,2,325.8,320.0,345.4,-0.56],['Jerger',1,2,318.8,326.0,383.4,-0.56],['Mr. G',1,2,294.7,390.2,357.2,0],['Colin',1,2,289.9,322.0,357.2,-0.33],['DLin',1,2,282.9,326.7,354.9,0.11],['Pablo',1,2,270.0,303.4,360.8,0.33]].map(r=>({m:r[0],w:r[1],l:r[2],pf:r[3],pa:r[4],max:r[5],luck:r[6]}));
+const PAIRS={1:[['Pablo','Matt'],['ASG','Colin'],['Tristan','Kurt'],['Andy','Jerger'],['Mr. G','DLin']],2:[['DLin','Kurt'],['ASG','Mr. G'],['Tristan','Jerger'],['Matt','Andy'],['Colin','Pablo']],3:[['Andy','Colin'],['ASG','Pablo'],['Tristan','Matt'],['DLin','Jerger'],['Kurt','Mr. G']],4:[['ASG','Andy'],['Tristan','Colin'],['Matt','DLin'],['Jerger','Kurt'],['Mr. G','Pablo']]};
+const LIVE4={Matt:[6.00,117.88],DLin:[10.20,114.39],Tristan:[8.90,111.52],Colin:[0,111.42],Jerger:[0,113.79],Kurt:[14.10,109.08],ASG:[0,107.79],Andy:[0,116.74],'Mr. G':[0,118.23],Pablo:[0,93.17]};
+const PROJ=Object.fromEntries(Object.entries(LIVE4).map(([k,v])=>[k,v[1]]));
+const LIVEPTS={'KC Concepcion Jr.':8.90,'Harold Fannin Jr.':9.48,'Steelers':6.00};
+const f2=n=>n.toFixed(2);
+const CAPTION={1:'Pablo held off Matt by 4.8. Pablo would like this one framed, since it may be a while.',2:'DLin beat Kurt 100.6–89.4. Neither fan base was reached for comment.',3:'Andy beat Colin by 3.9. Colin has already blamed the kicker, the refs and Yahoo.',4:'Tristan 111.52, Colin 111.42. A 0.10 projection gap after TNF. Tristan banked 8.90 from KC Concepcion Jr. Colin banked nothing and is still projected to lose by a rounding error.'};
+const BOOTH={1:[['Colin','Colin opened his season with 65.7. ASG thanks him for his service.'],['Mr. G','Mr. G put up 135.2 in Week 1. Frame it. It has been downhill since.'],['Jerger','Jerger scored 124.1 and lost. Some weeks the schedule picks you.']],2:[['ASG','ASG dropped 154.5 on Mr. G. Mr. G has asked that the tape not be shared.'],['Andy','Andy scored 76.0. The gibbing has paused.'],['Pablo','Pablo posted 70.9, lowest of the week. He was #1. Past tense.']],3:[['Kurt','Kurt hung 135.9 on Mr. G, the top score of the week.'],['Mr. G','Mr. G: 75.1, his second straight week under 85. The team name says Definitely not a Boomer. The box score disagrees.'],['DLin','DLin managed 82.5. Toilet Bowl King is starting to look like a mission statement.']],4:[['Matt','The Steelers D gave Matt 6.00 on Thursday. He trails DLin 10.20–6.00 but is projected to win by 3.49. Matt would like the projection read aloud.'],['ASG','ASG is 3–0 and still projected to lose to Andy by 8.95. Respect remains pending.'],['Kurt','Kurt hung 135.9 last week and leads Jerger 14.10–0.00 after Thursday. Jerger would like to talk about something else.'],['Mr. G','Pablo is projected for 93.17, lowest in the league. Mr. G is projected for 118.23, highest. The group-chat victory lap is already drafted.'],['Colin','Colin has made 20 adds this season. The waiver wire has asked for a restraining order.']]};
+const ROAST={ASG:'3–0 on 2 adds all season. Set it, forget it, collect wins.',Tristan:'Undefeated and quiet about it. Suspicious.',Andy:'Lost Week 2 with 76.0. Still has the second-best Max PF in the league.',Matt:'Unluckiest manager in the league. Would like you to know that.',Kurt:'Week 3 hero, Weeks 1 and 2 villain.',Jerger:'Has left 64.6 points on the bench. The bench is having a great season.',
+'Mr. G':'Most points allowed in the league by 36. Opponents save their best for him.',Colin:'Twenty adds, one win. The grind continues.',DLin:'Toilet Bowl King. Not a prediction, a title defense.',Pablo:'Left 90.8 on the bench. Most in the league, by a lot.'};
+const PPROJ={'Josh Allen':23.1,'Omarion Hampton':10.3,'TreVeyon Henderson':9.0,'Jaxon Smith-Njigba':17.9,'Matthew Golden':10.4,'Dalton Kincaid':9.8,'Bucky Irving':12.3,'Jason Myers':8.8,'Eagles':5.1};
+const ORD={QB:0,RB:1,WR:2,TE:3,WRT:4,K:5,DEF:6};
+const ord=n=>n+(n%10==1&&n!=11?'st':n%10==2&&n!=12?'nd':n%10==3&&n!=13?'rd':'th');
+const f1=n=>n.toFixed(1);
+const sgn=n=>n>0?'+'+n.toFixed(2):n<0?'−'+Math.abs(n).toFixed(2):'0.00';
+const MON={Jan:0,Feb:1,Mar:2,Apr:3,May:4,Jun:5,Jul:6,Aug:7,Sep:8,Oct:9,Nov:10,Dec:11};
+const DOW=['SUN','MON','TUE','WED','THU','FRI','SAT'];
+function parseWhen(s){const m=s.match(/(\w+) (\d+), (\d+):(\d+) (am|pm)/);if(!m)return new Date(2026,8,1);let h=+m[3]%12;if(m[5]=='pm')h+=12;return new Date(2026,MON[m[1]],+m[2],h,+m[4]);}
+function rec(m,upto){let w=0,l=0;for(let i=1;i<=upto;i++){const p=PAIRS[i].find(p=>p.includes(m));const o=p[0]==m?p[1]:p[0];SC[m][i-1]>SC[o][i-1]?w++:l++;}return w+'–'+l;}
+function allPlay(m,wk){const s=SC[m][wk-1];let w=0;MGR.forEach(o=>{if(o!=m&&SC[o][wk-1]<s)w++;});return {w,l:9-w,rank:10-w};}
+
+class Component extends DCLogic {
+  state={tab:this.props.startTab??'Gameday',week:4,theme:null,sheet:null,team:'ASG',wire:'7 days',draftMode:'By round',draftRound:1,draftTeam:'ASG',rosters:null,draft:null,tx:null};
+  componentDidMount(){this.applyTheme();
+    Promise.all(['uploads/9feamg-rosters.json','uploads/9feamg-draft-rosters.json','uploads/9feamg-transactions.json'].map(u=>fetch(u).then(r=>r.json()).catch(()=>null))).then(([rosters,draft,tx])=>this.setState({rosters,draft,tx}));}
+  componentDidUpdate(){this.applyTheme();}
+  theme(){return this.state.theme??this.props.theme??'dark';}
+  applyTheme(){document.documentElement.dataset.theme=this.theme();}
+  players(m){const t=this.state.rosters?.teams?.find(t=>t.name==m);return t?t.players:[];}
+  starters(m,wk=4){return this.players(m).filter(p=>p.slot=='starter').sort((a,b)=>(ORD[a.pos]??9)-(ORD[b.pos]??9)).map(p=>{
+    const live=wk==4;const lp=live?LIVEPTS[p.name]:null;const v=lp??(live?(p.proj??p.projected??p.projections?.[wk]??PPROJ[p.name]):(p.points?.[wk]??p.weeks?.[wk]??p.pts?.[wk]));
+    return {slot:p.pos=='WRT'?'FLEX':p.pos,name:p.name,meta:(p.nfl?p.nfl.toUpperCase():'—')+(lp!=null?' · Final':''),pts:v!=null?(lp!=null?f2(+v):f1(+v)):'—',ptsColor:lp!=null?'var(--accentInk)':v!=null?'var(--ink)':'var(--muted)'};});}
+  side(m,o,wk){const live=wk==4;
+    if(live){const [c,p]=LIVE4[m];return {m,init:INIT[m],color:col(m),rec:rec(m,3)+' · '+ord(ST.findIndex(x=>x.m==m)+1),score:f2(c),raw:p,status:'Proj '+f2(p),scoreColor:'var(--ink)'};}const s=live?PROJ[m]:SC[m][wk-1];const os=live?PROJ[o]:SC[o][wk-1];const win=s>os;
+    return {m,init:INIT[m],color:col(m),rec:rec(m,wk-1)+(live?' · '+ord(ST.findIndex(x=>x.m==m)+1):''),score:f1(s),raw:s,status:live?'9 to play':(win?'Won':'Lost'),scoreColor:live?'var(--ink)':(win?'var(--ink)':'var(--muted)')};}
+  match(pair,wk){const [a,b]=pair;const A=this.side(a,b,wk),B=this.side(b,a,wk);const gap=Math.abs(A.raw-B.raw);
+    return {a:A,b:B,gap:wk==4?'Proj gap '+f2(gap)+' · live':'Margin '+f1(gap),mid:wk==4?'proj gap '+f2(gap):'final',share:(A.raw/(A.raw+B.raw)*100).toFixed(1)+'%',open:()=>this.setState({sheet:{a,b,wk}})};}
+  renderVals(){
+    const S=this.state,wk=S.week,boothOn=this.props.trashTalk??true;
+    const tabsL=['Gameday','Season','Teams','Draft','Wire'];
+    const tabs=tabsL.map(t=>({label:t,fg:S.tab==t?'var(--ink)':'var(--muted)',bar:S.tab==t?'var(--accent)':'transparent',pick:()=>{this.setState({tab:t});window.scrollTo(0,0);}}));
+    const weekChips=[1,2,3,4,5].map(w=>{const on=w==wk;return {label:'W'+w,sub:w==4?'● LIVE':w==5?'NEXT':'FINAL',bg:on?'var(--accent)':'var(--surface)',fg:on?'var(--onAccent)':(w==4?'var(--accentInk)':'var(--ink)'),border:on?'var(--accent)':'var(--line)',pick:()=>this.setState({week:w})};});
+    let matchups=[],hero=null;
+    if(wk<=4){const all=PAIRS[wk].map(p=>this.match(p,wk)).sort((x,y)=>Math.abs(x.a.raw-x.b.raw)-Math.abs(y.a.raw-y.b.raw));hero=all[0];matchups=all.slice(1);}
+    const blank={a:{},b:{},share:'50%'};
+    // Season
+    const standings=ST.map((s,i)=>({rank:i+1,m:s.m,init:INIT[s.m],color:col(s.m),pa:f1(s.pa),max:f1(s.max),wl:s.w+'–'+s.l,pf:f1(s.pf),luck:sgn(s.luck),luckColor:s.luck>0?'var(--pos)':s.luck<0?'var(--neg)':'var(--muted)',cut:i==5,open:()=>{this.setState({tab:'Teams',team:s.m});window.scrollTo(0,0);}}));
+    const allS=Object.values(SC).flat(),lo=Math.min(...allS),hi=Math.max(...allS);
+    const heat=MGR.map(m=>({m,cells:[1,2,3].map(w=>{const v=SC[m][w-1];const t=(hi-v)/(hi-lo);const p=Math.round(6+t*80);const p2=PAIRS[w].find(p=>p.includes(m));const o=p2[0]==m?p2[1]:p2[0];return {v:f1(v),r:v>SC[o][w-1]?'W':'L',bg:`color-mix(in oklch, var(--accent) ${p}%, var(--surface2))`,fg:p>55?'#141311':'var(--ink)'};})}));
+    const bench=ST.map(s=>({m:s.m,b:s.max-s.pf})).sort((a,b)=>b.b-a.b)[0];
+    const seasonTiles=[{label:'Top week',value:'154.5',sub:'ASG · W2',dot:col('ASG'),color:'var(--ink)'},{label:'Luckiest',value:'+1.11',sub:'ASG · 3–0 on 1.89 xW',dot:col('ASG'),color:'var(--pos)'},{label:'Unluckiest',value:'−0.78',sub:'Matt · 1–2',dot:col('Matt'),color:'var(--neg)'},{label:'Left on bench',value:f1(bench.b),sub:bench.m+' · 3 weeks',dot:col(bench.m),color:'var(--accentInk)'}];
+    // tx
+    const tx=S.tx||[];const adds={},spent={};MGR.forEach(m=>{adds[m]=0;spent[m]=0;});
+    tx.forEach(t=>{if(t.action=='add'){adds[t.manager]++;if(t.faab)spent[t.manager]+=parseInt(t.faab.replace('$',''))||0;}});
+    // Teams
+    const tm=S.team,s=ST.find(x=>x.m==tm),place=ST.indexOf(s)+1;
+    const res=[1,2,3].map(w=>{const p=PAIRS[w].find(p=>p.includes(tm));const o=p[0]==tm?p[1]:p[0];return SC[tm][w-1]>SC[o][w-1]?'W':'L';});
+    let k=0;for(let i=2;i>=0&&res[i]==res[2];i--)k++;
+    const pfRank=[...ST].sort((a,b)=>b.pf-a.pf).indexOf(s)+1,paRank=[...ST].sort((a,b)=>a.pa-b.pa).indexOf(s)+1,maxRank=[...ST].sort((a,b)=>b.max-a.max).indexOf(s)+1;
+    const xw=s.w-s.luck,bn=s.max-s.pf,rt=S.rosters?.teams?.find(t=>t.name==tm);
+    const log=[1,2,3,4].map(w=>{const p=PAIRS[w].find(p=>p.includes(tm));const o=p[0]==tm?p[1]:p[0];
+      if(w==4)return {w,opp:o,color:col(o),sub:'Live · proj '+f2(PROJ[tm])+'–'+f2(PROJ[o]),score:f2(LIVE4[tm][0])+'–'+f2(LIVE4[o][0]),r:'·',rbg:'var(--surface2)',rfg:'var(--muted)',open:()=>this.setState({sheet:{a:tm,b:o,wk:4}})};
+      const ap=allPlay(tm,w),win=SC[tm][w-1]>SC[o][w-1];
+      return {w,opp:o,color:col(o),sub:ord(ap.rank)+' of 10 · all-play '+ap.w+'–'+ap.l,score:f1(SC[tm][w-1])+'–'+f1(SC[o][w-1]),r:win?'W':'L',rbg:win?'var(--accent)':'var(--surface2)',rfg:win?'var(--onAccent)':'var(--muted)',open:()=>this.setState({sheet:{a:tm,b:o,wk:w}})};});
+    const pl=this.players(tm);
+    const team={m:tm,init:INIT[tm],color:col(tm),teamName:rt?.team??'',line:`${s.w}–${s.l} · ${ord(place)} place · ${res[2]}${k} streak`,roast:ROAST[tm],proj:f2(PROJ[tm]),
+      stats:[{label:'PF',value:f1(s.pf),sub:ord(pfRank)+' in league'},{label:'PA',value:f1(s.pa),sub:ord(paRank)+' fewest'},{label:'Luck',value:sgn(s.luck),sub:'W − xW',color:s.luck>0?'var(--pos)':s.luck<0?'var(--neg)':'var(--ink)'},{label:'xW',value:xw.toFixed(2),sub:'vs '+s.w+' real wins'},{label:'Max PF',value:f1(s.max),sub:ord(maxRank)+' best possible'},{label:'Bench',value:f1(bn),sub:'Points left sitting'},{label:'FAAB left',value:'$'+(100-spent[tm]),sub:'of $100'},{label:'Adds',value:String(adds[tm]),sub:'This season'}].map(x=>({color:'var(--ink)',...x})),
+      log,starters:this.starters(tm),bench:pl.filter(p=>p.slot!='starter').map(p=>{const lp=LIVEPTS[p.name];const v=lp??p.proj??p.projected??p.projections?.[4]??PPROJ[p.name];return {slot:p.slot=='IR'?'IR':p.pos,name:p.name,meta:(p.nfl||'').toUpperCase(),pts:p.slot=='IR'?'':(v!=null?(lp!=null?f2(+v):f1(+v)):'—')};}),benchCount:pl.filter(p=>p.slot!='starter').length};
+    const teamPicker=MGR.map(m=>({m,init:INIT[m],color:col(m),ring:m==tm?'2px solid var(--accent)':'2px solid transparent',op:m==tm?1:.75,fg:m==tm?'var(--ink)':'var(--muted)',pick:()=>this.setState({team:m})}));
+    // Draft
+    const dr=S.draft,picks=[];
+    if(dr)Object.entries(dr.rosters).forEach(([yt,r])=>r.picks.forEach(p=>picks.push({...p,m:r.manager||dr.managerMap[yt]})));
+    picks.sort((a,b)=>a.overall-b.overall);
+    const pn=p=>p.round+'.'+String(p.overall-(p.round-1)*10).padStart(2,'0');
+    const firstOf=pos=>picks.find(p=>p.pos==pos);
+    const draftFirsts=[['FIRST QB','QB'],['FIRST TE','TE'],['FIRST KICKER','K'],['FIRST DEFENSE','DEF']].map(([label,pos])=>{const p=firstOf(pos);return p?{label,player:p.player,pick:pn(p),m:p.m,color:col(p.m)}:{label,player:'—',pick:'',m:'',color:'transparent'};});
+    const byRound=S.draftMode=='By round';
+    const draftModes=['By round','By team'].map(l=>({label:l,bg:S.draftMode==l?'var(--surface2)':'transparent',fg:S.draftMode==l?'var(--ink)':'var(--muted)',pick:()=>this.setState({draftMode:l})}));
+    const draftChips=byRound?Array.from({length:15},(_,i)=>i+1).map(r=>{const on=r==S.draftRound;return {label:String(r),bg:on?'var(--accent)':'var(--surface)',fg:on?'var(--onAccent)':'var(--ink)',border:on?'var(--accent)':'var(--line)',pick:()=>this.setState({draftRound:r})};})
+      :MGR.map(m=>{const on=m==S.draftTeam;return {label:INIT[m],bg:on?col(m):'var(--surface)',fg:on?'#141311':'var(--ink)',border:on?col(m):'var(--line)',pick:()=>this.setState({draftTeam:m})};});
+    const rp=byRound?picks.filter(p=>p.round==S.draftRound):picks.filter(p=>p.m==S.draftTeam);
+    const draftPicks=rp.map(p=>({pick:pn(p),player:p.player,who:byRound?p.m:'Round '+p.round+' · '+p.overall+' overall',color:col(p.m),meta:(p.nfl||'').toUpperCase()+' '+p.pos}));
+    const firstM=picks.filter(p=>p.round==S.draftRound)[0]?.m;
+    const draftTitle=byRound?'Round '+S.draftRound:S.draftTeam;
+    const draftSub=byRound?(S.draftRound%2?'Snake →':'← Snake')+(firstM?' · '+firstM+' first':''):(dr?Object.values(dr.rosters).find(r=>r.manager==S.draftTeam)?.manager&&Object.keys(dr.rosters).find(k=>dr.rosters[k].manager==S.draftTeam):'');
+    // Wire
+    const seasonMode=S.wire=='Season';const now=new Date(2026,9,1,23,59),cut=new Date(2026,8,25);
+    const groups=[];tx.forEach(t=>{const d=parseWhen(t.when);const last=groups[groups.length-1];if(last&&last.m==t.manager&&last.when==t.when)last.items.push(t);else groups.push({m:t.manager,when:t.when,d,items:[t]});});
+    const ym=n=>dr?.managerMap?.[n]??n;
+    const shown=groups.filter(g=>seasonMode||g.d>=cut);
+    const days=[];shown.forEach(g=>{const key=g.d.toDateString();let day=days.find(x=>x.key==key);if(!day){day={key,label:DOW[g.d.getDay()]+' · '+g.when.split(',')[0].toUpperCase(),moves:[]};days.push(day);}
+      const time=g.when.split(', ')[1].toUpperCase();
+      day.moves.push({m:g.m,init:INIT[g.m],color:col(g.m),time,lines:g.items.sort((a,b)=>(a.action=='drop')-(b.action=='drop')).map(t=>({sign:t.action=='add'?'+':t.action=='drop'?'−':'⇄',color:t.action=='add'?'var(--pos)':t.action=='drop'?'var(--neg)':'var(--accentInk)',player:t.player,weight:t.action=='drop'?400:600,fg:t.action=='drop'?'var(--muted)':'var(--ink)',meta:[t.pos,(t.nfl||'').toUpperCase(),t.action=='trade'?'Trade with '+ym(t.via.replace('trade from ','')):t.action=='add'?(t.via=='Waivers'?'Waivers '+(t.faab??''):'Free agent'):null].filter(Boolean).join(' · ')}))});});
+    const wireModes=['7 days','Season'].map(l=>({label:l,bg:S.wire==l?'var(--surface2)':'transparent',fg:S.wire==l?'var(--ink)':'var(--muted)',pick:()=>this.setState({wire:l})}));
+    const byAdds=[...MGR].sort((a,b)=>adds[b]-adds[a]);const maxA=Math.max(1,adds[byAdds[0]]);
+    const activity=byAdds.map(m=>{const st=ST.find(x=>x.m==m);return {m,n:adds[m],w:(adds[m]/maxA*100)+'%',color:col(m),rec:st.w+'–'+st.l};});
+    const top=byAdds[0],low=byAdds[byAdds.length-1],tS=ST.find(x=>x.m==top),lS=ST.find(x=>x.m==low);
+    const wk7={};groups.filter(g=>g.d>=cut).forEach(g=>g.items.forEach(t=>{if(t.action=='add')wk7[t.manager]=(wk7[t.manager]||0)+1;}));
+    const top7=Object.keys(wk7).sort((a,b)=>wk7[b]-wk7[a])[0];
+    const wireRoast=!S.tx?'Loading the wire…':seasonMode?`${top} leads the league with ${adds[top]} adds and is ${tS.w}–${tS.l}. ${low} has made ${adds[low]} and is ${lS.w}–${lS.l}. Draw your own conclusions.`:`${top7} made ${wk7[top7]} adds this week. ASG has made ${adds.ASG} all season and is 3–0. Draw your own conclusions.`;
+    const faab=[...MGR].sort((a,b)=>(100-spent[b])-(100-spent[a])).map(m=>({m,left:'$'+(100-spent[m]),w:(100-spent[m])+'%',color:col(m)}));
+    // Sheet
+    let sheet={a:{},b:{},rows:[],title:'',note:''};
+    if(S.sheet){const {a,b,wk:w}=S.sheet;const A=this.side(a,b,w),B=this.side(b,a,w);const sa=this.starters(a,w),sb=this.starters(b,w);const n=Math.max(sa.length,sb.length);
+      const rows=[];for(let i=0;i<n;i++)rows.push({slot:(sa[i]||sb[i]).slot,a:sa[i]||{name:'—',meta:'',pts:''},b:sb[i]||{name:'—',meta:'',pts:''}});
+      const missing=[...sa,...sb].some(p=>p.pts=='—');
+      sheet={a:A,b:B,rows,title:'WEEK '+w+(w==4?' · LIVE':' · FINAL'),ptsLabel:w==4?'PTS/PROJ':'PTS',note:(w==4?'Live after TNF. Orange = final points; the rest kick off Sunday.':'Lineups shown are current Week 4 rosters as of Oct 1.')+(missing?' — = no player '+(w==4?'projection':'score')+' in the data yet.':'')};}
+    const hl=S.hl,dim=m=>hl&&hl!=m?.3:1,pickHl=m=>()=>this.setState({hl:S.hl==m?null:m});
+    const pfs=ST.map(x=>x.pf),pas=ST.map(x=>x.pa),x0=Math.floor(Math.min(...pfs)/10)*10-5,x1=Math.ceil(Math.max(...pfs)/10)*10+5,y0=Math.floor(Math.min(...pas)/10)*10-10,y1=Math.ceil(Math.max(...pas)/10)*10+10;
+    const avg=a=>a.reduce((s,v)=>s+v,0)/a.length,sx=v=>((v-x0)/(x1-x0)*100).toFixed(1)+'%',sy=v=>((y1-v)/(y1-y0)*100).toFixed(1)+'%';
+    const scatter=ST.map(x=>({init:INIT[x.m],color:col(x.m),x:sx(x.pf),y:sy(x.pa),op:dim(x.m),ring:hl==x.m?'var(--ink)':'var(--bg)',z:hl==x.m?5:1,pick:pickHl(x.m)}));
+    const maxL=Math.max(...ST.map(x=>Math.abs(x.luck)));
+    const luckBars=[...ST].sort((a,b)=>b.luck-a.luck).map(x=>({m:x.m,v:sgn(x.luck),pos:x.luck>0?(x.luck/maxL*100)+'%':'0%',neg:x.luck<0?(-x.luck/maxL*100)+'%':'0%',color:x.luck>0?'var(--pos)':x.luck<0?'var(--neg)':'var(--muted)',op:dim(x.m),pick:pickHl(x.m)}));
+    const topMax=Math.max(...ST.map(x=>x.max));
+    const benchBars=[...ST].sort((a,b)=>(b.max-b.pf)-(a.max-a.pf)).map(x=>({m:x.m,pf:(x.pf/topMax*100)+'%',bench:((x.max-x.pf)/topMax*100)+'%',v:f1(x.max-x.pf),color:'var(--muted)',op:dim(x.m),pick:pickHl(x.m)}));
+    return {
+      scatter,scatterMidX:sx(avg(pfs)),scatterMidY:sy(avg(pas)),pfMin:x0,pfMax:x1,luckBars,benchBars,hlHint:hl?hl+' · tap again to clear':'Tap a team',
+      themeLabel:this.theme()=='dark'?'Light':'Dark',toggleTheme:()=>this.setState({theme:this.theme()=='dark'?'light':'dark'}),
+      tabs,tabGameday:S.tab=='Gameday',tabSeason:S.tab=='Season',tabTeams:S.tab=='Teams',tabDraft:S.tab=='Draft',tabWire:S.tab=='Wire',
+      weekChips,isW5:wk==5,hasWeek:wk<=4,hero:hero||blank,matchups,heroLabel:wk==4?'Matchup of the week':'Closest finish',heroCaption:CAPTION[wk]||'',
+      weekStatus:wk==4?'Week 4 · Live · TNF final · Sunday to come · big number = current':wk==5?'Week 5 · Oct 8–12':'Week '+wk+' · Final',
+      showBooth:boothOn,booth:(BOOTH[wk]||[]).map(([m,text])=>({init:INIT[m],color:col(m),text})),
+      seasonTiles,standings,heat,team,teamPicker,
+      draftFirsts,draftModes,draftChips,draftPicks,draftTitle,draftSub:byRound?draftSub:'15 picks',
+      wireModes,wireSeason:seasonMode,wireDays:days,activity,wireRoast,faab,
+      sheetOpen:!!S.sheet,sheet,closeSheet:()=>this.setState({sheet:null})
+    };
+  }
+}
+</script>
+
+
+</body></html>
