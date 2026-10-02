@@ -60,7 +60,7 @@ window.SEASON = {
     // [current points, projected final]
     // Yahoo live projections as of Fri Oct 2.
     scores: {
-      Matt: [6.00, 103.67], DLin: [10.20, 114.46],
+      Matt: [6.00, 114.79], DLin: [10.20, 114.46],
       Tristan: [8.90, 111.99], Colin: [0, 112.58],
       Jerger: [0, 113.91], Kurt: [14.10, 111.64],
       ASG: [0, 108.39], Andy: [0, 116.82],
@@ -103,7 +103,7 @@ window.SEASON = {
     1: 'Pablo held off Matt by 4.8. Pablo would like this one framed, since it may be a while.',
     2: 'DLin beat Kurt 100.6–89.4. Neither fan base was reached for comment.',
     3: 'Andy beat Colin by 3.9. Colin is expected to blame the kicker, the refs and Yahoo.',
-    4: 'Colin 112.58, Tristan 111.99. Colin banked nothing on Thursday and is now projected to win by 0.59. Tristan has 8.90 from KC Concepcion Jr. and trails by a rounding error.'
+    4: 'Matt 114.79, DLin 114.46. A 0.33 projection gap. DLin leads 10.20–6.00 after Thursday, and Matt only pulled ahead by benching an injured Justin Jefferson for Josh Downs.'
   },
 
   // "The Booth" lines by week: [manager, text].
@@ -130,7 +130,8 @@ window.SEASON = {
       ['Colin', 'Colin lost by 3.84 with Joe Burrow on his bench for 22.58. Patrick Mahomes started and scored 16.94.']
     ],
     4: [
-      ['Matt', 'Justin Jefferson is listed Out and still in Matt’s starting lineup, projected for 0.00. Quinshon Judkins scored 18.60 on Thursday from Matt’s bench. Yahoo now has DLin by 10.79.'],
+      ['Matt', 'Quinshon Judkins scored 18.60 on Thursday from Matt’s bench. Matt would like that one back.'],
+      ['Colin', 'Colin banked nothing on Thursday and is still projected to beat Tristan by 0.59. Tristan has 8.90 from KC Concepcion Jr. and trails by a rounding error.'],
       ['ASG', 'ASG is 3–0 and still projected to lose to Andy by 8.43. Respect remains pending.'],
       ['Kurt', 'Kurt and Jerger are both 1–2, and the loser falls to 1–3. Jaylen Warren’s 14.10 on Thursday cut Jerger’s projected edge to 2.27. Kurt would like a word with the projection.'],
       ['Mr. G', 'Pablo is projected for 88.77, lowest in the league. Mr. G is projected for 119.12, highest. The group-chat victory lap is already drafted.'],

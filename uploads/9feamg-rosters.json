@@ -757,7 +757,7 @@
         {
           "name": "Justin Jefferson",
           "pos": "WR",
-          "slot": "starter",
+          "slot": "bench",
           "nfl": "Min"
         },
         {
@@ -774,7 +774,7 @@
         },
         {
           "name": "Christian Watson",
-          "pos": "WRT",
+          "pos": "WR",
           "slot": "starter",
           "nfl": "GB"
         },
@@ -798,8 +798,8 @@
         },
         {
           "name": "Josh Downs",
-          "pos": "WR",
-          "slot": "bench",
+          "pos": "WRT",
+          "slot": "starter",
           "nfl": "Ind"
         },
         {
@@ -1058,9 +1058,9 @@
         "BUF"
       ],
       "drop": [
-        "\u2014",
+        "—",
         "DEF",
-        "\u2014"
+        "—"
       ],
       "note": "Yahoo transaction supplied by parent"
     },
