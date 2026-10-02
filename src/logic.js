@@ -47,9 +47,31 @@ const ST = MGR.map(m => {
     won(m, i) ? w++ : l++;
     xw += allPlay(m, i).w / (MGR.length - 1);
   }
-  const max = D?.maxPF?.[m] ?? pf;
-  return { m, w, l, pf, pa, max, xw, luck: Math.round((w - xw) * 100) / 100 };
+  // max is filled in by setMaxPF once the Yahoo box scores load.
+  return { m, w, l, pf, pa, max: null, xw, luck: Math.round((w - xw) * 100) / 100 };
 }).sort((a, b) => b.w - a.w || b.pf - a.pf);
+
+// Max PF: the best legal lineup each final week from that week's starters + bench
+// (IR can't start). Filling the fixed slots with the top scorers at each position,
+// then the FLEX with the best remaining RB/WR/TE, is optimal for this lineup shape.
+const LINEUP = ['QB', 'RB', 'RB', 'WR', 'WR', 'TE', 'K', 'DEF'], FLEX = ['RB', 'WR', 'TE'];
+function optimalLineup(players) {
+  const pool = players.filter(p => p[0] != 'IR').map(p => ({ pos: p[3], pts: p[4] })).sort((a, b) => b.pts - a.pts);
+  const take = ok => { const i = pool.findIndex(p => ok(p.pos)); return i < 0 ? 0 : pool.splice(i, 1)[0].pts; };
+  return LINEUP.reduce((t, slot) => t + take(pos => pos == slot), 0) + take(pos => FLEX.includes(pos));
+}
+// Sets each manager's season Max PF, or leaves it null when any final week's box score is missing.
+function setMaxPF(box) {
+  ST.forEach(s => {
+    let t = 0;
+    for (let w = 1; w <= NF; w++) {
+      const x = box?.weeks?.[w]?.[s.m];
+      if (!x) { t = null; break; }
+      t += optimalLineup([...x.starters, ...x.bench]);
+    }
+    s.max = t;
+  });
+}
 
 class Component extends DCLogic {
   state = { tab: this.props.startTab ?? 'Gameday', week: LW ?? NF, theme: null, sheet: null, team: MGR[0], wire: '7 days', draftMode: 'By round', draftRound: 1, draftTeam: MGR[0], rosters: null, draft: null, tx: null, loaded: false };
@@ -57,7 +79,7 @@ class Component extends DCLogic {
     this.applyTheme();
     Promise.all(['uploads/9feamg-rosters.json', 'uploads/9feamg-draft-rosters.json', 'uploads/9feamg-transactions.json', 'uploads/9feamg-boxscores.json']
       .map(u => fetch(u, { cache: 'no-cache' }).then(r => r.ok ? r.json() : null).catch(() => null)))
-      .then(([rosters, draft, tx, box]) => this.setState({ rosters, draft, tx, box, loaded: true }));
+      .then(([rosters, draft, tx, box]) => { setMaxPF(box); this.setState({ rosters, draft, tx, box, loaded: true }); });
     // Keep the newest week chips in view once the season gets long.
     setTimeout(() => { const el = document.querySelector('[data-weekchips]'); if (el) el.scrollLeft = el.scrollWidth; }, 0);
     // Preload the screenshot library so the first share is quick.
@@ -181,7 +203,7 @@ class Component extends DCLogic {
 
     // Season
     const P = D.playoffTeams;
-    const standings = ST.map((s, i) => ({ rank: i + 1, m: s.m, init: INIT[s.m], color: col(s.m), pa: f1(s.pa), max: f1(s.max), wl: s.w + '–' + s.l, pf: f1(s.pf), luck: sgn(s.luck), luckColor: s.luck > 0 ? 'var(--pos)' : s.luck < 0 ? 'var(--neg)' : 'var(--muted)', cut: i == P - 1, open: () => { this.setState({ tab: 'Teams', team: s.m }); window.scrollTo(0, 0); } }));
+    const standings = ST.map((s, i) => ({ rank: i + 1, m: s.m, init: INIT[s.m], color: col(s.m), pa: f1(s.pa), max: s.max == null ? '—' : f1(s.max), wl: s.w + '–' + s.l, pf: f1(s.pf), luck: sgn(s.luck), luckColor: s.luck > 0 ? 'var(--pos)' : s.luck < 0 ? 'var(--neg)' : 'var(--muted)', cut: i == P - 1, open: () => { this.setState({ tab: 'Teams', team: s.m }); window.scrollTo(0, 0); } }));
     const allS = Object.values(SC).flat(), lo = Math.min(...allS), hi = Math.max(...allS);
     const heatHead = chipWeeks.filter(w => w <= NF).map(w => 'W' + w).concat(LW ? ['W' + LW] : []);
     const restFrom = (LW ?? NF) + 1, total = D.regularSeasonWeeks;
@@ -192,12 +214,14 @@ class Component extends DCLogic {
     let topW = { v: -1 };
     MGR.forEach(m => SC[m].forEach((v, i) => { if (v > topW.v) topW = { v, m, w: i + 1 }; }));
     const lucky = [...ST].sort((a, b) => b.luck - a.luck)[0], unlucky = [...ST].sort((a, b) => a.luck - b.luck)[0];
-    const bench = ST.map(s => ({ m: s.m, b: s.max - s.pf })).sort((a, b) => b.b - a.b)[0];
+    const maxOk = ST.every(s => s.max != null);
+    const bench = maxOk ? ST.map(s => ({ m: s.m, b: s.max - s.pf })).sort((a, b) => b.b - a.b)[0] : null;
     const seasonTiles = NF ? [
       { label: 'Top week', value: f1(topW.v), sub: topW.m + ' · W' + topW.w, dot: col(topW.m), color: 'var(--ink)' },
       { label: 'Luckiest', value: sgn(lucky.luck), sub: `${lucky.m} · ${lucky.w}–${lucky.l} on ${lucky.xw.toFixed(2)} xW`, dot: col(lucky.m), color: 'var(--pos)' },
       { label: 'Unluckiest', value: sgn(unlucky.luck), sub: `${unlucky.m} · ${unlucky.w}–${unlucky.l}`, dot: col(unlucky.m), color: 'var(--neg)' },
-      { label: 'Left on bench', value: f1(bench.b), sub: bench.m + ' · ' + NF + (NF == 1 ? ' week' : ' weeks'), dot: col(bench.m), color: 'var(--accentInk)' }
+      bench ? { label: 'Left on bench', value: f1(bench.b), sub: bench.m + ' · ' + NF + (NF == 1 ? ' week' : ' weeks'), dot: col(bench.m), color: 'var(--accentInk)' }
+        : { label: 'Left on bench', value: '—', sub: S.loaded ? 'Box scores unavailable' : 'Loading…', dot: 'transparent', color: 'var(--muted)' }
     ] : [];
     const seasonSub = `Through week ${NF} · ${NF} of ${total} weeks final`;
 
@@ -226,7 +250,7 @@ class Component extends DCLogic {
       m: tm, init: INIT[tm], color: col(tm), teamName: rt?.team ?? '', roast: D.roasts?.[tm] ?? '',
       line: `${s.w}–${s.l} · ${ord(place)} place` + (NF ? ` · ${res[res.length - 1]}${k} streak` : ''),
       lineupTitle: `Week ${lineupWeek} lineup`, proj: LW ? 'Proj ' + f2(PROJ[tm]) : '',
-      stats: [{ label: 'PF', value: f1(s.pf), sub: ord(pfRank) + ' in league' }, { label: 'PA', value: f1(s.pa), sub: ord(paRank) + ' fewest' }, { label: 'Luck', value: sgn(s.luck), sub: 'W − xW', color: s.luck > 0 ? 'var(--pos)' : s.luck < 0 ? 'var(--neg)' : 'var(--ink)' }, { label: 'xW', value: s.xw.toFixed(2), sub: 'vs ' + s.w + ' real wins' }, { label: 'Max PF', value: f1(s.max), sub: ord(maxRank) + ' best possible' }, { label: 'Bench', value: f1(bn), sub: 'Points left sitting' }, { label: 'FAAB left', value: txOk ? '$' + (budget - spent[tm]) : '—', sub: 'of $' + budget }, { label: 'Adds', value: txOk ? String(adds[tm]) : '—', sub: 'This season' }].map(x => ({ color: 'var(--ink)', ...x })),
+      stats: [{ label: 'PF', value: f1(s.pf), sub: ord(pfRank) + ' in league' }, { label: 'PA', value: f1(s.pa), sub: ord(paRank) + ' fewest' }, { label: 'Luck', value: sgn(s.luck), sub: 'W − xW', color: s.luck > 0 ? 'var(--pos)' : s.luck < 0 ? 'var(--neg)' : 'var(--ink)' }, { label: 'xW', value: s.xw.toFixed(2), sub: 'vs ' + s.w + ' real wins' }, { label: 'Max PF', value: maxOk ? f1(s.max) : '—', sub: maxOk ? ord(maxRank) + ' best possible' : 'Best possible lineup' }, { label: 'Bench', value: maxOk ? f1(bn) : '—', sub: 'Points left sitting' }, { label: 'FAAB left', value: txOk ? '$' + (budget - spent[tm]) : '—', sub: 'of $' + budget }, { label: 'Adds', value: txOk ? String(adds[tm]) : '—', sub: 'This season' }].map(x => ({ color: 'var(--ink)', ...x })),
       log, starters: this.starters(tm, lineupWeek),
       bench: pl.filter(p => p.slot != 'starter').map(p => { const lp = LIVEPTS[p.name]; const v = lp ?? p.proj ?? p.projected ?? p.projections?.[lineupWeek] ?? PPROJ[p.name]; return { slot: p.slot == 'IR' ? 'IR' : p.pos, name: p.name, meta: (p.nfl || '').toUpperCase(), pts: p.slot == 'IR' ? '' : (v != null ? (lp != null ? f2(+v) : f1(+v)) : '—') }; }),
       benchCount: pl.filter(p => p.slot != 'starter').length, lineupMsg, hasLineup: !lineupMsg
@@ -304,8 +328,8 @@ class Component extends DCLogic {
     const scatter = ST.map(x => ({ init: INIT[x.m], color: col(x.m), x: sx(x.pf), y: sy(x.pa), op: dim(x.m), ring: hl == x.m ? 'var(--ink)' : 'var(--bg)', z: hl == x.m ? 5 : 1, pick: pickHl(x.m) }));
     const maxL = Math.max(0.01, ...ST.map(x => Math.abs(x.luck)));
     const luckBars = [...ST].sort((a, b) => b.luck - a.luck).map(x => ({ m: x.m, v: sgn(x.luck), pos: x.luck > 0 ? (x.luck / maxL * 100) + '%' : '0%', neg: x.luck < 0 ? (-x.luck / maxL * 100) + '%' : '0%', color: x.luck > 0 ? 'var(--pos)' : x.luck < 0 ? 'var(--neg)' : 'var(--muted)', op: dim(x.m), pick: pickHl(x.m) }));
-    const topMax = Math.max(...ST.map(x => x.max));
-    const benchBars = [...ST].sort((a, b) => (b.max - b.pf) - (a.max - a.pf)).map(x => ({ m: x.m, pf: (x.pf / topMax * 100) + '%', bench: ((x.max - x.pf) / topMax * 100) + '%', v: f1(x.max - x.pf), color: 'var(--muted)', op: dim(x.m), pick: pickHl(x.m) }));
+    const topMax = Math.max(...ST.map(x => x.max ?? x.pf));
+    const benchBars = !maxOk ? [] : [...ST].sort((a, b) => (b.max - b.pf) - (a.max - a.pf)).map(x => ({ m: x.m, pf: (x.pf / topMax * 100) + '%', bench: ((x.max - x.pf) / topMax * 100) + '%', v: f1(x.max - x.pf), color: 'var(--muted)', op: dim(x.m), pick: pickHl(x.m) }));
 
     return {
       ok: true, dataError: false,

@@ -5,7 +5,8 @@
 //   During a live week  -> update `live.scores` and `live.playerPoints`.
 //   When a week goes final:
 //     1. append each manager's final score to `scores` (one number per week)
-//     2. set `maxPF` to each manager's season Max PF from Yahoo
+//     2. add the week's Yahoo box scores to uploads/9feamg-boxscores.json
+//        (Max PF and bench points are calculated from them)
 //     3. set `live` to the new week (add its matchups to `schedule`), or null
 //     4. add a caption / booth lines for the week if you want them
 //   Then commit and push. Data changes don't need `node build.js`.
@@ -50,12 +51,6 @@ window.SEASON = {
     Colin: [65.66, 100.08, 124.14],
     DLin: [99.82, 100.56, 82.52],
     Pablo: [112.66, 70.92, 86.38]
-  },
-
-  // Season Max PF through the last final week (from Yahoo).
-  maxPF: {
-    ASG: 420.9, Tristan: 396.9, Andy: 411.9, Matt: 398.9, Kurt: 345.4,
-    Jerger: 383.4, 'Mr. G': 357.2, Colin: 357.2, DLin: 354.9, Pablo: 360.8
   },
 
   // The week in progress. Set to null between weeks.
@@ -149,6 +144,6 @@ window.SEASON = {
     'Mr. G': 'Most points allowed in the league by 36. Opponents save their best for him.',
     Colin: 'Twenty adds, one win. The grind continues.',
     DLin: 'Toilet Bowl King. Not a prediction, a title defense.',
-    Pablo: 'Left 90.8 on the bench. Most in the league, by a lot.'
+    Pablo: 'Left 90.9 on the bench, the most in the league. Geno Smith alone had 26.04 of it.'
   }
 };
