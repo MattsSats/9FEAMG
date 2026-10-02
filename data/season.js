@@ -111,17 +111,23 @@ window.SEASON = {
     1: [
       ['Colin', 'Colin opened his season with 65.7. ASG thanks him for his service.'],
       ['Mr. G', 'Mr. G put up 135.2 in Week 1. Frame it. It has been downhill since.'],
-      ['Jerger', 'Jerger scored 124.1 and lost. Some weeks the schedule picks you.']
+      ['Jerger', 'Jerger scored 124.1 and lost. Some weeks the schedule picks you.'],
+      ['Matt', 'Matt lost by 4.80 with Christian Watson’s 29.70 on his bench. DeVonta Smith started and scored 6.80. Unlucky is one word for it.']
     ],
     2: [
       ['ASG', 'ASG dropped 154.5 on Mr. G. Mr. G has asked that the tape not be shared.'],
       ['Andy', 'Andy scored 76.0. The gibbing has paused.'],
-      ['Pablo', 'Pablo posted 70.9, lowest of the week. He was #1. Past tense.']
+      ['Pablo', 'Pablo posted 70.9, lowest of the week. He was #1. Past tense.'],
+      ['Jerger', 'Jerger lost by 11.50. Travis Kelce scored 20.60 on his bench while Malik Nabers started and scored 0.60.'],
+      ['Colin', 'Colin benched Davante Adams for 35.50, the best bench score of the season. He won anyway, which will not help.']
     ],
     3: [
       ['Kurt', 'Kurt hung 135.9 on Mr. G, the top score of the week.'],
       ['Mr. G', 'Mr. G: 75.1, his second straight week under 85 and the lowest score of the week. The team name says Definitely not a Boomer. The box score disagrees.'],
-      ['DLin', 'DLin managed 82.5. Toilet Bowl King is starting to look like a mission statement.']
+      ['DLin', 'DLin managed 82.5. Toilet Bowl King is starting to look like a mission statement.'],
+      ['Pablo', 'Pablo lost by 9.04 with Geno Smith (26.04) and Juwan Johnson (19.30) on his bench. Either one wins it.'],
+      ['Matt', 'Christian Watson on Matt’s bench, again: 19.10 while Justin Jefferson started for 4.20. Matt lost by 7.16. Same lesson, Week 3 edition.'],
+      ['Colin', 'Colin lost by 3.84 with Joe Burrow on his bench for 22.58. Patrick Mahomes started and scored 16.94.']
     ],
     4: [
       ['Matt', 'Matt is projected to beat DLin by 3.49. Win and he’s 2–2; lose and the unluckiest manager in the league has a fresh grievance.'],
