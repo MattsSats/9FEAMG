@@ -102,7 +102,7 @@ window.SEASON = {
   captions: {
     1: 'Pablo held off Matt by 4.8. Pablo would like this one framed, since it may be a while.',
     2: 'DLin beat Kurt 100.6–89.4. Neither fan base was reached for comment.',
-    3: 'Andy beat Colin by 3.9. Colin has already blamed the kicker, the refs and Yahoo.',
+    3: 'Andy beat Colin by 3.9. Colin is expected to blame the kicker, the refs and Yahoo.',
     4: 'Tristan 111.52, Colin 111.42. A 0.10 projection gap after TNF. Tristan banked 8.90 from KC Concepcion Jr. Colin banked nothing and is still projected to lose by a rounding error.'
   },
 
@@ -120,15 +120,15 @@ window.SEASON = {
     ],
     3: [
       ['Kurt', 'Kurt hung 135.9 on Mr. G, the top score of the week.'],
-      ['Mr. G', 'Mr. G: 75.1, his second straight week under 85. The team name says Definitely not a Boomer. The box score disagrees.'],
+      ['Mr. G', 'Mr. G: 75.1, his second straight week under 85 and the lowest score of the week. The team name says Definitely not a Boomer. The box score disagrees.'],
       ['DLin', 'DLin managed 82.5. Toilet Bowl King is starting to look like a mission statement.']
     ],
     4: [
-      ['Matt', 'The Steelers D gave Matt 6.00 on Thursday. He trails DLin 10.20–6.00 but is projected to win by 3.49. Matt would like the projection read aloud.'],
+      ['Matt', 'Matt is projected to beat DLin by 3.49. Win and he’s 2–2; lose and the unluckiest manager in the league has a fresh grievance.'],
       ['ASG', 'ASG is 3–0 and still projected to lose to Andy by 8.95. Respect remains pending.'],
       ['Kurt', 'Kurt and Jerger are both 1–2, and the loser falls to 1–3. Yahoo has Jerger by 4.71. Kurt hung 135.9 last week and would like a word with the projection.'],
       ['Mr. G', 'Pablo is projected for 93.17, lowest in the league. Mr. G is projected for 118.23, highest. The group-chat victory lap is already drafted.'],
-      ['Colin', 'Colin has made 20 adds this season. The waiver wire has asked for a restraining order.']
+      ['Colin', 'Colin made 6 adds this week alone, more than ASG has made all season, times three.']
     ]
   },
 
