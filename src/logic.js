@@ -136,8 +136,8 @@ class Component extends DCLogic {
   side(m, o, wk) {
     const place = ord(ST.findIndex(x => x.m == m) + 1);
     if (wk == LW) {
-      const [c, p] = LIVE.scores[m] || [0, 0];
-      return { m, init: INIT[m], color: col(m), rec: rec(m, NF) + ' · ' + place, score: f2(c), raw: p, status: 'Proj ' + f2(p), scoreColor: 'var(--ink)' };
+      const [c, p] = LIVE.scores[m] || [0, 0], op = (LIVE.scores[o] || [0, 0])[1];
+      return { m, init: INIT[m], color: col(m), rec: rec(m, NF) + ' · ' + place, score: f2(p), raw: p, status: 'Now ' + f2(c), scoreColor: p < op ? 'var(--muted)' : 'var(--ink)' };
     }
     const s = SC[m][wk - 1], os = SC[o][wk - 1], win = s > os;
     return { m, init: INIT[m], color: col(m), rec: rec(m, wk - 1), score: f1(s), raw: s, status: win ? 'Won' : 'Lost', scoreColor: win ? 'var(--ink)' : 'var(--muted)' };
@@ -165,7 +165,7 @@ class Component extends DCLogic {
     const isNext = !hasWeek;
     const nextTitle = NEXT && wk == NEXT.week ? 'Not yet' : 'No matchups';
     const nextNote = NEXT && wk == NEXT.week ? NEXT.note : 'Add this week to the schedule in data/season.js.';
-    const weekStatus = wk == LW ? `Week ${wk} · ${LIVE.status} · big number = current` : NEXT && wk == NEXT.week ? `Week ${wk} · ${NEXT.dates}` : `Week ${wk} · Final`;
+    const weekStatus = wk == LW ? `Week ${wk} · ${LIVE.status} · big number = projected` : NEXT && wk == NEXT.week ? `Week ${wk} · ${NEXT.dates}` : `Week ${wk} · Final`;
 
     // Season
     const P = D.playoffTeams;
@@ -204,7 +204,7 @@ class Component extends DCLogic {
     const logWeeks = [...Array(NF).keys()].map(i => i + 1).concat(LW ? [LW] : []);
     const log = logWeeks.filter(w => opp(tm, w)).map(w => {
       const o = opp(tm, w);
-      if (w == LW) { const a = LIVE.scores[tm] || [0, 0], b = LIVE.scores[o] || [0, 0]; return { w, opp: o, color: col(o), sub: 'Live · proj ' + f2(a[1]) + '–' + f2(b[1]), score: f2(a[0]) + '–' + f2(b[0]), r: '·', rbg: 'var(--surface2)', rfg: 'var(--muted)', open: () => this.setState({ sheet: { a: tm, b: o, wk: w } }) }; }
+      if (w == LW) { const a = LIVE.scores[tm] || [0, 0], b = LIVE.scores[o] || [0, 0]; return { w, opp: o, color: col(o), sub: 'Live · now ' + f2(a[0]) + '–' + f2(b[0]), score: f2(a[1]) + '–' + f2(b[1]), r: '·', rbg: 'var(--surface2)', rfg: 'var(--muted)', open: () => this.setState({ sheet: { a: tm, b: o, wk: w } }) }; }
       const ap = allPlay(tm, w), win = won(tm, w);
       return { w, opp: o, color: col(o), sub: ord(ap.rank) + ' of ' + MGR.length + ' · all-play ' + ap.w + '–' + ap.l, score: f1(SC[tm][w - 1]) + '–' + f1(SC[o][w - 1]), r: win ? 'W' : 'L', rbg: win ? 'var(--accent)' : 'var(--surface2)', rfg: win ? 'var(--onAccent)' : 'var(--muted)', open: () => this.setState({ sheet: { a: tm, b: o, wk: w } }) };
     });
