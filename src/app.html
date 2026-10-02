@@ -483,7 +483,10 @@ button{font-family:inherit;color:inherit}
 
   <sc-for list="{{ parlays }}" as="pr" hint-placeholder-count="1">
     <div style="padding:28px 20px 0">
-      <div data-shot="{{ pr.shot }}" style="background:var(--surface);border:1px solid var(--line);border-radius:20px;overflow:hidden">
+      <div data-shot="{{ pr.shot }}" style="position:relative;background:var(--surface);border:1px solid var(--line);border-radius:20px;overflow:hidden">
+        <sc-if value="{{ pr.settled }}" hint-placeholder-val="{{ false }}">
+          <div style="position:absolute;top:56px;right:18px;z-index:2;transform:rotate(-10deg);border:3px solid {{ pr.stampColor }};color:{{ pr.stampColor }};font-family:'Big Shoulders Display';font-weight:900;font-size:30px;line-height:1;letter-spacing:.06em;padding:4px 12px;border-radius:8px;background:color-mix(in oklch, var(--surface) 70%, transparent);pointer-events:none">{{ pr.status }}</div>
+        </sc-if>
         <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;padding:14px 16px 0">
           <span style="font-family:'JetBrains Mono';font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--accentInk);font-weight:600">The Booth Parlay</span>
           <span style="display:flex;align-items:center;gap:8px">
@@ -501,16 +504,29 @@ button{font-family:inherit;color:inherit}
         <div style="padding:6px 16px 0">
           <sc-for list="{{ pr.legs }}" as="lg" hint-placeholder-count="3">
             <div style="display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:10px;align-items:center;padding:11px 0;border-bottom:1px solid var(--line)">
-              <span style="font-size:15px;font-weight:600;line-height:1.3">{{ lg.text }}</span>
+              <div style="min-width:0">
+                <div style="font-size:15px;font-weight:600;line-height:1.3">{{ lg.text }}</div>
+                <div style="display:flex;flex-wrap:wrap;align-items:center;gap:4px 8px;margin-top:4px;font-family:'JetBrains Mono';font-size:10px;color:var(--muted)">
+                  <sc-if value="{{ lg.hasOwner }}" hint-placeholder-val="{{ true }}"><span style="display:inline-flex;align-items:center;gap:5px;color:var(--ink)"><span style="width:7px;height:7px;border-radius:50%;background:{{ lg.ownerColor }}"></span>{{ lg.owner }}</span></sc-if>
+                  <span>{{ lg.meta }}</span>
+                </div>
+              </div>
               <span style="font-family:'JetBrains Mono';font-size:12px;color:var(--muted)">{{ lg.odds }}</span>
               <span style="font-family:'JetBrains Mono';font-size:10px;font-weight:700;letter-spacing:.08em;min-width:46px;text-align:center;padding:4px 0;border-radius:6px;background:{{ lg.bg }};color:{{ lg.fg }}">{{ lg.tag }}</span>
             </div>
           </sc-for>
         </div>
-        <div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:12px 16px 0;font-family:'JetBrains Mono';font-size:12px">
-          <span style="color:var(--muted)">{{ pr.oddsLabel }}</span>
-          <span style="font-weight:600">{{ pr.payout }}</span>
+        <div aria-hidden="true" style="position:relative;margin-top:16px;border-top:2px dashed var(--line)">
+          <span style="position:absolute;left:-11px;top:-11px;width:20px;height:20px;border-radius:50%;background:var(--bg);border:1px solid var(--line)"></span>
+          <span style="position:absolute;right:-11px;top:-11px;width:20px;height:20px;border-radius:50%;background:var(--bg);border:1px solid var(--line)"></span>
         </div>
+        <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:4px 12px;padding:14px 16px 0;font-family:'JetBrains Mono';font-size:12px">
+          <span style="font-weight:600">{{ pr.oddsLabel }}</span>
+          <span style="color:var(--muted)">{{ pr.payout }}</span>
+        </div>
+        <sc-if value="{{ pr.hasAngle }}" hint-placeholder-val="{{ true }}">
+          <div style="padding:10px 16px 0;font-size:13px;line-height:1.45;color:var(--muted);text-wrap:pretty">{{ pr.angle }}</div>
+        </sc-if>
         <sc-if value="{{ pr.hasTailers }}" hint-placeholder-val="{{ true }}">
           <div style="display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:12px 16px 0;font-size:13px">
             <span style="font-family:'JetBrains Mono';font-size:11px;color:var(--muted)">Tailing:</span>
@@ -527,6 +543,19 @@ button{font-family:inherit;color:inherit}
       </div>
     </div>
   </sc-for>
+  <sc-if value="{{ hasLedger }}" hint-placeholder-val="{{ true }}">
+    <div style="padding:12px 20px 0">
+      <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:8px 12px;padding:12px 14px;border:1px dashed var(--line);border-radius:14px;font-family:'JetBrains Mono';font-size:11px;color:var(--muted)">
+        <span style="letter-spacing:.1em">PARLAY LEDGER · $10 STAKES</span>
+        <span style="color:var(--ink);font-weight:600">{{ ledgerLine }}</span>
+        <div style="flex-basis:100%;display:flex;flex-wrap:wrap;gap:6px 14px">
+          <sc-for list="{{ ledgerOwners }}" as="lo" hint-placeholder-count="1">
+            <span style="display:inline-flex;align-items:center;gap:6px"><span style="width:7px;height:7px;border-radius:50%;background:{{ lo.color }}"></span>{{ lo.m }} {{ lo.rec }}</span>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+  </sc-if>
 </div>
 </div>
 </sc-if>

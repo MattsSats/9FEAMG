@@ -139,10 +139,20 @@ window.SEASON = {
     ]
   },
 
-  // The Booth Parlay, by week. Shows under All matchups.
-  //   legs[].odds   American odds as text ('+120', '-150'); leave null until you
-  //                 have real lines. Once every leg has odds, the combined
-  //                 parlay odds and $10 payout calculate themselves.
+  // The Booth Parlay, by week. Shows under All matchups, with a season ledger
+  // ($10 flat stakes) underneath.
+  //   legs[].text   what the bet is
+  //   legs[].player Yahoo player name, or the team name for a defense/moneyline
+  //                 ('Ravens'). The site tags whose fantasy roster it's on and
+  //                 shows the player's fantasy points once they're in.
+  //   legs[].type   'td' (anytime TD), 'over' (needs stat + line) or 'ml'
+  //                 (moneyline); tells the weekly update how to grade the leg
+  //   legs[].stat / legs[].line  for 'over' legs, e.g. stat 'Rec Yds', line 62.5
+  //   legs[].game   kickoff, e.g. 'Sun 12:00 PM vs TEN'
+  //   legs[].result optional, replaces the kickoff once graded ('2 Rush TD')
+  //   legs[].odds   American odds as text ('+120', '-150'); null until you have
+  //                 real lines. Once every leg has odds, the combined parlay
+  //                 odds and $10 payout calculate themselves.
   //   legs[].status 'open', 'hit' or 'miss'. Any miss = BUSTED, all hit = CASHED.
   //   tailers       managers riding along; tailing your own opponent shows HEDGE.
   //   booth         optional trash talk (hidden when trash talk is off).
@@ -151,12 +161,12 @@ window.SEASON = {
       {
         owner: 'Andy',
         legs: [
-          { text: 'Jahmyr Gibbs anytime TD', odds: null, status: 'open' },
-          { text: 'Drake London over receiving yards', odds: null, status: 'open' },
-          { text: 'Ravens moneyline', odds: null, status: 'open' }
+          { text: 'Jahmyr Gibbs anytime TD', player: 'Jahmyr Gibbs', type: 'td', game: 'Sun 7:20 PM @ CAR', odds: null, status: 'open' },
+          { text: 'Drake London over receiving yards', player: 'Drake London', type: 'over', stat: 'Rec Yds', line: null, game: 'Mon 7:15 PM @ NO', odds: null, status: 'open' },
+          { text: 'Ravens moneyline', player: 'Ravens', type: 'ml', game: 'Sun 12:00 PM vs TEN', odds: null, status: 'open' }
         ],
         tailers: ['ASG'],
-        booth: 'Andy asked for a “lock parlay.” There is no such thing. The man tailing it is the one he plays this week, so ASG cashes either way.'
+        booth: 'Andy asked for a “lock parlay.” There is no such thing. ASG is tailing it and is also Andy’s opponent this week, so ASG cashes either way.'
       }
     ]
   },

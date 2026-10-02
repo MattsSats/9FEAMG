@@ -69,6 +69,13 @@ const LEG_TAG = {
   hit: { tag: 'HIT', bg: 'var(--pos)', fg: '#141311' },
   miss: { tag: 'MISS', bg: 'var(--neg)', fg: '#141311' }
 };
+// A parlay's state from its legs: any miss = BUSTED, all hit = CASHED, else OPEN.
+function parlayState(p) {
+  const st = p.legs.map(l => l.status || 'open');
+  const status = st.includes('miss') ? 'BUSTED' : st.length && st.every(s => s == 'hit') ? 'CASHED' : 'OPEN';
+  const decs = p.legs.map(l => toDecimal(l.odds)), priced = decs.length > 0 && decs.every(d => d != null);
+  return { status, priced, dec: priced ? decs.reduce((a, b) => a * b, 1) : null };
+}
 function setMaxPF(box) {
   ST.forEach(s => {
     let t = 0;
@@ -155,6 +162,29 @@ class Component extends DCLogic {
   theme() { return this.state.theme ?? this.props.theme ?? 'dark'; }
   applyTheme() { document.documentElement.dataset.theme = this.theme(); }
   players(m) { const t = this.state.rosters?.teams?.find(t => t.name == m); return t ? t.players : []; }
+  // Whose roster a player (or team defense, by team name) is on: { m, starter, pos }.
+  // Final weeks use that week's box score; otherwise the current roster file.
+  rosterSpot(name, wk) {
+    const wkBox = wk != LW ? this.state.box?.weeks?.[wk] : null;
+    if (wkBox) for (const [m, t] of Object.entries(wkBox)) {
+      const p = [...t.starters, ...t.bench].find(x => x[1] == name);
+      if (p) return { m, starter: p[0] != 'BN' && p[0] != 'IR', pos: p[0] == 'W/R/T' ? 'FLEX' : p[0] == 'DEF' ? 'D/ST' : p[0] };
+    }
+    for (const t of this.state.rosters?.teams || []) {
+      const p = t.players.find(x => x.name == name);
+      if (p) return { m: t.name, starter: p.slot == 'starter', pos: p.pos == 'WRT' ? 'FLEX' : p.pos == 'DEF' ? 'D/ST' : p.pos };
+    }
+    return null;
+  }
+  // A player's fantasy points for the week, if known (live points or final box score).
+  fantasyPts(name, wk) {
+    if (wk == LW) return LIVEPTS[name] ?? null;
+    for (const t of Object.values(this.state.box?.weeks?.[wk] || {})) {
+      const p = [...t.starters, ...t.bench].find(x => x[1] == name);
+      if (p) return p[4];
+    }
+    return null;
+  }
   // Yahoo box score for a manager's final week: { total, starters, bench }, players as [slot, name, nfl, pos, pts, proj].
   box(m, wk) { return wk != LW ? this.state.box?.weeks?.[wk]?.[m] : null; }
   boxPlayers(list) {
@@ -209,19 +239,30 @@ class Component extends DCLogic {
     const nextNote = NEXT && wk == NEXT.week ? NEXT.note : 'Add this week to the schedule in data/season.js.';
     // Booth parlays for the selected week (data/season.js -> parlays[week]).
     const parlays = (D.parlays?.[wk] || []).map((p, i) => {
-      const legs = p.legs.map(l => ({ text: l.text, odds: l.odds || '', ...(LEG_TAG[l.status] || LEG_TAG.open) }));
-      const st = p.legs.map(l => l.status || 'open');
-      const status = st.includes('miss') ? 'BUSTED' : st.every(s => s == 'hit') ? 'CASHED' : 'OPEN';
-      const decs = p.legs.map(l => toDecimal(l.odds)), priced = decs.every(d => d != null), dec = priced ? decs.reduce((a, b) => a * b, 1) : null;
+      const { status, dec, priced } = parlayState(p);
       const vs = p.vs ?? opp(p.owner, wk), shot = 'parlay-' + i;
+      const legs = p.legs.map(l => {
+        const spot = l.player ? this.rosterSpot(l.player, wk) : null, pts = l.player ? this.fantasyPts(l.player, wk) : null;
+        const owner = spot ? spot.m + '’s ' + (spot.starter ? spot.pos : 'bench') : l.player ? 'Free agent' : '';
+        const meta = [l.result || (pts != null ? f2(pts) + ' fantasy pts' : l.game), l.line != null ? 'line ' + l.line : null].filter(Boolean).join(' · ');
+        return { text: l.text, odds: l.odds || '', owner, ownerColor: spot ? col(spot.m) : 'transparent', hasOwner: !!owner, meta, ...(LEG_TAG[l.status] || LEG_TAG.open), spot };
+      });
+      // How the ticket lines up with the fantasy matchup.
+      const mine = legs.filter(l => l.spot?.m == p.owner && l.spot.starter).length, theirs = legs.filter(l => l.spot?.m == vs && l.spot.starter).length;
+      const proj = wk == LW ? LIVE.scores?.[p.owner]?.[1] : null, angle = [];
+      if (mine) angle.push((mine == legs.length ? (mine == 1 ? 'The leg is' : `All ${mine} legs are`) : `${mine} of ${legs.length} legs ${mine == 1 ? 'is' : 'are'}`) + ` ${p.owner}’s starter${mine == 1 ? '' : 's'}.` + (proj ? ` If this cashes, that ${f2(proj)} projection is probably low.` : ''));
+      if (theirs) angle.push(`${theirs == 1 ? 'One leg is' : theirs + ' legs are'} ${vs}’s starter${theirs == 1 ? '' : 's'}. ${p.owner} is betting on the opponent.`);
+      (p.tailers || []).filter(m => m == vs && mine).forEach(m => angle.push(`${m} is rooting against these players in the matchup and for them on the ticket.`));
       return {
         shot, title: p.owner + '’s parlay', init: INIT[p.owner], color: col(p.owner),
         sub: [vs ? 'vs ' + vs : null, 'Week ' + wk, legs.length + (legs.length == 1 ? ' leg' : ' legs')].filter(Boolean).join(' · '),
-        legs, status,
+        legs, status, settled: status != 'OPEN',
+        stampColor: status == 'CASHED' ? 'var(--pos)' : 'var(--neg)',
         statusBg: status == 'CASHED' ? 'var(--pos)' : status == 'BUSTED' ? 'var(--neg)' : 'var(--surface2)',
         statusFg: status == 'OPEN' ? 'var(--muted)' : '#141311',
         oddsLabel: priced ? 'Parlay ' + toAmerican(dec) : 'Lines TBD',
-        payout: priced ? '$10 pays $' + (10 * dec).toFixed(2) : '',
+        payout: !priced ? 'Odds calculate once every leg has a line' : (status == 'CASHED' ? '$10 paid $' : status == 'BUSTED' ? '$10 would have paid $' : '$10 pays $') + (10 * dec).toFixed(2),
+        angle: angle.join(' '), hasAngle: angle.length > 0,
         // Tailing your own opponent's parlay is a hedge: you win the matchup or cash the ticket.
         tailers: (p.tailers || []).map(m => ({ m, color: col(m), tag: m == vs ? 'HEDGE' : 'TAIL' })), hasTailers: !!p.tailers?.length,
         booth: p.booth || '', hasBooth: boothOn && !!p.booth,
@@ -229,6 +270,16 @@ class Component extends DCLogic {
         shotLabel: `${p.owner}’s parlay · Week ${wk}`
       };
     });
+    // Season ledger across every week's parlays. Stakes are a flat $10.
+    const allParlays = Object.values(D.parlays || {}).flat(), ledger = { w: 0, l: 0, open: 0, net: 0, unpriced: 0 }, byOwner = {};
+    allParlays.forEach(p => {
+      const s = parlayState(p), o = byOwner[p.owner] ??= { m: p.owner, w: 0, l: 0, open: 0 };
+      if (s.status == 'CASHED') { ledger.w++; o.w++; if (s.priced) ledger.net += 10 * (s.dec - 1); else ledger.unpriced++; }
+      else if (s.status == 'BUSTED') { ledger.l++; o.l++; ledger.net -= 10; }
+      else { ledger.open++; o.open++; }
+    });
+    const ledgerLine = `${ledger.w}–${ledger.l}` + (ledger.open ? ` · ${ledger.open} open` : '') + ` · ${ledger.net < 0 ? '−' : '+'}$${Math.abs(ledger.net).toFixed(2)}` + (ledger.unpriced ? ` (${ledger.unpriced} cashed without a line)` : '');
+    const ledgerOwners = Object.values(byOwner).map(o => ({ m: o.m, color: col(o.m), rec: `${o.w}–${o.l}` + (o.open ? ` · ${o.open} open` : '') }));
     const weekStatus = wk == LW ? `Week ${wk} · ${LIVE.status} · big number = projected` : NEXT && wk == NEXT.week ? `Week ${wk} · ${NEXT.dates}` : `Week ${wk} · Final`;
 
     // Season
@@ -367,7 +418,7 @@ class Component extends DCLogic {
       themeLabel, toggleTheme,
       tabs, tabGameday: S.tab == 'Gameday', tabSeason: S.tab == 'Season', tabTeams: S.tab == 'Teams', tabDraft: S.tab == 'Draft', tabWire: S.tab == 'Wire',
       weekChips, isW5: isNext, nextTitle, nextNote, hasWeek, hero: hero || blank, matchups, heroLabel: wk == LW ? 'Matchup of the week' : 'Closest finish', heroCaption: D.captions?.[wk] || '',
-      weekStatus, parlays,
+      weekStatus, parlays, hasLedger: allParlays.length > 0, ledgerLine, ledgerOwners,
       showBooth: boothOn, booth: (D.booth?.[wk] || []).map(([m, text]) => ({ init: INIT[m], color: col(m), text })), hasBooth: boothOn && !!D.booth?.[wk]?.length,
       seasonSub, seasonTiles, standings, playoffLine: `Playoff line · top ${P} of ${MGR.length}`,
       heat, heatHead, heatCols, heatMinW, restLabel, hasRest: !!restLabel, liveCol: !!LW,
