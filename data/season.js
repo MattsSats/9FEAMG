@@ -133,6 +133,28 @@ window.SEASON = {
     ]
   },
 
+  // The Booth Parlay, by week. Shows under All matchups.
+  //   legs[].odds   American odds as text ('+120', '-150'); leave null until you
+  //                 have real lines. Once every leg has odds, the combined
+  //                 parlay odds and $10 payout calculate themselves.
+  //   legs[].status 'open', 'hit' or 'miss'. Any miss = BUSTED, all hit = CASHED.
+  //   tailers       managers riding along; tailing your own opponent shows HEDGE.
+  //   booth         optional trash talk (hidden when trash talk is off).
+  parlays: {
+    4: [
+      {
+        owner: 'Andy',
+        legs: [
+          { text: 'Jahmyr Gibbs anytime TD', odds: null, status: 'open' },
+          { text: 'Drake London over receiving yards', odds: null, status: 'open' },
+          { text: 'Ravens moneyline', odds: null, status: 'open' }
+        ],
+        tailers: ['ASG'],
+        booth: 'Andy asked for a “lock parlay.” There is no such thing. The man tailing it is the one he plays this week, so ASG cashes either way.'
+      }
+    ]
+  },
+
   // One-liner on each team page.
   roasts: {
     ASG: '3–0 on 2 adds all season. Set it, forget it, collect wins.',

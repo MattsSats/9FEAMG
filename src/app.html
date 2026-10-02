@@ -480,6 +480,53 @@ button{font-family:inherit;color:inherit}
       </sc-for>
     </div>
   </div>
+
+  <sc-for list="{{ parlays }}" as="pr" hint-placeholder-count="1">
+    <div style="padding:28px 20px 0">
+      <div data-shot="{{ pr.shot }}" style="background:var(--surface);border:1px solid var(--line);border-radius:20px;overflow:hidden">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;padding:14px 16px 0">
+          <span style="font-family:'JetBrains Mono';font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--accentInk);font-weight:600">The Booth Parlay</span>
+          <span style="display:flex;align-items:center;gap:8px">
+            <button class="share-btn no-shot" sc-camel-on-click="{{ pr.share }}" aria-label="Share this parlay as an image">{{ pr.shareLabel }}</button>
+            <span style="font-family:'JetBrains Mono';font-size:10px;font-weight:700;letter-spacing:.1em;padding:5px 9px;border-radius:999px;background:{{ pr.statusBg }};color:{{ pr.statusFg }}">{{ pr.status }}</span>
+          </span>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px;padding:14px 16px 4px">
+          <div style="width:40px;height:40px;border-radius:50%;background:{{ pr.color }};color:#141311;display:flex;align-items:center;justify-content:center;font-family:'Big Shoulders Display';font-weight:800;font-size:16px;flex:none">{{ pr.init }}</div>
+          <div style="min-width:0">
+            <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:26px;line-height:1;text-transform:uppercase">{{ pr.title }}</div>
+            <div style="font-family:'JetBrains Mono';font-size:11px;color:var(--muted);margin-top:4px">{{ pr.sub }}</div>
+          </div>
+        </div>
+        <div style="padding:6px 16px 0">
+          <sc-for list="{{ pr.legs }}" as="lg" hint-placeholder-count="3">
+            <div style="display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:10px;align-items:center;padding:11px 0;border-bottom:1px solid var(--line)">
+              <span style="font-size:15px;font-weight:600;line-height:1.3">{{ lg.text }}</span>
+              <span style="font-family:'JetBrains Mono';font-size:12px;color:var(--muted)">{{ lg.odds }}</span>
+              <span style="font-family:'JetBrains Mono';font-size:10px;font-weight:700;letter-spacing:.08em;min-width:46px;text-align:center;padding:4px 0;border-radius:6px;background:{{ lg.bg }};color:{{ lg.fg }}">{{ lg.tag }}</span>
+            </div>
+          </sc-for>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:12px 16px 0;font-family:'JetBrains Mono';font-size:12px">
+          <span style="color:var(--muted)">{{ pr.oddsLabel }}</span>
+          <span style="font-weight:600">{{ pr.payout }}</span>
+        </div>
+        <sc-if value="{{ pr.hasTailers }}" hint-placeholder-val="{{ true }}">
+          <div style="display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:12px 16px 0;font-size:13px">
+            <span style="font-family:'JetBrains Mono';font-size:11px;color:var(--muted)">Tailing:</span>
+            <sc-for list="{{ pr.tailers }}" as="tl" hint-placeholder-count="1">
+              <span style="display:inline-flex;align-items:center;gap:6px;font-weight:600"><span style="width:8px;height:8px;border-radius:50%;background:{{ tl.color }}"></span>{{ tl.m }}<span style="font-family:'JetBrains Mono';font-size:9px;font-weight:700;letter-spacing:.1em;padding:3px 6px;border-radius:5px;background:var(--accent);color:var(--onAccent)">{{ tl.tag }}</span></span>
+            </sc-for>
+          </div>
+        </sc-if>
+        <sc-if value="{{ pr.hasBooth }}" hint-placeholder-val="{{ true }}">
+          <div style="margin-top:14px;padding:14px 16px;border-top:1px solid var(--line);font-size:15px;line-height:1.4;text-wrap:pretty">{{ pr.booth }}</div>
+        </sc-if>
+        <div style="height:14px"></div>
+        <div class="shot-footer" style="padding:0 16px 14px"><b>9FEAMG</b><span>{{ pr.shotLabel }}</span></div>
+      </div>
+    </div>
+  </sc-for>
 </div>
 </div>
 </sc-if>

@@ -61,6 +61,14 @@ function optimalLineup(players) {
   return LINEUP.reduce((t, slot) => t + take(pos => pos == slot), 0) + take(pos => FLEX.includes(pos));
 }
 // Sets each manager's season Max PF, or leaves it null when any final week's box score is missing.
+// American odds <-> decimal, for combining parlay legs.
+const toDecimal = o => { const n = parseFloat(o); return isNaN(n) || n == 0 ? null : n > 0 ? 1 + n / 100 : 1 + 100 / -n; };
+const toAmerican = d => d >= 2 ? '+' + Math.round((d - 1) * 100) : '−' + Math.round(100 / (d - 1));
+const LEG_TAG = {
+  open: { tag: 'OPEN', bg: 'var(--surface2)', fg: 'var(--muted)' },
+  hit: { tag: 'HIT', bg: 'var(--pos)', fg: '#141311' },
+  miss: { tag: 'MISS', bg: 'var(--neg)', fg: '#141311' }
+};
 function setMaxPF(box) {
   ST.forEach(s => {
     let t = 0;
@@ -199,6 +207,28 @@ class Component extends DCLogic {
     const isNext = !hasWeek;
     const nextTitle = NEXT && wk == NEXT.week ? 'Not yet' : 'No matchups';
     const nextNote = NEXT && wk == NEXT.week ? NEXT.note : 'Add this week to the schedule in data/season.js.';
+    // Booth parlays for the selected week (data/season.js -> parlays[week]).
+    const parlays = (D.parlays?.[wk] || []).map((p, i) => {
+      const legs = p.legs.map(l => ({ text: l.text, odds: l.odds || '', ...(LEG_TAG[l.status] || LEG_TAG.open) }));
+      const st = p.legs.map(l => l.status || 'open');
+      const status = st.includes('miss') ? 'BUSTED' : st.every(s => s == 'hit') ? 'CASHED' : 'OPEN';
+      const decs = p.legs.map(l => toDecimal(l.odds)), priced = decs.every(d => d != null), dec = priced ? decs.reduce((a, b) => a * b, 1) : null;
+      const vs = p.vs ?? opp(p.owner, wk), shot = 'parlay-' + i;
+      return {
+        shot, title: p.owner + '’s parlay', init: INIT[p.owner], color: col(p.owner),
+        sub: [vs ? 'vs ' + vs : null, 'Week ' + wk, legs.length + (legs.length == 1 ? ' leg' : ' legs')].filter(Boolean).join(' · '),
+        legs, status,
+        statusBg: status == 'CASHED' ? 'var(--pos)' : status == 'BUSTED' ? 'var(--neg)' : 'var(--surface2)',
+        statusFg: status == 'OPEN' ? 'var(--muted)' : '#141311',
+        oddsLabel: priced ? 'Parlay ' + toAmerican(dec) : 'Lines TBD',
+        payout: priced ? '$10 pays $' + (10 * dec).toFixed(2) : '',
+        // Tailing your own opponent's parlay is a hedge: you win the matchup or cash the ticket.
+        tailers: (p.tailers || []).map(m => ({ m, color: col(m), tag: m == vs ? 'HEDGE' : 'TAIL' })), hasTailers: !!p.tailers?.length,
+        booth: p.booth || '', hasBooth: boothOn && !!p.booth,
+        share: e => this.share(shot, e), shareLabel: S.sharing == shot ? '…' : 'Share',
+        shotLabel: `${p.owner}’s parlay · Week ${wk}`
+      };
+    });
     const weekStatus = wk == LW ? `Week ${wk} · ${LIVE.status} · big number = projected` : NEXT && wk == NEXT.week ? `Week ${wk} · ${NEXT.dates}` : `Week ${wk} · Final`;
 
     // Season
@@ -337,7 +367,7 @@ class Component extends DCLogic {
       themeLabel, toggleTheme,
       tabs, tabGameday: S.tab == 'Gameday', tabSeason: S.tab == 'Season', tabTeams: S.tab == 'Teams', tabDraft: S.tab == 'Draft', tabWire: S.tab == 'Wire',
       weekChips, isW5: isNext, nextTitle, nextNote, hasWeek, hero: hero || blank, matchups, heroLabel: wk == LW ? 'Matchup of the week' : 'Closest finish', heroCaption: D.captions?.[wk] || '',
-      weekStatus,
+      weekStatus, parlays,
       showBooth: boothOn, booth: (D.booth?.[wk] || []).map(([m, text]) => ({ init: INIT[m], color: col(m), text })), hasBooth: boothOn && !!D.booth?.[wk]?.length,
       seasonSub, seasonTiles, standings, playoffLine: `Playoff line · top ${P} of ${MGR.length}`,
       heat, heatHead, heatCols, heatMinW, restLabel, hasRest: !!restLabel, liveCol: !!LW,
