@@ -38,18 +38,18 @@ window.SEASON = {
     4: [['ASG', 'Andy'], ['Tristan', 'Colin'], ['Matt', 'DLin'], ['Jerger', 'Kurt'], ['Mr. G', 'Pablo']]
   },
 
-  // Final scores, one per completed week.
+  // Final scores (Yahoo, two decimals), one per completed week.
   scores: {
-    ASG: [123.1, 154.5, 95.4],
-    Tristan: [144.4, 104.1, 121.6],
-    Andy: [139.3, 76.0, 128.0],
-    Matt: [107.9, 105.6, 114.5],
-    Kurt: [100.6, 89.4, 135.9],
-    Jerger: [124.1, 92.6, 102.1],
-    'Mr. G': [135.2, 84.4, 75.1],
-    Colin: [65.7, 100.1, 124.1],
-    DLin: [99.8, 100.6, 82.5],
-    Pablo: [112.7, 70.9, 86.4]
+    ASG: [123.06, 154.52, 95.42],
+    Tristan: [144.36, 104.10, 121.64],
+    Andy: [139.34, 75.96, 127.98],
+    Matt: [107.86, 105.64, 114.48],
+    Kurt: [100.60, 89.36, 135.88],
+    Jerger: [124.06, 92.60, 102.14],
+    'Mr. G': [135.22, 84.42, 75.06],
+    Colin: [65.66, 100.08, 124.14],
+    DLin: [99.82, 100.56, 82.52],
+    Pablo: [112.66, 70.92, 86.38]
   },
 
   // Season Max PF through the last final week (from Yahoo).

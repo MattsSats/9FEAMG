@@ -55,9 +55,9 @@ class Component extends DCLogic {
   state = { tab: this.props.startTab ?? 'Gameday', week: LW ?? NF, theme: null, sheet: null, team: MGR[0], wire: '7 days', draftMode: 'By round', draftRound: 1, draftTeam: MGR[0], rosters: null, draft: null, tx: null, loaded: false };
   componentDidMount() {
     this.applyTheme();
-    Promise.all(['uploads/9feamg-rosters.json', 'uploads/9feamg-draft-rosters.json', 'uploads/9feamg-transactions.json']
+    Promise.all(['uploads/9feamg-rosters.json', 'uploads/9feamg-draft-rosters.json', 'uploads/9feamg-transactions.json', 'uploads/9feamg-boxscores.json']
       .map(u => fetch(u, { cache: 'no-cache' }).then(r => r.ok ? r.json() : null).catch(() => null)))
-      .then(([rosters, draft, tx]) => this.setState({ rosters, draft, tx, loaded: true }));
+      .then(([rosters, draft, tx, box]) => this.setState({ rosters, draft, tx, box, loaded: true }));
     // Keep the newest week chips in view once the season gets long.
     setTimeout(() => { const el = document.querySelector('[data-weekchips]'); if (el) el.scrollLeft = el.scrollWidth; }, 0);
     // Preload the screenshot library so the first share is quick.
@@ -125,8 +125,20 @@ class Component extends DCLogic {
   theme() { return this.state.theme ?? this.props.theme ?? 'dark'; }
   applyTheme() { document.documentElement.dataset.theme = this.theme(); }
   players(m) { const t = this.state.rosters?.teams?.find(t => t.name == m); return t ? t.players : []; }
+  // Yahoo box score for a manager's final week: { total, starters, bench }, players as [slot, name, nfl, pos, pts, proj].
+  box(m, wk) { return wk != LW ? this.state.box?.weeks?.[wk]?.[m] : null; }
+  boxPlayers(list) {
+    return list.map(([slot, name, nfl, pos, pts, proj]) => ({
+      slot: slot == 'W/R/T' ? 'FLEX' : slot, name,
+      meta: [nfl.toUpperCase(), slot == 'W/R/T' || slot == 'BN' || slot == 'IR' ? pos : null, slot == 'BN' || slot == 'IR' ? null : 'proj ' + f1(proj)].filter(Boolean).join(' · '),
+      pts: slot == 'IR' ? '' : f2(pts),
+      // Green when a player beat his projection by 8+, red when he missed it by 8+.
+      ptsColor: pts - proj >= 8 ? 'var(--pos)' : proj - pts >= 8 ? 'var(--neg)' : 'var(--ink)'
+    }));
+  }
   starters(m, wk) {
-    const live = wk == LW;
+    const live = wk == LW, bx = this.box(m, wk);
+    if (bx) return this.boxPlayers(bx.starters);
     return this.players(m).filter(p => p.slot == 'starter').sort((a, b) => (ORD[a.pos] ?? 9) - (ORD[b.pos] ?? 9)).map(p => {
       const lp = live ? LIVEPTS[p.name] : null;
       const v = lp ?? (live ? (p.proj ?? p.projected ?? p.projections?.[wk] ?? PPROJ[p.name]) : (p.points?.[wk] ?? p.weeks?.[wk] ?? p.pts?.[wk]));
@@ -140,11 +152,11 @@ class Component extends DCLogic {
       return { m, init: INIT[m], color: col(m), rec: rec(m, NF) + ' · ' + place, score: f2(p), raw: p, status: 'Now ' + f2(c), scoreColor: p < op ? 'var(--muted)' : 'var(--ink)' };
     }
     const s = SC[m][wk - 1], os = SC[o][wk - 1], win = s > os;
-    return { m, init: INIT[m], color: col(m), rec: rec(m, wk - 1), score: f1(s), raw: s, status: win ? 'Won' : 'Lost', scoreColor: win ? 'var(--ink)' : 'var(--muted)' };
+    return { m, init: INIT[m], color: col(m), rec: rec(m, wk - 1), score: f2(s), raw: s, status: win ? 'Won' : 'Lost', scoreColor: win ? 'var(--ink)' : 'var(--muted)' };
   }
   match(pair, wk) {
     const [a, b] = pair, A = this.side(a, b, wk), B = this.side(b, a, wk), gap = Math.abs(A.raw - B.raw), live = wk == LW;
-    return { a: A, b: B, gap: live ? 'Proj gap ' + f2(gap) + ' · live' : 'Margin ' + f1(gap), mid: live ? 'proj gap ' + f2(gap) : 'final', share: (A.raw / (A.raw + B.raw || 1) * 100).toFixed(1) + '%', open: () => this.setState({ sheet: { a, b, wk } }) };
+    return { a: A, b: B, gap: live ? 'Proj gap ' + f2(gap) + ' · live' : 'Margin ' + f2(gap), mid: live ? 'proj gap ' + f2(gap) : 'final', share: (A.raw / (A.raw + B.raw || 1) * 100).toFixed(1) + '%', open: () => this.setState({ sheet: { a, b, wk } }) };
   }
   renderVals() {
     const S = this.state, themeLabel = this.theme() == 'dark' ? 'Light' : 'Dark', toggleTheme = () => this.setState({ theme: this.theme() == 'dark' ? 'light' : 'dark' });
@@ -206,7 +218,7 @@ class Component extends DCLogic {
       const o = opp(tm, w);
       if (w == LW) { const a = LIVE.scores[tm] || [0, 0], b = LIVE.scores[o] || [0, 0]; return { w, opp: o, color: col(o), sub: 'Live · now ' + f2(a[0]) + '–' + f2(b[0]), score: f2(a[1]) + '–' + f2(b[1]), r: '·', rbg: 'var(--surface2)', rfg: 'var(--muted)', open: () => this.setState({ sheet: { a: tm, b: o, wk: w } }) }; }
       const ap = allPlay(tm, w), win = won(tm, w);
-      return { w, opp: o, color: col(o), sub: ord(ap.rank) + ' of ' + MGR.length + ' · all-play ' + ap.w + '–' + ap.l, score: f1(SC[tm][w - 1]) + '–' + f1(SC[o][w - 1]), r: win ? 'W' : 'L', rbg: win ? 'var(--accent)' : 'var(--surface2)', rfg: win ? 'var(--onAccent)' : 'var(--muted)', open: () => this.setState({ sheet: { a: tm, b: o, wk: w } }) };
+      return { w, opp: o, color: col(o), sub: ord(ap.rank) + ' of ' + MGR.length + ' · all-play ' + ap.w + '–' + ap.l, score: f2(SC[tm][w - 1]) + '–' + f2(SC[o][w - 1]), r: win ? 'W' : 'L', rbg: win ? 'var(--accent)' : 'var(--surface2)', rfg: win ? 'var(--onAccent)' : 'var(--muted)', open: () => this.setState({ sheet: { a: tm, b: o, wk: w } }) };
     });
     const pl = this.players(tm), lineupWeek = LW ?? NF + 1;
     const lineupMsg = !S.loaded ? 'Loading rosters…' : !S.rosters ? 'Couldn’t load rosters. Try refreshing in a minute.' : '';
@@ -272,12 +284,17 @@ class Component extends DCLogic {
     let sheet = { a: {}, b: {}, rows: [], title: '', note: '' };
     if (S.sheet) {
       const { a, b, wk: w } = S.sheet, A = this.side(a, b, w), B = this.side(b, a, w), sa = this.starters(a, w), sb = this.starters(b, w), n = Math.max(sa.length, sb.length);
-      const rows = []; for (let i = 0; i < n; i++) rows.push({ slot: (sa[i] || sb[i]).slot, a: sa[i] || { name: '—', meta: '', pts: '' }, b: sb[i] || { name: '—', meta: '', pts: '' } });
+      const blankP = { name: '—', meta: '', pts: '' };
+      const pair = (x, y) => { const r = []; for (let i = 0; i < Math.max(x.length, y.length); i++) r.push({ slot: (x[i] || y[i]).slot, a: x[i] || blankP, b: y[i] || blankP }); return r; };
+      const rows = pair(sa, sb);
+      const ba = this.box(a, w), bb = this.box(b, w), hasBox = !!(ba && bb);
+      const bench = hasBox ? pair(this.boxPlayers(ba.bench), this.boxPlayers(bb.bench)).map(r => ({ ...r, slot: r.a.slot && r.b.slot && r.a.slot != r.b.slot ? '' : r.slot })) : [];
       const missing = [...sa, ...sb].some(p => p.pts == '—'), live = w == LW;
       const asOf = S.rosters?.asOf ? shortDate(new Date(S.rosters.asOf)) : '';
-      const note = !S.rosters ? (S.loaded ? 'Couldn’t load rosters, so lineups aren’t available.' : 'Loading rosters…')
+      const note = hasBox ? 'Final, from Yahoo. Green beat the projection by 8+, red missed it by 8+.'
+        : !S.rosters ? (S.loaded ? 'Couldn’t load rosters, so lineups aren’t available.' : 'Loading rosters…')
         : (live ? LIVE.sheetNote : `Lineups shown are current rosters${asOf ? ' as of ' + asOf : ''}, not the Week ${w} lineups.`) + (missing ? ' — = no player ' + (live ? 'projection' : 'score') + ' in the data yet.' : '');
-      sheet = { a: A, b: B, rows, title: 'WEEK ' + w + (live ? ' · LIVE' : ' · FINAL'), ptsLabel: live ? 'PTS/PROJ' : 'PTS', note };
+      sheet = { a: A, b: B, rows, bench, hasBench: bench.length > 0, title: 'WEEK ' + w + (live ? ' · LIVE' : ' · FINAL'), ptsLabel: live ? 'PTS/PROJ' : 'PTS', note };
     }
 
     // Charts

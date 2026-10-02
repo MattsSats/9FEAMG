@@ -882,9 +882,9 @@ button{font-family:inherit;color:inherit}
         </div>
       </div>
       <div style="padding:6px 16px 0">
-        <div style="display:grid;grid-template-columns:minmax(0,1fr) 38px 40px 38px minmax(0,1fr);gap:6px;padding:8px 0 2px;font-family:'JetBrains Mono';font-size:9px;letter-spacing:.08em;color:var(--muted)"><span></span><span style="text-align:right">{{ sheet.ptsLabel }}</span><span></span><span>{{ sheet.ptsLabel }}</span><span></span></div>
+        <div style="display:grid;grid-template-columns:minmax(0,1fr) 44px 40px 44px minmax(0,1fr);gap:6px;padding:8px 0 2px;font-family:'JetBrains Mono';font-size:9px;letter-spacing:.08em;color:var(--muted)"><span></span><span style="text-align:right">{{ sheet.ptsLabel }}</span><span></span><span>{{ sheet.ptsLabel }}</span><span></span></div>
         <sc-for list="{{ sheet.rows }}" as="r" hint-placeholder-count="9">
-          <div style="display:grid;grid-template-columns:minmax(0,1fr) 38px 40px 38px minmax(0,1fr);gap:6px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)">
+          <div style="display:grid;grid-template-columns:minmax(0,1fr) 44px 40px 44px minmax(0,1fr);gap:6px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)">
             <div style="min-width:0"><div style="font-weight:600;font-size:14px;line-height:1.2">{{ r.a.name }}</div><div style="font-family:'JetBrains Mono';font-size:10px;color:var(--muted);margin-top:2px">{{ r.a.meta }}</div></div>
             <span style="font-family:'Big Shoulders Display';font-weight:800;font-size:19px;text-align:right;color:{{ r.a.ptsColor }}">{{ r.a.pts }}</span>
             <span style="font-family:'JetBrains Mono';font-size:10px;font-weight:600;text-align:center;color:var(--accentInk);background:var(--surface);border-radius:6px;padding:4px 0">{{ r.slot }}</span>
@@ -892,6 +892,18 @@ button{font-family:inherit;color:inherit}
             <div style="min-width:0;text-align:right"><div style="font-weight:600;font-size:14px;line-height:1.2">{{ r.b.name }}</div><div style="font-family:'JetBrains Mono';font-size:10px;color:var(--muted);margin-top:2px">{{ r.b.meta }}</div></div>
           </div>
         </sc-for>
+        <sc-if value="{{ sheet.hasBench }}" hint-placeholder-val="{{ false }}">
+          <div style="padding:16px 0 4px;font-family:'JetBrains Mono';font-size:10px;letter-spacing:.1em;color:var(--muted)">BENCH</div>
+          <sc-for list="{{ sheet.bench }}" as="r" hint-placeholder-count="6">
+            <div style="display:grid;grid-template-columns:minmax(0,1fr) 44px 40px 44px minmax(0,1fr);gap:6px;align-items:center;padding:8px 0;border-bottom:1px solid var(--line);opacity:.8">
+              <div style="min-width:0"><div style="font-size:13px;line-height:1.2">{{ r.a.name }}</div><div style="font-family:'JetBrains Mono';font-size:10px;color:var(--muted);margin-top:2px">{{ r.a.meta }}</div></div>
+              <span style="font-family:'Big Shoulders Display';font-weight:800;font-size:17px;text-align:right;color:{{ r.a.ptsColor }}">{{ r.a.pts }}</span>
+              <span style="font-family:'JetBrains Mono';font-size:10px;text-align:center;color:var(--muted)">{{ r.slot }}</span>
+              <span style="font-family:'Big Shoulders Display';font-weight:800;font-size:17px;text-align:left;color:{{ r.b.ptsColor }}">{{ r.b.pts }}</span>
+              <div style="min-width:0;text-align:right"><div style="font-size:13px;line-height:1.2">{{ r.b.name }}</div><div style="font-family:'JetBrains Mono';font-size:10px;color:var(--muted);margin-top:2px">{{ r.b.meta }}</div></div>
+            </div>
+          </sc-for>
+        </sc-if>
         <div style="font-family:'JetBrains Mono';font-size:10px;color:var(--muted);padding-top:12px;text-wrap:pretty">{{ sheet.note }}</div>
       </div>
     </div>
