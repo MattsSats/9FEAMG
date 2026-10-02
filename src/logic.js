@@ -14,6 +14,11 @@ const LIVEPTS = LIVE?.playerPoints || {};
 const PPROJ = D?.projections || {};
 const PAIRS = D ? D.schedule : {};
 const PROJ = Object.fromEntries(MGR.map(m => [m, LIVE?.scores?.[m]?.[1] ?? 0]));
+// Screenshot library for the share buttons, loaded on demand.
+const SHOT_LIB = {
+  src: 'https://cdn.jsdelivr.net/npm/html-to-image@1.11.13/dist/html-to-image.js',
+  integrity: 'sha384-Tha/42qsYmpYmQ07pX+nJzkKumO0BzKJxK/uzVc7xyBQxVCUgQBhQIG8L7vXK+9C'
+};
 const ORD = { QB: 0, RB: 1, WR: 2, TE: 3, WRT: 4, K: 5, DEF: 6 };
 const MON = { Jan: 0, Feb: 1, Mar: 2, Apr: 3, May: 4, Jun: 5, Jul: 6, Aug: 7, Sep: 8, Oct: 9, Nov: 10, Dec: 11 };
 const MONS = Object.keys(MON);
@@ -55,6 +60,66 @@ class Component extends DCLogic {
       .then(([rosters, draft, tx]) => this.setState({ rosters, draft, tx, loaded: true }));
     // Keep the newest week chips in view once the season gets long.
     setTimeout(() => { const el = document.querySelector('[data-weekchips]'); if (el) el.scrollLeft = el.scrollWidth; }, 0);
+    // Preload the screenshot library so the first share is quick.
+    setTimeout(() => this.loadShotLib().catch(() => {}), 1500);
+  }
+  loadShotLib() {
+    if (window.htmlToImage) return Promise.resolve(window.htmlToImage);
+    if (!this._shotLib) this._shotLib = new Promise((res, rej) => {
+      const s = document.createElement('script');
+      s.src = SHOT_LIB.src; s.integrity = SHOT_LIB.integrity; s.crossOrigin = 'anonymous';
+      s.onload = () => window.htmlToImage ? res(window.htmlToImage) : rej(new Error('html-to-image missing'));
+      s.onerror = () => { this._shotLib = null; rej(new Error('html-to-image failed to load')); };
+      document.head.appendChild(s);
+    });
+    return this._shotLib;
+  }
+  toast(text, file) {
+    clearTimeout(this._toastT);
+    this.setState({ toast: { text, file } });
+    this._toastT = setTimeout(() => this.setState({ toast: null }), file ? 10000 : 3500);
+  }
+  // Renders the element marked data-shot="<name>" to a PNG, then opens the share
+  // sheet (phones), copies it (desktop) or downloads it as a last resort.
+  async share(name, e) {
+    e?.stopPropagation?.();
+    const el = document.querySelector(`[data-shot="${name}"]`);
+    if (!el || this.state.sharing) return;
+    this.setState({ sharing: name });
+    el.classList.add('capturing');
+    let file;
+    try {
+      const lib = await this.loadShotLib();
+      const bg = getComputedStyle(document.documentElement).getPropertyValue('--bg').trim();
+      const blob = await lib.toBlob(el, { pixelRatio: 2, backgroundColor: bg, style: { margin: '0' }, filter: n => !n.classList?.contains('no-shot') });
+      file = new File([blob], `9feamg-${name}.png`, { type: 'image/png' });
+    } catch (err) {
+      console.error('share capture failed', err);
+      this.toast('Couldn’t create the image. Try again.');
+      return;
+    } finally {
+      el.classList.remove('capturing');
+      this.setState({ sharing: null });
+    }
+    await this.deliver(file);
+  }
+  async deliver(file) {
+    try {
+      if (navigator.canShare?.({ files: [file] })) { await navigator.share({ files: [file] }); return; }
+      if (navigator.clipboard?.write && window.ClipboardItem) {
+        await navigator.clipboard.write([new ClipboardItem({ 'image/png': file })]);
+        this.toast('Image copied. Paste it into the chat.');
+        return;
+      }
+    } catch (err) {
+      if (err.name == 'AbortError') return;
+      // iOS drops the tap's permission while the image renders; a second tap re-grants it.
+      if (err.name == 'NotAllowedError' && navigator.canShare?.({ files: [file] })) { this.toast('Image ready.', file); return; }
+    }
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(file); a.download = file.name; a.click();
+    setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+    this.toast('Image saved.');
   }
   componentDidUpdate() { this.applyTheme(); }
   theme() { return this.state.theme ?? this.props.theme ?? 'dark'; }
@@ -238,7 +303,13 @@ class Component extends DCLogic {
       team, teamPicker,
       draftInfo: D.draftInfo, draftOk: !draftMsg, draftMsg, draftFirsts, draftModes, draftChips, draftPicks, draftTitle, draftSub,
       wireSub: 'Adds, drops, trades and FAAB · through ' + shortDate(now), wireModes, wireSeason: seasonMode && txOk, wireDays: days, noMoves, activity, wireRoast, wireBanner: boothOn || !txOk, faab, faabBudget: '$' + budget + ' budget', txOk,
-      sheetOpen: !!S.sheet, sheet, closeSheet: () => this.setState({ sheet: null })
+      sheetOpen: !!S.sheet, sheet, closeSheet: () => this.setState({ sheet: null }),
+      // Share buttons
+      shareHero: e => this.share('hero', e), shareStandings: e => this.share('standings', e), shareTeam: e => this.share('team', e),
+      shareLabel: { hero: S.sharing == 'hero' ? '…' : 'Share', standings: S.sharing == 'standings' ? '…' : 'Share', team: S.sharing == 'team' ? '…' : 'Share' },
+      shotHero: `Week ${wk} · ${wk == LW ? 'Live' : 'Final'}`, shotStandings: `Standings · through week ${NF}`, shotTeam: `${tm} · through week ${NF}`,
+      toastOn: !!S.toast, toastText: S.toast?.text ?? '', toastAct: !!S.toast?.file,
+      toastDo: () => { const f = S.toast?.file; this.setState({ toast: null }); if (f) navigator.share({ files: [f] }).catch(() => {}); }
     };
   }
 }

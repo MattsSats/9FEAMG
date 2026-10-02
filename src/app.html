@@ -347,6 +347,12 @@ button{font-family:inherit;color:inherit}
 .sheet{max-width:440px}
 .tiles{grid-template-columns:repeat(2,minmax(0,1fr))}
 .scroll-x{overflow-x:auto}
+/* Share buttons; .shot-footer only shows inside the generated image. */
+.share-btn{min-height:32px;padding:0 12px;border:1px solid var(--line);border-radius:999px;background:var(--surface);color:var(--muted);font-family:'JetBrains Mono';font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;cursor:pointer}
+.share-btn:hover{color:var(--ink);border-color:var(--muted)}
+.shot-footer{display:none;justify-content:space-between;align-items:baseline;gap:12px;padding:14px 0 16px;font-family:'JetBrains Mono';font-size:10px;letter-spacing:.08em;color:var(--muted)}
+.capturing .shot-footer{display:flex}
+.shot-footer b{font-family:'Big Shoulders Display';font-weight:900;font-size:15px;letter-spacing:.02em;color:var(--ink)}
 /* Desktop: wider page, side-by-side sections, four-up stat tiles. */
 @media (min-width:900px){
   .app,.tabbar{max-width:1080px}
@@ -401,10 +407,13 @@ button{font-family:inherit;color:inherit}
 <sc-if value="{{ hasWeek }}" hint-placeholder-val="{{ true }}">
 <div class="cols">
 <div>
-  <div sc-camel-on-click="{{ hero.open }}" style="margin:16px 20px 0;background:var(--surface);border:1px solid var(--line);border-radius:20px;overflow:hidden;cursor:pointer">
-    <div style="display:flex;justify-content:space-between;align-items:center;padding:14px 16px 0">
+  <div data-shot="hero" sc-camel-on-click="{{ hero.open }}" style="margin:16px 20px 0;background:var(--surface);border:1px solid var(--line);border-radius:20px;overflow:hidden;cursor:pointer">
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;padding:14px 16px 0;min-height:46px">
       <span style="font-family:'JetBrains Mono';font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--accentInk);font-weight:600">{{ heroLabel }}</span>
-      <span style="font-family:'JetBrains Mono';font-size:11px;color:var(--muted)">Lineups ›</span>
+      <span class="no-shot" style="display:flex;align-items:center;gap:12px">
+        <button class="share-btn" sc-camel-on-click="{{ shareHero }}" aria-label="Share this matchup as an image">{{ shareLabel.hero }}</button>
+        <span style="font-family:'JetBrains Mono';font-size:11px;color:var(--muted)">Lineups ›</span>
+      </span>
     </div>
     <div style="display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);align-items:center;gap:8px;padding:18px 16px 8px">
       <div style="display:flex;flex-direction:column;align-items:flex-start;gap:8px">
@@ -427,6 +436,7 @@ button{font-family:inherit;color:inherit}
       <div style="width:{{ hero.share }};background:var(--accent)"></div>
     </div>
     <div style="padding:16px;font-size:15px;line-height:1.4;text-wrap:pretty;border-top:1px solid var(--line);margin-top:16px">{{ heroCaption }}</div>
+    <div class="shot-footer" style="padding:0 16px 14px"><b>9FEAMG</b><span>{{ shotHero }}</span></div>
   </div>
 
   <sc-if value="{{ hasBooth }}" hint-placeholder-val="{{ true }}">
@@ -491,9 +501,12 @@ button{font-family:inherit;color:inherit}
 </div>
 
 <div class="cols">
-<div style="padding:30px 20px 0">
-  <div style="display:flex;align-items:baseline;justify-content:space-between">
-    <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:26px;text-transform:uppercase">Standings</div>
+<div data-shot="standings" style="padding:30px 20px 0">
+  <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+    <div style="display:flex;align-items:center;gap:12px">
+      <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:26px;text-transform:uppercase">Standings</div>
+      <button class="share-btn no-shot" sc-camel-on-click="{{ shareStandings }}" aria-label="Share the standings as an image">{{ shareLabel.standings }}</button>
+    </div>
     <div style="font-family:'JetBrains Mono';font-size:11px;color:var(--muted)">Luck = W − xW</div>
   </div>
   <div style="display:grid;grid-template-columns:22px minmax(0,1fr) 40px 52px 48px;gap:8px;padding:14px 0 8px;font-family:'JetBrains Mono';font-size:10px;letter-spacing:.08em;color:var(--muted);border-bottom:1px solid var(--line)">
@@ -514,6 +527,7 @@ button{font-family:inherit;color:inherit}
       <div style="display:flex;align-items:center;gap:10px;padding:8px 0;font-family:'JetBrains Mono';font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--accentInk)"><span style="flex:1;height:2px;background:var(--accent)"></span><span>{{ playoffLine }}</span><span style="flex:1;height:2px;background:var(--accent)"></span></div>
     </sc-if>
   </sc-for>
+  <div class="shot-footer"><b>9FEAMG</b><span>{{ shotStandings }}</span></div>
 </div>
 
 <div style="padding:30px 20px 0">
@@ -638,9 +652,10 @@ button{font-family:inherit;color:inherit}
 </div>
 
 <div class="cols">
-<div>
-<div style="margin:16px 20px 0;padding:20px;border-radius:20px;background:var(--surface);border:1px solid var(--line)">
-  <div style="display:flex;gap:14px;align-items:center">
+<div data-shot="team">
+<div style="position:relative;margin:16px 20px 0;padding:20px;border-radius:20px;background:var(--surface);border:1px solid var(--line)">
+  <button class="share-btn no-shot" sc-camel-on-click="{{ shareTeam }}" aria-label="Share this team as an image" style="position:absolute;top:14px;right:14px">{{ shareLabel.team }}</button>
+  <div style="display:flex;gap:14px;align-items:center;padding-right:64px">
     <div style="width:64px;height:64px;border-radius:50%;background:{{ team.color }};color:#141311;display:flex;align-items:center;justify-content:center;font-family:'Big Shoulders Display';font-weight:900;font-size:26px;flex:none">{{ team.init }}</div>
     <div style="min-width:0">
       <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:34px;line-height:.95;text-transform:uppercase">{{ team.m }}</div>
@@ -662,6 +677,7 @@ button{font-family:inherit;color:inherit}
     </div>
   </sc-for>
 </div>
+<div class="shot-footer" style="padding:14px 20px 16px"><b>9FEAMG</b><span>{{ shotTeam }}</span></div>
 </div>
 
 <div>
@@ -879,6 +895,15 @@ button{font-family:inherit;color:inherit}
         <div style="font-family:'JetBrains Mono';font-size:10px;color:var(--muted);padding-top:12px;text-wrap:pretty">{{ sheet.note }}</div>
       </div>
     </div>
+  </div>
+</sc-if>
+
+<sc-if value="{{ toastOn }}" hint-placeholder-val="{{ false }}">
+  <div role="status" style="position:fixed;left:50%;bottom:96px;transform:translateX(-50%);z-index:60;display:flex;align-items:center;gap:12px;max-width:calc(100% - 32px);padding:10px 10px 10px 16px;border-radius:999px;background:var(--ink);color:var(--bg);font-size:14px;font-weight:600;box-shadow:0 6px 24px rgba(0,0,0,.35)">
+    <span>{{ toastText }}</span>
+    <sc-if value="{{ toastAct }}" hint-placeholder-val="{{ false }}">
+      <button sc-camel-on-click="{{ toastDo }}" style="min-height:36px;padding:0 14px;border:0;border-radius:999px;background:var(--accent);color:var(--onAccent);font-weight:700;font-size:14px;cursor:pointer">Share</button>
+    </sc-if>
   </div>
 </sc-if>
 
