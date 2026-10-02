@@ -268,9 +268,7 @@ class Component extends DCLogic {
         oddsMath: priced ? (() => {
           const decs = p.legs.map(l => toDecimal(l.odds)), prob = p.legs.reduce((a, l) => a * impliedProb(l.odds), 1);
           return decs.map(x => x.toFixed(2)).join(' × ') + ` = ×${dec.toFixed(2)} · hits about 1 in ${Math.max(1, Math.round(1 / prob))} (${Math.round(prob * 100)}%)`;
-        })() : `${p.legs.filter(l => toDecimal(l.odds)).length} of ${p.legs.length} legs priced`,
-        oddsHelpOpen: !!S.oddsHelp, toggleOddsHelp: () => this.setState({ oddsHelp: !S.oddsHelp }), oddsHelpLabel: S.oddsHelp ? 'Hide' : 'How odds work',
-        payout: !priced ? 'Odds calculate once every leg has a line' : (status == 'CASHED' ? '$10 paid $' : status == 'BUSTED' ? '$10 would have paid $' : '$10 pays $') + (10 * dec).toFixed(2),
+        })() : `${p.legs.filter(l => toDecimal(l.odds)).length} of ${p.legs.length} legs priced`,        payout: !priced ? 'Odds calculate once every leg has a line' : (status == 'CASHED' ? '$10 paid $' : status == 'BUSTED' ? '$10 would have paid $' : '$10 pays $') + (10 * dec).toFixed(2),
         angle: angle.join(' '), hasAngle: angle.length > 0,
         // Tailing your own opponent's parlay is a hedge: you win the matchup or cash the ticket.
         tailers: (p.tailers || []).map(m => ({ m, color: col(m), tag: m == vs ? 'HEDGE' : 'TAIL' })), hasTailers: !!p.tailers?.length,
