@@ -64,6 +64,8 @@ function optimalLineup(players) {
 // American odds <-> decimal, for combining parlay legs.
 const toDecimal = o => { const n = parseFloat(o); return isNaN(n) || n == 0 ? null : n > 0 ? 1 + n / 100 : 1 + 100 / -n; };
 const toAmerican = d => d >= 2 ? '+' + Math.round((d - 1) * 100) : '−' + Math.round(100 / (d - 1));
+// The book's implied chance of a leg hitting (includes the book's cut).
+const impliedProb = o => { const n = parseFloat(o); return isNaN(n) || n == 0 ? null : n > 0 ? 100 / (n + 100) : -n / (-n + 100); };
 const LEG_TAG = {
   open: { tag: 'OPEN', bg: 'var(--surface2)', fg: 'var(--muted)' },
   hit: { tag: 'HIT', bg: 'var(--pos)', fg: '#141311' },
@@ -245,7 +247,8 @@ class Component extends DCLogic {
         const spot = l.player ? this.rosterSpot(l.player, wk) : null, pts = l.player ? this.fantasyPts(l.player, wk) : null;
         const owner = spot ? spot.m + '’s ' + (spot.starter ? spot.pos : 'bench') : l.player ? 'Free agent' : '';
         const meta = [l.result || (pts != null ? f2(pts) + ' fantasy pts' : l.game), l.line != null ? 'line ' + l.line : null].filter(Boolean).join(' · ');
-        return { text: l.text, odds: l.odds || '', owner, ownerColor: spot ? col(spot.m) : 'transparent', hasOwner: !!owner, meta, ...(LEG_TAG[l.status] || LEG_TAG.open), spot };
+        const d = toDecimal(l.odds), ip = impliedProb(l.odds);
+        return { text: l.text, odds: l.odds ? l.odds.replace('-', '−') : '—', oddsSub: d ? `×${d.toFixed(2)} · ${Math.round(ip * 100)}%` : 'no line', owner, ownerColor: spot ? col(spot.m) : 'transparent', hasOwner: !!owner, meta, ...(LEG_TAG[l.status] || LEG_TAG.open), spot };
       });
       // How the ticket lines up with the fantasy matchup.
       const mine = legs.filter(l => l.spot?.m == p.owner && l.spot.starter).length, theirs = legs.filter(l => l.spot?.m == vs && l.spot.starter).length;
@@ -261,6 +264,12 @@ class Component extends DCLogic {
         statusBg: status == 'CASHED' ? 'var(--pos)' : status == 'BUSTED' ? 'var(--neg)' : 'var(--surface2)',
         statusFg: status == 'OPEN' ? 'var(--muted)' : '#141311',
         oddsLabel: priced ? 'Parlay ' + toAmerican(dec) : 'Lines TBD',
+        // e.g. "2.20 × 1.87 × 1.67 = ×6.86 · hits about 1 in 7 (15%)"
+        oddsMath: priced ? (() => {
+          const decs = p.legs.map(l => toDecimal(l.odds)), prob = p.legs.reduce((a, l) => a * impliedProb(l.odds), 1);
+          return decs.map(x => x.toFixed(2)).join(' × ') + ` = ×${dec.toFixed(2)} · hits about 1 in ${Math.max(1, Math.round(1 / prob))} (${Math.round(prob * 100)}%)`;
+        })() : `${p.legs.filter(l => toDecimal(l.odds)).length} of ${p.legs.length} legs priced`,
+        oddsHelpOpen: !!S.oddsHelp, toggleOddsHelp: () => this.setState({ oddsHelp: !S.oddsHelp }), oddsHelpLabel: S.oddsHelp ? 'Hide' : 'How odds work',
         payout: !priced ? 'Odds calculate once every leg has a line' : (status == 'CASHED' ? '$10 paid $' : status == 'BUSTED' ? '$10 would have paid $' : '$10 pays $') + (10 * dec).toFixed(2),
         angle: angle.join(' '), hasAngle: angle.length > 0,
         // Tailing your own opponent's parlay is a hedge: you win the matchup or cash the ticket.

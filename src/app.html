@@ -511,7 +511,10 @@ button{font-family:inherit;color:inherit}
                   <span>{{ lg.meta }}</span>
                 </div>
               </div>
-              <span style="font-family:'JetBrains Mono';font-size:12px;color:var(--muted)">{{ lg.odds }}</span>
+              <span style="display:flex;flex-direction:column;align-items:flex-end;gap:2px;font-family:'JetBrains Mono'">
+                <span style="font-size:13px;font-weight:600">{{ lg.odds }}</span>
+                <span style="font-size:9px;color:var(--muted);white-space:nowrap">{{ lg.oddsSub }}</span>
+              </span>
               <span style="font-family:'JetBrains Mono';font-size:10px;font-weight:700;letter-spacing:.08em;min-width:46px;text-align:center;padding:4px 0;border-radius:6px;background:{{ lg.bg }};color:{{ lg.fg }}">{{ lg.tag }}</span>
             </div>
           </sc-for>
@@ -524,6 +527,18 @@ button{font-family:inherit;color:inherit}
           <span style="font-weight:600">{{ pr.oddsLabel }}</span>
           <span style="color:var(--muted)">{{ pr.payout }}</span>
         </div>
+        <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:6px 12px;padding:6px 16px 0;font-family:'JetBrains Mono';font-size:10px;color:var(--muted)">
+          <span>{{ pr.oddsMath }}</span>
+          <button class="no-shot" sc-camel-on-click="{{ pr.toggleOddsHelp }}" style="border:0;background:transparent;padding:4px 0;min-height:28px;font-family:'JetBrains Mono';font-size:10px;font-weight:600;color:var(--accentInk);cursor:pointer">{{ pr.oddsHelpLabel }}</button>
+        </div>
+        <sc-if value="{{ pr.oddsHelpOpen }}" hint-placeholder-val="{{ false }}">
+          <div class="no-shot" style="margin:8px 16px 0;padding:12px 14px;border-radius:12px;background:var(--surface2);font-size:13px;line-height:1.5;color:var(--muted);text-wrap:pretty">
+            <div><b style="color:var(--ink)">+120</b> is an underdog: $10 wins $12, so $22 comes back.</div>
+            <div><b style="color:var(--ink)">−150</b> is a favorite: $10 wins $6.67, so $16.67 comes back.</div>
+            <div style="margin-top:6px">Under each leg, <b style="color:var(--ink)">×2.20</b> is what $1 turns into if it hits, and the % is the book’s implied chance (a little high, since the book takes a cut).</div>
+            <div style="margin-top:6px">A parlay multiplies every leg together. Bigger payout, but every leg has to hit, so the chance drops fast.</div>
+          </div>
+        </sc-if>
         <sc-if value="{{ pr.hasAngle }}" hint-placeholder-val="{{ true }}">
           <div style="padding:10px 16px 0;font-size:13px;line-height:1.45;color:var(--muted);text-wrap:pretty">{{ pr.angle }}</div>
         </sc-if>
