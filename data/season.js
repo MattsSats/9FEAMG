@@ -58,18 +58,23 @@ window.SEASON = {
     week: 4,
     status: 'Live · TNF final · Sunday to come',
     // [current points, projected final]
+    // Yahoo live projections as of Fri Oct 2.
     scores: {
-      Matt: [6.00, 117.88], DLin: [10.20, 114.39],
-      Tristan: [8.90, 111.52], Colin: [0, 111.42],
-      Jerger: [0, 113.79], Kurt: [14.10, 109.08],
-      ASG: [0, 107.79], Andy: [0, 116.74],
-      'Mr. G': [0, 118.23], Pablo: [0, 93.17]
+      Matt: [6.00, 103.67], DLin: [10.20, 114.46],
+      Tristan: [8.90, 111.99], Colin: [0, 112.58],
+      Jerger: [0, 113.91], Kurt: [14.10, 111.64],
+      ASG: [0, 108.39], Andy: [0, 116.82],
+      'Mr. G': [0, 119.12], Pablo: [0, 88.77]
     },
-    // Points for players whose games are final.
+    // Points for players whose games are final (starters and bench).
     playerPoints: {
       'KC Concepcion Jr.': 8.90,
-      'Harold Fannin Jr.': 9.48,
-      'Steelers': 6.00
+      'Harold Fannin Jr.': 10.20,
+      'Steelers': 6.00,
+      'Jaylen Warren': 14.10,
+      'Quinshon Judkins': 18.60,
+      'Denzel Boston': 10.90,
+      'DK Metcalf': 14.00
     },
     sheetNote: 'Live after TNF. Orange = final points; the rest kick off Sunday.'
   },
@@ -98,7 +103,7 @@ window.SEASON = {
     1: 'Pablo held off Matt by 4.8. Pablo would like this one framed, since it may be a while.',
     2: 'DLin beat Kurt 100.6–89.4. Neither fan base was reached for comment.',
     3: 'Andy beat Colin by 3.9. Colin is expected to blame the kicker, the refs and Yahoo.',
-    4: 'Tristan 111.52, Colin 111.42. A 0.10 projection gap after TNF. Tristan banked 8.90 from KC Concepcion Jr. Colin banked nothing and is still projected to lose by a rounding error.'
+    4: 'Colin 112.58, Tristan 111.99. Colin banked nothing on Thursday and is now projected to win by 0.59. Tristan has 8.90 from KC Concepcion Jr. and trails by a rounding error.'
   },
 
   // "The Booth" lines by week: [manager, text].
@@ -125,11 +130,11 @@ window.SEASON = {
       ['Colin', 'Colin lost by 3.84 with Joe Burrow on his bench for 22.58. Patrick Mahomes started and scored 16.94.']
     ],
     4: [
-      ['Matt', 'Matt is projected to beat DLin by 3.49. Win and he’s 2–2; lose and the unluckiest manager in the league has a fresh grievance.'],
-      ['ASG', 'ASG is 3–0 and still projected to lose to Andy by 8.95. Respect remains pending.'],
-      ['Kurt', 'Kurt and Jerger are both 1–2, and the loser falls to 1–3. Yahoo has Jerger by 4.71. Kurt hung 135.9 last week and would like a word with the projection.'],
-      ['Mr. G', 'Pablo is projected for 93.17, lowest in the league. Mr. G is projected for 118.23, highest. The group-chat victory lap is already drafted.'],
-      ['Colin', 'Colin made 6 adds this week alone, more than ASG has made all season, times three.']
+      ['Matt', 'Justin Jefferson is listed Out and still in Matt’s starting lineup, projected for 0.00. Quinshon Judkins scored 18.60 on Thursday from Matt’s bench. Yahoo now has DLin by 10.79.'],
+      ['ASG', 'ASG is 3–0 and still projected to lose to Andy by 8.43. Respect remains pending.'],
+      ['Kurt', 'Kurt and Jerger are both 1–2, and the loser falls to 1–3. Jaylen Warren’s 14.10 on Thursday cut Jerger’s projected edge to 2.27. Kurt would like a word with the projection.'],
+      ['Mr. G', 'Pablo is projected for 88.77, lowest in the league. Mr. G is projected for 119.12, highest. The group-chat victory lap is already drafted.'],
+      ['Colin', 'Colin made 6 adds this week alone, more than ASG has made all season, times three. His only points so far: Denzel Boston, 10.90, on the bench.']
     ]
   },
 
