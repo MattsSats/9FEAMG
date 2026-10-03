@@ -7,7 +7,7 @@
     "player": "RJ Harvey",
     "nfl": "Den",
     "pos": "RB",
-    "faab": 0,
+    "faab": "$0",
     "via": "Waivers",
     "notes": "Yahoo live pull 2026-10-03"
   },
@@ -19,7 +19,7 @@
     "player": "Chiefs",
     "nfl": "KC",
     "pos": "DEF",
-    "faab": 0,
+    "faab": "$0",
     "via": "Waivers",
     "notes": "Yahoo live pull 2026-10-03"
   },
@@ -43,7 +43,7 @@
     "player": "Jadarian Price",
     "nfl": "Sea",
     "pos": "RB",
-    "faab": 1,
+    "faab": "$1",
     "via": "Waivers",
     "notes": "Yahoo live pull 2026-10-03"
   },
