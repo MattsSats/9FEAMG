@@ -145,9 +145,15 @@ window.SEASON = {
   //   legs[].player Yahoo player name, or the team name for a defense/moneyline
   //                 ('Ravens'). The site tags whose fantasy roster it's on and
   //                 shows the player's fantasy points once they're in.
-  //   legs[].type   'td' (anytime TD), 'over' (needs stat + line) or 'ml'
-  //                 (moneyline); tells the weekly update how to grade the leg
+  //   legs[].type   'td' (anytime TD), 'over' (player stat; needs stat + line),
+  //                 'ml' (moneyline) or 'total' (game points; needs side + line);
+  //                 tells the weekly update how to grade the leg
   //   legs[].stat / legs[].line  for 'over' legs, e.g. stat 'Rec Yds', line 62.5
+  //   legs[].side   'over' or 'under', for 'total' legs
+  //   legs[].team   the team a moneyline is on, for game legs without a player
+  //   legs[].teams  NFL teams in the game (['Jax', 'Cin']); the card lists the
+  //                 managers starting someone in it
+  //   owner         a manager, or anyone else (e.g. 'The Booth' with init 'TB')
   //   legs[].game   kickoff, e.g. 'Sun 12:00 PM vs TEN'
   //   legs[].result optional, replaces the kickoff once graded ('2 Rush TD')
   //   legs[].odds   American odds as text ('+120', '-150'); null until you have
@@ -167,6 +173,16 @@ window.SEASON = {
         ],
         tailers: ['ASG'],
         booth: 'Andy asked for a “lock parlay.” There is no such thing. ASG is tailing it and is also Andy’s opponent this week, so ASG cashes either way.'
+      },
+      {
+        owner: 'The Booth', init: 'TB',
+        // Odds: ESPN odds page (DraftKings), Fri Oct 2. Noon CT kickoffs.
+        legs: [
+          { text: 'Jaguars–Bengals over 51.5', type: 'total', side: 'over', line: 51.5, teams: ['Jax', 'Cin'], game: 'Sun 12:00 PM · JAX @ CIN', odds: '-102', status: 'open' },
+          { text: 'Cowboys moneyline at Texans', type: 'ml', team: 'Dal', teams: ['Dal', 'Hou'], game: 'Sun 12:00 PM · DAL @ HOU', odds: '+136', status: 'open' },
+          { text: 'Packers moneyline at Buccaneers', type: 'ml', team: 'GB', teams: ['GB', 'TB'], game: 'Sun 12:00 PM · GB @ TB', odds: '-175', status: 'open' }
+        ],
+        booth: 'The Booth’s noon special: the highest total on the early slate, a Cowboys upset that runs straight through Pablo’s QB and defense, and Matt’s Jordan Love against an 0–3 Bucs team. For fun, not a lock.'
       }
     ]
   },

@@ -5,6 +5,8 @@ const MGR = D ? D.managers.map(x => x.m) : [];
 const INIT = D ? Object.fromEntries(D.managers.map(x => [x.m, x.init])) : {};
 const HUE = D ? Object.fromEntries(D.managers.map(x => [x.m, x.hue])) : {};
 const col = m => `oklch(0.76 0.12 ${HUE[m] ?? 0})`;
+// Parlays can belong to someone outside the league (e.g. 'The Booth'), who gets the accent color.
+const ownerCol = m => m in HUE ? col(m) : 'var(--accent)';
 const SC = D ? D.scores : {};
 const NF = D ? Math.max(0, ...MGR.map(m => (SC[m] || []).length)) : 0; // weeks final
 const LIVE = D ? D.live : null;
@@ -178,6 +180,14 @@ class Component extends DCLogic {
     }
     return null;
   }
+  // Managers starting at least one player from these NFL teams (e.g. ['Jax', 'Cin']).
+  gameStakes(teams, wk) {
+    const want = new Set(teams.map(t => t.toLowerCase())), out = [];
+    const wkBox = wk != LW ? this.state.box?.weeks?.[wk] : null;
+    if (wkBox) Object.entries(wkBox).forEach(([m, t]) => { if (t.starters.some(p => want.has(String(p[2]).toLowerCase()))) out.push(m); });
+    else (this.state.rosters?.teams || []).forEach(t => { if (t.players.some(p => p.slot == 'starter' && want.has(String(p.nfl).toLowerCase()))) out.push(t.name); });
+    return MGR.filter(m => out.includes(m));
+  }
   // A player's fantasy points for the week, if known (live points or final box score).
   fantasyPts(name, wk) {
     if (wk == LW) return LIVEPTS[name] ?? null;
@@ -245,19 +255,22 @@ class Component extends DCLogic {
       const vs = p.vs ?? opp(p.owner, wk), shot = 'parlay-' + i;
       const legs = p.legs.map(l => {
         const spot = l.player ? this.rosterSpot(l.player, wk) : null, pts = l.player ? this.fantasyPts(l.player, wk) : null;
-        const owner = spot ? spot.m + '’s ' + (spot.starter ? spot.pos : 'bench') : l.player ? 'Free agent' : '';
-        const meta = [l.result || (pts != null ? f2(pts) + ' fantasy pts' : l.game), l.line != null ? 'line ' + l.line : null].filter(Boolean).join(' · ');
+        // Game legs (totals, moneylines) list the managers starting someone in that game.
+        const stakes = !l.player && l.teams ? this.gameStakes(l.teams, wk) : null;
+        const owner = spot ? spot.m + '’s ' + (spot.starter ? spot.pos : 'bench') : l.player ? 'Free agent'
+          : stakes ? (stakes.length ? 'Starters in this game: ' + stakes.join(', ') : 'No league starters in this game') : '';
+        const meta = [l.result || (pts != null ? f2(pts) + ' fantasy pts' : l.game), l.line != null && !l.text.includes(String(l.line)) ? 'line ' + l.line : null].filter(Boolean).join(' · ');
         const d = toDecimal(l.odds), ip = impliedProb(l.odds);
-        return { text: l.text, odds: l.odds ? l.odds.replace('-', '−') : '—', oddsSub: d ? `×${d.toFixed(2)} · ${Math.round(ip * 100)}%` : 'no line', owner, ownerColor: spot ? col(spot.m) : 'transparent', hasOwner: !!owner, meta, ...(LEG_TAG[l.status] || LEG_TAG.open), spot };
+        return { text: l.text, odds: l.odds ? l.odds.replace('-', '−') : '—', oddsSub: d ? `×${d.toFixed(2)} · ${Math.round(ip * 100)}%` : 'no line', owner, ownerColor: spot ? col(spot.m) : stakes ? 'var(--accent)' : 'transparent', hasOwner: !!owner, meta, ...(LEG_TAG[l.status] || LEG_TAG.open), spot };
       });
       // How the ticket lines up with the fantasy matchup.
-      const mine = legs.filter(l => l.spot?.m == p.owner && l.spot.starter).length, theirs = legs.filter(l => l.spot?.m == vs && l.spot.starter).length;
+      const mine = legs.filter(l => l.spot && l.spot.m == p.owner && l.spot.starter).length, theirs = vs ? legs.filter(l => l.spot && l.spot.m == vs && l.spot.starter).length : 0;
       const proj = wk == LW ? LIVE.scores?.[p.owner]?.[1] : null, angle = [];
       if (mine) angle.push((mine == legs.length ? (mine == 1 ? 'The leg is' : `All ${mine} legs are`) : `${mine} of ${legs.length} legs ${mine == 1 ? 'is' : 'are'}`) + ` ${p.owner}’s starter${mine == 1 ? '' : 's'}.` + (proj ? ` If this cashes, that ${f2(proj)} projection is probably low.` : ''));
       if (theirs) angle.push(`${theirs == 1 ? 'One leg is' : theirs + ' legs are'} ${vs}’s starter${theirs == 1 ? '' : 's'}. ${p.owner} is betting on the opponent.`);
       (p.tailers || []).filter(m => m == vs && mine).forEach(m => angle.push(`${m} is rooting against these players in the matchup and for them on the ticket.`));
       return {
-        shot, title: p.owner + '’s parlay', init: INIT[p.owner], color: col(p.owner),
+        shot, title: p.owner + '’s parlay', init: INIT[p.owner] ?? p.init ?? p.owner.replace(/^The /, '').slice(0, 2).toUpperCase(), color: ownerCol(p.owner),
         sub: [vs ? 'vs ' + vs : null, 'Week ' + wk, legs.length + (legs.length == 1 ? ' leg' : ' legs')].filter(Boolean).join(' · '),
         legs, status, settled: status != 'OPEN',
         stampColor: status == 'CASHED' ? 'var(--pos)' : 'var(--neg)',
@@ -286,7 +299,7 @@ class Component extends DCLogic {
       else { ledger.open++; o.open++; }
     });
     const ledgerLine = `${ledger.w}–${ledger.l}` + (ledger.open ? ` · ${ledger.open} open` : '') + ` · ${ledger.net < 0 ? '−' : '+'}$${Math.abs(ledger.net).toFixed(2)}` + (ledger.unpriced ? ` (${ledger.unpriced} cashed without a line)` : '');
-    const ledgerOwners = Object.values(byOwner).map(o => ({ m: o.m, color: col(o.m), rec: `${o.w}–${o.l}` + (o.open ? ` · ${o.open} open` : '') }));
+    const ledgerOwners = Object.values(byOwner).map(o => ({ m: o.m, color: ownerCol(o.m), rec: `${o.w}–${o.l}` + (o.open ? ` · ${o.open} open` : '') }));
     const weekStatus = wk == LW ? `Week ${wk} · ${LIVE.status} · big number = projected` : NEXT && wk == NEXT.week ? `Week ${wk} · ${NEXT.dates}` : `Week ${wk} · Final`;
 
     // Season
