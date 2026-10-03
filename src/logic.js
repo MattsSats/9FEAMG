@@ -269,9 +269,15 @@ class Component extends DCLogic {
       if (mine) angle.push((mine == legs.length ? (mine == 1 ? 'The leg is' : `All ${mine} legs are`) : `${mine} of ${legs.length} legs ${mine == 1 ? 'is' : 'are'}`) + ` ${p.owner}’s starter${mine == 1 ? '' : 's'}.` + (proj ? ` If this cashes, that ${f2(proj)} projection is probably low.` : ''));
       if (theirs) angle.push(`${theirs == 1 ? 'One leg is' : theirs + ' legs are'} ${vs}’s starter${theirs == 1 ? '' : 's'}. ${p.owner} is betting on the opponent.`);
       (p.tailers || []).filter(m => m == vs && mine).forEach(m => angle.push(`${m} is rooting against these players in the matchup and for them on the ticket.`));
+      // Joint tickets (owners: ['Andy', 'ASG']): how many legs come from each lineup.
+      if (p.owners?.length > 1) {
+        const per = p.owners.map(m => ({ m, n: legs.filter(l => l.spot && l.spot.m == m && l.spot.starter).length })).filter(x => x.n);
+        if (per.length) angle.push(per.map(x => `${x.n} ${x.n == 1 ? 'leg' : 'legs'} from ${x.m}’s starters`).join(', ') + '.');
+        if (p.owners.length == 2 && opp(p.owners[0], wk) == p.owners[1]) angle.push(`${p.owners[0]} and ${p.owners[1]} play each other this week, so every leg that hits helps one of them in the matchup and both of them on the ticket.`);
+      }
       return {
-        shot, title: p.owner + '’s parlay', init: INIT[p.owner] ?? p.init ?? p.owner.replace(/^The /, '').slice(0, 2).toUpperCase(), color: ownerCol(p.owner),
-        sub: [vs ? 'vs ' + vs : null, 'Week ' + wk, legs.length + (legs.length == 1 ? ' leg' : ' legs')].filter(Boolean).join(' · '),
+        shot, title: p.title ?? p.owner + '’s parlay', init: INIT[p.owner] ?? p.init ?? p.owner.replace(/^The /, '').slice(0, 2).toUpperCase(), color: ownerCol(p.owner),
+        sub: [p.owners ? p.owners.join(' + ') : vs ? 'vs ' + vs : null, 'Week ' + wk, legs.length + (legs.length == 1 ? ' leg' : ' legs')].filter(Boolean).join(' · '),
         legs, status, settled: status != 'OPEN',
         stampColor: status == 'CASHED' ? 'var(--pos)' : 'var(--neg)',
         statusBg: status == 'CASHED' ? 'var(--pos)' : status == 'BUSTED' ? 'var(--neg)' : 'var(--surface2)',

@@ -176,6 +176,17 @@ window.SEASON = {
         booth: 'Andy asked for a “lock parlay.” There is no such thing. ASG is tailing it and is also Andy’s opponent this week, so ASG cashes either way.'
       },
       {
+        owner: 'Andy & ASG', owners: ['Andy', 'ASG'], init: 'A&A', title: 'The Truce',
+        // Odds: DraftKings via ESPN props pages, Fri Oct 2.
+        legs: [
+          { text: 'Josh Allen anytime TD', player: 'Josh Allen', type: 'td', game: 'Sun 12:00 PM vs NE', odds: '-130', status: 'open' },
+          { text: 'Jaxon Smith-Njigba over 91.5 receiving yards', player: 'Jaxon Smith-Njigba', type: 'over', stat: 'Rec Yds', line: 91.5, game: 'Sun 3:25 PM vs LAC', odds: '-112', status: 'open' },
+          { text: 'D’Andre Swift anytime TD', player: "D'Andre Swift", type: 'td', game: 'Sun 12:00 PM vs NYJ', odds: '-115', status: 'open' },
+          { text: 'Javonte Williams over 58.5 rushing yards', player: 'Javonte Williams', type: 'over', stat: 'Rush Yds', line: 58.5, game: 'Sun 12:00 PM @ HOU', odds: '-112', status: 'open' }
+        ],
+        booth: 'Opponents on Sunday, partners on the ticket. If all four hit, whoever loses the matchup still gets paid.'
+      },
+      {
         owner: 'The Booth', init: 'TB',
         // Odds: ESPN odds page (DraftKings), Fri Oct 2. Noon CT kickoffs.
         legs: [
