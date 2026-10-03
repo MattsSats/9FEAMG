@@ -254,7 +254,7 @@ class Component extends DCLogic {
   }
   match(pair, wk) {
     const [a, b] = pair, A = this.side(a, b, wk), B = this.side(b, a, wk), gap = Math.abs(A.raw - B.raw), live = wk == LW;
-    return { a: A, b: B, gap: live ? 'Proj gap ' + f2(gap) + ' · live' : 'Margin ' + f2(gap), mid: live ? 'proj gap ' + f2(gap) : 'final', share: (A.raw / (A.raw + B.raw || 1) * 100).toFixed(1) + '%', open: () => this.setState({ sheet: { a, b, wk } }) };
+    return { a: A, b: B, gap: live ? 'Proj gap ' + f2(gap) + ' · live' : 'Margin ' + f2(gap), mid: live ? 'proj' : 'final', delta: 'Δ ' + f2(gap), share: (A.raw / (A.raw + B.raw || 1) * 100).toFixed(1) + '%', open: () => this.setState({ sheet: { a, b, wk } }) };
   }
   renderVals() {
     const S = this.state, themeLabel = this.theme() == 'dark' ? 'Light' : 'Dark', toggleTheme = () => this.setState({ theme: this.theme() == 'dark' ? 'light' : 'dark' });
@@ -335,7 +335,7 @@ class Component extends DCLogic {
     });
     const ledgerLine = `${ledger.w}–${ledger.l}` + (ledger.open ? ` · ${ledger.open} open` : '') + ` · ${ledger.net < 0 ? '−' : '+'}$${Math.abs(ledger.net).toFixed(2)}` + (ledger.unpriced ? ` (${ledger.unpriced} cashed without a line)` : '');
     const ledgerOwners = Object.values(byOwner).map(o => ({ m: o.m, color: ownerCol(o.m), rec: `${o.w}–${o.l}` + (o.open ? ` · ${o.open} open` : '') }));
-    const weekStatus = wk == LW ? `Week ${wk} · ${LIVE.status} · big number = projected` : NEXT && wk == NEXT.week ? `Week ${wk} · ${NEXT.dates}` : `Week ${wk} · Final`;
+    const weekStatus = wk == LW ? `Week ${wk} · ${LIVE.status}` : NEXT && wk == NEXT.week ? `Week ${wk} · ${NEXT.dates}` : `Week ${wk} · Final`;
 
     // Season
     const P = D.playoffTeams;
