@@ -13,7 +13,7 @@ export default {
     const card = new URL('/#' + slug, url.origin);
 
     if (!BOTS.test(request.headers.get('user-agent') || '')) {
-      return Response.redirect(card.href, 302);
+      return new Response(null, { status: 302, headers: { location: card.href, 'cache-control': 'private, no-store', vary: 'User-Agent' } });
     }
 
     let found = null;
@@ -42,7 +42,8 @@ export default {
 </head><body><a href="${e(card.href)}">${e(title)}</a></body></html>`;
 
     return new Response(html, {
-      headers: { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'public, max-age=60' }
+      // Never cache: bots and people get different responses from the same URL.
+      headers: { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'private, no-store', vary: 'User-Agent' }
     });
   }
 };
