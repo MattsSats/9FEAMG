@@ -4,7 +4,8 @@ const D = window.SEASON;
 const MGR = D ? D.managers.map(x => x.m) : [];
 const INIT = D ? Object.fromEntries(D.managers.map(x => [x.m, x.init])) : {};
 const HUE = D ? Object.fromEntries(D.managers.map(x => [x.m, x.hue])) : {};
-const col = m => `oklch(0.76 0.12 ${HUE[m] ?? 0})`;
+// Manager colors: lightness comes from --mgrL (0.76 dark, 0.61 light) so dots and bars hold 3:1 on the light background.
+const col = m => `oklch(var(--mgrL, 0.76) 0.12 ${HUE[m] ?? 0})`;
 // Parlays can belong to someone outside the league (e.g. 'The Booth'), who gets the accent color.
 const ownerCol = m => m in HUE ? col(m) : 'var(--accent)';
 const SC = D ? D.scores : {};
@@ -70,8 +71,8 @@ const toAmerican = d => d >= 2 ? '+' + Math.round((d - 1) * 100) : '−' + Math.
 const impliedProb = o => { const n = parseFloat(o); return isNaN(n) || n == 0 ? null : n > 0 ? 100 / (n + 100) : -n / (-n + 100); };
 const LEG_TAG = {
   open: { tag: 'OPEN', bg: 'var(--surface2)', fg: 'var(--muted)' },
-  hit: { tag: 'HIT', bg: 'var(--pos)', fg: '#141311' },
-  miss: { tag: 'MISS', bg: 'var(--neg)', fg: '#141311' }
+  hit: { tag: 'HIT', bg: 'var(--pos)', fg: 'var(--onStatus)' },
+  miss: { tag: 'MISS', bg: 'var(--neg)', fg: 'var(--onStatus)' }
 };
 // A parlay's state from its legs: any miss = BUSTED, all hit = CASHED, else OPEN.
 function parlayState(p) {
@@ -95,6 +96,12 @@ function setMaxPF(box) {
 class Component extends DCLogic {
   state = { tab: this.props.startTab ?? 'Gameday', week: LW ?? NF, theme: null, sheet: null, team: MGR[0], wire: '7 days', draftMode: 'By round', draftRound: 1, draftTeam: MGR[0], rosters: null, draft: null, tx: null, loaded: false };
   componentDidMount() {
+    // Keyboard: Enter or Space activates clickable rows (role="button"); Escape closes the lineup sheet.
+    document.addEventListener('keydown', e => {
+      if (e.key == 'Escape' && this.state.sheet) { this.setState({ sheet: null }); return; }
+      const el = e.target;
+      if ((e.key == 'Enter' || e.key == ' ') && el?.getAttribute?.('role') == 'button' && el.tagName != 'BUTTON') { e.preventDefault(); el.click(); }
+    });
     this.applyTheme();
     Promise.all(['uploads/9feamg-rosters.json', 'uploads/9feamg-draft-rosters.json', 'uploads/9feamg-transactions.json', 'uploads/9feamg-boxscores.json']
       .map(u => fetch(u, { cache: 'no-cache' }).then(r => r.ok ? r.json() : null).catch(() => null)))
@@ -240,7 +247,7 @@ class Component extends DCLogic {
     return this.players(m).filter(p => p.slot == 'starter').sort((a, b) => (ORD[a.pos] ?? 9) - (ORD[b.pos] ?? 9)).map(p => {
       const lp = live ? LIVEPTS[p.name] : null;
       const v = lp ?? (live ? (p.proj ?? p.projected ?? p.projections?.[wk] ?? PPROJ[p.name]) : (p.points?.[wk] ?? p.weeks?.[wk] ?? p.pts?.[wk]));
-      return { slot: p.pos == 'WRT' ? 'FLEX' : p.pos, name: p.name, meta: (p.nfl ? p.nfl.toUpperCase() : '—') + (lp != null ? ' · Final' : ''), pts: v != null ? (lp != null ? f2(+v) : f1(+v)) : '—', ptsColor: lp != null ? 'var(--accentInk)' : v != null ? 'var(--ink)' : 'var(--muted)' };
+      return { slot: p.pos == 'WRT' ? 'FLEX' : p.pos, name: p.name, meta: (p.nfl ? p.nfl.toUpperCase() : '—') + (lp != null ? ' · Final' : live && v != null ? ' · proj' : ''), pts: v != null ? (lp != null ? f2(+v) : f1(+v)) : '—', ptsColor: lp != null ? 'var(--accentInk)' : v != null && !live ? 'var(--ink)' : 'var(--muted)' };
     });
   }
   side(m, o, wk) {
@@ -309,7 +316,7 @@ class Component extends DCLogic {
         legs, status, settled: status != 'OPEN',
         stampColor: status == 'CASHED' ? 'var(--pos)' : 'var(--neg)',
         statusBg: status == 'CASHED' ? 'var(--pos)' : status == 'BUSTED' ? 'var(--neg)' : 'var(--surface2)',
-        statusFg: status == 'OPEN' ? 'var(--muted)' : '#141311',
+        statusFg: status == 'OPEN' ? 'var(--muted)' : 'var(--onStatus)',
         oddsLabel: priced ? 'Parlay ' + toAmerican(dec) : 'Lines TBD',
         // e.g. "2.20 × 1.87 × 1.67 = ×6.86 · hits about 1 in 7 (15%)"
         oddsMath: priced ? (() => {
@@ -346,7 +353,7 @@ class Component extends DCLogic {
     const restLabel = restFrom < total ? restFrom + '–' + total : restFrom == total ? 'W' + total : '';
     const heatCols = `64px repeat(${heatHead.length},minmax(36px,1fr))` + (restLabel ? ' 36px' : '');
     const heatMinW = (64 + heatHead.length * 40 + (restLabel ? 40 : 0)) + 'px';
-    const heat = MGR.map(m => ({ m, cells: [...Array(NF).keys()].map(i => { const w = i + 1, v = SC[m][i], t = (hi - v) / (hi - lo || 1), p = Math.round(6 + t * 80); return { v: f1(v), r: won(m, w) ? 'W' : 'L', bg: `color-mix(in oklch, var(--accent) ${p}%, var(--surface2))`, fg: p > 55 ? '#141311' : 'var(--ink)' }; }) }));
+    const heat = MGR.map(m => ({ m, cells: [...Array(NF).keys()].map(i => { const w = i + 1, v = SC[m][i], t = (hi - v) / (hi - lo || 1), k = Math.min(5, Math.floor(t * 5) + 1); return { v: f1(v), r: won(m, w) ? 'W' : 'L', bg: `var(--heat${k})`, fg: 'var(--ink)' }; }) }));
     let topW = { v: -1 };
     MGR.forEach(m => SC[m].forEach((v, i) => { if (v > topW.v) topW = { v, m, w: i + 1 }; }));
     const lucky = [...ST].sort((a, b) => b.luck - a.luck)[0], unlucky = [...ST].sort((a, b) => a.luck - b.luck)[0];
@@ -388,7 +395,7 @@ class Component extends DCLogic {
       lineupTitle: `Week ${lineupWeek} lineup`, proj: LW ? 'Proj ' + f2(PROJ[tm]) : '',
       stats: [{ label: 'PF', value: f1(s.pf), sub: ord(pfRank) + ' in league' }, { label: 'PA', value: f1(s.pa), sub: ord(paRank) + ' fewest' }, { label: 'Luck', value: sgn(s.luck), sub: 'W − xW', color: s.luck > 0 ? 'var(--pos)' : s.luck < 0 ? 'var(--neg)' : 'var(--ink)' }, { label: 'xW', value: s.xw.toFixed(2), sub: 'vs ' + s.w + ' real wins' }, { label: 'Max PF', value: maxOk ? f1(s.max) : '—', sub: maxOk ? ord(maxRank) + ' best possible' : 'Best possible lineup' }, { label: 'Bench', value: maxOk ? f1(bn) : '—', sub: 'Points left sitting' }, { label: 'FAAB left', value: txOk ? '$' + (budget - spent[tm]) : '—', sub: 'of $' + budget }, { label: 'Adds', value: txOk ? String(adds[tm]) : '—', sub: 'This season' }].map(x => ({ color: 'var(--ink)', ...x })),
       log, starters: this.starters(tm, lineupWeek),
-      bench: pl.filter(p => p.slot != 'starter').map(p => { const lp = LIVEPTS[p.name]; const v = lp ?? p.proj ?? p.projected ?? p.projections?.[lineupWeek] ?? PPROJ[p.name]; return { slot: p.slot == 'IR' ? 'IR' : p.pos, name: p.name, meta: (p.nfl || '').toUpperCase(), pts: p.slot == 'IR' ? '' : (v != null ? (lp != null ? f2(+v) : f1(+v)) : '—') }; }),
+      bench: pl.filter(p => p.slot != 'starter').map(p => { const lp = LIVEPTS[p.name]; const v = lp ?? p.proj ?? p.projected ?? p.projections?.[lineupWeek] ?? PPROJ[p.name]; return { slot: p.slot == 'IR' ? 'IR' : p.pos, name: p.name, meta: (p.nfl || '').toUpperCase() + (lp == null && v != null && p.slot != 'IR' ? ' · proj' : ''), pts: p.slot == 'IR' ? '' : (v != null ? (lp != null ? f2(+v) : f1(+v)) : '—') }; }),
       benchCount: pl.filter(p => p.slot != 'starter').length, lineupMsg, hasLineup: !lineupMsg
     };
     const teamPicker = MGR.map(m => ({ m, init: INIT[m], color: col(m), ring: m == tm ? '2px solid var(--accent)' : '2px solid transparent', op: m == tm ? 1 : .75, fg: m == tm ? 'var(--ink)' : 'var(--muted)', pick: () => this.setState({ team: m }) }));
@@ -405,7 +412,7 @@ class Component extends DCLogic {
     const draftModes = ['By round', 'By team'].map(l => ({ label: l, bg: S.draftMode == l ? 'var(--surface2)' : 'transparent', fg: S.draftMode == l ? 'var(--ink)' : 'var(--muted)', pick: () => this.setState({ draftMode: l }) }));
     const rounds = dr?.rounds ?? 15;
     const draftChips = byRound ? Array.from({ length: rounds }, (_, i) => i + 1).map(r => { const on = r == S.draftRound; return { label: String(r), bg: on ? 'var(--accent)' : 'var(--surface)', fg: on ? 'var(--onAccent)' : 'var(--ink)', border: on ? 'var(--accent)' : 'var(--line)', pick: () => this.setState({ draftRound: r }) }; })
-      : MGR.map(m => { const on = m == S.draftTeam; return { label: INIT[m], bg: on ? col(m) : 'var(--surface)', fg: on ? '#141311' : 'var(--ink)', border: on ? col(m) : 'var(--line)', pick: () => this.setState({ draftTeam: m }) }; });
+      : MGR.map(m => { const on = m == S.draftTeam; return { label: INIT[m], bg: on ? col(m) : 'var(--surface)', fg: on ? 'var(--onAccent)' : 'var(--ink)', border: on ? col(m) : 'var(--line)', pick: () => this.setState({ draftTeam: m }) }; });
     const rp = byRound ? picks.filter(p => p.round == S.draftRound) : picks.filter(p => p.m == S.draftTeam);
     const draftPicks = rp.map(p => ({ pick: pn(p), player: p.player, who: byRound ? p.m : 'Round ' + p.round + ' · ' + p.overall + ' overall', color: col(p.m), meta: (p.nfl || '').toUpperCase() + ' ' + p.pos }));
     const firstM = picks.filter(p => p.round == S.draftRound)[0]?.m;
@@ -478,7 +485,7 @@ class Component extends DCLogic {
       seasonSub, seasonTiles, standings, playoffLine: `Playoff line · top ${P} of ${MGR.length}`,
       heat, heatHead, heatCols, heatMinW, restLabel, hasRest: !!restLabel, liveCol: !!LW,
       team, teamPicker,
-      draftInfo: D.draftInfo, draftOk: !draftMsg, draftMsg, draftFirsts, draftModes, draftChips, draftPicks, draftTitle, draftSub,
+      draftInfo: D.draftInfo, draftToolUrl: D.draftToolUrl || '', hasDraftTool: !!D.draftToolUrl, draftOk: !draftMsg, draftMsg, draftFirsts, draftModes, draftChips, draftPicks, draftTitle, draftSub,
       wireSub: 'Adds, drops, trades and FAAB · through ' + shortDate(now), wireModes, wireSeason: seasonMode && txOk, wireDays: days, noMoves, activity, wireRoast, wireBanner: boothOn || !txOk, faab, faabBudget: '$' + budget + ' budget', txOk,
       sheetOpen: !!S.sheet, sheet, closeSheet: () => this.setState({ sheet: null }),
       // Share buttons
