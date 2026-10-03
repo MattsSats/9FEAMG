@@ -19,7 +19,7 @@ window.SEASON = {
 
   // Display order and avatar color (hue 0-360) for each manager.
   managers: [
-    { m: 'Tony', init: 'AS', hue: 35 },
+    { m: 'Tony', init: 'ASG', hue: 35 },
     { m: 'Tristan', init: 'TR', hue: 250 },
     { m: 'Andy', init: 'AN', hue: 150 },
     { m: 'Matt', init: 'MA', hue: 305 },
