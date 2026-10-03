@@ -4,9 +4,10 @@
 import { ImageResponse } from '@vercel/og';
 import { loadSeason, findParlay, describe } from './_parlays.js';
 
-const C = { bg: '#141311', surface: '#1D1C19', line: '#302E28', ink: '#F3F0E8', muted: '#A6A195', accent: '#E4572E', accentInk: '#FF7A52', pos: '#72C690', neg: '#FF7A52' };
-const TAG = { open: [C.surface, C.muted, 'OPEN'], hit: [C.pos, C.bg, 'HIT'], miss: [C.neg, C.bg, 'MISS'] };
-const STATUS = { OPEN: [C.surface, C.muted], CASHED: [C.pos, C.bg], BUSTED: [C.neg, C.bg] };
+// Dark-theme tokens from the 9FEAMG design system (same values as :root in src/app.html).
+const C = { bg: '#0D1424', surface: '#141C2F', line: '#28334F', ink: '#EEF2F8', muted: '#9AA6BD', accent: '#E4572E', accentInk: '#FF7A52', pos: '#72C690', neg: '#F2667A', onStatus: '#0D1424' };
+const TAG = { open: [C.surface, C.muted, 'OPEN'], hit: [C.pos, C.onStatus, 'HIT'], miss: [C.neg, C.onStatus, 'MISS'] };
+const STATUS = { OPEN: [C.surface, C.muted], CASHED: [C.pos, C.onStatus], BUSTED: [C.neg, C.onStatus] };
 
 // Google Fonts serves TrueType to clients it doesn't recognize, which is what Satori needs.
 const fontCache = new Map();
