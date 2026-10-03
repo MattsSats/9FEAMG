@@ -1,6 +1,28 @@
 // App logic. build.cjs splices this into src/app.html's x-dc script before bundling.
 // All season numbers come from data/season.js (window.SEASON).
-const D = window.SEASON;
+// Yahoo sync (window.YAHOO from /api/league) fills in the numbers: final scores, schedule,
+// and the live week's scores and player points. Booth lines, captions and parlays stay in season.js.
+function mergeYahoo(S, Y) {
+  if (!S || !Y?.weeks) return S;
+  const ws = Object.keys(Y.weeks).map(Number).sort((a, b) => a - b);
+  const full = w => S.managers.every(x => Y.weeks[w].teams?.[x.m]);
+  S = { ...S, schedule: { ...S.schedule }, scores: Object.fromEntries(S.managers.map(x => [x.m, [...(S.scores[x.m] || [])]])) };
+  for (const w of ws) {
+    const Wk = Y.weeks[w];
+    if (!full(w)) continue;
+    if (!S.schedule[w] && Wk.matchups?.length == S.managers.length / 2) S.schedule[w] = Wk.matchups;
+    if (Wk.status == 'postevent' && w <= S.regularSeasonWeeks) for (const x of S.managers) { const a = S.scores[x.m]; if (a.length >= w - 1) a[w - 1] = Wk.teams[x.m].pts; }
+  }
+  const live = ws.find(w => Y.weeks[w].status == 'midevent' && full(w));
+  if (live) {
+    const Wk = Y.weeks[live], same = S.live?.week == live, pp = { ...(same ? S.live.playerPoints : {}) };
+    for (const t of Object.values(Wk.box || {})) for (const r of [...t.starters, ...t.bench]) if (r[4]) pp[r[1]] = r[4];
+    S.live = { status: 'Live', sheetNote: 'Live from Yahoo. Orange = points so far; the rest are projections.', ...(same ? S.live : {}), week: live, playerPoints: pp,
+      scores: Object.fromEntries(S.managers.map(x => [x.m, [Wk.teams[x.m].pts, Wk.teams[x.m].proj]])) };
+  } else if (S.live && Y.weeks[S.live.week]?.status == 'postevent' && full(S.live.week)) S.live = null;
+  return S;
+}
+const D = mergeYahoo(window.SEASON, window.YAHOO);
 const MGR = D ? D.managers.map(x => x.m) : [];
 const INIT = D ? Object.fromEntries(D.managers.map(x => [x.m, x.init])) : {};
 const HUE = D ? Object.fromEntries(D.managers.map(x => [x.m, x.hue])) : {};
@@ -105,7 +127,10 @@ class Component extends DCLogic {
     this.applyTheme();
     Promise.all(['uploads/9feamg-rosters.json', 'uploads/9feamg-draft-rosters.json', 'uploads/9feamg-transactions.json', 'uploads/9feamg-boxscores.json']
       .map(u => fetch(u, { cache: 'no-cache' }).then(r => r.ok ? r.json() : null).catch(() => null)))
-      .then(([rosters, draft, tx, box]) => { setMaxPF(box); this.setState({ rosters, draft, tx, box, loaded: true }); });
+      .then(([rosters, draft, tx, box]) => {
+        // Yahoo fills box-score weeks the uploads file doesn't have.
+        for (const [w, Wk] of Object.entries(window.YAHOO?.weeks || {})) if (Wk.status == 'postevent' && Wk.box && !box?.weeks?.[w]) { box ||= { weeks: {} }; box.weeks ||= {}; box.weeks[w] = Wk.box; }
+        setMaxPF(box); this.setState({ rosters, draft, tx, box, loaded: true }); });
     // Keep the newest week chips in view once the season gets long.
     setTimeout(() => { const el = document.querySelector('[data-weekchips]'); if (el) el.scrollLeft = el.scrollWidth; }, 0);
     // Preload the screenshot library so the first share is quick.
@@ -235,10 +260,10 @@ class Component extends DCLogic {
   boxPlayers(list) {
     return list.map(([slot, name, nfl, pos, pts, proj]) => ({
       slot: slot == 'W/R/T' ? 'FLEX' : slot, name,
-      meta: [nfl.toUpperCase(), slot == 'W/R/T' || slot == 'BN' || slot == 'IR' ? pos : null, slot == 'BN' || slot == 'IR' ? null : 'proj ' + f1(proj)].filter(Boolean).join(' · '),
+      meta: [nfl.toUpperCase(), slot == 'W/R/T' || slot == 'BN' || slot == 'IR' ? pos : null, slot == 'BN' || slot == 'IR' || proj == null ? null : 'proj ' + f1(proj)].filter(Boolean).join(' · '),
       pts: slot == 'IR' ? '' : f2(pts),
       // Green when a player beat his projection by 8+, red when he missed it by 8+.
-      ptsColor: pts - proj >= 8 ? 'var(--pos)' : proj - pts >= 8 ? 'var(--neg)' : 'var(--ink)'
+      ptsColor: proj == null ? 'var(--ink)' : pts - proj >= 8 ? 'var(--pos)' : proj - pts >= 8 ? 'var(--neg)' : 'var(--ink)'
     }));
   }
   starters(m, wk) {
