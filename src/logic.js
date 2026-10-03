@@ -401,7 +401,7 @@ class Component extends DCLogic {
     // Transactions
     const tx = S.tx || [], txOk = !!S.tx;
     const adds = {}, spent = {}; MGR.forEach(m => { adds[m] = 0; spent[m] = 0; });
-    tx.forEach(t => { if (t.action == 'add' && t.manager in adds) { adds[t.manager]++; if (t.faab) spent[t.manager] += parseInt(t.faab.replace('$', '')) || 0; } });
+    tx.forEach(t => { if (t.action == 'add' && t.manager in adds) { adds[t.manager]++; if (t.faab) spent[t.manager] += parseInt(String(t.faab).replace('$', '')) || 0; } });
     const budget = D.faabBudget;
 
     // Teams
@@ -460,7 +460,7 @@ class Component extends DCLogic {
       const key = g.d.toDateString(); let day = days.find(x => x.key == key);
       if (!day) { day = { key, label: DOW[g.d.getDay()] + ' · ' + g.when.split(',')[0].toUpperCase(), moves: [] }; days.push(day); }
       const time = g.when.split(', ')[1].toUpperCase();
-      day.moves.push({ m: g.m, init: INIT[g.m], color: col(g.m), time, lines: g.items.sort((a, b) => (a.action == 'drop') - (b.action == 'drop')).map(t => ({ sign: t.action == 'add' ? '+' : t.action == 'drop' ? '−' : '⇄', color: t.action == 'add' ? 'var(--pos)' : t.action == 'drop' ? 'var(--neg)' : 'var(--accentInk)', player: t.player, weight: t.action == 'drop' ? 400 : 600, fg: t.action == 'drop' ? 'var(--muted)' : 'var(--ink)', meta: [t.pos, (t.nfl || '').toUpperCase(), t.action == 'trade' ? 'Trade with ' + ym(t.via.replace('trade from ', '')) : t.action == 'add' ? (t.via == 'Waivers' ? 'Waivers ' + (t.faab ?? '') : 'Free agent') : null].filter(Boolean).join(' · ') })) });
+      day.moves.push({ m: g.m, init: INIT[g.m], color: col(g.m), time, lines: g.items.sort((a, b) => (a.action == 'drop') - (b.action == 'drop')).map(t => ({ sign: t.action == 'add' ? '+' : t.action == 'drop' ? '−' : '⇄', color: t.action == 'add' ? 'var(--pos)' : t.action == 'drop' ? 'var(--neg)' : 'var(--accentInk)', player: t.player, weight: t.action == 'drop' ? 400 : 600, fg: t.action == 'drop' ? 'var(--muted)' : 'var(--ink)', meta: [t.pos, (t.nfl || '').toUpperCase(), t.action == 'trade' ? 'Trade with ' + ym(t.via.replace('trade from ', '')) : t.action == 'add' ? (t.via == 'Waivers' ? 'Waivers ' + (typeof t.faab == 'number' ? '$' + t.faab : t.faab ?? '') : 'Free agent') : null].filter(Boolean).join(' · ') })) });
     });
     const wireModes = ['7 days', 'Season'].map(l => ({ label: l, bg: S.wire == l ? 'var(--surface2)' : 'transparent', fg: S.wire == l ? 'var(--ink)' : 'var(--muted)', pick: () => this.setState({ wire: l }) }));
     const byAdds = [...MGR].sort((a, b) => adds[b] - adds[a]); const maxA = Math.max(1, adds[byAdds[0]]);
