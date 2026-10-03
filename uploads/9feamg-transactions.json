@@ -326,7 +326,7 @@
   {
     "when": "Sep 30, 3:31 am",
     "yahooTeam": "11 Shots In",
-    "manager": "ASG",
+    "manager": "Tony",
     "action": "add",
     "player": "Ollie Gordon II",
     "nfl": "Mia",
@@ -338,7 +338,7 @@
   {
     "when": "Sep 30, 3:31 am",
     "yahooTeam": "11 Shots In",
-    "manager": "ASG",
+    "manager": "Tony",
     "action": "drop",
     "player": "Makai Lemon",
     "nfl": "Phi",
@@ -1238,7 +1238,7 @@
   {
     "when": "Sep 16, 3:41 am",
     "yahooTeam": "11 Shots In",
-    "manager": "ASG",
+    "manager": "Tony",
     "action": "add",
     "player": "Matthew Golden",
     "nfl": "GB",
@@ -1250,7 +1250,7 @@
   {
     "when": "Sep 16, 3:41 am",
     "yahooTeam": "11 Shots In",
-    "manager": "ASG",
+    "manager": "Tony",
     "action": "drop",
     "player": "49ers",
     "nfl": "SF",

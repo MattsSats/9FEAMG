@@ -19,7 +19,7 @@ window.SEASON = {
 
   // Display order and avatar color (hue 0-360) for each manager.
   managers: [
-    { m: 'ASG', init: 'AS', hue: 35 },
+    { m: 'Tony', init: 'AS', hue: 35 },
     { m: 'Tristan', init: 'TR', hue: 250 },
     { m: 'Andy', init: 'AN', hue: 150 },
     { m: 'Matt', init: 'MA', hue: 305 },
@@ -33,15 +33,15 @@ window.SEASON = {
 
   // Matchups by week.
   schedule: {
-    1: [['Pablo', 'Matt'], ['ASG', 'Colin'], ['Tristan', 'Kurt'], ['Andy', 'Jerger'], ['Mr. G', 'DLin']],
-    2: [['DLin', 'Kurt'], ['ASG', 'Mr. G'], ['Tristan', 'Jerger'], ['Matt', 'Andy'], ['Colin', 'Pablo']],
-    3: [['Andy', 'Colin'], ['ASG', 'Pablo'], ['Tristan', 'Matt'], ['DLin', 'Jerger'], ['Kurt', 'Mr. G']],
-    4: [['ASG', 'Andy'], ['Tristan', 'Colin'], ['Matt', 'DLin'], ['Jerger', 'Kurt'], ['Mr. G', 'Pablo']]
+    1: [['Pablo', 'Matt'], ['Tony', 'Colin'], ['Tristan', 'Kurt'], ['Andy', 'Jerger'], ['Mr. G', 'DLin']],
+    2: [['DLin', 'Kurt'], ['Tony', 'Mr. G'], ['Tristan', 'Jerger'], ['Matt', 'Andy'], ['Colin', 'Pablo']],
+    3: [['Andy', 'Colin'], ['Tony', 'Pablo'], ['Tristan', 'Matt'], ['DLin', 'Jerger'], ['Kurt', 'Mr. G']],
+    4: [['Tony', 'Andy'], ['Tristan', 'Colin'], ['Matt', 'DLin'], ['Jerger', 'Kurt'], ['Mr. G', 'Pablo']]
   },
 
   // Final scores (Yahoo, two decimals), one per completed week.
   scores: {
-    ASG: [123.06, 154.52, 95.42],
+    Tony: [123.06, 154.52, 95.42],
     Tristan: [144.36, 104.10, 121.64],
     Andy: [139.34, 75.96, 127.98],
     Matt: [107.86, 105.64, 114.48],
@@ -63,7 +63,7 @@ window.SEASON = {
       Matt: [6.00, 114.79], DLin: [10.20, 114.46],
       Tristan: [8.90, 111.99], Colin: [0, 112.58],
       Jerger: [0, 113.91], Kurt: [14.10, 111.64],
-      ASG: [0, 108.39], Andy: [0, 116.82],
+      Tony: [0, 108.39], Andy: [0, 116.82],
       'Mr. G': [0, 119.12], Pablo: [0, 88.77]
     },
     // Points for players whose games are final (starters and bench).
@@ -109,13 +109,13 @@ window.SEASON = {
   // "The Booth" lines by week: [manager, text].
   booth: {
     1: [
-      ['Colin', 'Colin opened his season with 65.7. ASG thanks him for his service.'],
+      ['Colin', 'Colin opened his season with 65.7. Tony thanks him for his service.'],
       ['Mr. G', 'Mr. G put up 135.2 in Week 1. Frame it. It has been downhill since.'],
       ['Jerger', 'Jerger scored 124.1 and lost. Some weeks the schedule picks you.'],
       ['Matt', 'Matt lost by 4.80 with Christian Watson’s 29.70 on his bench. DeVonta Smith started and scored 6.80. Unlucky is one word for it.']
     ],
     2: [
-      ['ASG', 'ASG dropped 154.5 on Mr. G. Mr. G has asked that the tape not be shared.'],
+      ['Tony', 'Tony dropped 154.5 on Mr. G. Mr. G has asked that the tape not be shared.'],
       ['Andy', 'Andy scored 76.0. The gibbing has paused.'],
       ['Pablo', 'Pablo posted 70.9, lowest of the week. He was #1. Past tense.'],
       ['Jerger', 'Jerger lost by 11.50. Travis Kelce scored 20.60 on his bench while Malik Nabers started and scored 0.60.'],
@@ -132,10 +132,10 @@ window.SEASON = {
     4: [
       ['Matt', 'Quinshon Judkins scored 18.60 on Thursday from Matt’s bench. Matt would like that one back.'],
       ['Colin', 'Colin banked nothing on Thursday and is still projected to beat Tristan by 0.59. Tristan has 8.90 from KC Concepcion Jr. and trails by a rounding error.'],
-      ['ASG', 'ASG is 3–0 and still projected to lose to Andy by 8.43. Respect remains pending.'],
+      ['Tony', 'Tony is 3–0 and still projected to lose to Andy by 8.43. Respect remains pending.'],
       ['Kurt', 'Kurt and Jerger are both 1–2, and the loser falls to 1–3. Jaylen Warren’s 14.10 on Thursday cut Jerger’s projected edge to 2.27. Kurt would like a word with the projection.'],
       ['Mr. G', 'Pablo is projected for 88.77, lowest in the league. Mr. G is projected for 119.12, highest. The group-chat victory lap is already drafted.'],
-      ['Colin', 'Colin made 6 adds this week alone, more than ASG has made all season, times three. His only points so far: Denzel Boston, 10.90, on the bench.']
+      ['Colin', 'Colin made 6 adds this week alone, more than Tony has made all season, times three. His only points so far: Denzel Boston, 10.90, on the bench.']
     ]
   },
 
@@ -172,11 +172,11 @@ window.SEASON = {
           { text: 'Drake London over 79.5 receiving yards', player: 'Drake London', type: 'over', stat: 'Rec Yds', line: 79.5, game: 'Mon 7:15 PM @ NO', odds: '-110', status: 'open' },
           { text: 'Ravens moneyline', player: 'Ravens', type: 'ml', game: 'Sun 12:00 PM vs TEN', odds: '-700', status: 'open' }
         ],
-        tailers: ['ASG'],
-        booth: 'Andy asked for a “lock parlay.” There is no such thing. ASG is tailing it and is also Andy’s opponent this week, so ASG cashes either way.'
+        tailers: ['Tony'],
+        booth: 'Andy asked for a “lock parlay.” There is no such thing. Tony is tailing it and is also Andy’s opponent this week, so Tony cashes either way.'
       },
       {
-        owner: 'Andy & ASG', owners: ['Andy', 'ASG'], init: 'A&A', title: 'The Truce',
+        owner: 'Andy & Tony', owners: ['Andy', 'Tony'], init: 'A&T', title: 'The Truce',
         // Odds: DraftKings via ESPN props pages, Fri Oct 2.
         legs: [
           { text: 'Josh Allen anytime TD', player: 'Josh Allen', type: 'td', game: 'Sun 12:00 PM vs NE', odds: '-130', status: 'open' },
@@ -194,7 +194,7 @@ window.SEASON = {
           { text: 'Cowboys moneyline at Texans', type: 'ml', team: 'Dal', teams: ['Dal', 'Hou'], game: 'Sun 12:00 PM · DAL @ HOU', odds: '+136', status: 'open' },
           { text: 'Packers moneyline at Buccaneers', type: 'ml', team: 'GB', teams: ['GB', 'TB'], game: 'Sun 12:00 PM · GB @ TB', odds: '-175', status: 'open' }
         ],
-        tailers: ['ASG'],
+        tailers: ['Tony'],
         booth: 'The Booth’s noon special: the highest total on the early slate, a Cowboys upset that runs straight through Pablo’s QB and defense, and Matt’s Jordan Love against an 0–3 Bucs team. For fun, not a lock.'
       }
     ]
@@ -202,7 +202,7 @@ window.SEASON = {
 
   // One-liner on each team page.
   roasts: {
-    ASG: '3–0 on 2 adds all season. Set it, forget it, collect wins.',
+    Tony: '3–0 on 2 adds all season. Set it, forget it, collect wins.',
     Tristan: 'Undefeated and quiet about it. Suspicious.',
     Andy: 'Lost Week 2 with 76.0. Still has the second-best Max PF in the league.',
     Matt: 'Unluckiest manager in the league. Would like you to know that.',

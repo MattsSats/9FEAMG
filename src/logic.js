@@ -269,7 +269,7 @@ class Component extends DCLogic {
       if (mine) angle.push((mine == legs.length ? (mine == 1 ? 'The leg is' : `All ${mine} legs are`) : `${mine} of ${legs.length} legs ${mine == 1 ? 'is' : 'are'}`) + ` ${p.owner}’s starter${mine == 1 ? '' : 's'}.` + (proj ? ` If this cashes, that ${f2(proj)} projection is probably low.` : ''));
       if (theirs) angle.push(`${theirs == 1 ? 'One leg is' : theirs + ' legs are'} ${vs}’s starter${theirs == 1 ? '' : 's'}. ${p.owner} is betting on the opponent.`);
       (p.tailers || []).filter(m => m == vs && mine).forEach(m => angle.push(`${m} is rooting against these players in the matchup and for them on the ticket.`));
-      // Joint tickets (owners: ['Andy', 'ASG']): how many legs come from each lineup.
+      // Joint tickets (owners: ['Andy', 'Tony']): how many legs come from each lineup.
       if (p.owners?.length > 1) {
         const per = p.owners.map(m => ({ m, n: legs.filter(l => l.spot && l.spot.m == m && l.spot.starter).length })).filter(x => x.n);
         if (per.length) angle.push(per.map(x => `${x.n} ${x.n == 1 ? 'leg' : 'legs'} from ${x.m}’s starters`).join(', ') + '.');
