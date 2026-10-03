@@ -306,7 +306,7 @@ class Component extends DCLogic {
     const chipWeeks = [...Array(NF).keys()].map(i => i + 1);
     if (LW) chipWeeks.push(LW);
     if (NEXT && NEXT.week != LW) chipWeeks.push(NEXT.week);
-    const weekChips = chipWeeks.map(w => { const on = w == wk; return { label: 'W' + w, sub: w == LW ? '● LIVE' : w <= NF ? 'FINAL' : 'NEXT', bg: on ? 'var(--accent)' : 'var(--surface)', fg: on ? 'var(--onAccent)' : (w == LW ? 'var(--accentInk)' : 'var(--ink)'), border: on ? 'var(--accent)' : 'var(--line)', pick: () => this.setState({ week: w }) }; });
+    const weekChips = chipWeeks.map(w => { const on = w == wk; return { label: 'W' + w, live: w == LW, sub: w == LW ? 'LIVE' : w <= NF ? 'FINAL' : 'NEXT', bg: on ? 'var(--accent)' : 'var(--surface)', fg: on ? 'var(--onAccent)' : (w == LW ? 'var(--accentInk)' : 'var(--ink)'), border: on ? 'var(--accent)' : 'var(--line)', pick: () => this.setState({ week: w }) }; });
     const hasWeek = (wk <= NF || wk == LW) && !!PAIRS[wk];
     let matchups = [], hero = null;
     if (hasWeek) { const all = PAIRS[wk].map(p => this.match(p, wk)).sort((x, y) => Math.abs(x.a.raw - x.b.raw) - Math.abs(y.a.raw - y.b.raw)); hero = all[0]; matchups = all.slice(1); }
@@ -429,7 +429,7 @@ class Component extends DCLogic {
       m: tm, init: INIT[tm], color: col(tm), teamName: rt?.team ?? '', roast: D.roasts?.[tm] ?? '',
       line: `${s.w}–${s.l} · ${ord(place)} place` + (NF ? ` · ${res[res.length - 1]}${k} streak` : ''),
       lineupTitle: `Week ${lineupWeek} lineup`, proj: LW ? 'Proj ' + f2(PROJ[tm]) : '',
-      stats: [{ label: 'PF', value: f1(s.pf), sub: ord(pfRank) + ' in league' }, { label: 'PA', value: f1(s.pa), sub: ord(paRank) + ' fewest' }, { label: 'Luck', value: sgn(s.luck), sub: 'W − xW', color: s.luck > 0 ? 'var(--pos)' : s.luck < 0 ? 'var(--neg)' : 'var(--ink)' }, { label: 'xW', value: s.xw.toFixed(2), sub: 'vs ' + s.w + ' real wins' }, { label: 'Max PF', value: maxOk ? f1(s.max) : '—', sub: maxOk ? ord(maxRank) + ' best possible' : 'Best possible lineup' }, { label: 'Bench', value: maxOk ? f1(bn) : '—', sub: 'Points left sitting' }, { label: 'FAAB left', value: txOk ? '$' + (budget - spent[tm]) : '—', sub: 'of $' + budget }, { label: 'Adds', value: txOk ? String(adds[tm]) : '—', sub: 'This season' }].map(x => ({ color: 'var(--ink)', ...x })),
+      stats: [{ label: 'PF', value: f1(s.pf), sub: ord(pfRank) + ' in league' }, { label: 'PA', value: f1(s.pa), sub: ord(paRank) + ' fewest' }, { label: 'Luck', value: sgn(s.luck), sub: 'W − xW', color: s.luck > 0 ? 'var(--pos)' : s.luck < 0 ? 'var(--neg)' : 'var(--ink)' }, { label: 'xW', value: s.xw.toFixed(2), sub: 'vs ' + s.w + ' real wins' }, { label: 'Max PF', value: maxOk ? f1(s.max) : '—', sub: maxOk ? ord(maxRank) + ' best possible' : 'Best possible lineup' }, { label: 'Bench', value: maxOk ? f1(bn) : '—', sub: 'Points left sitting' }, { label: 'FAAB left', value: txOk ? '$' + (budget - spent[tm]) : '—', sub: 'of $' + budget }, { label: 'Adds', value: txOk ? String(adds[tm]) : '—', sub: 'This season' }].map(x => ({ color: 'var(--ink)', isLuck: x.label == 'Luck', isBench: x.label == 'Bench', ...x })),
       log, starters: this.starters(tm, lineupWeek),
       bench: pl.filter(p => p.slot != 'starter').map(p => { const lp = LIVEPTS[p.name]; const v = lp ?? p.proj ?? p.projected ?? p.projections?.[lineupWeek] ?? PPROJ[p.name]; return { slot: p.slot == 'IR' ? 'IR' : p.pos, name: p.name, meta: (p.nfl || '').toUpperCase() + (lp == null && v != null && p.slot != 'IR' ? ' · proj' : ''), pts: p.slot == 'IR' ? '' : (v != null ? (lp != null ? f2(+v) : f1(+v)) : '—') }; }),
       benchCount: pl.filter(p => p.slot != 'starter').length, lineupMsg, hasLineup: !lineupMsg
@@ -514,7 +514,7 @@ class Component extends DCLogic {
       ok: true, dataError: false,
       scatter, scatterMidX: sx(avg(pfs)), scatterMidY: sy(avg(pas)), pfMin: x0, pfMax: x1, luckBars, benchBars, hlHint: hl ? hl + ' · tap again to clear' : 'Tap a team',
       themeLabel, toggleTheme,
-      openDraft: () => { this.setState({ tab: 'Draft' }); window.scrollTo(0, 0); },
+      draftIconCls: S.tab == 'Draft' ? 'hi play inv' : 'hi', openDraft: () => { this.setState({ tab: 'Draft' }); window.scrollTo(0, 0); },
       draftBtnBg: S.tab == 'Draft' ? 'var(--accent)' : 'var(--surface)', draftBtnFg: S.tab == 'Draft' ? 'var(--onAccent)' : 'var(--ink)', draftBtnBorder: S.tab == 'Draft' ? 'var(--accent)' : 'var(--line)',
       tabs, tabGameday: S.tab == 'Gameday', tabSeason: S.tab == 'Season', tabTeams: S.tab == 'Teams', tabDraft: S.tab == 'Draft', tabWire: S.tab == 'Wire',
       weekChips, isW5: isNext, nextTitle, nextNote, hasWeek, hero: hero || blank, matchups, heroLabel: wk == LW ? 'Matchup of the week' : 'Closest finish', heroCaption: D.captions?.[wk] || '',
