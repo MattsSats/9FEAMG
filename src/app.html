@@ -339,7 +339,7 @@
 }
 </style>
 <style>
-:root{--page:#070B14;--bg:#0D1424;--surface:#141C2F;--surface2:#1C2640;--surfaceHover:#18223A;--line:#28334F;--focus:#E4572E;--ink:#EEF2F8;--muted:#9AA6BD;--accent:#E4572E;--accentInk:#FF7A52;--pos:#72C690;--neg:#F2667A;--onAccent:#0D1424;--onStatus:#0D1424;--heat1:#3C2E3D;--heat2:#5C363A;--heat3:#7C3E37;--heat4:#9C4534;--heat5:#B04A33;--mgrL:0.76}
+:root{--page:#070B14;--bg:#0D1424;--surface:#141C2F;--surface2:#1C2640;--surfaceHover:#18223A;--line:#28334F;--focus:#E4572E;--ink:#EEF2F8;--muted:#AFB9CD;--accent:#E4572E;--accentInk:#FF7A52;--pos:#72C690;--neg:#F2667A;--onAccent:#0D1424;--onStatus:#0D1424;--heat1:#3C2E3D;--heat2:#5C363A;--heat3:#7C3E37;--heat4:#9C4534;--heat5:#B04A33;--mgrL:0.76}
 :root[data-theme="light"]{--page:#E2DED4;--bg:#F7F5F0;--surface:#FFFFFF;--surface2:#EFECE5;--surfaceHover:#F1EEE8;--line:#E0DBD0;--focus:#E4572E;--ink:#191815;--muted:#5F5B52;--accent:#E4572E;--accentInk:#B23B15;--pos:#25784A;--neg:#B8233F;--onAccent:#141311;--onStatus:#FFFFFF;--heat1:#F4D7CF;--heat2:#F4C1B2;--heat3:#F2AA96;--heat4:#EF937A;--heat5:#EB7B5C;--mgrL:0.61}
 html,body{margin:0;background:var(--page);color:var(--ink);font-family:'Instrument Sans',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
 *{box-sizing:border-box}
@@ -370,9 +370,20 @@ button{font-family:inherit;color:inherit}
   .sheet{max-width:620px;border-radius:22px!important;margin-bottom:4vh}
   .cols{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:0 12px;align-items:start}
   .cols>*{min-width:0}
+  .cols>.col-wide{grid-column:1/-1;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:0 12px;align-items:start}
+  .cols>.col-wide>*{min-width:0}
+  .cols>.col-wide>.ledger,.cols>.col-wide>.col-head{grid-column:1/-1}
   .tiles{grid-template-columns:repeat(4,minmax(0,1fr))}
   .sheet-wrap{align-items:center!important}
 }
+/* Wide desktop: three columns on Gameday (featured + Booth | matchups | parlays). */
+@media (min-width:1320px){
+  .app,.tabbar{max-width:1440px}
+  .cols{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .cols>.col-wide{grid-column:auto;display:block}
+}
+/* Collapsed parlays still show every leg in a shared image. */
+.capturing .pr-body{display:block!important}
 </style>
 </helmet>
 <div style="min-height:100vh;background:var(--page);display:flex;justify-content:center">
@@ -445,7 +456,7 @@ button{font-family:inherit;color:inherit}
       <div style="font-family:'JetBrains Mono';font-size:10px;color:var(--muted);text-align:center;padding-bottom:10px;letter-spacing:.08em;text-transform:uppercase"><div style="font-size:12px;font-weight:600;color:var(--ink);text-transform:none">{{ hero.delta }}</div><div style="margin-top:3px">{{ hero.mid }}</div></div>
       <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:clamp(40px,11.5vw,64px);line-height:.9;text-align:right;color:{{ hero.b.scoreColor }}">{{ hero.b.score }}</div>
     </div>
-    <div style="display:flex;justify-content:space-between;padding:8px 16px 0;font-family:'JetBrains Mono';font-size:11px;color:var(--muted)"><span>{{ hero.a.status }}</span><span>{{ hero.b.status }}</span></div>
+    <div style="display:flex;justify-content:space-between;padding:8px 16px 0;font-family:'JetBrains Mono';font-size:12px;color:var(--muted)"><span>{{ hero.a.status }}</span><span>{{ hero.b.status }}</span></div>
     <div style="height:6px;margin:14px 16px 0;border-radius:3px;background:var(--surface2);display:flex;overflow:hidden">
       <div style="width:{{ hero.share }};background:var(--accent)"></div>
     </div>
@@ -480,23 +491,32 @@ button{font-family:inherit;color:inherit}
           <div style="display:grid;grid-template-columns:32px minmax(0,1fr) auto;gap:12px;align-items:center;padding:14px 16px 6px">
             <div style="width:32px;height:32px;border-radius:50%;background:{{ mu.a.color }};color:var(--onAccent);display:flex;align-items:center;justify-content:center;font-family:'Big Shoulders Display';font-weight:800;font-size:13px">{{ mu.a.init }}</div>
             <div><div style="font-weight:600;font-size:15px">{{ mu.a.m }}</div><div style="font-family:'JetBrains Mono';font-size:11px;color:var(--muted);margin-top:1px">{{ mu.a.rec }}</div></div>
-            <div style="display:flex;flex-direction:column;align-items:flex-end"><div style="font-family:'Big Shoulders Display';font-weight:800;font-size:30px;color:{{ mu.a.scoreColor }}">{{ mu.a.score }}</div><div style="font-family:'JetBrains Mono';font-size:11px;color:var(--muted);margin-top:1px">{{ mu.a.status }}</div></div>
+            <div style="display:flex;flex-direction:column;align-items:flex-end"><div style="display:flex;align-items:center;gap:6px"><span aria-hidden="true" style="font-size:11px;color:var(--accentInk);opacity:{{ mu.a.markOp }}">▲</span><div style="font-family:'Big Shoulders Display';font-weight:800;font-size:30px;color:{{ mu.a.scoreColor }}">{{ mu.a.score }}</div></div><div style="font-family:'JetBrains Mono';font-size:12px;color:var(--muted);margin-top:1px">{{ mu.a.status }}</div></div>
           </div>
           <div style="display:grid;grid-template-columns:32px minmax(0,1fr) auto;gap:12px;align-items:center;padding:6px 16px 14px">
             <div style="width:32px;height:32px;border-radius:50%;background:{{ mu.b.color }};color:var(--onAccent);display:flex;align-items:center;justify-content:center;font-family:'Big Shoulders Display';font-weight:800;font-size:13px">{{ mu.b.init }}</div>
             <div><div style="font-weight:600;font-size:15px">{{ mu.b.m }}</div><div style="font-family:'JetBrains Mono';font-size:11px;color:var(--muted);margin-top:1px">{{ mu.b.rec }}</div></div>
-            <div style="display:flex;flex-direction:column;align-items:flex-end"><div style="font-family:'Big Shoulders Display';font-weight:800;font-size:30px;color:{{ mu.b.scoreColor }}">{{ mu.b.score }}</div><div style="font-family:'JetBrains Mono';font-size:11px;color:var(--muted);margin-top:1px">{{ mu.b.status }}</div></div>
+            <div style="display:flex;flex-direction:column;align-items:flex-end"><div style="display:flex;align-items:center;gap:6px"><span aria-hidden="true" style="font-size:11px;color:var(--accentInk);opacity:{{ mu.b.markOp }}">▲</span><div style="font-family:'Big Shoulders Display';font-weight:800;font-size:30px;color:{{ mu.b.scoreColor }}">{{ mu.b.score }}</div></div><div style="font-family:'JetBrains Mono';font-size:12px;color:var(--muted);margin-top:1px">{{ mu.b.status }}</div></div>
           </div>
+          <div aria-hidden="true" style="height:4px;margin:0 16px 14px;border-radius:2px;background:var(--surface2);display:flex;overflow:hidden"><div style="width:{{ mu.share }};background:var(--accent)"></div></div>
           <button sc-camel-on-click="{{ mu.open }}" class="hov" style="width:100%;display:flex;justify-content:space-between;align-items:center;min-height:44px;padding:0 16px;border:0;border-top:1px solid var(--line);background:transparent;cursor:pointer;font-family:'JetBrains Mono';font-size:11px">
-            <span style="color:var(--muted)">{{ mu.gap }}</span><span style="color:var(--accentInk);font-weight:600">Lineups ›</span>
+            <span style="color:var(--ink)">{{ mu.gap }}</span><span style="color:var(--accentInk);font-weight:600">Lineups ›</span>
           </button>
         </div>
       </sc-for>
     </div>
   </div>
+</div>
 
+<div class="col-wide">
+  <sc-if value="{{ hasParlays }}" hint-placeholder-val="{{ true }}">
+    <div class="col-head" style="padding:28px 20px 0;display:flex;align-items:baseline;justify-content:space-between">
+      <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:26px;text-transform:uppercase">Booth parlays</div>
+      <div style="font-family:'JetBrains Mono';font-size:10px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase">$10 stakes · for fun</div>
+    </div>
+  </sc-if>
   <sc-for list="{{ parlays }}" as="pr" hint-placeholder-count="1">
-    <div id="{{ pr.anchor }}" style="padding:28px 20px 0;scroll-margin-top:64px">
+    <div id="{{ pr.anchor }}" style="padding:12px 20px 0;scroll-margin-top:64px">
       <div data-shot="{{ pr.shot }}" style="position:relative;background:var(--surface);border:1px solid var(--line);border-radius:20px;overflow:hidden">
         <sc-if value="{{ pr.settled }}" hint-placeholder-val="{{ false }}">
           <div style="position:absolute;top:56px;right:18px;z-index:2;transform:rotate(-10deg);border:3px solid {{ pr.stampColor }};color:{{ pr.stampColor }};font-family:'Big Shoulders Display';font-weight:900;font-size:30px;line-height:1;letter-spacing:.06em;padding:4px 12px;border-radius:8px;background:color-mix(in oklch, var(--surface) 70%, transparent);pointer-events:none">{{ pr.status }}</div>
@@ -516,6 +536,7 @@ button{font-family:inherit;color:inherit}
             <div style="font-family:'JetBrains Mono';font-size:11px;color:var(--muted);margin-top:4px">{{ pr.sub }}</div>
           </div>
         </div>
+        <div class="pr-body" style="display:{{ pr.bodyDisplay }}">
         <div style="padding:6px 16px 0">
           <sc-for list="{{ pr.legs }}" as="lg" hint-placeholder-count="3">
             <div style="display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:10px;align-items:center;padding:11px 0;border-bottom:1px solid var(--line)">
@@ -538,10 +559,12 @@ button{font-family:inherit;color:inherit}
           <span style="position:absolute;left:-11px;top:-11px;width:20px;height:20px;border-radius:50%;background:var(--bg);border:1px solid var(--line)"></span>
           <span style="position:absolute;right:-11px;top:-11px;width:20px;height:20px;border-radius:50%;background:var(--bg);border:1px solid var(--line)"></span>
         </div>
+        </div>
         <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:4px 12px;padding:14px 16px 0;font-family:'JetBrains Mono';font-size:12px">
           <span style="font-weight:600">{{ pr.oddsLabel }}</span>
           <span style="color:var(--muted)">{{ pr.payout }}</span>
         </div>
+        <div class="pr-body" style="display:{{ pr.bodyDisplay }}">
         <div style="padding:6px 16px 0;font-family:'JetBrains Mono';font-size:10px;color:var(--muted)">{{ pr.oddsMath }}</div>
         <sc-if value="{{ pr.hasAngle }}" hint-placeholder-val="{{ true }}">
           <div style="padding:10px 16px 0;font-size:13px;line-height:1.45;color:var(--muted);text-wrap:pretty">{{ pr.angle }}</div>
@@ -557,13 +580,16 @@ button{font-family:inherit;color:inherit}
         <sc-if value="{{ pr.hasBooth }}" hint-placeholder-val="{{ true }}">
           <div style="margin-top:14px;padding:14px 16px;border-top:1px solid var(--line);font-size:15px;line-height:1.4;text-wrap:pretty">{{ pr.booth }}</div>
         </sc-if>
-        <div style="height:14px"></div>
+        </div>
+        <button class="hov no-shot" sc-camel-on-click="{{ pr.toggle }}" aria-expanded="{{ pr.expanded }}" style="width:100%;display:flex;justify-content:space-between;align-items:center;min-height:44px;margin-top:14px;padding:0 16px;border:0;border-top:1px solid var(--line);background:transparent;cursor:pointer;font-family:'JetBrains Mono';font-size:11px;color:var(--ink)">
+          <span style="color:var(--muted)">{{ pr.legCount }}</span><span style="color:var(--accentInk);font-weight:600">{{ pr.toggleLabel }}</span>
+        </button>
         <div class="shot-footer" style="padding:0 16px 14px"><b>9FEAMG</b><span>{{ pr.shotLabel }}</span></div>
       </div>
     </div>
   </sc-for>
   <sc-if value="{{ hasLedger }}" hint-placeholder-val="{{ true }}">
-    <div style="padding:12px 20px 0">
+    <div class="ledger" style="padding:12px 20px 0">
       <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:8px 12px;padding:12px 14px;border:1px dashed var(--line);border-radius:14px;font-family:'JetBrains Mono';font-size:11px;color:var(--muted)">
         <span style="letter-spacing:.1em">PARLAY LEDGER · $10 STAKES</span>
         <span style="color:var(--ink);font-weight:600">{{ ledgerLine }}</span>

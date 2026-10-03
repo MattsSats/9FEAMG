@@ -135,7 +135,7 @@ window.SEASON = {
       ['Tony', 'Tony is 3–0 and still projected to lose to Andy by 8.43. Respect remains pending.'],
       ['Kurt', 'Kurt and Jerger are both 1–2, and the loser falls to 1–3. Jaylen Warren’s 14.10 on Thursday cut Jerger’s projected edge to 2.27. Kurt would like a word with the projection.'],
       ['Mr. G', 'Pablo is projected for 88.77, lowest in the league. Mr. G is projected for 119.12, highest. The group-chat victory lap is already drafted.'],
-      ['Colin', 'Colin made 6 adds this week alone, more than Tony has made all season, times three. His only points so far: Denzel Boston, 10.90, on the bench.']
+      ['Colin', 'Colin made 6 adds this week alone, triple Tony’s total for the whole season. His only points so far: Denzel Boston, 10.90, on the bench.']
     ]
   },
 

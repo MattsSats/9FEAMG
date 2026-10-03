@@ -117,7 +117,7 @@ class Component extends DCLogic {
   openHash() {
     const m = location.hash.match(/^#w(\d+)-([\w-]+)$/);
     if (!m) return;
-    this.setState({ tab: 'Gameday', week: +m[1] });
+    this.setState({ tab: 'Gameday', week: +m[1], prOpen: { ...this.state.prOpen, [m[0].slice(1)]: true } });
     setTimeout(() => {
       const el = document.getElementById(m[0].slice(1));
       if (!el) return;
@@ -254,14 +254,14 @@ class Component extends DCLogic {
     const place = ord(ST.findIndex(x => x.m == m) + 1);
     if (wk == LW) {
       const [c, p] = LIVE.scores[m] || [0, 0], op = (LIVE.scores[o] || [0, 0])[1];
-      return { m, init: INIT[m], color: col(m), rec: rec(m, NF) + ' · ' + place, score: f2(p), raw: p, status: 'Now ' + f2(c), scoreColor: p < op ? 'var(--muted)' : 'var(--ink)' };
+      return { m, init: INIT[m], color: col(m), rec: rec(m, NF) + ' · ' + place, score: f2(p), raw: p, status: 'Now ' + f2(c), scoreColor: p < op ? 'var(--muted)' : 'var(--ink)', markOp: p > op ? 1 : 0 };
     }
     const s = SC[m][wk - 1], os = SC[o][wk - 1], win = s > os;
-    return { m, init: INIT[m], color: col(m), rec: rec(m, wk - 1), score: f2(s), raw: s, status: win ? 'Won' : 'Lost', scoreColor: win ? 'var(--ink)' : 'var(--muted)' };
+    return { m, init: INIT[m], color: col(m), rec: rec(m, wk - 1), score: f2(s), raw: s, status: win ? 'Won' : 'Lost', scoreColor: win ? 'var(--ink)' : 'var(--muted)', markOp: win ? 1 : 0 };
   }
   match(pair, wk) {
     const [a, b] = pair, A = this.side(a, b, wk), B = this.side(b, a, wk), gap = Math.abs(A.raw - B.raw), live = wk == LW;
-    return { a: A, b: B, gap: live ? 'Proj gap ' + f2(gap) + ' · live' : 'Margin ' + f2(gap), mid: live ? 'proj' : 'final', delta: 'Δ ' + f2(gap), share: (A.raw / (A.raw + B.raw || 1) * 100).toFixed(1) + '%', open: () => this.setState({ sheet: { a, b, wk } }) };
+    return { a: A, b: B, gap: (() => { const lead = A.raw > B.raw ? A.m : B.raw > A.raw ? B.m : null; if (!lead) return live ? 'Projected dead even · live' : 'Tied'; return live ? 'Proj: ' + lead + ' by ' + f2(gap) + ' · live' : lead + ' won by ' + f2(gap); })(), mid: live ? 'proj' : 'final', delta: 'Δ ' + f2(gap), share: (A.raw / (A.raw + B.raw || 1) * 100).toFixed(1) + '%', open: () => this.setState({ sheet: { a, b, wk } }) };
   }
   renderVals() {
     const S = this.state, themeLabel = this.theme() == 'dark' ? 'Light' : 'Dark', toggleTheme = () => this.setState({ theme: this.theme() == 'dark' ? 'light' : 'dark' });
@@ -330,6 +330,10 @@ class Component extends DCLogic {
         booth: p.booth || '', hasBooth: boothOn && !!p.booth,
         share: e => this.share(shot, e), shareLabel: S.sharing == shot ? '…' : 'Share',
         anchor, copyLink: e => this.copyLink(anchor, e),
+        // Parlays start collapsed to the header and payout; a deep link opens its card.
+        expanded: String(!!S.prOpen?.[anchor]), bodyDisplay: S.prOpen?.[anchor] ? 'block' : 'none',
+        legCount: legs.length + (legs.length == 1 ? ' leg' : ' legs'), toggleLabel: S.prOpen?.[anchor] ? 'Hide legs ▴' : 'Show legs ▾',
+        toggle: () => this.setState({ prOpen: { ...S.prOpen, [anchor]: !S.prOpen?.[anchor] } }),
         shotLabel: `${p.owner}’s parlay · Week ${wk}`
       };
     });
@@ -483,7 +487,7 @@ class Component extends DCLogic {
       draftBtnBg: S.tab == 'Draft' ? 'var(--accent)' : 'var(--surface)', draftBtnFg: S.tab == 'Draft' ? 'var(--onAccent)' : 'var(--ink)', draftBtnBorder: S.tab == 'Draft' ? 'var(--accent)' : 'var(--line)',
       tabs, tabGameday: S.tab == 'Gameday', tabSeason: S.tab == 'Season', tabTeams: S.tab == 'Teams', tabDraft: S.tab == 'Draft', tabWire: S.tab == 'Wire',
       weekChips, isW5: isNext, nextTitle, nextNote, hasWeek, hero: hero || blank, matchups, heroLabel: wk == LW ? 'Matchup of the week' : 'Closest finish', heroCaption: D.captions?.[wk] || '',
-      weekStatus, parlays, hasLedger: allParlays.length > 0, ledgerLine, ledgerOwners,
+      weekStatus, parlays, hasParlays: parlays.length > 0, hasLedger: allParlays.length > 0, ledgerLine, ledgerOwners,
       showBooth: boothOn, booth: (D.booth?.[wk] || []).map(([m, text]) => ({ init: INIT[m], color: col(m), text })), hasBooth: boothOn && !!D.booth?.[wk]?.length,
       seasonSub, seasonTiles, standings, playoffLine: `Playoff line · top ${P} of ${MGR.length}`,
       heat, heatHead, heatCols, heatMinW, restLabel, hasRest: !!restLabel, liveCol: !!LW,
