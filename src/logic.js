@@ -103,6 +103,31 @@ class Component extends DCLogic {
     setTimeout(() => { const el = document.querySelector('[data-weekchips]'); if (el) el.scrollLeft = el.scrollWidth; }, 0);
     // Preload the screenshot library so the first share is quick.
     setTimeout(() => this.loadShotLib().catch(() => {}), 1500);
+    // Parlay deep links: #w4-the-truce opens that week and scrolls to the card.
+    this.openHash();
+    window.addEventListener('hashchange', () => this.openHash());
+  }
+  openHash() {
+    const m = location.hash.match(/^#w(\d+)-([\w-]+)$/);
+    if (!m) return;
+    this.setState({ tab: 'Gameday', week: +m[1] });
+    setTimeout(() => {
+      const el = document.getElementById(m[0].slice(1));
+      if (!el) return;
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      el.classList.remove('flash'); void el.offsetWidth; el.classList.add('flash');
+    }, 350);
+  }
+  async copyLink(anchor, e) {
+    e?.stopPropagation?.();
+    const url = location.origin + location.pathname + '#' + anchor;
+    try { await navigator.clipboard.writeText(url); }
+    catch {
+      // Older browsers: copy through a temporary text field.
+      const t = document.createElement('textarea'); t.value = url; t.style.cssText = 'position:fixed;opacity:0';
+      document.body.appendChild(t); t.select(); document.execCommand('copy'); t.remove();
+    }
+    this.toast('Link copied.');
   }
   loadShotLib() {
     if (window.htmlToImage) return Promise.resolve(window.htmlToImage);
@@ -253,6 +278,8 @@ class Component extends DCLogic {
     const parlays = (D.parlays?.[wk] || []).map((p, i) => {
       const { status, dec, priced } = parlayState(p);
       const vs = p.vs ?? opp(p.owner, wk), shot = 'parlay-' + i;
+      // Stable link name from the parlay's id, title or owner: 'w4-the-truce'.
+      const anchor = `w${wk}-` + String(p.id ?? p.title ?? p.owner).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
       const legs = p.legs.map(l => {
         const spot = l.player ? this.rosterSpot(l.player, wk) : null, pts = l.player ? this.fantasyPts(l.player, wk) : null;
         // Game legs (totals, moneylines) list the managers starting someone in that game.
@@ -293,6 +320,7 @@ class Component extends DCLogic {
         tailers: (p.tailers || []).map(m => ({ m, color: col(m), tag: m == vs ? 'HEDGE' : 'TAIL' })), hasTailers: !!p.tailers?.length,
         booth: p.booth || '', hasBooth: boothOn && !!p.booth,
         share: e => this.share(shot, e), shareLabel: S.sharing == shot ? '…' : 'Share',
+        anchor, copyLink: e => this.copyLink(anchor, e),
         shotLabel: `${p.owner}’s parlay · Week ${wk}`
       };
     });

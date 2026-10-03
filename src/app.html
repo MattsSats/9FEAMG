@@ -356,6 +356,9 @@ button{font-family:inherit;color:inherit}
 .share-btn:hover{color:var(--ink);border-color:var(--muted)}
 .shot-footer{display:none;justify-content:space-between;align-items:baseline;gap:12px;padding:14px 0 16px;font-family:'JetBrains Mono';font-size:10px;letter-spacing:.08em;color:var(--muted)}
 .capturing .shot-footer{display:flex}
+/* A parlay opened from a copied link pulses once. */
+.flash>[data-shot]{animation:flash 1.8s ease-out}
+@keyframes flash{0%,30%{box-shadow:0 0 0 3px var(--accent)}100%{box-shadow:0 0 0 3px transparent}}
 .shot-footer b{font-family:'Big Shoulders Display';font-weight:900;font-size:15px;letter-spacing:.02em;color:var(--ink)}
 /* Desktop: wider page, side-by-side sections, four-up stat tiles. */
 @media (min-width:900px){
@@ -486,7 +489,7 @@ button{font-family:inherit;color:inherit}
   </div>
 
   <sc-for list="{{ parlays }}" as="pr" hint-placeholder-count="1">
-    <div style="padding:28px 20px 0">
+    <div id="{{ pr.anchor }}" style="padding:28px 20px 0;scroll-margin-top:64px">
       <div data-shot="{{ pr.shot }}" style="position:relative;background:var(--surface);border:1px solid var(--line);border-radius:20px;overflow:hidden">
         <sc-if value="{{ pr.settled }}" hint-placeholder-val="{{ false }}">
           <div style="position:absolute;top:56px;right:18px;z-index:2;transform:rotate(-10deg);border:3px solid {{ pr.stampColor }};color:{{ pr.stampColor }};font-family:'Big Shoulders Display';font-weight:900;font-size:30px;line-height:1;letter-spacing:.06em;padding:4px 12px;border-radius:8px;background:color-mix(in oklch, var(--surface) 70%, transparent);pointer-events:none">{{ pr.status }}</div>
@@ -494,6 +497,7 @@ button{font-family:inherit;color:inherit}
         <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;padding:14px 16px 0">
           <span style="font-family:'JetBrains Mono';font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--accentInk);font-weight:600">The Booth Parlay</span>
           <span style="display:flex;align-items:center;gap:8px">
+            <button class="share-btn no-shot" sc-camel-on-click="{{ pr.copyLink }}" aria-label="Copy a link to this parlay">Link</button>
             <button class="share-btn no-shot" sc-camel-on-click="{{ pr.share }}" aria-label="Share this parlay as an image">{{ pr.shareLabel }}</button>
             <span style="font-family:'JetBrains Mono';font-size:10px;font-weight:700;letter-spacing:.1em;padding:5px 9px;border-radius:999px;background:{{ pr.statusBg }};color:{{ pr.statusFg }}">{{ pr.status }}</span>
           </span>
