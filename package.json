@@ -1,0 +1,12 @@
+{
+  "name": "9feamg",
+  "private": true,
+  "type": "module",
+  "description": "9FEAMG fantasy football site. Static page plus two Vercel Functions for parlay link previews.",
+  "scripts": {
+    "bundle": "node build.cjs"
+  },
+  "dependencies": {
+    "@vercel/og": "^0.8.6"
+  }
+}

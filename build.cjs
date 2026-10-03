@@ -2,7 +2,7 @@
 //   src/app.html  markup + styles, with a /*LOGIC*/ placeholder
 //   src/logic.js  app logic, spliced into the placeholder
 // Season numbers live in data/season.js and load at runtime, so editing them needs no rebuild.
-// Usage: node build.js
+// Usage: node build.cjs
 const fs = require("fs");
 const path = require("path");
 

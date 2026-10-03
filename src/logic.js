@@ -1,4 +1,4 @@
-// App logic. build.js splices this into src/app.html's x-dc script before bundling.
+// App logic. build.cjs splices this into src/app.html's x-dc script before bundling.
 // All season numbers come from data/season.js (window.SEASON).
 const D = window.SEASON;
 const MGR = D ? D.managers.map(x => x.m) : [];
@@ -120,7 +120,8 @@ class Component extends DCLogic {
   }
   async copyLink(anchor, e) {
     e?.stopPropagation?.();
-    const url = location.origin + location.pathname + '#' + anchor;
+    // /p/<anchor> serves a preview of this parlay to chat apps, then forwards to /#<anchor>.
+    const url = location.origin + '/p/' + anchor;
     try { await navigator.clipboard.writeText(url); }
     catch {
       // Older browsers: copy through a temporary text field.

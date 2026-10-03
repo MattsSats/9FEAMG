@@ -9,7 +9,7 @@
 //        (Max PF and bench points are calculated from them)
 //     3. set `live` to the new week (add its matchups to `schedule`), or null
 //     4. add a caption / booth lines for the week if you want them
-//   Then commit and push. Data changes don't need `node build.js`.
+//   Then commit and push. Data changes don't need `node build.cjs`.
 window.SEASON = {
   year: 2026,
   regularSeasonWeeks: 14,
