@@ -167,9 +167,10 @@ window.SEASON = {
       {
         owner: 'Andy',
         legs: [
-          { text: 'Jahmyr Gibbs anytime TD', player: 'Jahmyr Gibbs', type: 'td', game: 'Sun 7:20 PM @ CAR', odds: null, status: 'open' },
-          { text: 'Drake London over receiving yards', player: 'Drake London', type: 'over', stat: 'Rec Yds', line: null, game: 'Mon 7:15 PM @ NO', odds: null, status: 'open' },
-          { text: 'Ravens moneyline', player: 'Ravens', type: 'ml', game: 'Sun 12:00 PM vs TEN', odds: null, status: 'open' }
+          // Odds: DraftKings via ESPN odds/props pages, Fri Oct 2.
+          { text: 'Jahmyr Gibbs anytime TD', player: 'Jahmyr Gibbs', type: 'td', game: 'Sun 7:20 PM @ CAR', odds: '-330', status: 'open' },
+          { text: 'Drake London over 79.5 receiving yards', player: 'Drake London', type: 'over', stat: 'Rec Yds', line: 79.5, game: 'Mon 7:15 PM @ NO', odds: '-110', status: 'open' },
+          { text: 'Ravens moneyline', player: 'Ravens', type: 'ml', game: 'Sun 12:00 PM vs TEN', odds: '-700', status: 'open' }
         ],
         tailers: ['ASG'],
         booth: 'Andy asked for a “lock parlay.” There is no such thing. ASG is tailing it and is also Andy’s opponent this week, so ASG cashes either way.'
