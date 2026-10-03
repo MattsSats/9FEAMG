@@ -383,7 +383,10 @@ button{font-family:inherit;color:inherit}
     <span style="font-family:'Big Shoulders Display';font-weight:900;font-size:26px;letter-spacing:.02em;line-height:1">9FEAMG</span>
     <span style="font-family:'JetBrains Mono';font-size:11px;color:var(--accentInk);letter-spacing:.06em">2026</span>
   </div>
-  <button sc-camel-on-click="{{ toggleTheme }}" style="background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:0 14px;font-family:'JetBrains Mono';font-size:11px;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;min-height:34px">{{ themeLabel }}</button>
+  <div style="display:flex;gap:8px">
+    <button sc-camel-on-click="{{ openDraft }}" aria-label="Draft results" style="background:{{ draftBtnBg }};color:{{ draftBtnFg }};border:1px solid {{ draftBtnBorder }};border-radius:999px;padding:0 14px;font-family:'JetBrains Mono';font-size:11px;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;min-height:34px">Draft</button>
+    <button sc-camel-on-click="{{ toggleTheme }}" style="background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:0 14px;font-family:'JetBrains Mono';font-size:11px;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;min-height:34px">{{ themeLabel }}</button>
+  </div>
 </div>
 
 <sc-if value="{{ dataError }}" hint-placeholder-val="{{ false }}">
@@ -1016,7 +1019,7 @@ button{font-family:inherit;color:inherit}
   </div>
 </sc-if>
 
-<div class="tabbar" style="position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;z-index:30;background:var(--bg);border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(5,minmax(0,1fr));padding:6px 8px 18px">
+<div class="tabbar" style="position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;z-index:30;background:var(--bg);border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(4,minmax(0,1fr));padding:6px 8px 18px">
   <sc-for list="{{ tabs }}" as="tb" hint-placeholder-count="5">
     <button sc-camel-on-click="{{ tb.pick }}" style="min-height:52px;border:0;background:transparent;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;color:{{ tb.fg }}">
       <span style="width:18px;height:3px;border-radius:2px;background:{{ tb.bar }}"></span>

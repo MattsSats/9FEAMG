@@ -267,7 +267,8 @@ class Component extends DCLogic {
     const S = this.state, themeLabel = this.theme() == 'dark' ? 'Light' : 'Dark', toggleTheme = () => this.setState({ theme: this.theme() == 'dark' ? 'light' : 'dark' });
     if (!D) return { ok: false, dataError: true, themeLabel, toggleTheme };
     const wk = S.week, boothOn = this.props.trashTalk ?? true;
-    const tabsL = ['Gameday', 'Season', 'Teams', 'Draft', 'Wire'];
+    // Draft lives in the header (it's rarely used), so the tab bar has four tabs.
+    const tabsL = ['Gameday', 'Season', 'Teams', 'Wire'];
     const tabs = tabsL.map(t => ({ label: t, fg: S.tab == t ? 'var(--ink)' : 'var(--muted)', bar: S.tab == t ? 'var(--accent)' : 'transparent', pick: () => { this.setState({ tab: t }); window.scrollTo(0, 0); } }));
 
     // Gameday
@@ -478,6 +479,8 @@ class Component extends DCLogic {
       ok: true, dataError: false,
       scatter, scatterMidX: sx(avg(pfs)), scatterMidY: sy(avg(pas)), pfMin: x0, pfMax: x1, luckBars, benchBars, hlHint: hl ? hl + ' · tap again to clear' : 'Tap a team',
       themeLabel, toggleTheme,
+      openDraft: () => { this.setState({ tab: 'Draft' }); window.scrollTo(0, 0); },
+      draftBtnBg: S.tab == 'Draft' ? 'var(--accent)' : 'var(--surface)', draftBtnFg: S.tab == 'Draft' ? 'var(--onAccent)' : 'var(--ink)', draftBtnBorder: S.tab == 'Draft' ? 'var(--accent)' : 'var(--line)',
       tabs, tabGameday: S.tab == 'Gameday', tabSeason: S.tab == 'Season', tabTeams: S.tab == 'Teams', tabDraft: S.tab == 'Draft', tabWire: S.tab == 'Wire',
       weekChips, isW5: isNext, nextTitle, nextNote, hasWeek, hero: hero || blank, matchups, heroLabel: wk == LW ? 'Matchup of the week' : 'Closest finish', heroCaption: D.captions?.[wk] || '',
       weekStatus, parlays, hasLedger: allParlays.length > 0, ledgerLine, ledgerOwners,
