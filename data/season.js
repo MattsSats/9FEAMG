@@ -16,6 +16,8 @@ window.SEASON = {
   playoffTeams: 6,
   faabBudget: 100,
   draftInfo: 'Sep 6 · 10-team snake · 15 rounds · Half-PPR',
+  // Draft tab "Open tool" button. Set to null to hide the button.
+  draftToolUrl: 'https://9feamg.grok.me/draft',
 
   // Display order and avatar color (hue 0-360) for each manager.
   managers: [
@@ -87,11 +89,9 @@ window.SEASON = {
   },
 
   // Player projections for the live week, used when the roster file has none.
-  projections: {
-    'Josh Allen': 23.1, 'Omarion Hampton': 10.3, 'TreVeyon Henderson': 9.0,
-    'Jaxon Smith-Njigba': 17.9, 'Matthew Golden': 10.4, 'Dalton Kincaid': 9.8,
-    'Bucky Irving': 12.3, 'Jason Myers': 8.8, 'Eagles': 5.1
-  },
+  // Fill in every manager's players or leave empty; a partial list makes one team look different.
+  // Projected values show in gray with "proj" so they never read as live points.
+  projections: {},
 
   // Wire tab: transactions newer than asOf minus windowDays show under "7 days".
   wire: { asOf: '2026-10-01T23:59:00', windowDays: 7 },
