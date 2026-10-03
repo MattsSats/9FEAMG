@@ -472,13 +472,13 @@ button{font-family:inherit;color:inherit}
         <div style="background:var(--surface);border:1px solid var(--line);border-radius:16px;overflow:hidden">
           <div style="display:grid;grid-template-columns:32px minmax(0,1fr) auto;gap:12px;align-items:center;padding:14px 16px 6px">
             <div style="width:32px;height:32px;border-radius:50%;background:{{ mu.a.color }};color:#141311;display:flex;align-items:center;justify-content:center;font-family:'Big Shoulders Display';font-weight:800;font-size:13px">{{ mu.a.init }}</div>
-            <div><div style="font-weight:600;font-size:15px">{{ mu.a.m }}</div><div style="font-family:'JetBrains Mono';font-size:11px;color:var(--muted);margin-top:1px">{{ mu.a.rec }} · {{ mu.a.status }}</div></div>
-            <div style="font-family:'Big Shoulders Display';font-weight:800;font-size:30px;color:{{ mu.a.scoreColor }}">{{ mu.a.score }}</div>
+            <div><div style="font-weight:600;font-size:15px">{{ mu.a.m }}</div><div style="font-family:'JetBrains Mono';font-size:11px;color:var(--muted);margin-top:1px">{{ mu.a.rec }}</div></div>
+            <div style="display:flex;flex-direction:column;align-items:flex-end"><div style="font-family:'Big Shoulders Display';font-weight:800;font-size:30px;color:{{ mu.a.scoreColor }}">{{ mu.a.score }}</div><div style="font-family:'JetBrains Mono';font-size:11px;color:var(--muted);margin-top:1px">{{ mu.a.status }}</div></div>
           </div>
           <div style="display:grid;grid-template-columns:32px minmax(0,1fr) auto;gap:12px;align-items:center;padding:6px 16px 14px">
             <div style="width:32px;height:32px;border-radius:50%;background:{{ mu.b.color }};color:#141311;display:flex;align-items:center;justify-content:center;font-family:'Big Shoulders Display';font-weight:800;font-size:13px">{{ mu.b.init }}</div>
-            <div><div style="font-weight:600;font-size:15px">{{ mu.b.m }}</div><div style="font-family:'JetBrains Mono';font-size:11px;color:var(--muted);margin-top:1px">{{ mu.b.rec }} · {{ mu.b.status }}</div></div>
-            <div style="font-family:'Big Shoulders Display';font-weight:800;font-size:30px;color:{{ mu.b.scoreColor }}">{{ mu.b.score }}</div>
+            <div><div style="font-weight:600;font-size:15px">{{ mu.b.m }}</div><div style="font-family:'JetBrains Mono';font-size:11px;color:var(--muted);margin-top:1px">{{ mu.b.rec }}</div></div>
+            <div style="display:flex;flex-direction:column;align-items:flex-end"><div style="font-family:'Big Shoulders Display';font-weight:800;font-size:30px;color:{{ mu.b.scoreColor }}">{{ mu.b.score }}</div><div style="font-family:'JetBrains Mono';font-size:11px;color:var(--muted);margin-top:1px">{{ mu.b.status }}</div></div>
           </div>
           <button sc-camel-on-click="{{ mu.open }}" style="width:100%;display:flex;justify-content:space-between;align-items:center;min-height:44px;padding:0 16px;border:0;border-top:1px solid var(--line);background:transparent;cursor:pointer;font-family:'JetBrains Mono';font-size:11px">
             <span style="color:var(--muted)">{{ mu.gap }}</span><span style="color:var(--accentInk);font-weight:600">Lineups ›</span>
