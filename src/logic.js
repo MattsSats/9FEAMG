@@ -28,7 +28,7 @@ const INIT = D ? Object.fromEntries(D.managers.map(x => [x.m, x.init])) : {};
 // Three-letter initials (Tony's ASG) shrink to fit inside the crest.
 if (D && typeof document != 'undefined' && !document.getElementById('ini-fit')) {
   const st = document.createElement('style'); st.id = 'ini-fit';
-  st.textContent = D.managers.filter(x => (x.init || '').length > 2).map(x => `.ini[data-i="${x.init}"]{font-size:.8em;letter-spacing:-.02em}`).join('');
+  st.textContent = D.managers.filter(x => (x.init || '').length > 2).map(x => `.crest .ini[data-i="${x.init}"]{font-size:.72em;letter-spacing:-.02em}`).join('');
   document.head.appendChild(st);
 }
 const HUE = D ? Object.fromEntries(D.managers.map(x => [x.m, x.hue])) : {};

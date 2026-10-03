@@ -385,8 +385,11 @@ button{font-family:inherit;color:inherit}
 }
 /* Collapsed parlays still show every leg in a shared image. */
 .capturing .pr-body{display:block!important}
-/* Manager crests: the avatar in its manager's hue, cut to a shield. */
-.crest{border-radius:0!important;-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='42' height='42' viewBox='3 3 42 42'%3E%3Cpath d='M24 4 L40 9 V23 C40 33 33 40 24 44 C15 40 8 33 8 23 V9 Z'/%3E%3C/svg%3E") center/100% 100% no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='42' height='42' viewBox='3 3 42 42'%3E%3Cpath d='M24 4 L40 9 V23 C40 33 33 40 24 44 C15 40 8 33 8 23 V9 Z'/%3E%3C/svg%3E") center/100% 100% no-repeat;padding-bottom:.18em}
+/* Manager crests: the avatar in its manager's hue, cut to a shield that fits
+   its square box with room for the point. Initials sit a touch high, in the
+   shield's wide part, which reads as centered. */
+.crest{border-radius:0!important;-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' view%42ox='0 0 48 48'%3E%3Cpath d='M24 2.5 L42.5 8 V22.5 C42.5 34 34.5 41.5 24 46 C13.5 41.5 5.5 34 5.5 22.5 V8 Z'/%3E%3C/svg%3E") center/100% 100% no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' view%42ox='0 0 48 48'%3E%3Cpath d='M24 2.5 L42.5 8 V22.5 C42.5 34 34.5 41.5 24 46 C13.5 41.5 5.5 34 5.5 22.5 V8 Z'/%3E%3C/svg%3E") center/100% 100% no-repeat}
+.crest .ini{display:block;line-height:1;transform:translateY(-4%);font-size:.88em}
 /* Tab bar icons: still until a tab is picked, then play once. */
 .tab{position:relative}
 .tab.on::before{content:'';position:absolute;top:-5px;left:22%;right:22%;height:3px;border-radius:0 0 3px 3px;background:var(--accent)}
