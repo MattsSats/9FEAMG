@@ -25,6 +25,12 @@ function mergeYahoo(S, Y) {
 const D = mergeYahoo(window.SEASON, window.YAHOO);
 const MGR = D ? D.managers.map(x => x.m) : [];
 const INIT = D ? Object.fromEntries(D.managers.map(x => [x.m, x.init])) : {};
+// Three-letter initials (Tony's ASG) shrink to fit inside the crest.
+if (D && typeof document != 'undefined' && !document.getElementById('ini-fit')) {
+  const st = document.createElement('style'); st.id = 'ini-fit';
+  st.textContent = D.managers.filter(x => (x.init || '').length > 2).map(x => `.ini[data-i="${x.init}"]{font-size:.8em;letter-spacing:-.02em}`).join('');
+  document.head.appendChild(st);
+}
 const HUE = D ? Object.fromEntries(D.managers.map(x => [x.m, x.hue])) : {};
 // Manager colors: lightness comes from --mgrL (0.76 dark, 0.61 light) so dots and bars hold 3:1 on the light background.
 const col = m => `oklch(var(--mgrL, 0.76) 0.12 ${HUE[m] ?? 0})`;
@@ -294,13 +300,13 @@ class Component extends DCLogic {
     const wk = S.week, boothOn = this.props.trashTalk ?? true;
     // Draft lives in the header (it's rarely used), so the tab bar has four tabs.
     const tabsL = ['Gameday', 'Season', 'Teams', 'Wire'];
-    const tabs = tabsL.map(t => ({ label: t, fg: S.tab == t ? 'var(--ink)' : 'var(--muted)', bar: S.tab == t ? 'var(--accent)' : 'transparent', pick: () => { this.setState({ tab: t }); window.scrollTo(0, 0); } }));
+    const tabs = tabsL.map(t => ({ label: t, fg: S.tab == t ? 'var(--ink)' : 'var(--muted)', cls: S.tab == t ? 'tab on' : 'tab', cur: S.tab == t ? 'page' : 'false', ['is' + t]: true, pick: () => { this.setState({ tab: t }); window.scrollTo(0, 0); } }));
 
     // Gameday
     const chipWeeks = [...Array(NF).keys()].map(i => i + 1);
     if (LW) chipWeeks.push(LW);
     if (NEXT && NEXT.week != LW) chipWeeks.push(NEXT.week);
-    const weekChips = chipWeeks.map(w => { const on = w == wk; return { label: 'W' + w, sub: w == LW ? '● LIVE' : w <= NF ? 'FINAL' : 'NEXT', bg: on ? 'var(--accent)' : 'var(--surface)', fg: on ? 'var(--onAccent)' : (w == LW ? 'var(--accentInk)' : 'var(--ink)'), border: on ? 'var(--accent)' : 'var(--line)', pick: () => this.setState({ week: w }) }; });
+    const weekChips = chipWeeks.map(w => { const on = w == wk; return { label: 'W' + w, live: w == LW, sub: w == LW ? 'LIVE' : w <= NF ? 'FINAL' : 'NEXT', bg: on ? 'var(--accent)' : 'var(--surface)', fg: on ? 'var(--onAccent)' : (w == LW ? 'var(--accentInk)' : 'var(--ink)'), border: on ? 'var(--accent)' : 'var(--line)', pick: () => this.setState({ week: w }) }; });
     const hasWeek = (wk <= NF || wk == LW) && !!PAIRS[wk];
     let matchups = [], hero = null;
     if (hasWeek) { const all = PAIRS[wk].map(p => this.match(p, wk)).sort((x, y) => Math.abs(x.a.raw - x.b.raw) - Math.abs(y.a.raw - y.b.raw)); hero = all[0]; matchups = all.slice(1); }
@@ -423,12 +429,12 @@ class Component extends DCLogic {
       m: tm, init: INIT[tm], color: col(tm), teamName: rt?.team ?? '', roast: D.roasts?.[tm] ?? '',
       line: `${s.w}–${s.l} · ${ord(place)} place` + (NF ? ` · ${res[res.length - 1]}${k} streak` : ''),
       lineupTitle: `Week ${lineupWeek} lineup`, proj: LW ? 'Proj ' + f2(PROJ[tm]) : '',
-      stats: [{ label: 'PF', value: f1(s.pf), sub: ord(pfRank) + ' in league' }, { label: 'PA', value: f1(s.pa), sub: ord(paRank) + ' fewest' }, { label: 'Luck', value: sgn(s.luck), sub: 'W − xW', color: s.luck > 0 ? 'var(--pos)' : s.luck < 0 ? 'var(--neg)' : 'var(--ink)' }, { label: 'xW', value: s.xw.toFixed(2), sub: 'vs ' + s.w + ' real wins' }, { label: 'Max PF', value: maxOk ? f1(s.max) : '—', sub: maxOk ? ord(maxRank) + ' best possible' : 'Best possible lineup' }, { label: 'Bench', value: maxOk ? f1(bn) : '—', sub: 'Points left sitting' }, { label: 'FAAB left', value: txOk ? '$' + (budget - spent[tm]) : '—', sub: 'of $' + budget }, { label: 'Adds', value: txOk ? String(adds[tm]) : '—', sub: 'This season' }].map(x => ({ color: 'var(--ink)', ...x })),
+      stats: [{ label: 'PF', value: f1(s.pf), sub: ord(pfRank) + ' in league' }, { label: 'PA', value: f1(s.pa), sub: ord(paRank) + ' fewest' }, { label: 'Luck', value: sgn(s.luck), sub: 'W − xW', color: s.luck > 0 ? 'var(--pos)' : s.luck < 0 ? 'var(--neg)' : 'var(--ink)' }, { label: 'xW', value: s.xw.toFixed(2), sub: 'vs ' + s.w + ' real wins' }, { label: 'Max PF', value: maxOk ? f1(s.max) : '—', sub: maxOk ? ord(maxRank) + ' best possible' : 'Best possible lineup' }, { label: 'Bench', value: maxOk ? f1(bn) : '—', sub: 'Points left sitting' }, { label: 'FAAB left', value: txOk ? '$' + (budget - spent[tm]) : '—', sub: 'of $' + budget }, { label: 'Adds', value: txOk ? String(adds[tm]) : '—', sub: 'This season' }].map(x => ({ color: 'var(--ink)', isLuck: x.label == 'Luck', isBench: x.label == 'Bench', ...x })),
       log, starters: this.starters(tm, lineupWeek),
       bench: pl.filter(p => p.slot != 'starter').map(p => { const lp = LIVEPTS[p.name]; const v = lp ?? p.proj ?? p.projected ?? p.projections?.[lineupWeek] ?? PPROJ[p.name]; return { slot: p.slot == 'IR' ? 'IR' : p.pos, name: p.name, meta: (p.nfl || '').toUpperCase() + (lp == null && v != null && p.slot != 'IR' ? ' · proj' : ''), pts: p.slot == 'IR' ? '' : (v != null ? (lp != null ? f2(+v) : f1(+v)) : '—') }; }),
       benchCount: pl.filter(p => p.slot != 'starter').length, lineupMsg, hasLineup: !lineupMsg
     };
-    const teamPicker = MGR.map(m => ({ m, init: INIT[m], color: col(m), ring: m == tm ? '2px solid var(--accent)' : '2px solid transparent', op: m == tm ? 1 : .75, fg: m == tm ? 'var(--ink)' : 'var(--muted)', pick: () => this.setState({ team: m }) }));
+    const teamPicker = MGR.map(m => ({ m, init: INIT[m], color: col(m), ring: m == tm ? '2px solid var(--accent)' : '2px solid transparent', ringFill: m == tm ? 'var(--accent)' : 'transparent', op: m == tm ? 1 : .75, fg: m == tm ? 'var(--ink)' : 'var(--muted)', pick: () => this.setState({ team: m }) }));
 
     // Draft
     const dr = S.draft, picks = [];
@@ -508,7 +514,7 @@ class Component extends DCLogic {
       ok: true, dataError: false,
       scatter, scatterMidX: sx(avg(pfs)), scatterMidY: sy(avg(pas)), pfMin: x0, pfMax: x1, luckBars, benchBars, hlHint: hl ? hl + ' · tap again to clear' : 'Tap a team',
       themeLabel, toggleTheme,
-      openDraft: () => { this.setState({ tab: 'Draft' }); window.scrollTo(0, 0); },
+      draftIconCls: S.tab == 'Draft' ? 'hi play inv' : 'hi', openDraft: () => { this.setState({ tab: 'Draft' }); window.scrollTo(0, 0); },
       draftBtnBg: S.tab == 'Draft' ? 'var(--accent)' : 'var(--surface)', draftBtnFg: S.tab == 'Draft' ? 'var(--onAccent)' : 'var(--ink)', draftBtnBorder: S.tab == 'Draft' ? 'var(--accent)' : 'var(--line)',
       tabs, tabGameday: S.tab == 'Gameday', tabSeason: S.tab == 'Season', tabTeams: S.tab == 'Teams', tabDraft: S.tab == 'Draft', tabWire: S.tab == 'Wire',
       weekChips, isW5: isNext, nextTitle, nextNote, hasWeek, hero: hero || blank, matchups, heroLabel: wk == LW ? 'Matchup of the week' : 'Closest finish', heroCaption: D.captions?.[wk] || '',
