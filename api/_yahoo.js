@@ -28,8 +28,8 @@ export const writeData = d => writeJson(DATA_PATH, d);
 // ---- access checks ----
 export const redirectUri = () => process.env.YAHOO_REDIRECT_URI || 'https://www.9feamg.cloud/api/yahoo/callback';
 const same = (a, b) => typeof a == 'string' && typeof b == 'string' && a.length == b.length && a.length > 0 && [...a].every((c, i) => c == b[i]);
-export const isAdmin = url => !!process.env.ADMIN_KEY && same(url.searchParams.get('key') || '', process.env.ADMIN_KEY);
-export const isCron = req => !!process.env.CRON_SECRET && same(req.headers.get('authorization') || '', 'Bearer ' + process.env.CRON_SECRET);
+export const isAdmin = url => !!process.env.ADMIN_KEY?.trim() && same((url.searchParams.get('key') || '').trim(), process.env.ADMIN_KEY.trim());
+export const isCron = req => !!process.env.CRON_SECRET && same(req.headers.get('authorization') || '', 'Bearer ' + process.env.CRON_SECRET.trim());
 
 // ---- OAuth ----
 export const authorizeUrl = (origin, state) => AUTH_URL + '?' + new URLSearchParams({
