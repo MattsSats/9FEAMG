@@ -94,7 +94,7 @@ window.SEASON = {
   projections: {},
 
   // Wire tab: transactions newer than asOf minus windowDays show under "7 days".
-  wire: { asOf: '2026-10-01T23:59:00', windowDays: 7 },
+  wire: { asOf: '2026-10-03T08:00:00', windowDays: 7 },
 
   // ---- Trash talk (hidden when the trashTalk setting is off) ----
 

@@ -296,10 +296,10 @@
           "nfl": "Hou"
         },
         {
-          "name": "Rachaad White",
+          "name": "Jadarian Price",
           "pos": "RB",
           "slot": "bench",
-          "nfl": "Was"
+          "nfl": "Sea"
         },
         {
           "name": "Travis Etienne Jr.",
@@ -407,6 +407,12 @@
           "nfl": "TB"
         },
         {
+          "name": "RJ Harvey",
+          "pos": "RB",
+          "slot": "bench",
+          "nfl": "Den"
+        },
+        {
           "name": "De'Von Achane",
           "pos": "RB",
           "slot": "IR",
@@ -425,10 +431,10 @@
           "nfl": "Bal"
         },
         {
-          "name": "Packers",
+          "name": "Chiefs",
           "pos": "DEF",
           "slot": "starter",
-          "nfl": "GB"
+          "nfl": "KC"
         }
       ]
     },
