@@ -385,6 +385,28 @@ button{font-family:inherit;color:inherit}
 }
 /* Collapsed parlays still show every leg in a shared image. */
 .capturing .pr-body{display:block!important}
+/* Manager crests: the avatar in its manager's hue, cut to a shield. */
+.crest{border-radius:0!important;-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='42' height='42' viewBox='3 3 42 42'%3E%3Cpath d='M24 4 L40 9 V23 C40 33 33 40 24 44 C15 40 8 33 8 23 V9 Z'/%3E%3C/svg%3E") center/100% 100% no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='42' height='42' viewBox='3 3 42 42'%3E%3Cpath d='M24 4 L40 9 V23 C40 33 33 40 24 44 C15 40 8 33 8 23 V9 Z'/%3E%3C/svg%3E") center/100% 100% no-repeat;padding-bottom:.18em}
+/* Tab bar icons: still until a tab is picked, then play once. */
+.tab{position:relative}
+.tab.on::before{content:'';position:absolute;top:-5px;left:22%;right:22%;height:3px;border-radius:0 0 3px 3px;background:var(--accent)}
+.ti{width:26px;height:26px;display:block;overflow:visible}
+.ti .vb{transform-box:view-box;transform-origin:24px 24px}
+.ti .a-bar{transform-box:fill-box;transform-origin:50% 100%}
+.ti .a-orbit{transform-box:view-box;transform-origin:24px 23px}
+@keyframes ti-ball{0%,100%{transform:translateY(0) rotate(0)}35%{transform:translateY(-7px) rotate(25deg)}55%{transform:translateY(0) rotate(0)}70%{transform:translateY(-3px) rotate(-12deg)}85%{transform:translateY(0) rotate(0)}}
+@keyframes ti-bar{0%{transform:scaleY(.15)}60%,100%{transform:scaleY(1)}}
+@keyframes ti-spin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+@keyframes ti-r{0%,100%{transform:translateX(0)}35%{transform:translateX(5px)}70%{transform:translateX(-2px)}}
+@keyframes ti-l{0%,100%{transform:translateX(0)}35%{transform:translateX(-5px)}70%{transform:translateX(2px)}}
+.tab.on .a-ball{animation:ti-ball 1.4s ease-in-out 1}
+.tab.on .a-bar{animation:ti-bar 1s cubic-bezier(.3,.7,.2,1) 1 both}
+.tab.on .a-bar2{animation-delay:.1s}
+.tab.on .a-bar3{animation-delay:.2s}
+.tab.on .a-orbit{animation:ti-spin 1.4s cubic-bezier(.6,0,.3,1) 1}
+.tab.on .a-swap1{animation:ti-r .9s ease-in-out 1}
+.tab.on .a-swap2{animation:ti-l .9s ease-in-out 1}
+@media (prefers-reduced-motion:reduce){.ti *{animation:none!important}}
 </style>
 </helmet>
 <div style="min-height:100vh;background:var(--page);display:flex;justify-content:center">
@@ -443,12 +465,12 @@ button{font-family:inherit;color:inherit}
     </div>
     <div style="display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);align-items:center;gap:8px;padding:18px 16px 8px">
       <div style="display:flex;flex-direction:column;align-items:flex-start;gap:8px">
-        <div style="width:44px;height:44px;border-radius:50%;background:{{ hero.a.color }};color:var(--onAccent);display:flex;align-items:center;justify-content:center;font-family:'Big Shoulders Display';font-weight:800;font-size:18px">{{ hero.a.init }}</div>
+        <div class="crest" style="width:44px;height:44px;background:{{ hero.a.color }};color:var(--onAccent);display:flex;align-items:center;justify-content:center;font-family:'Big Shoulders Display';font-weight:800;font-size:18px;flex:none"><span class="ini" data-i="{{ hero.a.init }}">{{ hero.a.init }}</span></div>
         <div><div style="font-weight:700;font-size:17px">{{ hero.a.m }}</div><div style="font-family:'JetBrains Mono';font-size:11px;color:var(--muted);margin-top:2px">{{ hero.a.rec }}</div></div>
       </div>
       <div style="font-family:'JetBrains Mono';font-size:11px;color:var(--muted);letter-spacing:.1em">VS</div>
       <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px;text-align:right">
-        <div style="width:44px;height:44px;border-radius:50%;background:{{ hero.b.color }};color:var(--onAccent);display:flex;align-items:center;justify-content:center;font-family:'Big Shoulders Display';font-weight:800;font-size:18px">{{ hero.b.init }}</div>
+        <div class="crest" style="width:44px;height:44px;background:{{ hero.b.color }};color:var(--onAccent);display:flex;align-items:center;justify-content:center;font-family:'Big Shoulders Display';font-weight:800;font-size:18px;flex:none"><span class="ini" data-i="{{ hero.b.init }}">{{ hero.b.init }}</span></div>
         <div><div style="font-weight:700;font-size:17px">{{ hero.b.m }}</div><div style="font-family:'JetBrains Mono';font-size:11px;color:var(--muted);margin-top:2px">{{ hero.b.rec }}</div></div>
       </div>
     </div>
@@ -474,7 +496,7 @@ button{font-family:inherit;color:inherit}
       <div style="display:flex;flex-direction:column;margin-top:10px">
         <sc-for list="{{ booth }}" as="b" hint-placeholder-count="3">
           <div style="display:grid;grid-template-columns:32px minmax(0,1fr);gap:12px;padding:12px 0;border-top:1px solid var(--line)">
-            <div style="width:32px;height:32px;border-radius:50%;background:{{ b.color }};color:var(--onAccent);display:flex;align-items:center;justify-content:center;font-family:'Big Shoulders Display';font-weight:800;font-size:13px">{{ b.init }}</div>
+            <div class="crest" style="width:32px;height:32px;background:{{ b.color }};color:var(--onAccent);display:flex;align-items:center;justify-content:center;font-family:'Big Shoulders Display';font-weight:800;font-size:13px;flex:none"><span class="ini" data-i="{{ b.init }}">{{ b.init }}</span></div>
             <div style="font-size:15px;line-height:1.4;text-wrap:pretty;padding-top:5px">{{ b.text }}</div>
           </div>
         </sc-for>
@@ -490,12 +512,12 @@ button{font-family:inherit;color:inherit}
       <sc-for list="{{ matchups }}" as="mu" hint-placeholder-count="4">
         <div style="background:var(--surface);border:1px solid var(--line);border-radius:16px;overflow:hidden">
           <div style="display:grid;grid-template-columns:32px minmax(0,1fr) auto;gap:12px;align-items:center;padding:14px 16px 6px">
-            <div style="width:32px;height:32px;border-radius:50%;background:{{ mu.a.color }};color:var(--onAccent);display:flex;align-items:center;justify-content:center;font-family:'Big Shoulders Display';font-weight:800;font-size:13px">{{ mu.a.init }}</div>
+            <div class="crest" style="width:32px;height:32px;background:{{ mu.a.color }};color:var(--onAccent);display:flex;align-items:center;justify-content:center;font-family:'Big Shoulders Display';font-weight:800;font-size:13px;flex:none"><span class="ini" data-i="{{ mu.a.init }}">{{ mu.a.init }}</span></div>
             <div><div style="font-weight:600;font-size:15px">{{ mu.a.m }}</div><div style="font-family:'JetBrains Mono';font-size:11px;color:var(--muted);margin-top:1px">{{ mu.a.rec }}</div></div>
             <div style="display:flex;flex-direction:column;align-items:flex-end"><div style="display:flex;align-items:center;gap:6px"><span aria-hidden="true" style="font-size:11px;color:var(--accentInk);opacity:{{ mu.a.markOp }}">▲</span><div style="font-family:'Big Shoulders Display';font-weight:800;font-size:30px;color:{{ mu.a.scoreColor }}">{{ mu.a.score }}</div></div><div style="font-family:'JetBrains Mono';font-size:12px;color:var(--muted);margin-top:1px">{{ mu.a.status }}</div></div>
           </div>
           <div style="display:grid;grid-template-columns:32px minmax(0,1fr) auto;gap:12px;align-items:center;padding:6px 16px 14px">
-            <div style="width:32px;height:32px;border-radius:50%;background:{{ mu.b.color }};color:var(--onAccent);display:flex;align-items:center;justify-content:center;font-family:'Big Shoulders Display';font-weight:800;font-size:13px">{{ mu.b.init }}</div>
+            <div class="crest" style="width:32px;height:32px;background:{{ mu.b.color }};color:var(--onAccent);display:flex;align-items:center;justify-content:center;font-family:'Big Shoulders Display';font-weight:800;font-size:13px;flex:none"><span class="ini" data-i="{{ mu.b.init }}">{{ mu.b.init }}</span></div>
             <div><div style="font-weight:600;font-size:15px">{{ mu.b.m }}</div><div style="font-family:'JetBrains Mono';font-size:11px;color:var(--muted);margin-top:1px">{{ mu.b.rec }}</div></div>
             <div style="display:flex;flex-direction:column;align-items:flex-end"><div style="display:flex;align-items:center;gap:6px"><span aria-hidden="true" style="font-size:11px;color:var(--accentInk);opacity:{{ mu.b.markOp }}">▲</span><div style="font-family:'Big Shoulders Display';font-weight:800;font-size:30px;color:{{ mu.b.scoreColor }}">{{ mu.b.score }}</div></div><div style="font-family:'JetBrains Mono';font-size:12px;color:var(--muted);margin-top:1px">{{ mu.b.status }}</div></div>
           </div>
@@ -531,7 +553,7 @@ button{font-family:inherit;color:inherit}
           </span>
         </div>
         <div style="display:flex;align-items:center;gap:12px;padding:14px 16px 4px">
-          <div style="width:40px;height:40px;border-radius:50%;background:{{ pr.color }};color:var(--onAccent);display:flex;align-items:center;justify-content:center;font-family:'Big Shoulders Display';font-weight:800;font-size:16px;flex:none">{{ pr.init }}</div>
+          <div class="crest" style="width:40px;height:40px;background:{{ pr.color }};color:var(--onAccent);display:flex;align-items:center;justify-content:center;font-family:'Big Shoulders Display';font-weight:800;font-size:16px;flex:none"><span class="ini" data-i="{{ pr.init }}">{{ pr.init }}</span></div>
           <div style="min-width:0">
             <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:26px;line-height:1;text-transform:uppercase">{{ pr.title }}</div>
             <div style="font-family:'JetBrains Mono';font-size:11px;color:var(--muted);margin-top:4px">{{ pr.sub }}</div>
@@ -641,7 +663,7 @@ button{font-family:inherit;color:inherit}
     <div sc-camel-on-click="{{ s.open }}" class="hov" tabindex="0" role="button" style="display:grid;grid-template-columns:22px minmax(0,1fr) 40px 52px 48px;gap:8px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line);cursor:pointer">
       <span style="font-family:'Big Shoulders Display';font-weight:800;font-size:18px;color:var(--muted)">{{ s.rank }}</span>
       <div style="display:flex;align-items:center;gap:10px;min-width:0">
-        <div style="width:28px;height:28px;border-radius:50%;background:{{ s.color }};color:var(--onAccent);display:flex;align-items:center;justify-content:center;font-family:'Big Shoulders Display';font-weight:800;font-size:12px;flex:none">{{ s.init }}</div>
+        <div class="crest" style="width:28px;height:28px;background:{{ s.color }};color:var(--onAccent);display:flex;align-items:center;justify-content:center;font-family:'Big Shoulders Display';font-weight:800;font-size:12px;flex:none"><span class="ini" data-i="{{ s.init }}">{{ s.init }}</span></div>
         <div style="min-width:0"><div style="font-weight:600;font-size:15px">{{ s.m }}</div><div style="font-family:'JetBrains Mono';font-size:10px;color:var(--muted);margin-top:1px">PA {{ s.pa }} · Max {{ s.max }}</div></div>
       </div>
       <span style="text-align:right;font-family:'JetBrains Mono';font-size:13px;font-weight:600">{{ s.wl }}</span>
@@ -770,7 +792,7 @@ button{font-family:inherit;color:inherit}
 <div style="display:flex;gap:10px;padding:18px 20px 4px;overflow-x:auto">
   <sc-for list="{{ teamPicker }}" as="p" hint-placeholder-count="10">
     <button sc-camel-on-click="{{ p.pick }}" style="flex:none;display:flex;flex-direction:column;align-items:center;gap:6px;background:transparent;border:0;padding:0;cursor:pointer;min-width:48px">
-      <div style="width:48px;height:48px;border-radius:50%;background:{{ p.color }};color:var(--onAccent);display:flex;align-items:center;justify-content:center;font-family:'Big Shoulders Display';font-weight:800;font-size:17px;outline:{{ p.ring }};outline-offset:3px;opacity:{{ p.op }}">{{ p.init }}</div>
+      <div class="crest" style="width:58px;height:58px;padding:3px;background:{{ p.ringFill }};opacity:{{ p.op }}"><div class="crest" style="width:52px;height:52px;background:{{ p.color }};color:var(--onAccent);display:flex;align-items:center;justify-content:center;font-family:'Big Shoulders Display';font-weight:800;font-size:17px;flex:none"><span class="ini" data-i="{{ p.init }}">{{ p.init }}</span></div></div>
       <span style="font-size:11px;font-weight:600;color:{{ p.fg }}">{{ p.m }}</span>
     </button>
   </sc-for>
@@ -781,7 +803,7 @@ button{font-family:inherit;color:inherit}
 <div style="position:relative;margin:16px 20px 0;padding:20px;border-radius:20px;background:var(--surface);border:1px solid var(--line)">
   <button class="share-btn no-shot" sc-camel-on-click="{{ shareTeam }}" aria-label="Share this team as an image" style="position:absolute;top:14px;right:14px">{{ shareLabel.team }}</button>
   <div style="display:flex;gap:14px;align-items:center;padding-right:64px">
-    <div style="width:64px;height:64px;border-radius:50%;background:{{ team.color }};color:var(--onAccent);display:flex;align-items:center;justify-content:center;font-family:'Big Shoulders Display';font-weight:900;font-size:26px;flex:none">{{ team.init }}</div>
+    <div class="crest" style="width:64px;height:64px;background:{{ team.color }};color:var(--onAccent);display:flex;align-items:center;justify-content:center;font-family:'Big Shoulders Display';font-weight:900;font-size:26px;flex:none"><span class="ini" data-i="{{ team.init }}">{{ team.init }}</span></div>
     <div style="min-width:0">
       <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:34px;line-height:.95;text-transform:uppercase">{{ team.m }}</div>
       <div style="font-size:14px;color:var(--muted);margin-top:4px">{{ team.teamName }}</div>
@@ -935,7 +957,7 @@ button{font-family:inherit;color:inherit}
     <div style="font-family:'JetBrains Mono';font-size:11px;font-weight:600;letter-spacing:.1em;color:var(--accentInk);padding:16px 0 6px">{{ d.label }}</div>
     <sc-for list="{{ d.moves }}" as="mv" hint-placeholder-count="3">
       <div style="display:grid;grid-template-columns:32px minmax(0,1fr);gap:12px;padding:12px 0;border-top:1px solid var(--line)">
-        <div style="width:32px;height:32px;border-radius:50%;background:{{ mv.color }};color:var(--onAccent);display:flex;align-items:center;justify-content:center;font-family:'Big Shoulders Display';font-weight:800;font-size:13px">{{ mv.init }}</div>
+        <div class="crest" style="width:32px;height:32px;background:{{ mv.color }};color:var(--onAccent);display:flex;align-items:center;justify-content:center;font-family:'Big Shoulders Display';font-weight:800;font-size:13px;flex:none"><span class="ini" data-i="{{ mv.init }}">{{ mv.init }}</span></div>
         <div style="min-width:0">
           <div style="display:flex;justify-content:space-between;gap:8px"><span style="font-weight:700;font-size:14px">{{ mv.m }}</span><span style="font-family:'JetBrains Mono';font-size:11px;color:var(--muted)">{{ mv.time }}</span></div>
           <div style="display:flex;flex-direction:column;gap:6px;margin-top:6px">
@@ -1048,8 +1070,19 @@ button{font-family:inherit;color:inherit}
 
 <div class="tabbar" style="position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;z-index:30;background:var(--bg);border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(4,minmax(0,1fr));padding:6px 8px 18px">
   <sc-for list="{{ tabs }}" as="tb" hint-placeholder-count="5">
-    <button sc-camel-on-click="{{ tb.pick }}" style="min-height:52px;border:0;background:transparent;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;color:{{ tb.fg }}">
-      <span style="width:18px;height:3px;border-radius:2px;background:{{ tb.bar }}"></span>
+    <button class="{{ tb.cls }}" aria-current="{{ tb.cur }}" sc-camel-on-click="{{ tb.pick }}" style="min-height:52px;border:0;background:transparent;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;color:{{ tb.fg }}">
+      <sc-if value="{{ tb.isGameday }}" hint-placeholder-val="{{ false }}">
+        <svg class="ti" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><g class="a-ball vb"><g transform="rotate(-45 24 24)"><ellipse cx="24" cy="24" rx="19" ry="11" style="fill:var(--accent)"></ellipse><path d="M17 24 H31 M20 20.5 V27.5 M24 20.5 V27.5 M28 20.5 V27.5"></path></g></g></svg>
+      </sc-if>
+      <sc-if value="{{ tb.isSeason }}" hint-placeholder-val="{{ false }}">
+        <svg class="ti" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 42 H43"></path><rect class="a-bar" x="8" y="26" width="9" height="14" rx="2"></rect><rect class="a-bar a-bar2" x="20" y="16" width="9" height="24" rx="2"></rect><rect class="a-bar a-bar3" x="32" y="6" width="9" height="34" rx="2" style="fill:var(--accent)"></rect></svg>
+      </sc-if>
+      <sc-if value="{{ tb.isTeams }}" hint-placeholder-val="{{ false }}">
+        <svg class="ti" viewBox="0 0 48 48" fill="none" stroke-width="2" aria-hidden="true"><g class="a-orbit"><circle cx="16" cy="18" r="8" style="fill:oklch(var(--mgrL) 0.12 250);stroke:var(--bg)"></circle><circle cx="32" cy="18" r="8" style="fill:oklch(var(--mgrL) 0.12 150);stroke:var(--bg)"></circle><circle cx="24" cy="32" r="8" style="fill:oklch(var(--mgrL) 0.12 35);stroke:var(--bg)"></circle></g></svg>
+      </sc-if>
+      <sc-if value="{{ tb.isWire }}" hint-placeholder-val="{{ false }}">
+        <svg class="ti" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><g class="a-swap1"><path d="M8 16 H38 M31 9 L38 16 L31 23" style="stroke:var(--accent)"></path></g><g class="a-swap2"><path d="M40 32 H10 M17 25 L10 32 L17 39"></path></g></svg>
+      </sc-if>
       <span style="font-family:'Big Shoulders Display';font-weight:800;font-size:16px;text-transform:uppercase;letter-spacing:.03em">{{ tb.label }}</span>
     </button>
   </sc-for>

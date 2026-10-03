@@ -25,6 +25,12 @@ function mergeYahoo(S, Y) {
 const D = mergeYahoo(window.SEASON, window.YAHOO);
 const MGR = D ? D.managers.map(x => x.m) : [];
 const INIT = D ? Object.fromEntries(D.managers.map(x => [x.m, x.init])) : {};
+// Three-letter initials (Tony's ASG) shrink to fit inside the crest.
+if (D && typeof document != 'undefined' && !document.getElementById('ini-fit')) {
+  const st = document.createElement('style'); st.id = 'ini-fit';
+  st.textContent = D.managers.filter(x => (x.init || '').length > 2).map(x => `.ini[data-i="${x.init}"]{font-size:.8em;letter-spacing:-.02em}`).join('');
+  document.head.appendChild(st);
+}
 const HUE = D ? Object.fromEntries(D.managers.map(x => [x.m, x.hue])) : {};
 // Manager colors: lightness comes from --mgrL (0.76 dark, 0.61 light) so dots and bars hold 3:1 on the light background.
 const col = m => `oklch(var(--mgrL, 0.76) 0.12 ${HUE[m] ?? 0})`;
@@ -294,7 +300,7 @@ class Component extends DCLogic {
     const wk = S.week, boothOn = this.props.trashTalk ?? true;
     // Draft lives in the header (it's rarely used), so the tab bar has four tabs.
     const tabsL = ['Gameday', 'Season', 'Teams', 'Wire'];
-    const tabs = tabsL.map(t => ({ label: t, fg: S.tab == t ? 'var(--ink)' : 'var(--muted)', bar: S.tab == t ? 'var(--accent)' : 'transparent', pick: () => { this.setState({ tab: t }); window.scrollTo(0, 0); } }));
+    const tabs = tabsL.map(t => ({ label: t, fg: S.tab == t ? 'var(--ink)' : 'var(--muted)', cls: S.tab == t ? 'tab on' : 'tab', cur: S.tab == t ? 'page' : 'false', ['is' + t]: true, pick: () => { this.setState({ tab: t }); window.scrollTo(0, 0); } }));
 
     // Gameday
     const chipWeeks = [...Array(NF).keys()].map(i => i + 1);
@@ -428,7 +434,7 @@ class Component extends DCLogic {
       bench: pl.filter(p => p.slot != 'starter').map(p => { const lp = LIVEPTS[p.name]; const v = lp ?? p.proj ?? p.projected ?? p.projections?.[lineupWeek] ?? PPROJ[p.name]; return { slot: p.slot == 'IR' ? 'IR' : p.pos, name: p.name, meta: (p.nfl || '').toUpperCase() + (lp == null && v != null && p.slot != 'IR' ? ' · proj' : ''), pts: p.slot == 'IR' ? '' : (v != null ? (lp != null ? f2(+v) : f1(+v)) : '—') }; }),
       benchCount: pl.filter(p => p.slot != 'starter').length, lineupMsg, hasLineup: !lineupMsg
     };
-    const teamPicker = MGR.map(m => ({ m, init: INIT[m], color: col(m), ring: m == tm ? '2px solid var(--accent)' : '2px solid transparent', op: m == tm ? 1 : .75, fg: m == tm ? 'var(--ink)' : 'var(--muted)', pick: () => this.setState({ team: m }) }));
+    const teamPicker = MGR.map(m => ({ m, init: INIT[m], color: col(m), ring: m == tm ? '2px solid var(--accent)' : '2px solid transparent', ringFill: m == tm ? 'var(--accent)' : 'transparent', op: m == tm ? 1 : .75, fg: m == tm ? 'var(--ink)' : 'var(--muted)', pick: () => this.setState({ team: m }) }));
 
     // Draft
     const dr = S.draft, picks = [];
