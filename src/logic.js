@@ -276,8 +276,17 @@ class Component extends DCLogic {
     this.toast('Image saved.');
   }
   componentDidUpdate() { this.applyTheme(); }
-  theme() { return this.state.theme ?? this.props.theme ?? 'dark'; }
-  applyTheme() { document.documentElement.dataset.theme = this.theme(); }
+  // Light by default; a viewer's own pick is remembered on their device.
+  theme() {
+    if (this.state.theme) return this.state.theme;
+    try { const t = localStorage.getItem('9feamg-theme'); if (t == 'light' || t == 'dark') return t; } catch {}
+    return this.props.theme ?? 'light';
+  }
+  applyTheme() {
+    const t = this.theme();
+    document.documentElement.dataset.theme = t;
+    document.querySelector('meta[name="theme-color"]')?.setAttribute('content', getComputedStyle(document.documentElement).getPropertyValue('--bg').trim() || (t == 'dark' ? '#0D1424' : '#F7F5F0'));
+  }
   players(m) { const t = this.state.rosters?.teams?.find(t => t.name == m); return t ? t.players : []; }
   // Whose roster a player (or team defense, by team name) is on: { m, starter, pos }.
   // Final weeks use that week's box score; otherwise the current roster file.
@@ -335,7 +344,7 @@ class Component extends DCLogic {
     if (wk == LW) {
       const [c, p] = LIVE.scores[m] || [0, 0], op = (LIVE.scores[o] || [0, 0])[1];
       const left = this.startersLeft(m);
-      return { m, init: INIT[m], color: col(m), rec: rec(m, NF) + ' · ' + place, info: rec(m, NF) + ' · ' + place + (left == null ? '' : left ? ` · ${left} left` : ' · done'), score: f2(p), raw: p, now: f2(c), status: 'Now ' + f2(c), scoreColor: p < op ? 'var(--muted)' : 'var(--ink)', nowColor: c < (LIVE.scores[o] || [0])[0] ? 'var(--muted)' : 'var(--ink)' };
+      return { m, init: INIT[m], color: col(m), rec: rec(m, NF) + ' · ' + place, info: rec(m, NF) + ' · ' + place, left: left == null ? '' : left ? left + ' left' : 'done', score: f2(p), raw: p, now: f2(c), status: 'Now ' + f2(c), scoreColor: p < op ? 'var(--muted)' : 'var(--ink)', nowColor: c < (LIVE.scores[o] || [0])[0] ? 'var(--muted)' : 'var(--ink)' };
     }
     const s = SC[m][wk - 1], os = SC[o][wk - 1], win = s > os;
     return { m, init: INIT[m], color: col(m), rec: rec(m, wk - 1), info: rec(m, wk - 1), score: f2(s), raw: s, now: '', status: win ? 'Won' : 'Lost', scoreColor: win ? 'var(--ink)' : 'var(--muted)', nowColor: 'var(--muted)' };
@@ -375,7 +384,7 @@ class Component extends DCLogic {
     return out.join(' ');
   }
   renderVals() {
-    const S = this.state, themeLabel = this.theme() == 'dark' ? 'Light' : 'Dark', toggleTheme = () => this.setState({ theme: this.theme() == 'dark' ? 'light' : 'dark' });
+    const S = this.state, themeLabel = this.theme() == 'dark' ? 'Light' : 'Dark', toggleTheme = () => { const t = this.theme() == 'dark' ? 'light' : 'dark'; try { localStorage.setItem('9feamg-theme', t); } catch {} this.setState({ theme: t }); };
     if (!D) return { ok: false, dataError: true, themeLabel, toggleTheme };
     const wk = S.week, boothOn = this.props.trashTalk ?? true;
     // Draft lives in the header (it's rarely used), so the tab bar has four tabs.
