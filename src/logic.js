@@ -195,7 +195,7 @@ class Component extends DCLogic {
   openHash() {
     const m = location.hash.match(/^#w(\d+)-([\w-]+)$/);
     if (!m) return;
-    this.setState({ tab: 'Gameday', week: +m[1], prOpen: { ...this.state.prOpen, [m[0].slice(1)]: true } });
+    this.setState({ tab: 'Gameday', week: +m[1], bustedOpen: true, prOpen: { ...this.state.prOpen, [m[0].slice(1)]: true } });
     setTimeout(() => {
       const el = document.getElementById(m[0].slice(1));
       if (!el) return;
@@ -413,8 +413,21 @@ class Component extends DCLogic {
         expanded: String(!!S.prOpen?.[anchor]), bodyDisplay: S.prOpen?.[anchor] ? 'block' : 'none',
         legCount: legs.length + (legs.length == 1 ? ' leg' : ' legs'), toggleLabel: S.prOpen?.[anchor] ? 'Hide legs ▴' : 'Show legs ▾',
         toggle: () => this.setState({ prOpen: { ...S.prOpen, [anchor]: !S.prOpen?.[anchor] } }),
-        shotLabel: `${p.owner}’s parlay · Week ${wk}`
+        shotLabel: `${p.owner}’s parlay · Week ${wk}`,
+        rank: status == 'CASHED' ? 2 : status == 'OPEN' ? 1 : 0, chance: chance ?? -1
       };
+    });
+    // Cashed first, then live tickets by chance to hit, then busted ones in a collapsible
+    // section (the toggle sits above the first busted card).
+    parlays.sort((a, b) => b.rank - a.rank || b.chance - a.chance);
+    const busted = parlays.filter(x => x.status == 'BUSTED'), bustOpen = !!S.bustedOpen;
+    parlays.forEach(x => {
+      x.firstBusted = x == busted[0];
+      x.wrapDisplay = x.status == 'BUSTED' && !bustOpen ? 'none' : 'block';
+      x.bustedLabel = `Busted · ${busted.length}`;
+      x.bustedToggleLabel = bustOpen ? 'Hide ▴' : 'Show ▾';
+      x.bustedExpanded = String(bustOpen);
+      x.toggleBusted = () => this.setState({ bustedOpen: !bustOpen });
     });
     // Season ledger across every week's parlays. Stakes are a flat $10.
     const allParlays = Object.values(D.parlays || {}).flat(), ledger = { w: 0, l: 0, open: 0, net: 0, unpriced: 0 }, byOwner = {};
