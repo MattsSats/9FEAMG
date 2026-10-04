@@ -1,5 +1,41 @@
 [
   {
+    "when": "Oct 4, 10:51 am",
+    "yahooTeam": "There is no 2nd best",
+    "manager": "Matt",
+    "action": "add",
+    "player": "MarShawn Lloyd",
+    "nfl": "GB",
+    "pos": "RB",
+    "faab": null,
+    "via": "Free Agency",
+    "notes": "Yahoo live pull 2026-10-04"
+  },
+  {
+    "when": "Oct 4, 2:23 am",
+    "yahooTeam": "C Lambs Biggest Hater",
+    "manager": "Colin",
+    "action": "add",
+    "player": "Emanuel Wilson",
+    "nfl": "Sea",
+    "pos": "RB",
+    "faab": null,
+    "via": "Free Agency",
+    "notes": "Yahoo live pull 2026-10-04"
+  },
+  {
+    "when": "Oct 4, 2:23 am",
+    "yahooTeam": "C Lambs Biggest Hater",
+    "manager": "Colin",
+    "action": "drop",
+    "player": "Woody Marks",
+    "nfl": "Hou",
+    "pos": "RB",
+    "faab": null,
+    "via": "Waivers",
+    "notes": "Yahoo live pull 2026-10-04"
+  },
+  {
     "when": "Oct 3, 2:45 am",
     "yahooTeam": "Toilet Bowl King",
     "manager": "DLin",

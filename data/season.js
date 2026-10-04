@@ -58,15 +58,15 @@ window.SEASON = {
   // The week in progress. Set to null between weeks.
   live: {
     week: 4,
-    status: 'Live · TNF final · Sunday to come',
+    status: 'Live · Sunday underway',
     // [current points, projected final]
-    // Yahoo live projections as of Fri Oct 2.
+    // Yahoo live projections as of Sun Oct 4, 11:32 AM CT.
     scores: {
-      Matt: [6.00, 114.79], DLin: [10.20, 114.46],
-      Tristan: [8.90, 111.99], Colin: [0, 112.58],
-      Jerger: [0, 113.91], Kurt: [14.10, 111.64],
-      Tony: [0, 108.39], Andy: [0, 116.82],
-      'Mr. G': [0, 119.12], Pablo: [0, 88.77]
+      Matt: [9.10, 108.13], DLin: [32.40, 118.56],
+      Tristan: [8.90, 110.91], Colin: [16.00, 120.77],
+      Jerger: [0.00, 115.05], Kurt: [14.10, 112.25],
+      Tony: [6.60, 105.74], Andy: [0.00, 116.62],
+      'Mr. G': [0.00, 119.97], Pablo: [0.00, 106.63]
     },
     // Points for players whose games are final (starters and bench).
     playerPoints: {
@@ -78,7 +78,7 @@ window.SEASON = {
       'Denzel Boston': 10.90,
       'DK Metcalf': 14.00
     },
-    sheetNote: 'Live after TNF. Orange = final points; the rest kick off Sunday.'
+    sheetNote: 'Live Sunday. Orange = final points; the rest are in progress or still to kick off.'
   },
 
   // Shown on the week after the live one.
@@ -94,7 +94,7 @@ window.SEASON = {
   projections: {},
 
   // Wire tab: transactions newer than asOf minus windowDays show under "7 days".
-  wire: { asOf: '2026-10-03T08:00:00', windowDays: 7 },
+  wire: { asOf: '2026-10-04T11:32:00', windowDays: 7 },
 
   // ---- Trash talk (hidden when the trashTalk setting is off) ----
 
