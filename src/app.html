@@ -595,7 +595,7 @@ button{font-family:inherit;color:inherit}
           <div style="position:absolute;top:56px;right:18px;z-index:2;transform:rotate(-10deg);border:3px solid {{ pr.stampColor }};color:{{ pr.stampColor }};font-family:'Big Shoulders Display';font-weight:900;font-size:30px;line-height:1;letter-spacing:.06em;padding:4px 12px;border-radius:8px;background:color-mix(in oklch, var(--surface) 70%, transparent);pointer-events:none">{{ pr.status }}</div>
         </sc-if>
         <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;padding:14px 16px 0">
-          <span style="font-family:'JetBrains Mono';font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--accentInk);font-weight:600">The Booth Parlay</span>
+          <span style="font-family:'JetBrains Mono';font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--accentInk);font-weight:600">{{ pr.by }}</span>
           <span style="display:flex;align-items:center;gap:8px">
             <button class="share-btn no-shot" sc-camel-on-click="{{ pr.copyLink }}" aria-label="Copy a link to this parlay">Link</button>
             <button class="share-btn no-shot" sc-camel-on-click="{{ pr.share }}" aria-label="Share this parlay as an image">{{ pr.shareLabel }}</button>

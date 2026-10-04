@@ -172,7 +172,7 @@ window.SEASON = {
   parlays: {
     4: [
       {
-        owner: 'Andy',
+        owner: 'Andy', title: 'Chalk Talk', id: 'andy', // id keeps the original link (#w4-andy)
         legs: [
           // Odds: DraftKings via ESPN odds/props pages, Fri Oct 2.
           { text: 'Jahmyr Gibbs anytime TD', player: 'Jahmyr Gibbs', type: 'td', game: 'Sun 7:20 PM @ CAR', odds: '-330', status: 'open' },
@@ -205,7 +205,7 @@ window.SEASON = {
         booth: 'Projected 0.59 apart, so they split the ticket down the middle. Lamar’s +240 touchdown is doing most of the heavy lifting.'
       },
       {
-        owner: 'The Booth', init: 'TB',
+        owner: 'The Booth', init: 'TB', title: 'Noon Special', id: 'the-booth', // id keeps the original link (#w4-the-booth)
         // Odds: ESPN odds page (DraftKings), Fri Oct 2. Noon CT kickoffs.
         legs: [
           { text: 'Jaguars–Bengals over 51.5', type: 'total', side: 'over', line: 51.5, teams: ['Jax', 'Cin'], game: 'Sun 12:00 PM · JAX @ CIN', odds: '-102', status: 'open' },

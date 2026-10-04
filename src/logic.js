@@ -102,6 +102,34 @@ const LEG_TAG = {
   hit: { tag: 'HIT', bg: 'var(--pos)', fg: 'var(--onStatus)' },
   miss: { tag: 'MISS', bg: 'var(--neg)', fg: 'var(--onStatus)' }
 };
+// Odds-implied chance a ticket still cashes: legs that hit count as done, any miss is 0.
+// A same-game group (or a ticket-level price) with some legs in is split evenly across its
+// legs, so it's a rough number. Book prices include the vig, so it runs a little high.
+function hitChance(p) {
+  const st = l => l.status || 'open';
+  if (p.legs.some(l => st(l) == 'miss')) return 0;
+  const groups = [];
+  if (toDecimal(p.odds)) groups.push({ odds: p.odds, legs: p.legs });
+  else {
+    const by = new Map();
+    for (const l of p.legs) {
+      if (!l.sgp) { groups.push({ odds: l.odds, legs: [l] }); continue; }
+      if (!by.has(l.sgp)) by.set(l.sgp, { odds: p.sgps?.[l.sgp - 1], legs: [] });
+      by.get(l.sgp).legs.push(l);
+    }
+    groups.push(...by.values());
+  }
+  let prob = 1;
+  for (const g of groups) {
+    const open = g.legs.filter(l => st(l) == 'open').length;
+    if (!open) continue;
+    const ip = impliedProb(g.odds);
+    if (ip == null) return null;
+    prob *= Math.pow(ip, open / g.legs.length);
+  }
+  return prob;
+}
+const pct = x => x < 0.1 ? (Math.max(x, 0.001) * 100).toFixed(1) + '%' : Math.round(x * 100) + '%';
 // The priced pieces of a ticket, multiplied together for the parlay odds: one per
 // same-game group (legs with sgp: n, priced by p.sgps[n - 1]) plus one per other leg.
 function parlayParts(p) {
@@ -335,7 +363,7 @@ class Component extends DCLogic {
     const nextNote = NEXT && wk == NEXT.week ? NEXT.note : 'Add this week to the schedule in data/season.js.';
     // Booth parlays for the selected week (data/season.js -> parlays[week]).
     const parlays = (D.parlays?.[wk] || []).map((p, i) => {
-      const { status, dec, priced } = parlayState(p);
+      const { status, dec, priced } = parlayState(p), chance = hitChance(p);
       const vs = p.vs ?? opp(p.owner, wk), shot = 'parlay-' + i;
       // Stable link name from the parlay's id, title or owner: 'w4-the-truce'.
       const anchor = `w${wk}-` + String(p.id ?? p.title ?? p.owner).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
@@ -368,11 +396,12 @@ class Component extends DCLogic {
         stampColor: status == 'CASHED' ? 'var(--pos)' : 'var(--neg)',
         statusBg: status == 'CASHED' ? 'var(--pos)' : status == 'BUSTED' ? 'var(--neg)' : 'var(--surface2)',
         statusFg: status == 'OPEN' ? 'var(--muted)' : 'var(--onStatus)',
-        oddsLabel: priced ? 'Parlay ' + toAmerican(dec) : 'Lines TBD',
+        oddsLabel: (priced ? 'Parlay ' + toAmerican(dec) : 'Lines TBD') + (status == 'OPEN' && chance != null ? ` · ~${pct(chance)} to hit${p.legs.some(l => l.status == 'hit') ? ' now' : ''}` : ''),
+        by: (p.owners ? p.owners.join(' & ') : p.owner) + '’s Parlay',
         // e.g. "2.20 × 1.87 × 1.67 = ×6.86 · hits about 1 in 7 (15%)"
         oddsMath: toDecimal(p.odds) ? 'Same-game parlay · book price ' + String(p.odds).replace('-', '−') : priced ? (() => {
           const parts = parlayParts(p), decs = parts.map(toDecimal), prob = parts.reduce((a, o) => a * impliedProb(o), 1);
-          return decs.map(x => x.toFixed(2)).join(' × ') + ` = ×${dec.toFixed(2)} · hits about 1 in ${Math.max(1, Math.round(1 / prob))} (${Math.round(prob * 100)}%)`;
+          return decs.map(x => x.toFixed(2)).join(' × ') + ` = ×${dec.toFixed(2)} · before kickoff about 1 in ${Math.max(1, Math.round(1 / prob))}`;
         })() : `${parlayParts(p).filter(o => toDecimal(o)).length} of ${parlayParts(p).length} ${p.sgps ? 'parts' : 'legs'} priced`,        payout: !priced ? 'Odds calculate once every leg has a line' : (status == 'CASHED' ? '$10 paid $' : status == 'BUSTED' ? '$10 would have paid $' : '$10 pays $') + (10 * dec).toFixed(2),
         angle: angle.join(' '), hasAngle: angle.length > 0,
         // Tailing your own opponent's parlay is a hedge: you win the matchup or cash the ticket.

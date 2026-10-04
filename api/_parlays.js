@@ -22,6 +22,35 @@ export function findParlay(season, slug) {
 }
 
 const toDecimal = o => { const n = parseFloat(o); return isNaN(n) || n == 0 ? null : n > 0 ? 1 + n / 100 : 1 + 100 / -n; };
+const impliedProb = o => { const n = parseFloat(o); return isNaN(n) || n == 0 ? null : n > 0 ? 100 / (n + 100) : -n / (-n + 100); };
+// Odds-implied chance a ticket still cashes: legs that hit count as done, any miss is 0.
+// A same-game group (or a ticket-level price) with some legs in is split evenly across its
+// legs, so it's a rough number. Book prices include the vig, so it runs a little high.
+function hitChance(p) {
+  const st = l => l.status || 'open';
+  if (p.legs.some(l => st(l) == 'miss')) return 0;
+  const groups = [];
+  if (toDecimal(p.odds)) groups.push({ odds: p.odds, legs: p.legs });
+  else {
+    const by = new Map();
+    for (const l of p.legs) {
+      if (!l.sgp) { groups.push({ odds: l.odds, legs: [l] }); continue; }
+      if (!by.has(l.sgp)) by.set(l.sgp, { odds: p.sgps?.[l.sgp - 1], legs: [] });
+      by.get(l.sgp).legs.push(l);
+    }
+    groups.push(...by.values());
+  }
+  let prob = 1;
+  for (const g of groups) {
+    const open = g.legs.filter(l => st(l) == 'open').length;
+    if (!open) continue;
+    const ip = impliedProb(g.odds);
+    if (ip == null) return null;
+    prob *= Math.pow(ip, open / g.legs.length);
+  }
+  return prob;
+}
+const pct = x => x < 0.1 ? (Math.max(x, 0.001) * 100).toFixed(1) + '%' : Math.round(x * 100) + '%';
 const toAmerican = d => d >= 2 ? '+' + Math.round((d - 1) * 100) : '−' + Math.round(100 / (d - 1));
 
 // Everything the preview needs about one parlay.
@@ -42,6 +71,8 @@ export function describe(week, p) {
   const who = p.owners ? p.owners.join(' + ') : title.includes(p.owner) ? null : p.owner;
   return {
     title, who, week, status,
+    by: (p.owners ? p.owners.join(' & ') : p.owner) + '’s Parlay',
+    chance: status == 'OPEN' && hitChance(p) != null ? pct(hitChance(p)) : null,
     odds: priced ? toAmerican(dec) : null,
     payout: priced ? (10 * dec).toFixed(2) : null,
     legs: p.legs.map(l => ({ text: l.text, odds: l.sgp ? 'SGP ' + l.sgp : l.odds ? String(l.odds).replace('-', '−') : '', status: l.status || 'open' })),
