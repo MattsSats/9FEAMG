@@ -332,13 +332,6 @@
           "proj": 8.86
         },
         {
-          "name": "Dontayvion Wicks",
-          "pos": "WR",
-          "slot": "bench",
-          "nfl": "Phi",
-          "proj": 9.83
-        },
-        {
           "name": "Jadarian Price",
           "pos": "RB",
           "slot": "bench",
@@ -372,6 +365,12 @@
           "slot": "starter",
           "nfl": "Buf",
           "proj": 6.88
+        },
+        {
+          "name": "Devaughn Vele",
+          "pos": "WR",
+          "slot": "bench",
+          "nfl": "NO"
         }
       ]
     },
@@ -1493,6 +1492,21 @@
         "SF"
       ],
       "note": "Yahoo live pull 2026-10-04 3:45 PM"
+    },
+    {
+      "date": "2026-10-04",
+      "manager": "Colin",
+      "add": [
+        "Devaughn Vele",
+        "WR",
+        "NO"
+      ],
+      "drop": [
+        "Dontayvion Wicks",
+        "WR",
+        "PHI"
+      ],
+      "note": "Yahoo sync queue Sun Oct 4, 5:34 PM CT"
     }
   ],
   "gaps": [],

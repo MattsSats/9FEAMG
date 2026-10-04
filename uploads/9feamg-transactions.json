@@ -1,5 +1,29 @@
 [
   {
+    "when": "Oct 4, 4:07 pm",
+    "yahooTeam": "C Lambs Biggest Hater",
+    "manager": "Colin",
+    "action": "add",
+    "player": "Devaughn Vele",
+    "nfl": "NO",
+    "pos": "WR",
+    "faab": null,
+    "via": "Free Agency",
+    "notes": "Yahoo sync queue Sun Oct 4, 5:34 PM CT"
+  },
+  {
+    "when": "Oct 4, 4:07 pm",
+    "yahooTeam": "C Lambs Biggest Hater",
+    "manager": "Colin",
+    "action": "drop",
+    "player": "Dontayvion Wicks",
+    "nfl": "Phi",
+    "pos": "WR",
+    "faab": null,
+    "via": "Waivers",
+    "notes": "Yahoo sync queue Sun Oct 4, 5:34 PM CT"
+  },
+  {
     "when": "Oct 4, 2:00 pm",
     "yahooTeam": "Squirtle Squad",
     "manager": "Tristan",
