@@ -334,16 +334,27 @@ class Component extends DCLogic {
     const place = ord(ST.findIndex(x => x.m == m) + 1);
     if (wk == LW) {
       const [c, p] = LIVE.scores[m] || [0, 0], op = (LIVE.scores[o] || [0, 0])[1];
-      return { m, init: INIT[m], color: col(m), rec: rec(m, NF) + ' · ' + place, score: f2(p), raw: p, status: 'Now ' + f2(c), scoreColor: p < op ? 'var(--muted)' : 'var(--ink)', markOp: p > op ? 1 : 0 };
+      const left = this.startersLeft(m);
+      return { m, init: INIT[m], color: col(m), rec: rec(m, NF) + ' · ' + place, info: rec(m, NF) + ' · ' + place + (left == null ? '' : left ? ` · ${left} left` : ' · done'), score: f2(p), raw: p, now: f2(c), status: 'Now ' + f2(c), scoreColor: p < op ? 'var(--muted)' : 'var(--ink)', nowColor: c < (LIVE.scores[o] || [0])[0] ? 'var(--muted)' : 'var(--ink)' };
     }
     const s = SC[m][wk - 1], os = SC[o][wk - 1], win = s > os;
-    return { m, init: INIT[m], color: col(m), rec: rec(m, wk - 1), score: f2(s), raw: s, status: win ? 'Won' : 'Lost', scoreColor: win ? 'var(--ink)' : 'var(--muted)', markOp: win ? 1 : 0 };
+    return { m, init: INIT[m], color: col(m), rec: rec(m, wk - 1), info: rec(m, wk - 1), score: f2(s), raw: s, now: '', status: win ? 'Won' : 'Lost', scoreColor: win ? 'var(--ink)' : 'var(--muted)', nowColor: 'var(--muted)' };
   }
   match(pair, wk) {
     const [a, b] = pair, A = this.side(a, b, wk), B = this.side(b, a, wk), gap = Math.abs(A.raw - B.raw), live = wk == LW;
-    return { a: A, b: B, gap: (() => { const lead = A.raw > B.raw ? A.m : B.raw > A.raw ? B.m : null; if (!lead) return live ? 'Projected dead even · live' : 'Tied'; return live ? 'Proj: ' + lead + ' by ' + f2(gap) + ' · live' : lead + ' won by ' + f2(gap); })(), mid: live ? 'proj' : 'final', delta: 'Δ ' + f2(gap),
-      // Card footer: the gap as a chip, then what it means in words.
-      gapNote: (() => { const lead = A.raw > B.raw ? A.m : B.raw > A.raw ? B.m : null; return lead ? lead + (live ? ' ahead' : ' won') : live ? 'Even' : 'Tied'; })(), share: (A.raw / (A.raw + B.raw || 1) * 100).toFixed(1) + '%', open: () => this.setState({ sheet: { a, b, wk } }) };
+    const lead = A.raw > B.raw ? A.m : B.raw > A.raw ? B.m : null;
+    return { a: A, b: B, live,
+      // Column headers: Now (live only) and Proj, or Final once the week is done.
+      colNow: live ? 'Now' : '', colScore: live ? 'Proj' : 'Final',
+      // The gap in words, leader first: "Pablo +3.55 proj" or "Tony won by 9.04".
+      chip: lead ? (live ? `${lead} +${f2(gap)} proj` : `${lead} won by ${f2(gap)}`) : live ? 'Even on projection' : 'Tied',
+      open: () => this.setState({ sheet: { a, b, wk } }) };
+  }
+  // Live week: how many of a manager's starters haven't finished (not started or still playing).
+  startersLeft(m) {
+    const st = this.players(m).filter(p => p.slot == 'starter');
+    if (!st.length) return null;
+    return st.filter(p => LIVEPTS[p.name] == null || PLAYING.has(p.name)).length;
   }
   // A week's caption. Strings always show; { pair, text } only when that pair is featured.
   // A live week whose featured matchup has no caption gets a plain one from the scores.
@@ -352,9 +363,16 @@ class Component extends DCLogic {
     if (typeof c == 'string') return c;
     if (c?.text && [...c.pair].sort().join() == pair) return c.text;
     if (wk != LW || !hero) return '';
-    const [A, B] = [hero.a, hero.b], ca = LIVE.scores[A.m]?.[0] ?? 0, cb = LIVE.scores[B.m]?.[0] ?? 0;
-    const lead = ca == cb ? 'Level so far.' : (ca > cb ? A.m : B.m) + ' leads ' + f2(Math.max(ca, cb)) + '–' + f2(Math.min(ca, cb)) + ' so far.';
-    return `${A.m} ${f2(A.raw)}, ${B.m} ${f2(B.raw)}. A ${f2(Math.abs(A.raw - B.raw))} projection gap. ${lead}`;
+    const [A, B] = [hero.a.m, hero.b.m], ca = LIVE.scores[A]?.[0] ?? 0, cb = LIVE.scores[B]?.[0] ?? 0;
+    const projLead = hero.a.raw >= hero.b.raw ? A : B, nowLead = ca == cb ? null : ca > cb ? A : B;
+    const out = [nowLead ? `${nowLead} is up ${f2(Math.abs(ca - cb))} so far${nowLead == projLead ? '' : ', but the projection favors ' + projLead}.` : 'Level so far.'];
+    const la = this.startersLeft(A), lb = this.startersLeft(B), n = x => x + (x == 1 ? ' starter' : ' starters');
+    if (la != null && lb != null) out.push(la == lb ? `Both have ${n(la)} left.` : `${A} has ${n(la)} left, ${B} has ${lb}.`);
+    // The biggest projection still to kick off on either side.
+    const next = [A, B].flatMap(m => this.players(m).filter(p => p.slot == 'starter' && LIVEPTS[p.name] == null && p.proj).map(p => ({ m, p })))
+      .sort((x, y) => y.p.proj - x.p.proj)[0];
+    if (next) out.push(`Still to come: ${next.p.name}, ${f1(next.p.proj)} projected for ${next.m}.`);
+    return out.join(' ');
   }
   renderVals() {
     const S = this.state, themeLabel = this.theme() == 'dark' ? 'Light' : 'Dark', toggleTheme = () => this.setState({ theme: this.theme() == 'dark' ? 'light' : 'dark' });
