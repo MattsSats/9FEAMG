@@ -161,6 +161,9 @@ window.SEASON = {
   //                 odds and $10 payout calculate themselves.
   //   legs[].status 'open', 'hit' or 'miss'. Any miss = BUSTED, all hit = CASHED.
   //   tailers       managers riding along; tailing your own opponent shows HEDGE.
+  //   odds          optional book price for the whole ticket ('+2350'). Use it for
+  //                 same-game parlays, which the book prices as one bet; it
+  //                 overrides the leg-by-leg math, and legs can stay odds: null.
   //   booth         optional trash talk (hidden when trash talk is off).
   parlays: {
     4: [
@@ -207,6 +210,26 @@ window.SEASON = {
         ],
         tailers: ['Tony'],
         booth: 'The Booth’s noon special: the highest total on the early slate, a Cowboys upset that runs straight through Pablo’s QB and defense, and Matt’s Jordan Love against an 0–3 Bucs team. For fun, not a lock.'
+      },
+      {
+        owner: 'Andy', title: 'London Lottery', odds: '+2350', // book price for the whole ticket (same-game parlay)
+        legs: [
+          { text: 'Jonathan Taylor anytime TD', player: 'Jonathan Taylor', type: 'td', game: 'Sun 8:30 AM · IND @ WAS (London)', result: '2 rush TD', odds: null, status: 'hit' },
+          { text: 'Jacory Croskey-Merritt anytime TD', player: 'Jacory Croskey-Merritt', type: 'td', game: 'Sun 8:30 AM · IND @ WAS (London)', result: '15 rush yds, 2-35 rec, no TD', odds: null, status: 'miss' },
+          { text: 'Tyler Warren anytime TD', player: 'Tyler Warren', type: 'td', game: 'Sun 8:30 AM · IND @ WAS (London)', result: '5-41, no TD', odds: null, status: 'miss' },
+          { text: 'Stefon Diggs anytime TD', player: 'Stefon Diggs', type: 'td', game: 'Sun 8:30 AM · IND @ WAS (London)', result: '5-35, no TD', odds: null, status: 'miss' }
+        ],
+        tailers: ['DLin'],
+        booth: 'Andy needed Tony’s tight end to score against Tony. Tyler Warren caught five balls and found no end zone, so Tony wins that subplot. Jonathan Taylor scored twice and DLin keeps the 22.20 in the matchup, so the tail only cost ten bucks.'
+      },
+      {
+        owner: 'Andy', title: 'Breakfast in London', odds: '+1000', // book price for the whole ticket (same-game parlay)
+        legs: [
+          { text: 'Commanders moneyline vs Colts', type: 'ml', team: 'Was', teams: ['Ind', 'Was'], game: 'Sun 8:30 AM · IND @ WAS (London)', result: 'Lost 13–30', odds: null, status: 'miss' },
+          { text: 'Jonathan Taylor anytime TD', player: 'Jonathan Taylor', type: 'td', game: 'Sun 8:30 AM · IND @ WAS (London)', result: '2 rush TD', odds: null, status: 'hit' },
+          { text: 'Stefon Diggs anytime TD', player: 'Stefon Diggs', type: 'td', game: 'Sun 8:30 AM · IND @ WAS (London)', result: '5-35, no TD', odds: null, status: 'miss' }
+        ],
+        booth: 'A Commanders win with two Jonathan Taylor touchdowns. Taylor delivered both. The Commanders lost by 17 before most of the league had coffee.'
       }
     ]
   },

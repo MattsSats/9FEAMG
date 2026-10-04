@@ -103,9 +103,11 @@ const LEG_TAG = {
   miss: { tag: 'MISS', bg: 'var(--neg)', fg: 'var(--onStatus)' }
 };
 // A parlay's state from its legs: any miss = BUSTED, all hit = CASHED, else OPEN.
+// A ticket-level odds (same-game parlays, priced by the book as one bet) overrides the leg math.
 function parlayState(p) {
   const st = p.legs.map(l => l.status || 'open');
   const status = st.includes('miss') ? 'BUSTED' : st.length && st.every(s => s == 'hit') ? 'CASHED' : 'OPEN';
+  if (toDecimal(p.odds)) return { status, priced: true, dec: toDecimal(p.odds) };
   const decs = p.legs.map(l => toDecimal(l.odds)), priced = decs.length > 0 && decs.every(d => d != null);
   return { status, priced, dec: priced ? decs.reduce((a, b) => a * b, 1) : null };
 }
@@ -358,7 +360,7 @@ class Component extends DCLogic {
         statusFg: status == 'OPEN' ? 'var(--muted)' : 'var(--onStatus)',
         oddsLabel: priced ? 'Parlay ' + toAmerican(dec) : 'Lines TBD',
         // e.g. "2.20 × 1.87 × 1.67 = ×6.86 · hits about 1 in 7 (15%)"
-        oddsMath: priced ? (() => {
+        oddsMath: toDecimal(p.odds) ? 'Same-game parlay · book price ' + String(p.odds).replace('-', '−') : priced ? (() => {
           const decs = p.legs.map(l => toDecimal(l.odds)), prob = p.legs.reduce((a, l) => a * impliedProb(l.odds), 1);
           return decs.map(x => x.toFixed(2)).join(' × ') + ` = ×${dec.toFixed(2)} · hits about 1 in ${Math.max(1, Math.round(1 / prob))} (${Math.round(prob * 100)}%)`;
         })() : `${p.legs.filter(l => toDecimal(l.odds)).length} of ${p.legs.length} legs priced`,        payout: !priced ? 'Odds calculate once every leg has a line' : (status == 'CASHED' ? '$10 paid $' : status == 'BUSTED' ? '$10 would have paid $' : '$10 pays $') + (10 * dec).toFixed(2),

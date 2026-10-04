@@ -28,8 +28,10 @@ const toAmerican = d => d >= 2 ? '+' + Math.round((d - 1) * 100) : '−' + Math.
 export function describe(week, p) {
   const st = p.legs.map(l => l.status || 'open');
   const status = st.includes('miss') ? 'BUSTED' : st.length && st.every(s => s == 'hit') ? 'CASHED' : 'OPEN';
-  const decs = p.legs.map(l => toDecimal(l.odds)), priced = decs.length > 0 && decs.every(d => d != null);
-  const dec = priced ? decs.reduce((a, b) => a * b, 1) : null;
+  // A ticket-level odds (same-game parlays, priced by the book as one bet) overrides the leg math.
+  const decs = p.legs.map(l => toDecimal(l.odds)), ticket = toDecimal(p.odds);
+  const priced = !!ticket || (decs.length > 0 && decs.every(d => d != null));
+  const dec = ticket ?? (priced ? decs.reduce((a, b) => a * b, 1) : null);
   const title = p.title ?? `${p.owner}’s parlay`;
   const who = p.owners ? p.owners.join(' + ') : title.includes(p.owner) ? null : p.owner;
   return {
@@ -38,7 +40,7 @@ export function describe(week, p) {
     payout: priced ? (10 * dec).toFixed(2) : null,
     legs: p.legs.map(l => ({ text: l.text, odds: l.odds ? String(l.odds).replace('-', '−') : '', status: l.status || 'open' })),
     // Changes whenever odds or results change, so chat apps fetch a fresh image.
-    version: p.legs.map(l => `${l.odds}:${l.status}`).join('|')
+    version: `${p.odds}|` + p.legs.map(l => `${l.odds}:${l.status}`).join('|')
   };
 }
 
