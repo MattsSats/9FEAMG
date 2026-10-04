@@ -184,11 +184,10 @@
           "proj": 13.29
         },
         {
-          "name": "Deebo Samuel Sr.",
-          "pos": "WR",
+          "name": "Bo Nix",
+          "pos": "QB",
           "slot": "bench",
-          "nfl": "SF",
-          "proj": 8.37
+          "nfl": "Den"
         },
         {
           "name": "Ladd McConkey",
@@ -1479,6 +1478,21 @@
         "—"
       ],
       "note": "Yahoo live pull 2026-10-04; DeVonta Smith moved to IR to open the spot"
+    },
+    {
+      "date": "2026-10-04",
+      "manager": "Tristan",
+      "add": [
+        "Bo Nix",
+        "QB",
+        "DEN"
+      ],
+      "drop": [
+        "Deebo Samuel Sr.",
+        "WR",
+        "SF"
+      ],
+      "note": "Yahoo live pull 2026-10-04 3:45 PM"
     }
   ],
   "gaps": [],
