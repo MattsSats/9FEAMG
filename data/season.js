@@ -58,27 +58,140 @@ window.SEASON = {
   // The week in progress. Set to null between weeks.
   live: {
     week: 4,
-    status: 'Live · Sunday underway',
+    status: 'Live · noon games near halftime',
     // [current points, projected final]
-    // Yahoo live projections as of Sun Oct 4, 11:32 AM CT.
+    // Yahoo live as of Sun Oct 4, 1:16 PM CT. DLin's and Pablo's projections may be a
+    // play behind (Yahoo's matchup page hadn't caught up).
     scores: {
-      Matt: [9.10, 108.13], DLin: [32.40, 118.56],
-      Tristan: [8.90, 110.91], Colin: [16.00, 120.77],
-      Jerger: [0.00, 115.05], Kurt: [14.10, 112.25],
-      Tony: [6.60, 105.74], Andy: [0.00, 116.62],
-      'Mr. G': [0.00, 119.97], Pablo: [0.00, 106.63]
+      Matt: [22.34, 93.08], DLin: [46.70, 104.10],
+      Tristan: [36.92, 116.25], Colin: [39.10, 105.06],
+      Jerger: [18.40, 108.10], Kurt: [41.30, 118.26],
+      Tony: [36.52, 105.16], Andy: [28.46, 101.85],
+      'Mr. G': [24.10, 112.65], Pablo: [59.78, 116.20]
     },
-    // Points for players whose games are final (starters and bench).
+    // Points so far for every player whose game has started (starters and bench).
+    // Players listed in inProgress are still playing; the rest are final.
     playerPoints: {
-      'KC Concepcion Jr.': 8.90,
-      'Harold Fannin Jr.': 10.20,
+      'Jordan Love': 6.84,
+      'Garrett Wilson': 2.30,
+      'Christian Watson': 2.10,
+      'Trey McBride': 2.00,
+      'Josh Downs': 3.10,
       'Steelers': 6.00,
-      'Jaylen Warren': 14.10,
       'Quinshon Judkins': 18.60,
+      'Chris Godwin Jr.': 2.30,
+      'Wan\'Dale Robinson': 1.80,
+      'MarShawn Lloyd': 1.40,
+      'DeVonta Smith': 0.00,
+      'Jayden Daniels': 0.00,
+      'Jonathan Taylor': 22.20,
+      'Cam Skattebo': 2.90,
+      'George Pickens': 0.00,
+      'Tee Higgins': 4.10,
+      'Harold Fannin Jr.': 10.20,
+      'Michael Wilson': 4.30,
+      'Tyler Loop': 3.00,
+      'Jalen Hurts': 7.12,
+      'Jake Ferguson': 1.40,
+      'Stefon Diggs': 6.00,
+      'Brian Thomas Jr.': 1.50,
+      'Kenny Gainwell': 0.50,
+      'Rico Dowdle': 0.00,
+      'Lamar Jackson': 16.02,
+      'KC Concepcion Jr.': 8.90,
+      'Evan McPherson': 3.00,
+      'Bears': 9.00,
+      'Bhayshul Tuten': 3.90,
+      'Rome Odunze': 4.30,
+      'Blake Corum': 2.10,
+      'Josh Jacobs': 0.00,
+      'A.J. Brown': 0.00,
+      'Joe Burrow': 3.10,
+      'Kyren Williams': 7.70,
+      'Ja\'Marr Chase': 4.10,
+      'Davante Adams': 4.20,
+      'Spencer Shrader': 16.00,
+      'Bills': 4.00,
+      'Kyle Monangai': 11.40,
       'Denzel Boston': 10.90,
-      'DK Metcalf': 14.00
+      'Dontayvion Wicks': 2.30,
+      'James Cook III': 8.70,
+      'David Montgomery': 1.50,
+      'CeeDee Lamb': 4.30,
+      'Braelon Allen': 3.90,
+      'Malik Nabers': 6.80,
+      'Tucker Kraft': 4.80,
+      'Saquon Barkley': 1.50,
+      'Zay Flowers': 19.30,
+      'Colston Loveland': 2.40,
+      'Jaylen Warren': 14.10,
+      'Harrison Mevis': 4.00,
+      'Dak Prescott': 3.08,
+      'Terry McLaurin': 0.00,
+      'Emeka Egbuka': 0.00,
+      'Jacory Croskey-Merritt': 6.00,
+      'Alec Pierce': 0.00,
+      'Josh Allen': 11.32,
+      'Bucky Irving': 2.30,
+      'Matthew Golden': 7.30,
+      'Tyler Warren': 6.60,
+      'Eagles': 9.00,
+      'TreVeyon Henderson': 1.80,
+      'Dalton Kincaid': 0.00,
+      'Carnell Tate': 6.10,
+      'Matthew Stafford': 3.72,
+      'Trevor Lawrence': 5.16,
+      'Javonte Williams': 4.30,
+      'DJ Moore': 2.20,
+      'Isaiah Likely': 3.50,
+      'D\'Andre Swift': 6.30,
+      'Chase McLaughlin': 1.00,
+      'Ravens': 6.00,
+      'Mark Andrews': 9.10,
+      'Kalif Raymond': 0.60,
+      'Rams': 6.00,
+      'Chase Brown': 3.20,
+      'Jeremiyah Love': 5.10,
+      'Nico Collins': 15.50,
+      'Kenyon Sadiq': 0.00,
+      'Parker Washington': 0.30,
+      'DK Metcalf': 14.00,
+      'Drake Maye': 10.64,
+      'Luther Burden III': 6.40,
+      'Rhamondre Stevenson': 8.60,
+      'Dallas Goedert': 0.00,
+      'C.J. Stroud': 11.18,
+      'Derrick Henry': 10.10,
+      'Tony Pollard': 9.80,
+      'Dalton Schultz': 1.20,
+      'Puka Nacua': 9.50,
+      'Brandon Aubrey': 8.00,
+      'Texans': 10.00,
+      'Breece Hall': 0.00,
+      'Caleb Williams': 0.00,
+      'Geno Smith': 0.72,
+      'Cairo Santos': 4.00
     },
-    sheetNote: 'Live Sunday. Orange = final points; the rest are in progress or still to kick off.'
+    inProgress: [
+      'Jordan Love', 'Garrett Wilson', 'Christian Watson', 'Trey McBride', 'Chris Godwin Jr.',
+      'Wan\'Dale Robinson', 'MarShawn Lloyd', 'DeVonta Smith', 'Cam Skattebo', 'George Pickens',
+      'Tee Higgins', 'Michael Wilson', 'Tyler Loop', 'Jalen Hurts', 'Jake Ferguson',
+      'Brian Thomas Jr.', 'Kenny Gainwell', 'Lamar Jackson', 'Evan McPherson', 'Bears',
+      'Bhayshul Tuten', 'Rome Odunze', 'Blake Corum', 'Josh Jacobs', 'A.J. Brown',
+      'Joe Burrow', 'Kyren Williams', 'Ja\'Marr Chase', 'Davante Adams', 'Bills',
+      'Kyle Monangai', 'Dontayvion Wicks', 'James Cook III', 'David Montgomery', 'CeeDee Lamb',
+      'Braelon Allen', 'Malik Nabers', 'Tucker Kraft', 'Saquon Barkley', 'Zay Flowers',
+      'Colston Loveland', 'Harrison Mevis', 'Dak Prescott', 'Emeka Egbuka', 'Josh Allen',
+      'Bucky Irving', 'Matthew Golden', 'Eagles', 'TreVeyon Henderson', 'Dalton Kincaid',
+      'Carnell Tate', 'Matthew Stafford', 'Trevor Lawrence', 'Javonte Williams', 'DJ Moore',
+      'Isaiah Likely', 'D\'Andre Swift', 'Chase McLaughlin', 'Ravens', 'Mark Andrews',
+      'Kalif Raymond', 'Rams', 'Chase Brown', 'Jeremiyah Love', 'Nico Collins',
+      'Kenyon Sadiq', 'Parker Washington', 'Drake Maye', 'Luther Burden III', 'Rhamondre Stevenson',
+      'Dallas Goedert', 'C.J. Stroud', 'Derrick Henry', 'Tony Pollard', 'Dalton Schultz',
+      'Puka Nacua', 'Brandon Aubrey', 'Texans', 'Breece Hall', 'Caleb Williams',
+      'Geno Smith', 'Cairo Santos'
+    ],
+    sheetNote: 'Live as of 1:16 PM. Orange = final points, white = still playing, gray = projection.'
   },
 
   // Shown on the week after the live one.
@@ -98,12 +211,14 @@ window.SEASON = {
 
   // ---- Trash talk (hidden when the trashTalk setting is off) ----
 
-  // Caption under the featured matchup, by week.
+  // Caption under the featured matchup, by week. While a week is live the featured
+  // matchup can change, so tie the caption to it: { pair: ['Matt', 'DLin'], text }.
+  // If another matchup takes over, the site writes a plain caption from the scores.
   captions: {
     1: 'Pablo held off Matt by 4.8. Pablo would like this one framed, since it may be a while.',
     2: 'DLin beat Kurt 100.6–89.4. Neither fan base was reached for comment.',
     3: 'Andy beat Colin by 3.9. Colin is expected to blame the kicker, the refs and Yahoo.',
-    4: 'Matt 114.79, DLin 114.46. A 0.33 projection gap. DLin leads 10.20–6.00 after Thursday, and Matt only pulled ahead by benching an injured Justin Jefferson for Josh Downs.'
+    4: { pair: ['Matt', 'DLin'], text: 'Matt 114.79, DLin 114.46. A 0.33 projection gap. DLin leads 10.20–6.00 after Thursday, and Matt only pulled ahead by benching an injured Justin Jefferson for Josh Downs.' }
   },
 
   // "The Booth" lines by week: [manager, text].

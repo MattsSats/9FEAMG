@@ -42,6 +42,8 @@ const LIVE = D ? D.live : null;
 const LW = LIVE ? LIVE.week : null;
 const NEXT = D ? D.next : null;
 const LIVEPTS = LIVE?.playerPoints || {};
+// Players still on the field: their points are so far, not final.
+const PLAYING = new Set(LIVE?.inProgress || []);
 const PPROJ = D?.projections || {};
 const PAIRS = D ? D.schedule : {};
 const PROJ = Object.fromEntries(MGR.map(m => [m, LIVE?.scores?.[m]?.[1] ?? 0]));
@@ -325,7 +327,7 @@ class Component extends DCLogic {
     return this.players(m).filter(p => p.slot == 'starter').sort((a, b) => (ORD[a.pos] ?? 9) - (ORD[b.pos] ?? 9)).map(p => {
       const lp = live ? LIVEPTS[p.name] : null;
       const v = lp ?? (live ? (p.proj ?? p.projected ?? p.projections?.[wk] ?? PPROJ[p.name]) : (p.points?.[wk] ?? p.weeks?.[wk] ?? p.pts?.[wk]));
-      return { slot: p.pos == 'WRT' ? 'FLEX' : p.pos, name: p.name, meta: (p.nfl ? p.nfl.toUpperCase() : '—') + (lp != null ? ' · Final' : live && v != null ? ' · proj' : ''), pts: v != null ? (lp != null ? f2(+v) : f1(+v)) : '—', ptsColor: lp != null ? 'var(--accentInk)' : v != null && !live ? 'var(--ink)' : 'var(--muted)' };
+      return { slot: p.pos == 'WRT' ? 'FLEX' : p.pos, name: p.name, meta: (p.nfl ? p.nfl.toUpperCase() : '—') + (lp != null ? (PLAYING.has(p.name) ? ' · Live' : ' · Final') : live && v != null ? ' · proj' : ''), pts: v != null ? (lp != null ? f2(+v) : f1(+v)) : '—', ptsColor: lp != null ? (PLAYING.has(p.name) ? 'var(--ink)' : 'var(--accentInk)') : v != null && !live ? 'var(--ink)' : 'var(--muted)' };
     });
   }
   side(m, o, wk) {
@@ -340,6 +342,17 @@ class Component extends DCLogic {
   match(pair, wk) {
     const [a, b] = pair, A = this.side(a, b, wk), B = this.side(b, a, wk), gap = Math.abs(A.raw - B.raw), live = wk == LW;
     return { a: A, b: B, gap: (() => { const lead = A.raw > B.raw ? A.m : B.raw > A.raw ? B.m : null; if (!lead) return live ? 'Projected dead even · live' : 'Tied'; return live ? 'Proj: ' + lead + ' by ' + f2(gap) + ' · live' : lead + ' won by ' + f2(gap); })(), mid: live ? 'proj' : 'final', delta: 'Δ ' + f2(gap), share: (A.raw / (A.raw + B.raw || 1) * 100).toFixed(1) + '%', open: () => this.setState({ sheet: { a, b, wk } }) };
+  }
+  // A week's caption. Strings always show; { pair, text } only when that pair is featured.
+  // A live week whose featured matchup has no caption gets a plain one from the scores.
+  heroCaption(wk, hero) {
+    const c = D.captions?.[wk], pair = hero ? [hero.a.m, hero.b.m].sort().join() : '';
+    if (typeof c == 'string') return c;
+    if (c?.text && [...c.pair].sort().join() == pair) return c.text;
+    if (wk != LW || !hero) return '';
+    const [A, B] = [hero.a, hero.b], ca = LIVE.scores[A.m]?.[0] ?? 0, cb = LIVE.scores[B.m]?.[0] ?? 0;
+    const lead = ca == cb ? 'Level so far.' : (ca > cb ? A.m : B.m) + ' leads ' + f2(Math.max(ca, cb)) + '–' + f2(Math.min(ca, cb)) + ' so far.';
+    return `${A.m} ${f2(A.raw)}, ${B.m} ${f2(B.raw)}. A ${f2(Math.abs(A.raw - B.raw))} projection gap. ${lead}`;
   }
   renderVals() {
     const S = this.state, themeLabel = this.theme() == 'dark' ? 'Light' : 'Dark', toggleTheme = () => this.setState({ theme: this.theme() == 'dark' ? 'light' : 'dark' });
@@ -492,7 +505,7 @@ class Component extends DCLogic {
       lineupTitle: `Week ${lineupWeek} lineup`, proj: LW ? 'Proj ' + f2(PROJ[tm]) : '',
       stats: [{ label: 'PF', value: f1(s.pf), sub: ord(pfRank) + ' in league' }, { label: 'PA', value: f1(s.pa), sub: ord(paRank) + ' fewest' }, { label: 'Luck', value: sgn(s.luck), sub: 'W − xW', color: s.luck > 0 ? 'var(--pos)' : s.luck < 0 ? 'var(--neg)' : 'var(--ink)' }, { label: 'xW', value: s.xw.toFixed(2), sub: 'vs ' + s.w + ' real wins' }, { label: 'Max PF', value: maxOk ? f1(s.max) : '—', sub: maxOk ? ord(maxRank) + ' best possible' : 'Best possible lineup' }, { label: 'Bench', value: maxOk ? f1(bn) : '—', sub: 'Points left sitting' }, { label: 'FAAB left', value: txOk ? '$' + (budget - spent[tm]) : '—', sub: 'of $' + budget }, { label: 'Adds', value: txOk ? String(adds[tm]) : '—', sub: 'This season' }].map(x => ({ color: 'var(--ink)', isLuck: x.label == 'Luck', isBench: x.label == 'Bench', ...x })),
       log, starters: this.starters(tm, lineupWeek),
-      bench: pl.filter(p => p.slot != 'starter').map(p => { const lp = LIVEPTS[p.name]; const v = lp ?? p.proj ?? p.projected ?? p.projections?.[lineupWeek] ?? PPROJ[p.name]; return { slot: p.slot == 'IR' ? 'IR' : p.pos, name: p.name, meta: (p.nfl || '').toUpperCase() + (lp == null && v != null && p.slot != 'IR' ? ' · proj' : ''), pts: p.slot == 'IR' ? '' : (v != null ? (lp != null ? f2(+v) : f1(+v)) : '—') }; }),
+      bench: pl.filter(p => p.slot != 'starter').map(p => { const lp = LIVEPTS[p.name]; const v = lp ?? p.proj ?? p.projected ?? p.projections?.[lineupWeek] ?? PPROJ[p.name]; return { slot: p.slot == 'IR' ? 'IR' : p.pos, name: p.name, meta: (p.nfl || '').toUpperCase() + (lp == null && v != null && p.slot != 'IR' ? ' · proj' : lp != null && PLAYING.has(p.name) ? ' · live' : ''), pts: p.slot == 'IR' ? '' : (v != null ? (lp != null ? f2(+v) : f1(+v)) : '—') }; }),
       benchCount: pl.filter(p => p.slot != 'starter').length, lineupMsg, hasLineup: !lineupMsg
     };
     const teamPicker = MGR.map(m => ({ m, init: INIT[m], color: col(m), ring: m == tm ? '2px solid var(--accent)' : '2px solid transparent', ringFill: m == tm ? 'var(--accent)' : 'transparent', op: m == tm ? 1 : .75, fg: m == tm ? 'var(--ink)' : 'var(--muted)', pick: () => this.setState({ team: m }) }));
@@ -578,7 +591,7 @@ class Component extends DCLogic {
       draftIconCls: S.tab == 'Draft' ? 'hi play inv' : 'hi', goHome: e => this.goHome(e), openDraft: () => { this.setState({ tab: 'Draft' }); window.scrollTo(0, 0); },
       draftBtnBg: S.tab == 'Draft' ? 'var(--accent)' : 'var(--surface)', draftBtnFg: S.tab == 'Draft' ? 'var(--onAccent)' : 'var(--ink)', draftBtnBorder: S.tab == 'Draft' ? 'var(--accent)' : 'var(--line)',
       tabs, tabGameday: S.tab == 'Gameday', tabSeason: S.tab == 'Season', tabTeams: S.tab == 'Teams', tabDraft: S.tab == 'Draft', tabWire: S.tab == 'Wire',
-      weekChips, isW5: isNext, nextTitle, nextNote, hasWeek, hero: hero || blank, matchups, heroLabel: wk == LW ? 'Matchup of the week' : 'Closest finish', heroCaption: D.captions?.[wk] || '',
+      weekChips, isW5: isNext, nextTitle, nextNote, hasWeek, hero: hero || blank, matchups, heroLabel: wk == LW ? 'Matchup of the week' : 'Closest finish', heroCaption: this.heroCaption(wk, hero),
       weekStatus, parlays, hasParlays: parlays.length > 0, hasLedger: allParlays.length > 0, ledgerLine, ledgerOwners,
       showBooth: boothOn, booth: (D.booth?.[wk] || []).map(([m, text]) => ({ init: INIT[m], color: col(m), text })), hasBooth: boothOn && !!D.booth?.[wk]?.length,
       seasonSub, seasonTiles, standings, playoffLine: `Playoff line · top ${P} of ${MGR.length}`,
