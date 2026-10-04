@@ -573,7 +573,7 @@ button{font-family:inherit;color:inherit}
           </div>
           <div aria-hidden="true" style="height:4px;margin:0 16px 14px;border-radius:2px;background:var(--surface2);display:flex;overflow:hidden"><div style="width:{{ mu.share }};background:var(--accent)"></div></div>
           <button sc-camel-on-click="{{ mu.open }}" class="hov" style="width:100%;display:flex;justify-content:space-between;align-items:center;min-height:44px;padding:0 16px;border:0;border-top:1px solid var(--line);background:transparent;cursor:pointer;font-family:'JetBrains Mono';font-size:11px">
-            <span style="color:var(--ink)">{{ mu.gap }}</span><span style="color:var(--accentInk);font-weight:600">Lineups ›</span>
+            <span style="display:flex;align-items:center;gap:8px;min-width:0"><span style="flex:none;font-weight:700;font-size:12px;color:var(--ink);padding:3px 8px;border-radius:6px;background:var(--surface2);border:1px solid var(--line)">{{ mu.delta }}</span><span style="color:var(--muted)">{{ mu.gapNote }}</span></span><span style="flex:none;color:var(--accentInk);font-weight:600">Lineups ›</span>
           </button>
         </div>
       </sc-for>

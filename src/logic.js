@@ -341,7 +341,9 @@ class Component extends DCLogic {
   }
   match(pair, wk) {
     const [a, b] = pair, A = this.side(a, b, wk), B = this.side(b, a, wk), gap = Math.abs(A.raw - B.raw), live = wk == LW;
-    return { a: A, b: B, gap: (() => { const lead = A.raw > B.raw ? A.m : B.raw > A.raw ? B.m : null; if (!lead) return live ? 'Projected dead even · live' : 'Tied'; return live ? 'Proj: ' + lead + ' by ' + f2(gap) + ' · live' : lead + ' won by ' + f2(gap); })(), mid: live ? 'proj' : 'final', delta: 'Δ ' + f2(gap), share: (A.raw / (A.raw + B.raw || 1) * 100).toFixed(1) + '%', open: () => this.setState({ sheet: { a, b, wk } }) };
+    return { a: A, b: B, gap: (() => { const lead = A.raw > B.raw ? A.m : B.raw > A.raw ? B.m : null; if (!lead) return live ? 'Projected dead even · live' : 'Tied'; return live ? 'Proj: ' + lead + ' by ' + f2(gap) + ' · live' : lead + ' won by ' + f2(gap); })(), mid: live ? 'proj' : 'final', delta: 'Δ ' + f2(gap),
+      // Card footer: the gap as a chip, then what it means in words.
+      gapNote: (() => { const lead = A.raw > B.raw ? A.m : B.raw > A.raw ? B.m : null; return live ? (lead ? lead + ' projected ahead' : 'Projected dead even') + ' · live' : lead ? lead + ' won' : 'Tied'; })(), share: (A.raw / (A.raw + B.raw || 1) * 100).toFixed(1) + '%', open: () => this.setState({ sheet: { a, b, wk } }) };
   }
   // A week's caption. Strings always show; { pair, text } only when that pair is featured.
   // A live week whose featured matchup has no caption gets a plain one from the scores.
