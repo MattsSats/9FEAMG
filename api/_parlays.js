@@ -29,7 +29,13 @@ export function describe(week, p) {
   const st = p.legs.map(l => l.status || 'open');
   const status = st.includes('miss') ? 'BUSTED' : st.length && st.every(s => s == 'hit') ? 'CASHED' : 'OPEN';
   // A ticket-level odds (same-game parlays, priced by the book as one bet) overrides the leg math.
-  const decs = p.legs.map(l => toDecimal(l.odds)), ticket = toDecimal(p.odds);
+  // Same-game groups (legs with sgp: n) are priced once, by p.sgps[n - 1].
+  const parts = [], seen = new Set();
+  for (const l of p.legs) {
+    if (l.sgp) { if (!seen.has(l.sgp)) { seen.add(l.sgp); parts.push(p.sgps?.[l.sgp - 1] ?? null); } }
+    else parts.push(l.odds ?? null);
+  }
+  const decs = parts.map(toDecimal), ticket = toDecimal(p.odds);
   const priced = !!ticket || (decs.length > 0 && decs.every(d => d != null));
   const dec = ticket ?? (priced ? decs.reduce((a, b) => a * b, 1) : null);
   const title = p.title ?? `${p.owner}’s parlay`;
@@ -38,9 +44,9 @@ export function describe(week, p) {
     title, who, week, status,
     odds: priced ? toAmerican(dec) : null,
     payout: priced ? (10 * dec).toFixed(2) : null,
-    legs: p.legs.map(l => ({ text: l.text, odds: l.odds ? String(l.odds).replace('-', '−') : '', status: l.status || 'open' })),
+    legs: p.legs.map(l => ({ text: l.text, odds: l.sgp ? 'SGP ' + l.sgp : l.odds ? String(l.odds).replace('-', '−') : '', status: l.status || 'open' })),
     // Changes whenever odds or results change, so chat apps fetch a fresh image.
-    version: `${p.odds}|` + p.legs.map(l => `${l.odds}:${l.status}`).join('|')
+    version: `${p.odds}|${p.sgps}|` + p.legs.map(l => `${l.odds}:${l.status}`).join('|')
   };
 }
 

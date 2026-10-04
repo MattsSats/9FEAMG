@@ -145,9 +145,10 @@ window.SEASON = {
   //   legs[].player Yahoo player name, or the team name for a defense/moneyline
   //                 ('Ravens'). The site tags whose fantasy roster it's on and
   //                 shows the player's fantasy points once they're in.
-  //   legs[].type   'td' (anytime TD), 'over' (player stat; needs stat + line),
-  //                 'ml' (moneyline) or 'total' (game points; needs side + line);
-  //                 tells the weekly update how to grade the leg
+  //   legs[].type   'td' (anytime TD; count: 2 for 2+ TDs), 'over' (player stat;
+  //                 needs stat + line), 'ml' (moneyline), 'spread' (team + line,
+  //                 e.g. team 'Bal', line -11.5) or 'total' (game points; needs
+  //                 side + line); tells the weekly update how to grade the leg
   //   legs[].stat / legs[].line  for 'over' legs, e.g. stat 'Rec Yds', line 62.5
   //   legs[].side   'over' or 'under', for 'total' legs
   //   legs[].team   the team a moneyline is on, for game legs without a player
@@ -164,6 +165,9 @@ window.SEASON = {
   //   odds          optional book price for the whole ticket ('+2350'). Use it for
   //                 same-game parlays, which the book prices as one bet; it
   //                 overrides the leg-by-leg math, and legs can stay odds: null.
+  //   sgps          for a parlay of same-game parlays: each SGP's book price
+  //                 (['+345', '+650']); legs[].sgp says which one a leg is in (1, 2…).
+  //                 The ticket odds are the SGP prices multiplied together.
   //   booth         optional trash talk (hidden when trash talk is off).
   parlays: {
     4: [
@@ -230,6 +234,34 @@ window.SEASON = {
           { text: 'Stefon Diggs anytime TD', player: 'Stefon Diggs', type: 'td', game: 'Sun 8:30 AM · IND @ WAS (London)', result: '5-35, no TD', odds: null, status: 'miss' }
         ],
         booth: 'A Commanders win with two Jonathan Taylor touchdowns. Taylor delivered both. The Commanders lost by 17 before most of the league had coffee.'
+      },
+      {
+        owner: 'Andy', title: 'Two-Score Moonshot',
+        // Three same-game parlays; each SGP's book price, from Andy's ticket.
+        sgps: ['+345', '+650', '+440'],
+        legs: [
+          { text: 'Derrick Henry 2+ TDs', player: 'Derrick Henry', type: 'td', count: 2, sgp: 1, game: 'Sun 12:00 PM · TEN @ BAL', odds: null, status: 'open' },
+          { text: 'Ravens −11.5 vs Titans', type: 'spread', team: 'Bal', line: -11.5, teams: ['Ten', 'Bal'], sgp: 1, game: 'Sun 12:00 PM · TEN @ BAL', odds: null, status: 'open' },
+          { text: 'Josh Allen 2+ TDs', player: 'Josh Allen', type: 'td', count: 2, sgp: 2, game: 'Sun 12:00 PM · NE @ BUF', odds: null, status: 'open' },
+          { text: 'Bills −7 vs Patriots', type: 'spread', team: 'Buf', line: -7, teams: ['NE', 'Buf'], sgp: 2, game: 'Sun 12:00 PM · NE @ BUF', odds: null, status: 'open' },
+          { text: 'Chiefs −4.5 at Raiders', type: 'spread', team: 'KC', line: -4.5, teams: ['KC', 'LV'], sgp: 3, game: 'Sun 3:25 PM · KC @ LV', odds: null, status: 'open' },
+          { text: 'Kenneth Walker III 2+ TDs', player: 'Kenneth Walker III', type: 'td', count: 2, sgp: 3, game: 'Sun 3:25 PM · KC @ LV', odds: null, status: 'open' }
+        ],
+        booth: 'Six legs across three games, with Derrick Henry, Josh Allen and Kenneth Walker III each asked to score twice. Allen is Tony’s quarterback, in the week Andy plays Tony. A $10 bet that pays about $1,800 if all of it lands.'
+      },
+      {
+        owner: 'Andy', title: 'The Sensible Six',
+        // Three same-game parlays; each SGP's book price, from Andy's ticket.
+        sgps: ['+210', '+106', '+112'],
+        legs: [
+          { text: 'D’Andre Swift anytime TD', player: 'D\'Andre Swift', type: 'td', sgp: 1, game: 'Sun 12:00 PM · NYJ @ CHI', odds: null, status: 'open' },
+          { text: 'Bears −6.5 vs Jets', type: 'spread', team: 'Chi', line: -6.5, teams: ['NYJ', 'Chi'], sgp: 1, game: 'Sun 12:00 PM · NYJ @ CHI', odds: null, status: 'open' },
+          { text: 'Derrick Henry anytime TD', player: 'Derrick Henry', type: 'td', sgp: 2, game: 'Sun 12:00 PM · TEN @ BAL', result: '5-yd rush TD, Q1', odds: null, status: 'hit' },
+          { text: 'Ravens −9.5 vs Titans', type: 'spread', team: 'Bal', line: -9.5, teams: ['Ten', 'Bal'], sgp: 2, game: 'Sun 12:00 PM · TEN @ BAL', odds: null, status: 'open' },
+          { text: 'Josh Allen anytime TD', player: 'Josh Allen', type: 'td', sgp: 3, game: 'Sun 12:00 PM · NE @ BUF', odds: null, status: 'open' },
+          { text: 'Bills −2.5 vs Patriots', type: 'spread', team: 'Buf', line: -2.5, teams: ['NE', 'Buf'], sgp: 3, game: 'Sun 12:00 PM · NE @ BUF', odds: null, status: 'open' }
+        ],
+        booth: 'The same three-game idea with friendlier numbers. Derrick Henry already scored, and D’Andre Swift is Andy’s own FLEX, so that leg pays twice if it hits.'
       }
     ]
   },

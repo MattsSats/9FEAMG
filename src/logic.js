@@ -102,13 +102,23 @@ const LEG_TAG = {
   hit: { tag: 'HIT', bg: 'var(--pos)', fg: 'var(--onStatus)' },
   miss: { tag: 'MISS', bg: 'var(--neg)', fg: 'var(--onStatus)' }
 };
+// The priced pieces of a ticket, multiplied together for the parlay odds: one per
+// same-game group (legs with sgp: n, priced by p.sgps[n - 1]) plus one per other leg.
+function parlayParts(p) {
+  const parts = [], seen = new Set();
+  for (const l of p.legs) {
+    if (l.sgp) { if (!seen.has(l.sgp)) { seen.add(l.sgp); parts.push(p.sgps?.[l.sgp - 1] ?? null); } }
+    else parts.push(l.odds ?? null);
+  }
+  return parts;
+}
 // A parlay's state from its legs: any miss = BUSTED, all hit = CASHED, else OPEN.
 // A ticket-level odds (same-game parlays, priced by the book as one bet) overrides the leg math.
 function parlayState(p) {
   const st = p.legs.map(l => l.status || 'open');
   const status = st.includes('miss') ? 'BUSTED' : st.length && st.every(s => s == 'hit') ? 'CASHED' : 'OPEN';
   if (toDecimal(p.odds)) return { status, priced: true, dec: toDecimal(p.odds) };
-  const decs = p.legs.map(l => toDecimal(l.odds)), priced = decs.length > 0 && decs.every(d => d != null);
+  const decs = parlayParts(p).map(toDecimal), priced = decs.length > 0 && decs.every(d => d != null);
   return { status, priced, dec: priced ? decs.reduce((a, b) => a * b, 1) : null };
 }
 function setMaxPF(box) {
@@ -336,8 +346,8 @@ class Component extends DCLogic {
         const owner = spot ? spot.m + '’s ' + (spot.starter ? spot.pos : 'bench') : l.player ? 'Free agent'
           : stakes ? (stakes.length ? 'Starters in this game: ' + stakes.join(', ') : 'No league starters in this game') : '';
         const meta = [l.result || (pts != null ? f2(pts) + ' fantasy pts' : l.game), l.line != null && !l.text.includes(String(l.line)) ? 'line ' + l.line : null].filter(Boolean).join(' · ');
-        const d = toDecimal(l.odds), ip = impliedProb(l.odds);
-        return { text: l.text, odds: l.odds ? l.odds.replace('-', '−') : '—', oddsSub: d ? `×${d.toFixed(2)} · ${Math.round(ip * 100)}%` : 'no line', owner, ownerColor: spot ? col(spot.m) : stakes ? 'var(--accent)' : 'transparent', hasOwner: !!owner, meta, ...(LEG_TAG[l.status] || LEG_TAG.open), spot };
+        const d = toDecimal(l.odds), ip = impliedProb(l.odds), g = l.sgp ? p.sgps?.[l.sgp - 1] : null;
+        return { text: l.text, odds: l.sgp ? 'SGP ' + l.sgp : l.odds ? l.odds.replace('-', '−') : '—', oddsSub: l.sgp ? (g ? String(g).replace('-', '−') + ' together' : 'no line') : d ? `×${d.toFixed(2)} · ${Math.round(ip * 100)}%` : 'no line', owner, ownerColor: spot ? col(spot.m) : stakes ? 'var(--accent)' : 'transparent', hasOwner: !!owner, meta, ...(LEG_TAG[l.status] || LEG_TAG.open), spot };
       });
       // How the ticket lines up with the fantasy matchup.
       const mine = legs.filter(l => l.spot && l.spot.m == p.owner && l.spot.starter).length, theirs = vs ? legs.filter(l => l.spot && l.spot.m == vs && l.spot.starter).length : 0;
@@ -361,9 +371,9 @@ class Component extends DCLogic {
         oddsLabel: priced ? 'Parlay ' + toAmerican(dec) : 'Lines TBD',
         // e.g. "2.20 × 1.87 × 1.67 = ×6.86 · hits about 1 in 7 (15%)"
         oddsMath: toDecimal(p.odds) ? 'Same-game parlay · book price ' + String(p.odds).replace('-', '−') : priced ? (() => {
-          const decs = p.legs.map(l => toDecimal(l.odds)), prob = p.legs.reduce((a, l) => a * impliedProb(l.odds), 1);
+          const parts = parlayParts(p), decs = parts.map(toDecimal), prob = parts.reduce((a, o) => a * impliedProb(o), 1);
           return decs.map(x => x.toFixed(2)).join(' × ') + ` = ×${dec.toFixed(2)} · hits about 1 in ${Math.max(1, Math.round(1 / prob))} (${Math.round(prob * 100)}%)`;
-        })() : `${p.legs.filter(l => toDecimal(l.odds)).length} of ${p.legs.length} legs priced`,        payout: !priced ? 'Odds calculate once every leg has a line' : (status == 'CASHED' ? '$10 paid $' : status == 'BUSTED' ? '$10 would have paid $' : '$10 pays $') + (10 * dec).toFixed(2),
+        })() : `${parlayParts(p).filter(o => toDecimal(o)).length} of ${parlayParts(p).length} ${p.sgps ? 'parts' : 'legs'} priced`,        payout: !priced ? 'Odds calculate once every leg has a line' : (status == 'CASHED' ? '$10 paid $' : status == 'BUSTED' ? '$10 would have paid $' : '$10 pays $') + (10 * dec).toFixed(2),
         angle: angle.join(' '), hasAngle: angle.length > 0,
         // Tailing your own opponent's parlay is a hedge: you win the matchup or cash the ticket.
         tailers: (p.tailers || []).map(m => ({ m, color: col(m), tag: m == vs ? 'HEDGE' : 'TAIL' })), hasTailers: !!p.tailers?.length,
