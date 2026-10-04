@@ -145,6 +145,13 @@ class Component extends DCLogic {
     this.openHash();
     window.addEventListener('hashchange', () => this.openHash());
   }
+  // Home: Gameday on the current week, back at the top, with a clean URL (drops #parlay links and ?query).
+  goHome(e) {
+    e?.preventDefault?.();
+    this.setState({ tab: 'Gameday', week: LW ?? NF, sheet: null });
+    if (location.pathname != '/' || location.search || location.hash) history.pushState(null, '', '/');
+    window.scrollTo(0, 0);
+  }
   openHash() {
     const m = location.hash.match(/^#w(\d+)-([\w-]+)$/);
     if (!m) return;
@@ -300,7 +307,7 @@ class Component extends DCLogic {
     const wk = S.week, boothOn = this.props.trashTalk ?? true;
     // Draft lives in the header (it's rarely used), so the tab bar has four tabs.
     const tabsL = ['Gameday', 'Season', 'Teams', 'Wire'];
-    const tabs = tabsL.map(t => ({ label: t, fg: S.tab == t ? 'var(--ink)' : 'var(--muted)', cls: S.tab == t ? 'tab on' : 'tab', cur: S.tab == t ? 'page' : 'false', ['is' + t]: true, pick: () => { this.setState({ tab: t }); window.scrollTo(0, 0); } }));
+    const tabs = tabsL.map(t => ({ label: t, fg: S.tab == t ? 'var(--ink)' : 'var(--muted)', cls: S.tab == t ? 'tab on' : 'tab', cur: S.tab == t ? 'page' : 'false', ['is' + t]: true, pick: t == 'Gameday' ? e => this.goHome(e) : () => { this.setState({ tab: t }); window.scrollTo(0, 0); } }));
 
     // Gameday
     const chipWeeks = [...Array(NF).keys()].map(i => i + 1);
@@ -514,7 +521,7 @@ class Component extends DCLogic {
       ok: true, dataError: false,
       scatter, scatterMidX: sx(avg(pfs)), scatterMidY: sy(avg(pas)), pfMin: x0, pfMax: x1, luckBars, benchBars, hlHint: hl ? hl + ' · tap again to clear' : 'Tap a team',
       themeLabel, toggleTheme,
-      draftIconCls: S.tab == 'Draft' ? 'hi play inv' : 'hi', openDraft: () => { this.setState({ tab: 'Draft' }); window.scrollTo(0, 0); },
+      draftIconCls: S.tab == 'Draft' ? 'hi play inv' : 'hi', goHome: e => this.goHome(e), openDraft: () => { this.setState({ tab: 'Draft' }); window.scrollTo(0, 0); },
       draftBtnBg: S.tab == 'Draft' ? 'var(--accent)' : 'var(--surface)', draftBtnFg: S.tab == 'Draft' ? 'var(--onAccent)' : 'var(--ink)', draftBtnBorder: S.tab == 'Draft' ? 'var(--accent)' : 'var(--line)',
       tabs, tabGameday: S.tab == 'Gameday', tabSeason: S.tab == 'Season', tabTeams: S.tab == 'Teams', tabDraft: S.tab == 'Draft', tabWire: S.tab == 'Wire',
       weekChips, isW5: isNext, nextTitle, nextNote, hasWeek, hero: hero || blank, matchups, heroLabel: wk == LW ? 'Matchup of the week' : 'Closest finish', heroCaption: D.captions?.[wk] || '',
