@@ -58,15 +58,15 @@ window.SEASON = {
   // The week in progress. Set to null between weeks.
   live: {
     week: 4,
-    status: 'Live · all Sunday games final, ATL @ NO Monday 7:15 PM',
+    status: 'Live · ATL @ NO kicks off at 7:15 PM; everything else final',
     // [current points, projected final]
-    // Yahoo live as of Mon Oct 5, 12:42 AM CT.
+    // Yahoo live as of Mon Oct 5, 6:50 PM CT.
     scores: {
       Matt: [92.08, 92.08], DLin: [114.68, 114.68],
-      Tristan: [98.68, 118.56], Colin: [129.92, 129.92],
-      Jerger: [98.06, 113.40], Kurt: [112.22, 112.22],
-      Tony: [90.82, 90.82], Andy: [84.28, 98.23],
-      'Mr. G': [77.90, 97.33], Pablo: [133.78, 133.78]
+      Tristan: [98.68, 118.75], Colin: [129.92, 129.92],
+      Jerger: [98.06, 113.62], Kurt: [112.22, 112.22],
+      Tony: [90.82, 90.82], Andy: [84.28, 98.25],
+      'Mr. G': [77.90, 97.08], Pablo: [133.78, 133.78]
     },
     // Points so far for every player whose game has started (starters and bench).
     // Players listed in inProgress are still playing; the rest are final.
@@ -223,7 +223,7 @@ window.SEASON = {
     inProgress: [
 
     ],
-    sheetNote: 'Live as of 12:42 AM CT. Orange = final points, white = still playing, gray = projection.'
+    sheetNote: 'Live as of 6:50 PM CT. Orange = final points, white = still playing, gray = projection.'
   },
 
   // Shown on the week after the live one.
