@@ -58,22 +58,22 @@ window.SEASON = {
   // The week in progress. Set to null between weeks.
   live: {
     week: 4,
-    status: 'Live · Sunday afternoon games final, DET @ CAR just kicked off',
+    status: 'Live · all Sunday games final, ATL @ NO Monday 7:15 PM',
     // [current points, projected final]
-    // Yahoo live as of Sun Oct 4, 7:25 PM CT.
+    // Yahoo live as of Mon Oct 5, 12:42 AM CT.
     scores: {
-      Matt: [66.68, 81.40], DLin: [94.20, 113.37],
-      Tristan: [80.28, 109.39], Colin: [129.92, 129.92],
-      Jerger: [76.60, 111.36], Kurt: [112.22, 112.22],
-      Tony: [90.82, 90.82], Andy: [69.28, 104.82],
-      'Mr. G': [66.40, 102.49], Pablo: [95.58, 110.63]
+      Matt: [92.08, 92.08], DLin: [114.68, 114.68],
+      Tristan: [98.68, 118.56], Colin: [129.92, 129.92],
+      Jerger: [98.06, 113.40], Kurt: [112.22, 112.22],
+      Tony: [90.82, 90.82], Andy: [84.28, 98.23],
+      'Mr. G': [77.90, 97.33], Pablo: [133.78, 133.78]
     },
     // Points so far for every player whose game has started (starters and bench).
     // Players listed in inProgress are still playing; the rest are final.
     playerPoints: {
       'Jordan Love': 14.08,
       'Christian McCaffrey': 14.50,
-      'Chuba Hubbard': 0.00,
+      'Chuba Hubbard': 25.40,
       'Garrett Wilson': 4.20,
       'Christian Watson': 6.20,
       'Trey McBride': 6.60,
@@ -88,7 +88,7 @@ window.SEASON = {
       'MarShawn Lloyd': 7.40,
       'DeVonta Smith': 0.00,
       'Jayden Daniels': 0.00,
-      'Jared Goff': 0.00,
+      'Jared Goff': 20.48,
       'Jonathan Taylor': 22.20,
       'Cam Skattebo': 7.10,
       'George Pickens': 8.50,
@@ -109,7 +109,7 @@ window.SEASON = {
       'Ashton Jeanty': 15.60,
       'KC Concepcion Jr.': 8.90,
       'Mike Evans': 10.10,
-      'Sam LaPorta': 0.00,
+      'Sam LaPorta': 18.40,
       'Aaron Jones Sr.': 14.80,
       'Evan McPherson': 5.00,
       'Bears': 7.00,
@@ -134,7 +134,7 @@ window.SEASON = {
       'Denzel Boston': 10.90,
       'Jadarian Price': 0.00,
       'Zach Charbonnet': 0.00,
-      'Bryce Young': 0.00,
+      'Bryce Young': 21.46,
       'James Cook III': 15.30,
       'David Montgomery': 4.30,
       'CeeDee Lamb': 32.80,
@@ -147,7 +147,7 @@ window.SEASON = {
       'Jalen Coker': 0.00,
       'Justin Herbert': 11.56,
       'J.K. Dobbins': 6.20,
-      'Jameson Williams': 0.00,
+      'Jameson Williams': 13.20,
       'Brock Purdy': 19.62,
       'Saquon Barkley': 1.50,
       'Kenneth Walker III': 30.40,
@@ -179,7 +179,7 @@ window.SEASON = {
       'Mike Washington Jr.': 2.20,
       'Ollie Gordon II': 17.00,
       'Trevor Lawrence': 13.08,
-      'Jahmyr Gibbs': 0.70,
+      'Jahmyr Gibbs': 15.70,
       'Javonte Williams': 28.80,
       'DJ Moore': 2.20,
       'Isaiah Likely': 10.10,
@@ -194,7 +194,7 @@ window.SEASON = {
       'Isiah Pacheco': 0.00,
       'Chase Brown': 13.60,
       'Jeremiyah Love': 6.00,
-      'Amon-Ra St. Brown': 0.00,
+      'Amon-Ra St. Brown': 11.50,
       'Nico Collins': 27.30,
       'Kenyon Sadiq': 0.00,
       'Parker Washington': 1.50,
@@ -209,7 +209,7 @@ window.SEASON = {
       'C.J. Stroud': 23.08,
       'Derrick Henry': 14.90,
       'Tony Pollard': 12.00,
-      'Tetairoa McMillan': 0.00,
+      'Tetairoa McMillan': 38.20,
       'Quentin Johnston': 4.50,
       'Dalton Schultz': 1.90,
       'Puka Nacua': 23.20,
@@ -221,10 +221,9 @@ window.SEASON = {
       'Cairo Santos': 11.00
     },
     inProgress: [
-      'Chuba Hubbard', 'Jared Goff', 'Sam LaPorta', 'Bryce Young', 'Jalen Coker',
-      'Jameson Williams', 'Jahmyr Gibbs', 'Isiah Pacheco', 'Amon-Ra St. Brown', 'Tetairoa McMillan'
+
     ],
-    sheetNote: 'Live as of 7:25 PM CT. Orange = final points, white = still playing, gray = projection.'
+    sheetNote: 'Live as of 12:42 AM CT. Orange = final points, white = still playing, gray = projection.'
   },
 
   // Shown on the week after the live one.
@@ -240,7 +239,7 @@ window.SEASON = {
   projections: {},
 
   // Wire tab: transactions newer than asOf minus windowDays show under "7 days".
-  wire: { asOf: '2026-10-04T19:25:00', windowDays: 7 },
+  wire: { asOf: '2026-10-05T00:42:00', windowDays: 7 },
 
   // ---- Trash talk (hidden when the trashTalk setting is off) ----
 
@@ -323,7 +322,7 @@ window.SEASON = {
         owner: 'Andy', title: 'Chalk Talk', id: 'andy', // id keeps the original link (#w4-andy)
         legs: [
           // Odds: DraftKings via ESPN odds/props pages, Fri Oct 2.
-          { text: 'Jahmyr Gibbs anytime TD', player: 'Jahmyr Gibbs', type: 'td', game: 'Sun 7:20 PM @ CAR', odds: '-330', status: 'open' },
+          { text: 'Jahmyr Gibbs anytime TD', player: 'Jahmyr Gibbs', type: 'td', game: 'Sun 7:20 PM @ CAR', result: '1 rush TD', odds: '-330', status: 'hit' },
           { text: 'Drake London over 79.5 receiving yards', player: 'Drake London', type: 'over', stat: 'Rec Yds', line: 79.5, game: 'Mon 7:15 PM @ NO', odds: '-110', status: 'open' },
           { text: 'Ravens moneyline', player: 'Ravens', type: 'ml', game: 'Sun 12:00 PM vs TEN', result: 'Final W 24–18', odds: '-700', status: 'hit' }
         ],
