@@ -336,7 +336,7 @@ class Component extends DCLogic {
     return this.players(m).filter(p => p.slot == 'starter').sort((a, b) => (ORD[a.pos] ?? 9) - (ORD[b.pos] ?? 9)).map(p => {
       const lp = live ? LIVEPTS[p.name] : null;
       const v = lp ?? (live ? (p.proj ?? p.projected ?? p.projections?.[wk] ?? PPROJ[p.name]) : (p.points?.[wk] ?? p.weeks?.[wk] ?? p.pts?.[wk]));
-      return { slot: p.pos == 'WRT' ? 'FLEX' : p.pos, name: p.name, meta: (p.nfl ? p.nfl.toUpperCase() : '—') + (lp != null ? (PLAYING.has(p.name) ? ' · Live' : ' · Final') : live && v != null ? ' · proj' : ''), pts: v != null ? (lp != null ? f2(+v) : f1(+v)) : '—', ptsColor: lp != null ? (PLAYING.has(p.name) ? 'var(--ink)' : 'var(--accentInk)') : v != null && !live ? 'var(--ink)' : 'var(--muted)' };
+      return { slot: p.pos == 'WRT' ? 'FLEX' : p.pos, name: p.name, meta: (p.nfl ? p.nfl.toUpperCase() : '—') + (lp != null ? (PLAYING.has(p.name) ? ' · Live' : ' · Final') : live && v != null ? ' · proj' : ''), pts: v != null ? f2(+v) : '—', ptsColor: lp != null ? (PLAYING.has(p.name) ? 'var(--ink)' : 'var(--accentInk)') : v != null && !live ? 'var(--ink)' : 'var(--muted)' };
     });
   }
   side(m, o, wk) {
@@ -380,7 +380,7 @@ class Component extends DCLogic {
     // The biggest projection still to kick off on either side.
     const next = [A, B].flatMap(m => this.players(m).filter(p => p.slot == 'starter' && LIVEPTS[p.name] == null && p.proj).map(p => ({ m, p })))
       .sort((x, y) => y.p.proj - x.p.proj)[0];
-    if (next) out.push(`Still to come: ${next.p.name}, ${f1(next.p.proj)} projected for ${next.m}.`);
+    if (next) out.push(`Still to come: ${next.p.name}, ${f2(next.p.proj)} projected for ${next.m}.`);
     return out.join(' ');
   }
   renderVals() {
@@ -534,7 +534,7 @@ class Component extends DCLogic {
       lineupTitle: `Week ${lineupWeek} lineup`, proj: LW ? 'Proj ' + f2(PROJ[tm]) : '',
       stats: [{ label: 'PF', value: f1(s.pf), sub: ord(pfRank) + ' in league' }, { label: 'PA', value: f1(s.pa), sub: ord(paRank) + ' fewest' }, { label: 'Luck', value: sgn(s.luck), sub: 'W − xW', color: s.luck > 0 ? 'var(--pos)' : s.luck < 0 ? 'var(--neg)' : 'var(--ink)' }, { label: 'xW', value: s.xw.toFixed(2), sub: 'vs ' + s.w + ' real wins' }, { label: 'Max PF', value: maxOk ? f1(s.max) : '—', sub: maxOk ? ord(maxRank) + ' best possible' : 'Best possible lineup' }, { label: 'Bench', value: maxOk ? f1(bn) : '—', sub: 'Points left sitting' }, { label: 'FAAB left', value: txOk ? '$' + (budget - spent[tm]) : '—', sub: 'of $' + budget }, { label: 'Adds', value: txOk ? String(adds[tm]) : '—', sub: 'This season' }].map(x => ({ color: 'var(--ink)', isLuck: x.label == 'Luck', isBench: x.label == 'Bench', ...x })),
       log, starters: this.starters(tm, lineupWeek),
-      bench: pl.filter(p => p.slot != 'starter').map(p => { const lp = LIVEPTS[p.name]; const v = lp ?? p.proj ?? p.projected ?? p.projections?.[lineupWeek] ?? PPROJ[p.name]; return { slot: p.slot == 'IR' ? 'IR' : p.pos, name: p.name, meta: (p.nfl || '').toUpperCase() + (lp == null && v != null && p.slot != 'IR' ? ' · proj' : lp != null && PLAYING.has(p.name) ? ' · live' : ''), pts: p.slot == 'IR' ? '' : (v != null ? (lp != null ? f2(+v) : f1(+v)) : '—') }; }),
+      bench: pl.filter(p => p.slot != 'starter').map(p => { const lp = LIVEPTS[p.name]; const v = lp ?? p.proj ?? p.projected ?? p.projections?.[lineupWeek] ?? PPROJ[p.name]; return { slot: p.slot == 'IR' ? 'IR' : p.pos, name: p.name, meta: (p.nfl || '').toUpperCase() + (lp == null && v != null && p.slot != 'IR' ? ' · proj' : lp != null && PLAYING.has(p.name) ? ' · live' : ''), pts: p.slot == 'IR' ? '' : (v != null ? f2(+v) : '—') }; }),
       benchCount: pl.filter(p => p.slot != 'starter').length, lineupMsg, hasLineup: !lineupMsg
     };
     const teamPicker = MGR.map(m => ({ m, init: INIT[m], color: col(m), ring: m == tm ? '2px solid var(--accent)' : '2px solid transparent', ringFill: m == tm ? 'var(--accent)' : 'transparent', op: m == tm ? 1 : .75, fg: m == tm ? 'var(--ink)' : 'var(--muted)', pick: () => this.setState({ team: m }) }));

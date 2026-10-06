@@ -223,7 +223,7 @@ window.SEASON = {
     inProgress: [
 
     ],
-    sheetNote: 'Live as of 6:50 PM CT. Orange = final points, white = still playing, gray = projection.'
+    sheetNote: 'Live as of 6:50 PM CT. Each player is tagged Final, Live or proj.'
   },
 
   // Shown on the week after the live one.
@@ -277,12 +277,12 @@ window.SEASON = {
       ['Colin', 'Colin lost by 3.84 with Joe Burrow on his bench for 22.58. Patrick Mahomes started and scored 16.94.']
     ],
     4: [
-      ['Matt', 'Quinshon Judkins scored 18.60 on Thursday from Matt’s bench. Matt would like that one back.'],
-      ['Colin', 'Colin banked nothing on Thursday and is still projected to beat Tristan by 0.59. Tristan has 8.90 from KC Concepcion Jr. and trails by a rounding error.'],
-      ['Tony', 'Tony is 3–0 and still projected to lose to Andy by 8.43. Respect remains pending.'],
-      ['Kurt', 'Kurt and Jerger are both 1–2, and the loser falls to 1–3. Jaylen Warren’s 14.10 on Thursday cut Jerger’s projected edge to 2.27. Kurt would like a word with the projection.'],
-      ['Mr. G', 'Pablo is projected for 88.77, lowest in the league. Mr. G is projected for 119.12, highest. The group-chat victory lap is already drafted.'],
-      ['Colin', 'Colin made 6 adds this week alone, triple Tony’s total for the whole season. His only points so far: Denzel Boston, 10.90, on the bench.']
+      ['Matt', 'Quinshon Judkins scored 18.60 on Matt’s bench on Thursday. Matt lost to DLin by 22.60, so the bench didn’t decide it, but it didn’t help either.'],
+      ['Colin', 'Colin was projected to beat Tristan by 0.59. Colin scored 129.92 instead, with Kyren Williams at 31.70 and another 27.50 from Kyle Monangai sitting on the bench. Tristan needs 31.25 from Bijan Robinson tonight.'],
+      ['Tony', 'Tony was projected to lose to Andy by 8.43. Tony finished at 90.82 and leads 90.82–84.28, so Andy needs 6.55 from Drake London tonight. London is also the last leg of Andy’s Chalk Talk parlay.'],
+      ['Kurt', 'Kurt finished at 112.22. Jerger sits at 98.06, with CeeDee Lamb’s 32.80 already in and Chris Olave left. Olave needs 14.17 tonight, or Jerger falls to 1–3.'],
+      ['Pablo', 'On Thursday Pablo was projected for 88.77, lowest in the league. Pablo scored 133.78, the top score of the week so far. Mr. G’s victory lap is on hold: Tyler Shough would need 55.89 tonight.'],
+      ['Colin', 'Colin made 8 adds this week, four times Tony’s 2 for the whole season. One of them, Emanuel Wilson, was picked up at 2:23 AM Sunday and scored 25.50.']
     ]
   },
 
