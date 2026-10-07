@@ -1,7 +1,7 @@
 {
-  "asOf": "2026-10-06T10:10:00-05:00",
+  "asOf": "2026-10-06T21:02:00-05:00",
   "source": "Signed-in Yahoo Fantasy league 935526 team roster pages (full reconcile)",
-  "week": 4,
+  "week": 5,
   "baseline": "yahoo-live",
   "baselineAvailable": true,
   "baselineNote": "Rosters from the Sun Oct 4 Yahoo reconcile plus later moves through Tue Oct 6, 10:10 AM CT. Week 4 projections removed once Week 4 went final; Week 5 player projections not loaded yet.",
@@ -40,7 +40,7 @@
         {
           "name": "DJ Moore",
           "pos": "WR",
-          "slot": "starter",
+          "slot": "bench",
           "nfl": "Buf"
         },
         {
@@ -58,7 +58,7 @@
         {
           "name": "Jaylen Waddle",
           "pos": "WR",
-          "slot": "bench",
+          "slot": "starter",
           "nfl": "Den"
         },
         {
@@ -115,7 +115,7 @@
         {
           "name": "Lamar Jackson",
           "pos": "QB",
-          "slot": "starter",
+          "slot": "bench",
           "nfl": "Bal"
         },
         {
@@ -133,7 +133,7 @@
         {
           "name": "KC Concepcion Jr.",
           "pos": "WR",
-          "slot": "starter",
+          "slot": "bench",
           "nfl": "Cle"
         },
         {
@@ -157,7 +157,7 @@
         {
           "name": "Bo Nix",
           "pos": "QB",
-          "slot": "bench",
+          "slot": "starter",
           "nfl": "Den"
         },
         {
@@ -175,7 +175,7 @@
         {
           "name": "Rome Odunze",
           "pos": "WR",
-          "slot": "bench",
+          "slot": "starter",
           "nfl": "Chi"
         },
         {
@@ -244,7 +244,7 @@
         {
           "name": "Rashee Rice",
           "pos": "WR",
-          "slot": "starter",
+          "slot": "bench",
           "nfl": "KC"
         },
         {
@@ -255,14 +255,14 @@
         },
         {
           "name": "Davante Adams",
-          "pos": "WRT",
+          "pos": "WR",
           "slot": "starter",
           "nfl": "LAR"
         },
         {
           "name": "Kyle Monangai",
-          "pos": "RB",
-          "slot": "bench",
+          "pos": "WRT",
+          "slot": "starter",
           "nfl": "Chi"
         },
         {
@@ -411,12 +411,6 @@
           "pos": "K",
           "slot": "starter",
           "nfl": "Bal"
-        },
-        {
-          "name": "Chiefs",
-          "pos": "DEF",
-          "slot": "starter",
-          "nfl": "KC"
         }
       ]
     },
@@ -559,12 +553,12 @@
         {
           "name": "Tyler Warren",
           "pos": "TE",
-          "slot": "starter",
+          "slot": "bench",
           "nfl": "Ind"
         },
         {
           "name": "George Kittle",
-          "pos": "WRT",
+          "pos": "TE",
           "slot": "starter",
           "nfl": "SF"
         },
@@ -582,8 +576,8 @@
         },
         {
           "name": "Carnell Tate",
-          "pos": "WR",
-          "slot": "bench",
+          "pos": "WRT",
+          "slot": "starter",
           "nfl": "Ten"
         },
         {
@@ -628,7 +622,7 @@
         {
           "name": "Tyler Shough",
           "pos": "QB",
-          "slot": "starter",
+          "slot": "bench",
           "nfl": "NO"
         },
         {
@@ -676,7 +670,7 @@
         {
           "name": "Drake Maye",
           "pos": "QB",
-          "slot": "bench",
+          "slot": "starter",
           "nfl": "NE"
         },
         {
@@ -838,7 +832,7 @@
         {
           "name": "Bryce Young",
           "pos": "QB",
-          "slot": "starter",
+          "slot": "bench",
           "nfl": "Car"
         },
         {
@@ -868,25 +862,25 @@
         {
           "name": "Travis Kelce",
           "pos": "TE",
-          "slot": "starter",
+          "slot": "bench",
           "nfl": "KC"
         },
         {
           "name": "Braelon Allen",
-          "pos": "WRT",
-          "slot": "starter",
+          "pos": "RB",
+          "slot": "bench",
           "nfl": "NYJ"
         },
         {
           "name": "Malik Nabers",
-          "pos": "WR",
-          "slot": "bench",
+          "pos": "WRT",
+          "slot": "starter",
           "nfl": "NYG"
         },
         {
           "name": "Tucker Kraft",
           "pos": "TE",
-          "slot": "bench",
+          "slot": "starter",
           "nfl": "GB"
         },
         {
@@ -898,7 +892,7 @@
         {
           "name": "Justin Herbert",
           "pos": "QB",
-          "slot": "bench",
+          "slot": "starter",
           "nfl": "LAC"
         },
         {
@@ -931,7 +925,7 @@
         {
           "name": "Brock Purdy",
           "pos": "QB",
-          "slot": "starter",
+          "slot": "bench",
           "nfl": "SF"
         },
         {
@@ -943,7 +937,7 @@
         {
           "name": "Kenneth Walker III",
           "pos": "RB",
-          "slot": "starter",
+          "slot": "bench",
           "nfl": "KC"
         },
         {
@@ -955,7 +949,7 @@
         {
           "name": "Jordan Addison",
           "pos": "WR",
-          "slot": "starter",
+          "slot": "bench",
           "nfl": "Min"
         },
         {
@@ -973,7 +967,7 @@
         {
           "name": "Dak Prescott",
           "pos": "QB",
-          "slot": "bench",
+          "slot": "starter",
           "nfl": "Dal"
         },
         {
@@ -991,13 +985,13 @@
         {
           "name": "Courtland Sutton",
           "pos": "WR",
-          "slot": "bench",
+          "slot": "starter",
           "nfl": "Den"
         },
         {
           "name": "Jacory Croskey-Merritt",
           "pos": "RB",
-          "slot": "bench",
+          "slot": "starter",
           "nfl": "Was"
         },
         {
@@ -1371,6 +1365,21 @@
         "NO"
       ],
       "note": "Yahoo sync queue Tue Oct 6, 10:10 AM CT"
+    },
+    {
+      "date": "2026-10-06",
+      "manager": "DLin",
+      "add": [
+        "—",
+        "DEF",
+        "—"
+      ],
+      "drop": [
+        "Chiefs",
+        "DEF",
+        "KC"
+      ],
+      "note": "Yahoo facts Tue Oct 6, 9:02 PM CT"
     }
   ],
   "gaps": [],

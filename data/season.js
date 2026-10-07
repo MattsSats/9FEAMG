@@ -61,13 +61,13 @@ window.SEASON = {
     week: 5,
     status: 'Kicks off Thursday',
     // [current points, projected final]
-    // Yahoo Week 5 projections as of Tue Oct 6, 10:10 AM CT (before waivers).
+    // Yahoo Week 5 projections as of Tue Oct 6, 9:02 PM CT (before Wednesday waivers).
     scores: {
-      Matt: [0, 95.68], DLin: [0, 100.11],
-      Tristan: [0, 100.77], Colin: [0, 99.30],
-      Jerger: [0, 96.22], Kurt: [0, 98.81],
-      Tony: [0, 106.42], Andy: [0, 111.46],
-      'Mr. G': [0, 110.62], Pablo: [0, 89.98]
+      Matt: [0, 99.51], DLin: [0, 105.58],
+      Tristan: [0, 111.07], Colin: [0, 106.89],
+      Jerger: [0, 99.59], Kurt: [0, 95.10],
+      Tony: [0, 109.30], Andy: [0, 116.90],
+      'Mr. G': [0, 116.25], Pablo: [0, 91.48]
     },
     // Points so far for every player whose game has started (starters and bench).
     // Players listed in inProgress are still playing; the rest are final.
