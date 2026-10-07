@@ -122,6 +122,8 @@ export default {
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
-</head><body><a href="/#${name}">${e(title)}</a></body></html>`, { headers: { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'public, max-age=300, s-maxage=300' } });
+</head><body><a href="/#${name}">${e(title)}</a></body></html>`, {
+      // Bots and people share this URL, so never let the CDN hand the bot page to a person.
+      headers: { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'private, no-store', vary: 'User-Agent' } });
   }
 };
