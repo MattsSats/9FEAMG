@@ -457,6 +457,13 @@ class Component extends DCLogic {
       const line = boothOn ? D.booth?.[wk]?.[i]?.[1] || '' : '';
       return { a: side(a, sa, sa > sb), b: side(b, sb, sb > sa), booth: line, hasBooth: !!line, gap: Math.abs(sa - sb), winner: sa > sb ? a : b };
     }).sort((x, y) => x.gap - y.gap).map((r, i) => ({ ...r, wide: i == 0, wideLabel: `Closest finish · ${r.winner} by ${f2(r.gap)}` })) : [];
+    // The Booth, per matchup slot: the recap (after Monday night) leads, with the preview
+    // (before Thursday kickoff) tucked under it; a preview alone shows in the recap's spot.
+    const recaps = D.booth?.[wk] || [], previews = D.boothPreview?.[wk] || [];
+    const boothLines = [...Array(Math.max(recaps.length, previews.length)).keys()].map(i => {
+      const r = recaps[i], p = previews[i], main = r || p;
+      return main && { init: INIT[main[0]], color: col(main[0]), text: main[1], isPreview: !r, preview: r && p ? p[1] : '', hasPreview: !!(r && p) };
+    }).filter(Boolean);
     const nextTitle = NEXT && wk == NEXT.week ? 'Not yet' : 'No matchups';
     const nextNote = NEXT && wk == NEXT.week ? NEXT.note : 'Add this week to the schedule in data/season.js.';
     // Booth parlays for the selected week (data/season.js -> parlays[week]).
@@ -702,7 +709,7 @@ class Component extends DCLogic {
       tabs, tabGameday: S.tab == 'Gameday', tabSeason: S.tab == 'Season', tabTeams: S.tab == 'Teams', tabDraft: S.tab == 'Draft', tabWire: S.tab == 'Wire',
       weekChips, isW5: isNext, nextTitle, nextNote, hasWeek, hero: hero || blank, matchups, heroLabel: wk == LW ? 'Matchup of the week' : 'Closest finish', heroCaption: this.heroCaption(wk, hero),
       weekStatus, parlays, hasParlays: parlays.length > 0, hasLedger: allParlays.length > 0, ledgerLine, ledgerOwners,
-      showBooth: boothOn, booth: (D.booth?.[wk] || []).map(([m, text]) => ({ init: INIT[m], color: col(m), text })), hasBooth: boothOn && !!D.booth?.[wk]?.length,
+      showBooth: boothOn, booth: boothLines, hasBooth: boothOn && boothLines.length > 0,
       seasonSub, seasonTiles, standings, playoffLine: `Playoff line · top ${P} of ${MGR.length}`,
       heat, heatHead, heatCols, heatMinW, restLabel, hasRest: !!restLabel, liveCol: !!LW,
       team, teamPicker,

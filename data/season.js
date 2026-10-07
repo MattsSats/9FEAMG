@@ -106,6 +106,9 @@ window.SEASON = {
   // "The Booth" lines by week: [manager, text].
   // Five per week: one per matchup, in the same order as schedule[week]. The manager
   // is whose crest shows next to the line (whoever the line is mostly about).
+  // booth holds the recaps (after Monday night); boothPreview (below) holds the
+  // previews (before Thursday kickoff), same order and format. A recap shows with its
+  // preview tucked under it; a preview alone shows in the recap's spot, labeled.
   booth: {
     1: [
       ['Matt', 'Pablo beat Matt by 4.80 because Matt benched Watson’s 29.70 to start DeVonta’s 6.80. Unlucky is one word for it.'],
@@ -136,6 +139,7 @@ window.SEASON = {
       ['Mr. G', 'Pablo was projected to lose to Mr. G by 30.35 and won by 39.94. Opponents keep saving their best for Mr. G.']
     ]
   },
+  boothPreview: {},
 
   // The Booth Parlay, by week. Shows under All matchups, with a season ledger
   // ($10 flat stakes) underneath.
