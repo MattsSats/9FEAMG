@@ -318,6 +318,17 @@ window.SEASON = {
           { text: 'Jahmyr Gibbs anytime TD', player: 'Jahmyr Gibbs', type: 'td', count: 1, game: 'Sun 3:25 PM · DET @ ARI', odds: '-450', status: 'open' },
           { text: 'Giants moneyline at Commanders', player: 'Giants', type: 'ml', team: 'NYG', teams: ['NYG', 'Was'], game: 'Sun 12:00 PM · NYG @ WAS', odds: '+150', status: 'open' }
         ]
+      },
+      {
+        owner: 'Andy', title: 'Ground and Pound (Juiced)',
+        // Andy's juiced take on Ground and Pound (his text, Wed Oct 7): Williams and Gibbs each
+        // need two TDs instead of one; the Giants moneyline stays. Not marked placed.
+        // Odds: DraftKings via The Odds API, Wed Oct 7, 3:32 PM CT.
+        legs: [
+          { text: 'Javonte Williams 2+ TDs', player: 'Javonte Williams', type: 'td', count: 2, game: 'Thu 7:15 PM · TB @ DAL', odds: '+245', status: 'open' },
+          { text: 'Jahmyr Gibbs 2+ TDs', player: 'Jahmyr Gibbs', type: 'td', count: 2, game: 'Sun 3:25 PM · DET @ ARI', odds: '+115', status: 'open' },
+          { text: 'Giants moneyline at Commanders', player: 'Giants', type: 'ml', team: 'NYG', teams: ['NYG', 'Was'], game: 'Sun 12:00 PM · NYG @ WAS', odds: '+150', status: 'open' }
+        ]
       }
     ]
   },

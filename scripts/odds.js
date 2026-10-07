@@ -4,6 +4,8 @@
 //   node scripts/odds.js games                  this week's NFL games: moneylines, spreads, totals
 //   node scripts/odds.js props <team> [alt]     player props for that team's game (anytime TD, yardage, receptions);
 //                                               add "alt" for alternate lines (e.g. 250+ passing yards)
+//   node scripts/odds.js props <team> <market>  just one market, e.g. player_tds_over (Over 1.5 = 2+ TDs);
+//                                               cheapest way to price one leg (about 1 credit)
 //
 // Every call prints the time it was pulled and the credits left, so the ticket can cite
 // "DraftKings via The Odds API, <time>".
@@ -49,12 +51,13 @@ async function games() {
   return left;
 }
 
-async function props(team, alt) {
+async function props(team, flag) {
+  const want = flag == 'alt' ? ALT : flag ? [flag] : PROPS;
   const { data: events } = await get('/events', {});
   const q = team.toLowerCase();
   const g = thisWeek(events).find(e => [e.home_team, e.away_team].some(t => t.toLowerCase().includes(q)));
   if (!g) throw new Error(`No game this week for "${team}".`);
-  const { data, left } = await get(`/events/${g.id}/odds`, { markets: (alt ? ALT : PROPS).join(',') });
+  const { data, left } = await get(`/events/${g.id}/odds`, { markets: want.join(',') });
   console.log(`\n${g.away_team} @ ${g.home_team}  (${kickoff(g.commence_time)})`);
   const markets = data.bookmakers?.[0]?.markets || [];
   if (!markets.length) console.log('  no DraftKings props yet');
@@ -71,7 +74,7 @@ async function props(team, alt) {
 const [cmd, arg, flag] = process.argv.slice(2);
 if (!KEY) { console.error('Add ODDS_API_KEY=... to .env.local first.'); process.exit(1); }
 try {
-  const left = cmd == 'games' ? await games() : cmd == 'props' && arg ? await props(arg, flag == 'alt') : null;
+  const left = cmd == 'games' ? await games() : cmd == 'props' && arg ? await props(arg, flag) : null;
   if (left === null) { console.error('Use: node scripts/odds.js games | props <team> [alt]'); process.exitCode = 1; } else
   console.log(`\nDraftKings via The Odds API, ${stamp()} · ${left} credits left`);
 } catch (e) { console.error(e.message); process.exitCode = 1; }
