@@ -46,9 +46,16 @@ const NEXT = D ? D.next : null;
 const LIVEPTS = LIVE?.playerPoints || {};
 // Players still on the field: their points are so far, not final.
 const PLAYING = new Set(LIVE?.inProgress || []);
+// Gameday opens on the week that just finished until the live week has points on the board
+// (Tuesday and Wednesday are for last week's results), then on the live week.
+const LIVE_STARTED = !!LIVE && (Object.keys(LIVEPTS).length > 0 || Object.values(LIVE.scores || {}).some(s => s[0] > 0));
+const HOME_WK = LW && (LIVE_STARTED || !NF) ? LW : NF;
 const PPROJ = D?.projections || {};
 const PAIRS = D ? D.schedule : {};
 const PROJ = Object.fromEntries(MGR.map(m => [m, LIVE?.scores?.[m]?.[1] ?? 0]));
+// Share images: CSS width they render at, at 3× pixels. Wide enough to stay short in a chat,
+// narrow enough that the text still reads in an iMessage bubble.
+const SHOT_W = 400;
 // Screenshot library for the share buttons, loaded on demand.
 const SHOT_LIB = {
   src: 'https://cdn.jsdelivr.net/npm/html-to-image@1.11.13/dist/html-to-image.js',
@@ -184,7 +191,7 @@ function setMaxPF(box) {
 }
 
 class Component extends DCLogic {
-  state = { tab: this.props.startTab ?? 'Gameday', week: LW ?? NF, theme: null, sheet: null, team: MGR[0], wire: '7 days', draftMode: 'By round', draftRound: 1, draftTeam: MGR[0], rosters: null, draft: null, tx: null, loaded: false };
+  state = { tab: this.props.startTab ?? 'Gameday', week: HOME_WK, theme: null, sheet: null, team: MGR[0], wire: '7 days', draftMode: 'By round', draftRound: 1, draftTeam: MGR[0], rosters: null, draft: null, tx: null, loaded: false };
   componentDidMount() {
     // Keyboard: Enter or Space activates clickable rows (role="button"); Escape closes the lineup sheet.
     document.addEventListener('keydown', e => {
@@ -210,7 +217,7 @@ class Component extends DCLogic {
   // Home: Gameday on the current week, back at the top, with a clean URL (drops #parlay links and ?query).
   goHome(e) {
     e?.preventDefault?.();
-    this.setState({ tab: 'Gameday', week: LW ?? NF, sheet: null });
+    this.setState({ tab: 'Gameday', week: HOME_WK, sheet: null });
     if (location.pathname != '/' || location.search || location.hash) history.pushState(null, '', '/');
     window.scrollTo(0, 0);
   }
@@ -264,24 +271,34 @@ class Component extends DCLogic {
   }
   // Renders the element marked data-shot="<name>" to a PNG, then opens the share
   // sheet (phones), copies it (desktop) or downloads it as a last resort.
+  // Images render from an off-screen copy at phone width (SHOT_W), so they read the same
+  // in an iMessage bubble whichever screen shared them, and the page doesn't move.
   async share(name, e) {
     e?.stopPropagation?.();
     const el = document.querySelector(`[data-shot="${name}"]`);
     if (!el || this.state.sharing) return;
     this.setState({ sharing: name });
-    el.classList.add('capturing');
+    const stage = document.createElement('div');
+    stage.className = 'offstage'; stage.style.width = SHOT_W + 'px';
+    const copy = el.cloneNode(true);
+    copy.removeAttribute('id'); copy.querySelectorAll('[id]').forEach(n => n.removeAttribute('id'));
+    // Drop what images leave out before layout, so the card closes up around the gap.
+    copy.querySelectorAll('.no-shot').forEach(n => n.remove());
+    copy.classList.add('capturing'); copy.style.margin = '0'; copy.style.width = 'auto';
+    stage.appendChild(copy); document.body.appendChild(stage);
     let file;
     try {
       const lib = await this.loadShotLib();
+      await new Promise(r => setTimeout(r, 30)); // let the copy lay out (rAF stalls in background tabs)
       const bg = getComputedStyle(document.documentElement).getPropertyValue('--bg').trim();
-      const blob = await lib.toBlob(el, { pixelRatio: 2, backgroundColor: bg, style: { margin: '0' }, filter: n => !n.classList?.contains('no-shot') });
+      const blob = await lib.toBlob(copy, { pixelRatio: 3, backgroundColor: bg, filter: n => !n.classList?.contains('no-shot') });
       file = new File([blob], `9feamg-${name}.png`, { type: 'image/png' });
     } catch (err) {
       console.error('share capture failed', err);
       this.toast('Couldn’t create the image. Try again.');
       return;
     } finally {
-      el.classList.remove('capturing');
+      stage.remove();
       this.setState({ sharing: null });
     }
     await this.deliver(file);
@@ -431,15 +448,15 @@ class Component extends DCLogic {
     const blank = { a: {}, b: {}, share: '50%' };
     const isNext = !hasWeek;
     // Week recap (final weeks): every final score with its Booth line, for sharing.
-    // booth[week] runs in schedule order, one line per matchup. Two columns, closest
-    // finish first and full width, so five matchups fill a 2×3 grid.
+    // booth[week] runs in schedule order, one line per matchup. Closest finish first;
+    // one score row per matchup keeps the phone-width image short.
     const hasRecap = wk <= NF && !!PAIRS[wk];
     const recap = hasRecap ? PAIRS[wk].map(([a, b], i) => {
       const sa = SC[a][wk - 1], sb = SC[b][wk - 1];
       const side = (m, s, win) => ({ m, init: INIT[m], color: col(m), score: f2(s), weight: win ? 800 : 500, fg: win ? 'var(--ink)' : 'var(--muted)' });
       const line = boothOn ? D.booth?.[wk]?.[i]?.[1] || '' : '';
       return { a: side(a, sa, sa > sb), b: side(b, sb, sb > sa), booth: line, hasBooth: !!line, gap: Math.abs(sa - sb), winner: sa > sb ? a : b };
-    }).sort((x, y) => x.gap - y.gap).map((r, i) => ({ ...r, span: i == 0 ? '1 / -1' : 'auto', wide: i == 0, wideLabel: `Closest finish · ${r.winner} by ${f2(r.gap)}` })) : [];
+    }).sort((x, y) => x.gap - y.gap).map((r, i) => ({ ...r, wide: i == 0, wideLabel: `Closest finish · ${r.winner} by ${f2(r.gap)}` })) : [];
     const nextTitle = NEXT && wk == NEXT.week ? 'Not yet' : 'No matchups';
     const nextNote = NEXT && wk == NEXT.week ? NEXT.note : 'Add this week to the schedule in data/season.js.';
     // Booth parlays for the selected week (data/season.js -> parlays[week]).
@@ -456,7 +473,9 @@ class Component extends DCLogic {
           : stakes ? (stakes.length ? 'Starters in this game: ' + stakes.join(', ') : 'No league starters in this game') : '';
         const meta = [l.result || (pts != null ? f2(pts) + ' fantasy pts' : l.game), l.line != null && !l.text.includes(String(l.line)) ? 'line ' + l.line : null].filter(Boolean).join(' · ');
         const d = toDecimal(l.odds), ip = impliedProb(l.odds), g = l.sgp ? p.sgps?.[l.sgp - 1] : null;
-        return { text: l.text, odds: l.sgp ? 'SGP ' + l.sgp : l.odds ? l.odds.replace('-', '−') : '—', oddsSub: l.sgp ? (g ? String(g).replace('-', '−') + ' together' : 'no line') : d ? `×${d.toFixed(2)} · ${Math.round(ip * 100)}%` : 'no line', owner, ownerColor: spot ? col(spot.m) : stakes ? 'var(--accent)' : 'transparent', hasOwner: !!owner, meta, ...(LEG_TAG[l.status] || LEG_TAG.open), spot };
+        return { text: l.text, odds: l.sgp ? 'SGP ' + l.sgp : l.odds ? l.odds.replace('-', '−') : '—', oddsSub: l.sgp ? (g ? String(g).replace('-', '−') + ' together' : 'no line') : d ? `×${d.toFixed(2)} · ${Math.round(ip * 100)}%` : 'no line', owner, ownerColor: spot ? col(spot.m) : stakes ? 'var(--accent)' : 'transparent', hasOwner: !!owner,
+          // Game legs list every league starter in the game; images leave that list out to stay short.
+          ownerCls: stakes ? 'no-shot' : '', meta, ...(LEG_TAG[l.status] || LEG_TAG.open), spot };
       });
       // How the ticket lines up with the fantasy matchup.
       const mine = legs.filter(l => l.spot && l.spot.m == p.owner && l.spot.starter).length, theirs = vs ? legs.filter(l => l.spot && l.spot.m == vs && l.spot.starter).length : 0;
