@@ -1,5 +1,5 @@
 {
-  "asOf": "2026-10-07T08:44:00-05:00",
+  "asOf": "2026-10-07T16:05:00-05:00",
   "source": "Signed-in Yahoo Fantasy league 935526 team roster pages (full reconcile)",
   "week": 5,
   "baseline": "yahoo-live",
@@ -284,12 +284,6 @@
           "nfl": "Cle"
         },
         {
-          "name": "Jadarian Price",
-          "pos": "RB",
-          "slot": "bench",
-          "nfl": "Sea"
-        },
-        {
           "name": "Travis Etienne Jr.",
           "pos": "RB",
           "slot": "IR",
@@ -316,8 +310,20 @@
         {
           "name": "Jaguars",
           "pos": "DEF",
-          "slot": "bench",
+          "slot": "starter",
           "nfl": "Jax"
+        },
+        {
+          "name": "Deebo Samuel Sr.",
+          "pos": "WR",
+          "slot": "bench",
+          "nfl": "SF"
+        },
+        {
+          "name": "Tank Dell",
+          "pos": "WR",
+          "slot": "bench",
+          "nfl": "Hou"
         }
       ]
     },
@@ -1524,6 +1530,36 @@
         "CHI"
       ],
       "note": "Yahoo facts Wed Oct 7, 8:44 AM CT"
+    },
+    {
+      "date": "2026-10-07",
+      "manager": "Colin",
+      "add": [
+        "Deebo Samuel Sr.",
+        "WR",
+        "SF"
+      ],
+      "drop": [
+        "—",
+        "WR",
+        "—"
+      ],
+      "note": "Yahoo facts Wed Oct 7, 4:05 PM CT"
+    },
+    {
+      "date": "2026-10-07",
+      "manager": "Colin",
+      "add": [
+        "Tank Dell",
+        "WR",
+        "HOU"
+      ],
+      "drop": [
+        "Jadarian Price",
+        "RB",
+        "SEA"
+      ],
+      "note": "Yahoo facts Wed Oct 7, 4:05 PM CT"
     }
   ],
   "gaps": [],

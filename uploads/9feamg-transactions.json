@@ -1,5 +1,41 @@
 [
   {
+    "when": "Oct 7, 1:29 pm",
+    "yahooTeam": "C Lambs Biggest Hater",
+    "manager": "Colin",
+    "action": "add",
+    "player": "Tank Dell",
+    "nfl": "Hou",
+    "pos": "WR",
+    "faab": null,
+    "via": "Free Agency",
+    "notes": "Yahoo facts Wed Oct 7, 4:05 PM CT"
+  },
+  {
+    "when": "Oct 7, 12:24 pm",
+    "yahooTeam": "C Lambs Biggest Hater",
+    "manager": "Colin",
+    "action": "drop",
+    "player": "Jadarian Price",
+    "nfl": "Sea",
+    "pos": "RB",
+    "faab": null,
+    "via": "Waivers",
+    "notes": "Yahoo facts Wed Oct 7, 4:05 PM CT"
+  },
+  {
+    "when": "Oct 7, 8:52 am",
+    "yahooTeam": "C Lambs Biggest Hater",
+    "manager": "Colin",
+    "action": "add",
+    "player": "Deebo Samuel Sr.",
+    "nfl": "SF",
+    "pos": "WR",
+    "faab": null,
+    "via": "Free Agency",
+    "notes": "Yahoo facts Wed Oct 7, 4:05 PM CT"
+  },
+  {
     "when": "Oct 7, 7:43 am",
     "yahooTeam": "Squirtle Squad",
     "manager": "Tristan",
