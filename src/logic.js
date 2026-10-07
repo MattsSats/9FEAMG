@@ -767,8 +767,8 @@ class Component extends DCLogic {
       const push = (1 - d) / 2, ux = d ? dx / d : 1, uy = d ? dy / d : 0;
       a.x -= ux * push * DX; b.x += ux * push * DX; a.y -= uy * push * DY; b.y += uy * push * DY;
     }
-    const pct = v => (Math.min(0.97, Math.max(0.03, v)) * 100).toFixed(1) + '%';
-    const scatter = ST.map((x, i) => ({ init: INIT[x.m], color: col(x.m), x: pct(pts[i].x), y: pct(pts[i].y), op: dim(x.m), ring: hl == x.m ? 'var(--ink)' : 'var(--bg)', z: hl == x.m ? 5 : 1, pick: pickHl(x.m) }));
+    const plotPos = v => (Math.min(0.97, Math.max(0.03, v)) * 100).toFixed(1) + '%';
+    const scatter = ST.map((x, i) => ({ init: INIT[x.m], color: col(x.m), x: plotPos(pts[i].x), y: plotPos(pts[i].y), op: dim(x.m), ring: hl == x.m ? 'var(--ink)' : 'var(--bg)', z: hl == x.m ? 5 : 1, pick: pickHl(x.m) }));
     const maxL = Math.max(0.01, ...ST.map(x => Math.abs(x.luck)));
     const luckBars = [...ST].sort((a, b) => b.luck - a.luck).map(x => ({ m: x.m, v: sgn(x.luck), pos: x.luck > 0 ? (x.luck / maxL * 100) + '%' : '0%', neg: x.luck < 0 ? (-x.luck / maxL * 100) + '%' : '0%', color: x.luck > 0 ? 'var(--pos)' : x.luck < 0 ? 'var(--neg)' : 'var(--muted)', op: dim(x.m), pick: pickHl(x.m) }));
     const topMax = Math.max(...ST.map(x => x.max ?? x.pf));

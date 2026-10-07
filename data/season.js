@@ -171,6 +171,8 @@ window.SEASON = {
   //                 (['+345', '+650']); legs[].sgp says which one a leg is in (1, 2…).
   //                 The ticket odds are the SGP prices multiplied together.
   //   booth         optional trash talk (hidden when trash talk is off).
+  //   request       the manager whose site parlay request (api/requests.js) this fills; the
+  //                 request on Gameday then shows Built and links here.
   parlays: {
     4: [
       {
@@ -265,6 +267,23 @@ window.SEASON = {
           { text: 'Bills −2.5 vs Patriots', type: 'spread', team: 'Buf', line: -2.5, teams: ['NE', 'Buf'], sgp: 3, game: 'Sun 12:00 PM · NE @ BUF', result: 'Final 26–29 · lost by 3', odds: null, status: 'miss' }
         ],
         booth: 'The same three-game idea with friendlier numbers. Derrick Henry already scored, and D’Andre Swift is Andy’s own FLEX, so that leg pays twice if it hits.'
+      }
+    ],
+    5: [
+      {
+        owner: 'Matt', title: 'The Whole Lineup', request: 'Matt',
+        // Built by Claude for Matt's Lottery request (+5000 and up, any legs): every leg is a team
+        // Matt starts someone from winning outright. Steelers over Colts because Matt starts the
+        // Steelers D/ST (and Josh Downs, so that leg cuts both ways); Hubbard's Panthers are on bye.
+        // Odds: DraftKings moneylines via ESPN, Tue Oct 6, 11:10 PM CT.
+        legs: [
+          { text: 'Packers moneyline vs Bears', type: 'ml', team: 'GB', teams: ['Chi', 'GB'], game: 'Sun 12:00 PM · CHI @ GB', odds: '+124', status: 'open' },
+          { text: '49ers moneyline at Seahawks', type: 'ml', team: 'SF', teams: ['SF', 'Sea'], game: 'Sun 3:25 PM · SF @ SEA', odds: '+130', status: 'open' },
+          { text: 'Jets moneyline vs Browns', type: 'ml', team: 'NYJ', teams: ['Cle', 'NYJ'], game: 'Sun 12:00 PM · CLE @ NYJ', odds: '-130', status: 'open' },
+          { text: 'Cardinals moneyline vs Lions', type: 'ml', team: 'Ari', teams: ['Det', 'Ari'], game: 'Sun 3:25 PM · DET @ ARI', odds: '+195', status: 'open' },
+          { text: 'Chargers moneyline vs Broncos', type: 'ml', team: 'LAC', teams: ['Den', 'LAC'], game: 'Sun 3:05 PM · DEN @ LAC', odds: '+154', status: 'open' },
+          { text: 'Steelers moneyline vs Colts', type: 'ml', team: 'Pit', teams: ['Ind', 'Pit'], game: 'Sun 12:00 PM · IND @ PIT', odds: '-142', status: 'open' }
+        ]
       }
     ]
   },
