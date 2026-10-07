@@ -571,8 +571,10 @@ class Component extends DCLogic {
       this.setState({ req: { ...R, players, playerLegs } }); };
     const chip = n => { const on = R.players.includes(n); return { name: n, short: n.replace(/^(\S)\S*\s+/, '$1. '), bg: on ? 'var(--accent)' : 'transparent', fg: on ? 'var(--onAccent)' : 'var(--ink)', border: on ? 'var(--accent)' : 'var(--line)', pressed: String(on), pick: togglePlayer(n) }; };
     const sugg = suggNames.map(chip), otherPicks = R.players.filter(n => !suggNames.includes(n)).length;
+    const parlaysBy = m => Object.values(D.parlays || {}).flat().filter(p => p.owner == m || p.owners?.includes(m)).length;
     const reqForm = !hasReq ? {} : {
-      mgrs: MGR.map(m => ({ m, init: INIT[m], color: col(m), ring: m == rm ? 'var(--ink)' : 'transparent', fg: m == rm ? 'var(--ink)' : 'var(--muted)', pick: pickMgr(m), pressed: String(m == rm) })),
+      // One sliding row, most parlays made first (ties keep league order).
+      mgrs: [...MGR].sort((a, b) => parlaysBy(b) - parlaysBy(a)).map(m => ({ m, init: INIT[m], color: col(m), ring: m == rm ? 'var(--ink)' : 'transparent', fg: m == rm ? 'var(--ink)' : 'var(--muted)', pick: pickMgr(m), pressed: String(m == rm) })),
       // Once someone's picked, the ten crests fold into "Requesting as Matt · Change".
       showMgrs: !rm || !!S.reqPicking, mgrCollapsed: !!rm && !S.reqPicking, me: rm ? { m: rm, init: INIT[rm], color: col(rm) } : {}, changeMgr: () => this.setState({ reqPicking: true }),
       hasMgr: !!rm, risk: R.risk, riskLabel: rk.label, riskRange: riskText(rk), riskPay: riskPay(rk),
