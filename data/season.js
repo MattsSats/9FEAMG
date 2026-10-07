@@ -303,11 +303,12 @@ window.SEASON = {
         // Jaxon Smith-Njigba): both players plus moneylines for two more Tony starters (Eagles D/ST,
         // Omarion Hampton). One leg per game, so the odds multiply as a regular parlay.
         // Odds: DraftKings. Allen and JSN props from Matt's DraftKings app screenshots, Tue Oct 6,
-        // 11:54-11:56 PM CT; moneylines from DraftKings via ESPN, Tue Oct 6, 11:10 PM CT.
+        // 11:54-11:56 PM CT; moneylines from DraftKings via ESPN, Tue Oct 6, 11:10 PM CT. Eagles +280
+        // re-checked: DraftKings via The Odds API, Wed Oct 7, 6:06 PM CT (Jaguars -355, home in London).
         legs: [
           { text: 'Josh Allen 250+ passing yards', player: 'Josh Allen', type: 'over', stat: 'Pass Yds', line: 249.5, game: 'Mon 7:15 PM · BUF @ LAR', odds: '+101', status: 'open' },
           { text: 'Jaxon Smith-Njigba anytime TD', player: 'Jaxon Smith-Njigba', type: 'td', count: 1, game: 'Sun 3:25 PM · SF @ SEA', odds: '-120', status: 'open' },
-          { text: 'Eagles moneyline vs Jaguars', player: 'Eagles', type: 'ml', team: 'Phi', teams: ['Phi', 'Jax'], game: 'Sun 8:30 AM · PHI vs JAX', odds: '+280', status: 'open' },
+          { text: 'Eagles moneyline at Jaguars', player: 'Eagles', type: 'ml', team: 'Phi', teams: ['Phi', 'Jax'], game: 'Sun 8:30 AM · PHI @ JAX', odds: '+280', status: 'open' },
           { text: 'Chargers moneyline vs Broncos', type: 'ml', team: 'LAC', teams: ['Den', 'LAC'], game: 'Sun 3:05 PM · DEN @ LAC', odds: '+154', status: 'open' }
         ]
       },
