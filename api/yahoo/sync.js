@@ -1,11 +1,12 @@
 // /api/yahoo/sync : pulls the league from Yahoo and saves it for /api/league.
-// Runs daily from the Vercel cron (Bearer CRON_SECRET), or on demand with ?key=ADMIN_KEY.
+// Runs daily from the Vercel cron (Bearer CRON_SECRET), or on demand: open it to get a form for
+// the admin key (POSTed, never in the URL), or send Authorization: Bearer <ADMIN_KEY>.
 // Saved shape:
 // { syncedAt, league, leagueKey, currentWeek, weeks: { [w]: { status, matchups: [[a, b]],
 //   teams: { [m]: { pts, proj } }, box?: { [m]: { total, starters, bench } } } } }
 // Box rows match uploads/9feamg-boxscores.json: [slot, name, nfl, pos, pts, proj]; proj is null
 // because Yahoo's API doesn't give per-player projections.
-import { accessToken, writeAuth, readData, writeData, yahoo, merge, list, num, teamManager, isAdmin, isCron, TEAMS } from '../_yahoo.js';
+import { accessToken, writeAuth, readData, writeData, yahoo, merge, list, num, teamManager, isAdmin, isCron, keyForm, TEAMS } from '../_yahoo.js';
 
 async function findLeague(token, auth) {
   if (auth.league_key) return auth.league_key;
@@ -78,7 +79,11 @@ export async function sync(origin) {
 export default {
   async fetch(request) {
     const url = new URL(request.url);
-    if (!isCron(request) && !isAdmin(url)) return new Response('Not allowed.', { status: 403 });
+    if (!isCron(request) && !(await isAdmin(request))) {
+      if (request.method == 'POST') return new Response('Not allowed.', { status: 403 });
+      const note = url.searchParams.has('key') ? '<p>Keys in the address bar aren’t accepted any more. Enter it below.</p>' : '';
+      return keyForm('Sync 9FEAMG from Yahoo', url.pathname, 'Sync now', note);
+    }
     try {
       const r = await sync(url.origin);
       return Response.json({ ok: true, ...r }, { headers: { 'cache-control': 'no-store' } });

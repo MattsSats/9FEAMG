@@ -28,7 +28,22 @@ export const writeData = d => writeJson(DATA_PATH, d);
 // ---- access checks ----
 export const redirectUri = () => process.env.YAHOO_REDIRECT_URI || 'https://www.9feamg.cloud/api/yahoo/callback';
 const same = (a, b) => typeof a == 'string' && typeof b == 'string' && a.length == b.length && a.length > 0 && [...a].every((c, i) => c == b[i]);
-export const isAdmin = url => !!process.env.ADMIN_KEY?.trim() && same((url.searchParams.get('key') || '').trim(), process.env.ADMIN_KEY.trim());
+// The admin key comes in a header (Authorization: Bearer <key>) or a POSTed form field,
+// never the query string, so it stays out of browser history and request logs.
+export async function isAdmin(request) {
+  const want = process.env.ADMIN_KEY?.trim();
+  if (!want) return false;
+  if (same(request.headers.get('authorization') || '', 'Bearer ' + want)) return true;
+  if (request.method != 'POST') return false;
+  try { return same(String((await request.formData()).get('key') || '').trim(), want); } catch { return false; }
+}
+// A one-field page that POSTs the admin key to `action`.
+export const keyForm = (title, action, button, note = '') => new Response(
+  `<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>${title}</title>` +
+  `<body style="font-family:system-ui,sans-serif;background:#F7F5F0;color:#191815;padding:32px;line-height:1.5;max-width:420px"><h1 style="font-size:22px">${title}</h1>${note}` +
+  `<form method="post" action="${action}"><label>Admin key<br><input name="key" type="password" autocomplete="current-password" required style="width:100%;font-size:16px;padding:10px;margin:6px 0 12px;border:1px solid #E0DBD0;border-radius:8px"></label>` +
+  `<button style="font-size:16px;padding:10px 18px;border:0;border-radius:999px;background:#E4572E;color:#141311;font-weight:700">${button}</button></form></body>`,
+  { headers: { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'no-store' } });
 export const isCron = req => !!process.env.CRON_SECRET && same(req.headers.get('authorization') || '', 'Bearer ' + process.env.CRON_SECRET.trim());
 
 // ---- OAuth ----
@@ -52,7 +67,7 @@ export const exchangeCode = (code, origin) => tokenRequest({ grant_type: 'author
 // A working access token, refreshed (and saved) when it's within 5 minutes of expiring.
 export async function accessToken(origin) {
   const auth = await readAuth();
-  if (!auth?.refresh_token) throw new Error('Not connected to Yahoo yet. Open /api/yahoo/login?key=ADMIN_KEY first.');
+  if (!auth?.refresh_token) throw new Error('Not connected to Yahoo yet. Open /api/yahoo/login and sign in first.');
   if (auth.access_token && auth.expires_at > Date.now() + 300000) return auth;
   const t = await tokenRequest({ grant_type: 'refresh_token', refresh_token: auth.refresh_token, redirect_uri: redirectUri(origin) });
   const next = { ...auth, ...t, refresh_token: t.refresh_token || auth.refresh_token };

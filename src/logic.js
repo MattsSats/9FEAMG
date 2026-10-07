@@ -800,9 +800,11 @@ class Component extends DCLogic {
     // Extra room above and below keeps the top and bottom dots clear of the corner labels.
     const pfs = ST.map(x => x.pf), pas = ST.map(x => x.pa), x0 = Math.floor(Math.min(...pfs) / 10) * 10 - 5, x1 = Math.ceil(Math.max(...pfs) / 10) * 10 + 5, y0 = Math.floor(Math.min(...pas) / 10) * 10 - 25, y1 = Math.ceil(Math.max(...pas) / 10) * 10 + 25;
     const avg = a => a.reduce((s, v) => s + v, 0) / a.length, sx = v => ((v - x0) / (x1 - x0) * 100).toFixed(1) + '%', sy = v => ((y1 - v) / (y1 - y0) * 100).toFixed(1) + '%';
-    // Nudge overlapping dots apart so every crest stays readable. DX/DY are a dot's size
-    // as a share of the plot on a phone, the narrowest it gets.
-    const pts = ST.map(x => ({ x: (x.pf - x0) / (x1 - x0), y: (y1 - x.pa) / (y1 - y0) })), DX = 0.1, DY = 0.09;
+    // Nudge overlapping dots apart so every crest stays readable and tappable. DX/DY are a
+    // 30px dot plus a gap, as a share of the plot: 340px tall, and on a phone the screen
+    // width less the card's padding (desktop columns are wider, so this is the tight case).
+    const plotW = Math.max(200, Math.min(window.innerWidth || 440, 440) - 94);
+    const pts = ST.map(x => ({ x: (x.pf - x0) / (x1 - x0), y: (y1 - x.pa) / (y1 - y0) })), DX = 36 / plotW, DY = 36 / 340;
     for (let it = 0; it < 80; it++) for (let i = 0; i < pts.length; i++) for (let j = i + 1; j < pts.length; j++) {
       const a = pts[i], b = pts[j], dx = (b.x - a.x) / DX, dy = (b.y - a.y) / DY, d = Math.hypot(dx, dy);
       if (d >= 1) continue;
