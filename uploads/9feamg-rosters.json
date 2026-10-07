@@ -1,5 +1,5 @@
 {
-  "asOf": "2026-10-06T21:02:00-05:00",
+  "asOf": "2026-10-07T08:44:00-05:00",
   "source": "Signed-in Yahoo Fantasy league 935526 team roster pages (full reconcile)",
   "week": 5,
   "baseline": "yahoo-live",
@@ -100,8 +100,14 @@
         {
           "name": "Ravens",
           "pos": "DEF",
-          "slot": "starter",
+          "slot": "bench",
           "nfl": "Bal"
+        },
+        {
+          "name": "Bengals",
+          "pos": "DEF",
+          "slot": "starter",
+          "nfl": "Cin"
         }
       ]
     },
@@ -155,12 +161,6 @@
           "nfl": "Min"
         },
         {
-          "name": "Bo Nix",
-          "pos": "QB",
-          "slot": "starter",
-          "nfl": "Den"
-        },
-        {
           "name": "Ladd McConkey",
           "pos": "WR",
           "slot": "bench",
@@ -203,10 +203,16 @@
           "nfl": "Cin"
         },
         {
-          "name": "Bears",
+          "name": "Jacoby Brissett",
+          "pos": "QB",
+          "slot": "starter",
+          "nfl": "Ari"
+        },
+        {
+          "name": "Jets",
           "pos": "DEF",
           "slot": "starter",
-          "nfl": "Chi"
+          "nfl": "NYJ"
         }
       ]
     },
@@ -306,6 +312,12 @@
           "pos": "WR",
           "slot": "bench",
           "nfl": "NO"
+        },
+        {
+          "name": "Jaguars",
+          "pos": "DEF",
+          "slot": "bench",
+          "nfl": "Jax"
         }
       ]
     },
@@ -587,12 +599,6 @@
           "nfl": "LAR"
         },
         {
-          "name": "Mike Washington Jr.",
-          "pos": "RB",
-          "slot": "bench",
-          "nfl": "LV"
-        },
-        {
           "name": "Ollie Gordon II",
           "pos": "RB",
           "slot": "bench",
@@ -601,7 +607,7 @@
         {
           "name": "Jason Myers",
           "pos": "K",
-          "slot": "starter",
+          "slot": "bench",
           "nfl": "Sea"
         },
         {
@@ -609,6 +615,12 @@
           "pos": "DEF",
           "slot": "starter",
           "nfl": "Phi"
+        },
+        {
+          "name": "Will Reichard",
+          "pos": "K",
+          "slot": "starter",
+          "nfl": "Min"
         }
       ]
     },
@@ -708,6 +720,12 @@
           "pos": "DEF",
           "slot": "starter",
           "nfl": "Sea"
+        },
+        {
+          "name": "Tyler Allgeier",
+          "pos": "RB",
+          "slot": "bench",
+          "nfl": "Ari"
         }
       ]
     },
@@ -733,7 +751,7 @@
         {
           "name": "Chuba Hubbard",
           "pos": "RB",
-          "slot": "starter",
+          "slot": "bench",
           "nfl": "Car"
         },
         {
@@ -756,20 +774,20 @@
         },
         {
           "name": "Josh Downs",
-          "pos": "WRT",
-          "slot": "starter",
+          "pos": "WR",
+          "slot": "bench",
           "nfl": "Ind"
         },
         {
           "name": "Justin Jefferson",
-          "pos": "WR",
-          "slot": "bench",
+          "pos": "WRT",
+          "slot": "starter",
           "nfl": "Min"
         },
         {
           "name": "Quinshon Judkins",
           "pos": "RB",
-          "slot": "bench",
+          "slot": "starter",
           "nfl": "Cle"
         },
         {
@@ -890,12 +908,6 @@
           "nfl": "Car"
         },
         {
-          "name": "Justin Herbert",
-          "pos": "QB",
-          "slot": "starter",
-          "nfl": "LAC"
-        },
-        {
           "name": "J.K. Dobbins",
           "pos": "RB",
           "slot": "bench",
@@ -912,6 +924,18 @@
           "pos": "DEF",
           "slot": "starter",
           "nfl": "Min"
+        },
+        {
+          "name": "Kirk Cousins",
+          "pos": "QB",
+          "slot": "starter",
+          "nfl": "LV"
+        },
+        {
+          "name": "Matt Gay",
+          "pos": "K",
+          "slot": "starter",
+          "nfl": "LV"
         }
       ]
     },
@@ -931,7 +955,7 @@
         {
           "name": "Saquon Barkley",
           "pos": "RB",
-          "slot": "starter",
+          "slot": "bench",
           "nfl": "Phi"
         },
         {
@@ -960,7 +984,7 @@
         },
         {
           "name": "Jaylen Warren",
-          "pos": "WRT",
+          "pos": "RB",
           "slot": "starter",
           "nfl": "Pit"
         },
@@ -972,20 +996,20 @@
         },
         {
           "name": "Terry McLaurin",
-          "pos": "WR",
-          "slot": "bench",
+          "pos": "WRT",
+          "slot": "starter",
           "nfl": "Was"
         },
         {
           "name": "Emeka Egbuka",
           "pos": "WR",
-          "slot": "bench",
+          "slot": "starter",
           "nfl": "TB"
         },
         {
           "name": "Courtland Sutton",
           "pos": "WR",
-          "slot": "starter",
+          "slot": "bench",
           "nfl": "Den"
         },
         {
@@ -1380,6 +1404,126 @@
         "KC"
       ],
       "note": "Yahoo facts Tue Oct 6, 9:02 PM CT"
+    },
+    {
+      "date": "2026-10-07",
+      "manager": "Tristan",
+      "add": [
+        "Jacoby Brissett",
+        "QB",
+        "ARI"
+      ],
+      "drop": [
+        "Bo Nix",
+        "QB",
+        "DEN"
+      ],
+      "note": "Yahoo facts Wed Oct 7, 8:44 AM CT"
+    },
+    {
+      "date": "2026-10-07",
+      "manager": "Jerger",
+      "add": [
+        "Kirk Cousins",
+        "QB",
+        "LV"
+      ],
+      "drop": [
+        "Justin Herbert",
+        "QB",
+        "LAC"
+      ],
+      "note": "Yahoo facts Wed Oct 7, 8:44 AM CT"
+    },
+    {
+      "date": "2026-10-07",
+      "manager": "Jerger",
+      "add": [
+        "Matt Gay",
+        "K",
+        "LV"
+      ],
+      "drop": [
+        "—",
+        "K",
+        "—"
+      ],
+      "note": "Yahoo facts Wed Oct 7, 8:44 AM CT"
+    },
+    {
+      "date": "2026-10-07",
+      "manager": "Tony",
+      "add": [
+        "Will Reichard",
+        "K",
+        "MIN"
+      ],
+      "drop": [
+        "Mike Washington Jr.",
+        "RB",
+        "LV"
+      ],
+      "note": "Yahoo facts Wed Oct 7, 8:44 AM CT"
+    },
+    {
+      "date": "2026-10-07",
+      "manager": "Colin",
+      "add": [
+        "Jaguars",
+        "DEF",
+        "JAX"
+      ],
+      "drop": [
+        "—",
+        "DEF",
+        "—"
+      ],
+      "note": "Yahoo facts Wed Oct 7, 8:44 AM CT"
+    },
+    {
+      "date": "2026-10-07",
+      "manager": "Mr. G",
+      "add": [
+        "Tyler Allgeier",
+        "RB",
+        "ARI"
+      ],
+      "drop": [
+        "—",
+        "RB",
+        "—"
+      ],
+      "note": "Yahoo facts Wed Oct 7, 8:44 AM CT"
+    },
+    {
+      "date": "2026-10-07",
+      "manager": "Andy",
+      "add": [
+        "Bengals",
+        "DEF",
+        "CIN"
+      ],
+      "drop": [
+        "—",
+        "DEF",
+        "—"
+      ],
+      "note": "Yahoo facts Wed Oct 7, 8:44 AM CT"
+    },
+    {
+      "date": "2026-10-07",
+      "manager": "Tristan",
+      "add": [
+        "Jets",
+        "DEF",
+        "NYJ"
+      ],
+      "drop": [
+        "Bears",
+        "DEF",
+        "CHI"
+      ],
+      "note": "Yahoo facts Wed Oct 7, 8:44 AM CT"
     }
   ],
   "gaps": [],
