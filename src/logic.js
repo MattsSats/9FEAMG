@@ -557,7 +557,7 @@ class Component extends DCLogic {
       const mv = prevRank[r.m] ? prevRank[r.m] - (i + 1) : 0;
       // One-liner per team for the latest rankings (data/season.js -> powerNotes[week]), from the writer.
       const note = boothOn ? D.powerNotes?.[NF]?.[r.m] || '' : '';
-      return { rank: i + 1, m: r.m, init: INIT[r.m], color: col(r.m), score: f1(r.score), sub: r.wl + ' · all-play ' + r.ap, note, hasNote: !!note,
+      return { rank: i + 1, m: r.m, init: INIT[r.m], color: col(r.m), score: f1(r.score), sub: r.wl + ' · luck ' + sgn(ST.find(s => s.m == r.m).luck), note, hasNote: !!note,
         move: mv > 0 ? '▲' + mv : mv < 0 ? '▼' + -mv : '–', moveColor: mv > 0 ? 'var(--pos)' : mv < 0 ? 'var(--neg)' : 'var(--muted)',
         open: () => { this.setState({ tab: 'Teams', team: r.m }); window.scrollTo(0, 0); } };
     }) : [];
