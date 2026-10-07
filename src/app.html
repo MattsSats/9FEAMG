@@ -394,21 +394,38 @@ button{font-family:inherit;color:inherit}
   .tiles{grid-template-columns:repeat(4,minmax(0,1fr))}
   .sheet-wrap{align-items:center!important}
 }
+/* Section headers: title left, share buttons right, caption underneath. */
+.sec-head{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:2px 10px}
+.sec-head>:first-child{line-height:1.05}
+.sec-btns{display:flex;gap:6px}
+.sec-cap{grid-column:1/-1;font-family:'JetBrains Mono';font-size:11px;color:var(--muted)}
+@media (max-width:440px){.hide-xs{display:none}}
+/* Wire on phones: the FAAB and activity charts come before the long list of moves. */
+.wire-cols{display:flex;flex-direction:column}
+.wire-cols>.wire-side{order:-1}
 /* Season: named spots so each column stacks on its own (no row gaps); phones keep source order. */
 @media (min-width:900px){
-  .cols.season-grid{grid-template-areas:"st ch" "st lk" "bn lk" "pw pw"}
+  .cols.season-grid{grid-template-areas:"st pw" "ch pw" "lk bn";grid-template-rows:auto auto auto}
   .season-grid>*{align-self:start}
   .season-grid>.sg-st{grid-area:st}.season-grid>.sg-ch{grid-area:ch}.season-grid>.sg-lk{grid-area:lk}.season-grid>.sg-bn{grid-area:bn}.season-grid>.sg-pw{grid-area:pw}
 }
 @media (min-width:1320px){
   /* The last row takes Power rankings' extra height, so the first two rows stay snug. */
-  .cols.season-grid{grid-template-columns:repeat(3,minmax(0,1fr));grid-template-areas:"st ch pw" "st lk pw" "bn lk pw";grid-template-rows:auto auto 1fr}
+  .cols.season-grid{grid-template-columns:repeat(3,minmax(0,1fr));grid-template-areas:"st pw ch" "lk pw bn";grid-template-rows:auto 1fr}
 }
 /* Wide desktop: three columns on Gameday (featured + Booth | matchups | parlays). */
 @media (min-width:1320px){
   .app,.tabbar{max-width:1440px}
   .cols{grid-template-columns:repeat(3,minmax(0,1fr))}
   .cols>.col-wide{grid-column:auto;display:block}
+  .cols.two{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+/* Teams and Wire on desktop: two columns; Wire's charts stay in view beside the list. */
+@media (min-width:900px){
+  .wire-cols{display:grid;grid-template-columns:minmax(0,3fr) minmax(0,2fr)}
+  .cols.two.wire-cols{grid-template-columns:minmax(0,3fr) minmax(0,2fr)}
+  .wire-cols>.wire-side{order:0;position:sticky;top:64px}
+  .team-tiles{grid-template-columns:repeat(4,minmax(0,1fr))!important}
 }
 /* Collapsed parlays still show every leg in a shared image. */
 .capturing .pr-body{display:block!important}
@@ -836,13 +853,10 @@ button{font-family:inherit;color:inherit}
 
 <div class="cols season-grid">
 <div data-shot="standings" class="sg-st" style="padding:30px 20px 0">
-  <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
-    <div style="display:flex;align-items:center;gap:12px">
-      <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:26px;text-transform:uppercase">Standings</div>
-      <button class="share-btn no-shot" sc-camel-on-click="{{ linkStandings }}" aria-label="Share a link to the standings">Share</button>
-      <button class="share-btn no-shot" sc-camel-on-click="{{ shareStandings }}" aria-label="Share the standings as an image">{{ shareLabel.standings }}</button>
-    </div>
-    <div style="font-family:'JetBrains Mono';font-size:11px;color:var(--muted)">Luck = W − xW</div>
+  <div class="sec-head">
+    <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:26px;text-transform:uppercase">Standings</div>
+    <span class="sec-btns no-shot"><button class="share-btn" sc-camel-on-click="{{ linkStandings }}" aria-label="Share a link to the standings">Share</button><button class="share-btn" sc-camel-on-click="{{ shareStandings }}" aria-label="Share the standings as an image">{{ shareLabel.standings }}</button></span>
+    <div class="sec-cap">Luck = W − xW</div>
   </div>
   <div style="display:grid;grid-template-columns:22px minmax(0,1fr) 40px 52px 48px;gap:8px;padding:14px 0 8px;font-family:'JetBrains Mono';font-size:10px;letter-spacing:.08em;color:var(--muted);border-bottom:1px solid var(--line)">
     <span>#</span><span>MANAGER</span><span style="text-align:right">W–L</span><span style="text-align:right">PF</span><span style="text-align:right">LUCK</span>
@@ -852,7 +866,7 @@ button{font-family:inherit;color:inherit}
       <span style="font-family:'Big Shoulders Display';font-weight:800;font-size:18px;color:var(--muted)">{{ s.rank }}</span>
       <div style="display:flex;align-items:center;gap:10px;min-width:0">
         <div class="crest" style="width:28px;height:28px;background:{{ s.color }};color:var(--onAccent);display:flex;align-items:center;justify-content:center;font-family:'Big Shoulders Display';font-weight:800;font-size:12px;flex:none"><span class="ini" data-i="{{ s.init }}">{{ s.init }}</span></div>
-        <div style="min-width:0"><div style="font-weight:600;font-size:15px">{{ s.m }}</div><div class="no-shot" style="font-family:'JetBrains Mono';font-size:10px;color:var(--muted);margin-top:1px">PA {{ s.pa }} · Max {{ s.max }}</div></div>
+        <div style="min-width:0"><div style="font-weight:600;font-size:15px">{{ s.m }}</div><div class="no-shot" style="font-family:'JetBrains Mono';font-size:10px;color:var(--muted);margin-top:1px;white-space:nowrap">PA {{ s.pa }}<span class="hide-xs"> · Max {{ s.max }}</span></div></div>
       </div>
       <span style="text-align:right;font-family:'JetBrains Mono';font-size:13px;font-weight:600">{{ s.wl }}</span>
       <span style="text-align:right;font-family:'JetBrains Mono';font-size:13px">{{ s.pf }}</span>
@@ -865,10 +879,36 @@ button{font-family:inherit;color:inherit}
   <div class="shot-footer"><b>9FEAMG</b><span>{{ shotStandings }}</span></div>
 </div>
 
+<sc-if value="{{ hasPower }}" hint-placeholder-val="{{ true }}">
+<div id="power" data-shot="power" class="sg-pw" style="padding:30px 20px 0;scroll-margin-top:64px">
+  <div class="sec-head">
+    <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:26px;text-transform:uppercase">Power rankings</div>
+    <span class="sec-btns no-shot"><button class="share-btn" sc-camel-on-click="{{ linkPower }}" aria-label="Share a link to the power rankings">Share</button><button class="share-btn" sc-camel-on-click="{{ sharePower }}" aria-label="Share the power rankings as an image">{{ powerLabel }}</button></span>
+  </div>
+  <div class="no-shot" style="font-family:'JetBrains Mono';font-size:10px;color:var(--muted);margin-top:8px;line-height:1.5;text-wrap:pretty">{{ powerSub }}. Site’s math, not Tristan’s: 50% season all-play, 25% record, 25% all-play over the last two weeks.</div>
+  <div style="display:grid;grid-template-columns:22px 30px minmax(0,1fr) 48px;gap:8px;padding:14px 0 8px;font-family:'JetBrains Mono';font-size:10px;letter-spacing:.08em;color:var(--muted);border-bottom:1px solid var(--line)">
+    <span>#</span><span></span><span>MANAGER</span><span style="text-align:right">SCORE</span>
+  </div>
+  <sc-for list="{{ powerRows }}" as="p" hint-placeholder-count="10">
+    <div sc-camel-on-click="{{ p.open }}" class="hov shot-tight" tabindex="0" role="button" style="display:grid;grid-template-columns:22px 30px minmax(0,1fr) 48px;gap:8px;align-items:start;padding:10px 0;border-bottom:1px solid var(--line);cursor:pointer">
+      <span style="font-family:'Big Shoulders Display';font-weight:800;font-size:18px;color:var(--muted)">{{ p.rank }}</span>
+      <span style="font-family:'JetBrains Mono';font-size:11px;font-weight:600;color:{{ p.moveColor }}">{{ p.move }}</span>
+      <div style="display:flex;align-items:flex-start;gap:10px;min-width:0">
+        <div class="crest" style="width:28px;height:28px;background:{{ p.color }};color:var(--onAccent);display:flex;align-items:center;justify-content:center;font-family:'Big Shoulders Display';font-weight:800;font-size:12px;flex:none"><span class="ini" data-i="{{ p.init }}">{{ p.init }}</span></div>
+        <div style="min-width:0"><div style="font-weight:600;font-size:15px">{{ p.m }}</div><div class="no-shot" style="font-family:'JetBrains Mono';font-size:10px;color:var(--muted);margin-top:1px">{{ p.wl }} · luck <span style="color:{{ p.luckColor }};font-weight:600">{{ p.luck }}</span></div><sc-if value="{{ p.hasNote }}" hint-placeholder-val="{{ false }}"><div style="font-size:13px;line-height:1.35;margin-top:3px;text-wrap:pretty">{{ p.note }}</div></sc-if></div>
+      </div>
+      <span style="text-align:right;font-family:'JetBrains Mono';font-size:13px;font-weight:600">{{ p.score }}</span>
+    </div>
+  </sc-for>
+  <div class="shot-footer"><b>9FEAMG</b><span>{{ shotPower }}</span></div>
+</div>
+</sc-if>
+
 <div id="pfpa" data-shot="pfpa" class="sg-ch" style="padding:30px 20px 0;scroll-margin-top:64px">
-  <div style="display:flex;align-items:baseline;justify-content:space-between">
-    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap"><div style="font-family:'Big Shoulders Display';font-weight:900;font-size:26px;text-transform:uppercase">Points for vs against</div><button class="share-btn no-shot" sc-camel-on-click="{{ linkPfpa }}" aria-label="Share a link to the points for vs against chart">Share</button><button class="share-btn no-shot" sc-camel-on-click="{{ shotPfpa }}" aria-label="Share the points for vs against chart as an image">{{ shotLabelPfpa }}</button></div>
-    <div class="no-shot" style="font-family:'JetBrains Mono';font-size:11px;color:var(--muted)">{{ hlHint }}</div>
+  <div class="sec-head">
+    <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:26px;text-transform:uppercase">Points for vs against</div>
+    <span class="sec-btns no-shot"><button class="share-btn" sc-camel-on-click="{{ linkPfpa }}" aria-label="Share a link to the points for vs against chart">Share</button><button class="share-btn" sc-camel-on-click="{{ shotPfpa }}" aria-label="Share the points for vs against chart as an image">{{ shotLabelPfpa }}</button></span>
+    <div class="sec-cap no-shot">{{ hlHint }}</div>
   </div>
   <div style="margin-top:12px;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:14px 14px 10px">
     <div style="position:relative;height:340px;margin:0 4px 0 22px;border-left:1px solid var(--line);border-bottom:1px solid var(--line)">
@@ -891,9 +931,10 @@ button{font-family:inherit;color:inherit}
 </div>
 
 <div id="luck" data-shot="luck" class="sg-lk" style="padding:30px 20px 0;scroll-margin-top:64px">
-  <div style="display:flex;align-items:baseline;justify-content:space-between">
-    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap"><div style="font-family:'Big Shoulders Display';font-weight:900;font-size:26px;text-transform:uppercase;display:flex;align-items:center;gap:8px"><svg class="hi play" width="26" height="26" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><g class="a-dice vb"><rect x="8" y="8" width="32" height="32" rx="7"></rect><circle cx="16" cy="16" r="2.6" stroke="none" style="fill:var(--hi-a)"></circle><circle cx="32" cy="16" r="2.6" stroke="none" style="fill:var(--hi-a)"></circle><circle cx="24" cy="24" r="2.6" stroke="none" style="fill:var(--hi-a)"></circle><circle cx="16" cy="32" r="2.6" stroke="none" style="fill:var(--hi-a)"></circle><circle cx="32" cy="32" r="2.6" stroke="none" style="fill:var(--hi-a)"></circle></g></svg>Luck</div><button class="share-btn no-shot" sc-camel-on-click="{{ linkLuck }}" aria-label="Share a link to the luck chart">Share</button><button class="share-btn no-shot" sc-camel-on-click="{{ shotLuck }}" aria-label="Share the luck chart as an image">{{ shotLabelLuck }}</button></div>
-    <div style="font-family:'JetBrains Mono';font-size:11px;color:var(--muted)">W − xW</div>
+  <div class="sec-head">
+    <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:26px;text-transform:uppercase;display:flex;align-items:center;gap:8px"><svg class="hi play" width="26" height="26" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><g class="a-dice vb"><rect x="8" y="8" width="32" height="32" rx="7"></rect><circle cx="16" cy="16" r="2.6" stroke="none" style="fill:var(--hi-a)"></circle><circle cx="32" cy="16" r="2.6" stroke="none" style="fill:var(--hi-a)"></circle><circle cx="24" cy="24" r="2.6" stroke="none" style="fill:var(--hi-a)"></circle><circle cx="16" cy="32" r="2.6" stroke="none" style="fill:var(--hi-a)"></circle><circle cx="32" cy="32" r="2.6" stroke="none" style="fill:var(--hi-a)"></circle></g></svg>Luck</div>
+    <span class="sec-btns no-shot"><button class="share-btn" sc-camel-on-click="{{ linkLuck }}" aria-label="Share a link to the luck chart">Share</button><button class="share-btn" sc-camel-on-click="{{ shotLuck }}" aria-label="Share the luck chart as an image">{{ shotLabelLuck }}</button></span>
+    <div class="sec-cap">W − xW</div>
   </div>
   <div style="display:flex;flex-direction:column;gap:6px;margin-top:12px">
     <sc-for list="{{ luckBars }}" as="lb" hint-placeholder-count="10">
@@ -909,9 +950,10 @@ button{font-family:inherit;color:inherit}
 </div>
 
 <div id="bench" data-shot="bench" class="sg-bn" style="padding:30px 20px 0;scroll-margin-top:64px">
-  <div style="display:flex;align-items:baseline;justify-content:space-between">
-    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap"><div style="font-family:'Big Shoulders Display';font-weight:900;font-size:26px;text-transform:uppercase">Points left on bench</div><button class="share-btn no-shot" sc-camel-on-click="{{ linkBench }}" aria-label="Share a link to the bench chart">Share</button><button class="share-btn no-shot" sc-camel-on-click="{{ shotBench }}" aria-label="Share the bench chart as an image">{{ shotLabelBench }}</button></div>
-    <div style="font-family:'JetBrains Mono';font-size:11px;color:var(--muted)">PF of Max PF</div>
+  <div class="sec-head">
+    <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:26px;text-transform:uppercase">Points left on bench</div>
+    <span class="sec-btns no-shot"><button class="share-btn" sc-camel-on-click="{{ linkBench }}" aria-label="Share a link to the bench chart">Share</button><button class="share-btn" sc-camel-on-click="{{ shotBench }}" aria-label="Share the bench chart as an image">{{ shotLabelBench }}</button></span>
+    <div class="sec-cap">PF of Max PF</div>
   </div>
   <div style="display:flex;flex-direction:column;gap:8px;margin-top:12px">
     <sc-for list="{{ benchBars }}" as="bb" hint-placeholder-count="10">
@@ -932,33 +974,6 @@ button{font-family:inherit;color:inherit}
   <div class="shot-footer"><b>9FEAMG</b><span>{{ shotNoteBench }}</span></div>
 </div>
 
-<sc-if value="{{ hasPower }}" hint-placeholder-val="{{ true }}">
-<div id="power" data-shot="power" class="sg-pw" style="padding:30px 20px 0;scroll-margin-top:64px">
-  <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
-    <div style="display:flex;align-items:center;gap:12px">
-      <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:26px;text-transform:uppercase">Power rankings</div>
-      <button class="share-btn no-shot" sc-camel-on-click="{{ linkPower }}" aria-label="Share a link to the power rankings">Share</button>
-      <button class="share-btn no-shot" sc-camel-on-click="{{ sharePower }}" aria-label="Share the power rankings as an image">{{ powerLabel }}</button>
-    </div>
-  </div>
-  <div class="no-shot" style="font-family:'JetBrains Mono';font-size:10px;color:var(--muted);margin-top:8px;line-height:1.5;text-wrap:pretty">{{ powerSub }}. Site’s math, not Tristan’s: 50% season all-play, 25% record, 25% all-play over the last two weeks.</div>
-  <div style="display:grid;grid-template-columns:22px 30px minmax(0,1fr) 48px;gap:8px;padding:14px 0 8px;font-family:'JetBrains Mono';font-size:10px;letter-spacing:.08em;color:var(--muted);border-bottom:1px solid var(--line)">
-    <span>#</span><span></span><span>MANAGER</span><span style="text-align:right">SCORE</span>
-  </div>
-  <sc-for list="{{ powerRows }}" as="p" hint-placeholder-count="10">
-    <div sc-camel-on-click="{{ p.open }}" class="hov shot-tight" tabindex="0" role="button" style="display:grid;grid-template-columns:22px 30px minmax(0,1fr) 48px;gap:8px;align-items:start;padding:10px 0;border-bottom:1px solid var(--line);cursor:pointer">
-      <span style="font-family:'Big Shoulders Display';font-weight:800;font-size:18px;color:var(--muted)">{{ p.rank }}</span>
-      <span style="font-family:'JetBrains Mono';font-size:11px;font-weight:600;color:{{ p.moveColor }}">{{ p.move }}</span>
-      <div style="display:flex;align-items:flex-start;gap:10px;min-width:0">
-        <div class="crest" style="width:28px;height:28px;background:{{ p.color }};color:var(--onAccent);display:flex;align-items:center;justify-content:center;font-family:'Big Shoulders Display';font-weight:800;font-size:12px;flex:none"><span class="ini" data-i="{{ p.init }}">{{ p.init }}</span></div>
-        <div style="min-width:0"><div style="font-weight:600;font-size:15px">{{ p.m }}</div><div class="no-shot" style="font-family:'JetBrains Mono';font-size:10px;color:var(--muted);margin-top:1px">{{ p.wl }} · luck <span style="color:{{ p.luckColor }};font-weight:600">{{ p.luck }}</span></div><sc-if value="{{ p.hasNote }}" hint-placeholder-val="{{ false }}"><div style="font-size:13px;line-height:1.35;margin-top:3px;text-wrap:pretty">{{ p.note }}</div></sc-if></div>
-      </div>
-      <span style="text-align:right;font-family:'JetBrains Mono';font-size:13px;font-weight:600">{{ p.score }}</span>
-    </div>
-  </sc-for>
-  <div class="shot-footer"><b>9FEAMG</b><span>{{ shotPower }}</span></div>
-</div>
-</sc-if>
 </div>
 
 <div style="padding:30px 20px 0">
@@ -1017,7 +1032,8 @@ button{font-family:inherit;color:inherit}
   </sc-for>
 </div>
 
-<div class="cols">
+<div class="cols two">
+<div>
 <div data-shot="team">
 <div style="position:relative;margin:16px 20px 0;padding:20px;border-radius:20px;background:var(--surface);border:1px solid var(--line)">
   <span class="no-shot" style="position:absolute;top:14px;right:14px;display:flex;gap:6px">
@@ -1048,8 +1064,6 @@ button{font-family:inherit;color:inherit}
 </div>
 <div class="shot-footer" style="padding:14px 20px 16px"><b>9FEAMG</b><span>{{ shotTeam }}</span></div>
 </div>
-
-<div>
 <div style="padding:28px 20px 0">
   <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:26px;text-transform:uppercase">Game log</div>
   <div style="margin-top:8px">
@@ -1067,6 +1081,9 @@ button{font-family:inherit;color:inherit}
   </div>
 </div>
 
+</div>
+
+<div>
 <div style="padding:28px 20px 0">
   <div style="display:flex;align-items:baseline;justify-content:space-between">
     <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:26px;text-transform:uppercase">{{ team.lineupTitle }}</div>
@@ -1169,7 +1186,7 @@ button{font-family:inherit;color:inherit}
 </sc-if>
 
 <sc-if value="{{ txOk }}" hint-placeholder-val="{{ true }}">
-<div class="cols">
+<div class="cols two wire-cols">
 <div>
 <sc-if value="{{ noMoves }}" hint-placeholder-val="{{ false }}">
   <div style="margin:24px 20px 0;padding:28px 16px;border:1px dashed var(--line);border-radius:16px;text-align:center;font-size:14px;color:var(--muted)">No moves in the last week.</div>
@@ -1197,7 +1214,7 @@ button{font-family:inherit;color:inherit}
 </div>
 </div>
 
-<div>
+<div class="wire-side">
 <sc-if value="{{ wireSeason }}" hint-placeholder-val="{{ false }}">
   <div style="padding:24px 20px 0">
     <div style="display:flex;justify-content:space-between;align-items:baseline">
