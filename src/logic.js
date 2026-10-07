@@ -491,7 +491,7 @@ class Component extends DCLogic {
     const chipWeeks = [...Array(NF).keys()].map(i => i + 1);
     if (LW) chipWeeks.push(LW);
     if (NEXT && NEXT.week != LW) chipWeeks.push(NEXT.week);
-    const weekChips = chipWeeks.map(w => { const on = w == wk; return { label: 'W' + w, live: w == LW, sub: w == LW ? 'LIVE' : w <= NF ? 'FINAL' : 'NEXT', bg: on ? 'var(--accent)' : 'var(--surface)', fg: on ? 'var(--onAccent)' : (w == LW ? 'var(--accentInk)' : 'var(--ink)'), border: on ? 'var(--accent)' : 'var(--line)', pick: () => this.setState({ week: w }) }; });
+    const weekChips = chipWeeks.map(w => { const on = w == wk; return { label: 'W' + w, live: w == LW, sub: w == LW ? 'LIVE' : w <= NF ? 'FINAL' : 'NEXT', bg: on ? 'var(--accent)' : 'var(--surface)', fg: on ? 'var(--onAccent)' : (w == LW ? 'var(--accentInk)' : 'var(--ink)'), border: on ? 'var(--accent)' : 'var(--line)', pick: () => { this.setState({ week: w }); if (window.scrollY > 150) window.scrollTo(0, 0); } }; });
     const hasWeek = (wk <= NF || wk == LW) && !!PAIRS[wk];
     let matchups = [], hero = null;
     if (hasWeek) { const all = PAIRS[wk].map(p => this.match(p, wk)).sort((x, y) => Math.abs(x.a.raw - x.b.raw) - Math.abs(y.a.raw - y.b.raw)); hero = all[0]; matchups = all.slice(1); }

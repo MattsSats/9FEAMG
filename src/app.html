@@ -513,7 +513,8 @@ button{font-family:inherit;color:inherit}
   <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:48px;line-height:.9;text-transform:uppercase">Gameday</div>
   <div style="font-size:14px;color:var(--muted);margin-top:8px">9 Fantasy Experts &amp; Mr. Glenn</div>
 </div>
-<div data-weekchips="" class="scroll-x" style="display:flex;gap:6px;padding:18px 20px 0">
+<!-- Week buttons stay pinned under the header while Gameday scrolls. -->
+<div data-weekchips="" class="scroll-x" style="position:sticky;top:60px;z-index:19;background:var(--bg);display:flex;gap:6px;margin-top:8px;padding:10px 20px">
   <sc-for list="{{ weekChips }}" as="w" hint-placeholder-count="5">
     <button sc-camel-on-click="{{ w.pick }}" style="flex:1 0 56px;min-height:48px;border-radius:10px;border:1px solid {{ w.border }};background:{{ w.bg }};color:{{ w.fg }};cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:4px 0">
       <span style="font-family:'Big Shoulders Display';font-weight:800;font-size:20px;line-height:1">{{ w.label }}</span>
@@ -521,7 +522,7 @@ button{font-family:inherit;color:inherit}
     </button>
   </sc-for>
 </div>
-<div style="padding:12px 20px 0;font-family:'JetBrains Mono';font-size:11px;color:var(--muted)">{{ weekStatus }}</div>
+<div style="padding:2px 20px 0;font-family:'JetBrains Mono';font-size:11px;color:var(--muted)">{{ weekStatus }}</div>
 
 <sc-if value="{{ hasRecap }}" hint-placeholder-val="{{ false }}">
   <div style="margin:12px 20px 0;display:flex;justify-content:space-between;align-items:center;gap:8px;padding:10px 14px;border:1px dashed var(--line);border-radius:14px">
