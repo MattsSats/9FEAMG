@@ -537,24 +537,6 @@ button{font-family:inherit;color:inherit}
     </div>
   </div>
 </sc-if>
-          <div style="display:grid;grid-template-columns:26px minmax(0,1fr) auto;column-gap:10px;row-gap:6px;align-items:center">
-            <div class="crest" style="width:26px;height:26px;background:{{ r.a.color }};color:var(--onAccent);display:flex;align-items:center;justify-content:center;font-family:'Big Shoulders Display';font-weight:800;font-size:11px"><span class="ini" data-i="{{ r.a.init }}">{{ r.a.init }}</span></div>
-            <span style="font-size:15px;font-weight:{{ r.a.weight }};color:{{ r.a.fg }}">{{ r.a.m }}</span>
-            <span style="font-family:'Big Shoulders Display';font-weight:900;font-size:24px;line-height:1;color:{{ r.a.fg }}">{{ r.a.score }}</span>
-            <div class="crest" style="width:26px;height:26px;background:{{ r.b.color }};color:var(--onAccent);display:flex;align-items:center;justify-content:center;font-family:'Big Shoulders Display';font-weight:800;font-size:11px"><span class="ini" data-i="{{ r.b.init }}">{{ r.b.init }}</span></div>
-            <span style="font-size:15px;font-weight:{{ r.b.weight }};color:{{ r.b.fg }}">{{ r.b.m }}</span>
-            <span style="font-family:'Big Shoulders Display';font-weight:900;font-size:24px;line-height:1;color:{{ r.b.fg }}">{{ r.b.score }}</span>
-          </div>
-          <sc-if value="{{ r.hasBooth }}" hint-placeholder-val="{{ true }}">
-            <div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--line);font-size:14px;line-height:1.4;text-wrap:pretty">{{ r.booth }}</div>
-          </sc-if>
-        </div>
-      </sc-for>
-      </div>
-      <div class="shot-footer"><b>9FEAMG</b><span>The Booth · on the record</span></div>
-    </div>
-  </div>
-</sc-if>
 
 <sc-if value="{{ isW5 }}" hint-placeholder-val="{{ false }}">
   <div style="margin:20px;padding:44px 24px;border:1px dashed var(--line);border-radius:16px;text-align:center">
