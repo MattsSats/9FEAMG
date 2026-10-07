@@ -906,18 +906,19 @@ button{font-family:inherit;color:inherit}
     <span class="sec-btns no-shot"><button class="share-btn" sc-camel-on-click="{{ linkStandings }}" aria-label="Share a link to the standings">Share</button><button class="share-btn" sc-camel-on-click="{{ shareStandings }}" aria-label="Share the standings as an image">{{ shareLabel.standings }}</button></span>
     <div class="sec-cap">Luck = W − xW</div>
   </div>
-  <div style="display:grid;grid-template-columns:22px minmax(0,1fr) 40px 52px 48px;gap:8px;padding:14px 0 8px;font-family:'JetBrains Mono';font-size:10px;letter-spacing:.08em;color:var(--muted);border-bottom:1px solid var(--line)">
-    <span>#</span><span>MANAGER</span><span style="text-align:right">W–L</span><span style="text-align:right">PF</span><span style="text-align:right">LUCK</span>
+  <div style="display:grid;grid-template-columns:22px minmax(0,1fr) 40px 52px 52px 48px;gap:8px;padding:14px 0 8px;font-family:'JetBrains Mono';font-size:10px;letter-spacing:.08em;color:var(--muted);border-bottom:1px solid var(--line)">
+    <span>#</span><span>MANAGER</span><span style="text-align:right">W–L</span><span style="text-align:right">PF</span><span style="text-align:right">MAX PF</span><span style="text-align:right">LUCK</span>
   </div>
   <sc-for list="{{ standings }}" as="s" hint-placeholder-count="10">
-    <div sc-camel-on-click="{{ s.open }}" class="hov shot-tight" tabindex="0" role="button" style="display:grid;grid-template-columns:22px minmax(0,1fr) 40px 52px 48px;gap:8px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line);cursor:pointer">
+    <div sc-camel-on-click="{{ s.open }}" class="hov shot-tight" tabindex="0" role="button" style="display:grid;grid-template-columns:22px minmax(0,1fr) 40px 52px 52px 48px;gap:8px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line);cursor:pointer">
       <span style="font-family:'Big Shoulders Display';font-weight:800;font-size:18px;color:var(--muted)">{{ s.rank }}</span>
       <div style="display:flex;align-items:center;gap:10px;min-width:0">
         <div class="crest" style="width:28px;height:28px;background:{{ s.color }};color:var(--onAccent);display:flex;align-items:center;justify-content:center;font-family:'Big Shoulders Display';font-weight:800;font-size:12px;flex:none"><span class="ini" data-i="{{ s.init }}">{{ s.init }}</span></div>
-        <div style="min-width:0"><div style="font-weight:600;font-size:15px">{{ s.m }}</div><div class="no-shot" style="font-family:'JetBrains Mono';font-size:10px;color:var(--muted);margin-top:1px;white-space:nowrap">PA {{ s.pa }}<span class="hide-xs"> · Max {{ s.max }}</span></div></div>
+        <div style="min-width:0"><div style="font-weight:600;font-size:15px">{{ s.m }}</div><div class="no-shot" style="font-family:'JetBrains Mono';font-size:10px;color:var(--muted);margin-top:1px;white-space:nowrap">PA {{ s.pa }}</div></div>
       </div>
       <span style="text-align:right;font-family:'JetBrains Mono';font-size:13px;font-weight:600">{{ s.wl }}</span>
       <span style="text-align:right;font-family:'JetBrains Mono';font-size:13px">{{ s.pf }}</span>
+      <span style="text-align:right;font-family:'JetBrains Mono';font-size:13px;color:var(--muted)">{{ s.max }}</span>
       <span style="text-align:right;font-family:'JetBrains Mono';font-size:13px;font-weight:600;color:{{ s.luckColor }}">{{ s.luck }}</span>
     </div>
     <sc-if value="{{ s.cut }}" hint-placeholder-val="{{ false }}">
