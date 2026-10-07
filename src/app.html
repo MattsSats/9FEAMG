@@ -507,11 +507,15 @@ button{font-family:inherit;color:inherit}
     </span>
   </div>
   <!-- The recap image renders from this off-screen card. -->
-  <div class="offstage" aria-hidden="true">
+  <div class="offstage" aria-hidden="true" style="width:760px">
     <div data-shot="recap" style="padding:20px 20px 0;background:var(--bg)">
       <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:34px;line-height:1;text-transform:uppercase">{{ recapTitle }}</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px">
       <sc-for list="{{ recap }}" as="r" hint-placeholder-count="5">
-        <div style="margin-top:12px;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:12px 14px">
+        <div style="grid-column:{{ r.span }};background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:12px 14px">
+          <sc-if value="{{ r.wide }}" hint-placeholder-val="{{ false }}">
+            <div style="font-family:'JetBrains Mono';font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--accentInk);font-weight:600;margin-bottom:8px">{{ r.wideLabel }}</div>
+          </sc-if>
           <div style="display:grid;grid-template-columns:26px minmax(0,1fr) auto;column-gap:10px;row-gap:6px;align-items:center">
             <div class="crest" style="width:26px;height:26px;background:{{ r.a.color }};color:var(--onAccent);display:flex;align-items:center;justify-content:center;font-family:'Big Shoulders Display';font-weight:800;font-size:11px"><span class="ini" data-i="{{ r.a.init }}">{{ r.a.init }}</span></div>
             <span style="font-size:15px;font-weight:{{ r.a.weight }};color:{{ r.a.fg }}">{{ r.a.m }}</span>
@@ -525,6 +529,7 @@ button{font-family:inherit;color:inherit}
           </sc-if>
         </div>
       </sc-for>
+      </div>
       <div class="shot-footer"><b>9FEAMG</b><span>The Booth · on the record</span></div>
     </div>
   </div>

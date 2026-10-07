@@ -431,14 +431,15 @@ class Component extends DCLogic {
     const blank = { a: {}, b: {}, share: '50%' };
     const isNext = !hasWeek;
     // Week recap (final weeks): every final score with its Booth line, for sharing.
-    // booth[week] runs in schedule order, one line per matchup.
+    // booth[week] runs in schedule order, one line per matchup. Two columns, closest
+    // finish first and full width, so five matchups fill a 2×3 grid.
     const hasRecap = wk <= NF && !!PAIRS[wk];
     const recap = hasRecap ? PAIRS[wk].map(([a, b], i) => {
       const sa = SC[a][wk - 1], sb = SC[b][wk - 1];
       const side = (m, s, win) => ({ m, init: INIT[m], color: col(m), score: f2(s), weight: win ? 800 : 500, fg: win ? 'var(--ink)' : 'var(--muted)' });
       const line = boothOn ? D.booth?.[wk]?.[i]?.[1] || '' : '';
-      return { a: side(a, sa, sa > sb), b: side(b, sb, sb > sa), booth: line, hasBooth: !!line };
-    }) : [];
+      return { a: side(a, sa, sa > sb), b: side(b, sb, sb > sa), booth: line, hasBooth: !!line, gap: Math.abs(sa - sb), winner: sa > sb ? a : b };
+    }).sort((x, y) => x.gap - y.gap).map((r, i) => ({ ...r, span: i == 0 ? '1 / -1' : 'auto', wide: i == 0, wideLabel: `Closest finish · ${r.winner} by ${f2(r.gap)}` })) : [];
     const nextTitle = NEXT && wk == NEXT.week ? 'Not yet' : 'No matchups';
     const nextNote = NEXT && wk == NEXT.week ? NEXT.note : 'Add this week to the schedule in data/season.js.';
     // Booth parlays for the selected week (data/season.js -> parlays[week]).
