@@ -129,11 +129,11 @@ window.SEASON = {
       ['Kurt', 'Kurt hung 135.88 on Mr. G, the top score of the week. Mr. G’s 75.06 was the lowest, with Tyler Shough’s 24.80 on the bench.']
     ],
     4: [
-      ['Tony', 'Tony scored 90.82, lowest of the week, and took a first loss by 5.56. Ollie Gordon II scored 17.00 on the bench while Bucky started for 6.10.'],
-      ['Tristan', 'Tristan scored 125.88, third-best of the week, and took a first loss anyway. The best bench swap comes up 0.54 short.'],
-      ['Matt', 'Watson scored 60.90 on Matt’s bench in Weeks 1–3. Matt finally started him against DLin, lost by 22.60, and Watson scored 6.20.'],
-      ['Kurt', 'Kurt lost to Jerger by 1.44 with JCM’s 6.00 on the bench. Saquon started and scored 1.50.'],
-      ['Pablo', 'Pablo was projected for 88.77 on Thursday, lowest in the league, and scored 133.78, the top score of the week. Mr. G lost by 39.94 with Drake Maye’s 27.16 on the bench.']
+      ['Tony', 'Andy won by 5.56 because Tony benched Ollie Gordon II’s 17.00 for Bucky’s 6.10. Tony’s first loss was self-inflicted.'],
+      ['Tristan', 'Tristan scored 125.88, third-best in the league, and still lost to Colin. Wrong week to draw the second-best score.'],
+      ['Matt', 'DLin beat Matt by 22.60. Matt’s starting receivers combined for 13.50, while Judkins scored 18.60 on the bench by himself.'],
+      ['Kurt', 'Jerger left Nabers’ 20.20 on the bench and still won, because Kurt started Saquon (1.50) over JCM (6.00). Two bad lineups, one loser.'],
+      ['Mr. G', 'Pablo was projected to lose to Mr. G by 30.35 and won by 39.94. Opponents keep saving their best for Mr. G.']
     ]
   },
 
