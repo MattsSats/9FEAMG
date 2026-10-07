@@ -398,7 +398,8 @@ button{font-family:inherit;color:inherit}
 .ti{width:26px;height:26px;display:block;overflow:visible}
 .ti .vb{transform-box:view-box;transform-origin:24px 24px}
 .ti .a-bar{transform-box:fill-box;transform-origin:50% 100%}
-.ti .a-orbit{transform-box:view-box;transform-origin:24px 23px}
+.ti .a-jersey{transform-box:view-box;transform-origin:24px 7px}
+@keyframes ti-swing{0%,100%{transform:rotate(0)}30%{transform:rotate(-7deg)}65%{transform:rotate(5deg)}}
 @keyframes ti-ball{0%,100%{transform:translateY(0) rotate(0)}35%{transform:translateY(-7px) rotate(25deg)}55%{transform:translateY(0) rotate(0)}70%{transform:translateY(-3px) rotate(-12deg)}85%{transform:translateY(0) rotate(0)}}
 @keyframes ti-bar{0%{transform:scaleY(.15)}60%,100%{transform:scaleY(1)}}
 @keyframes ti-spin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
@@ -408,7 +409,7 @@ button{font-family:inherit;color:inherit}
 .tab.on .a-bar{animation:ti-bar 1s cubic-bezier(.3,.7,.2,1) 1 both}
 .tab.on .a-bar2{animation-delay:.1s}
 .tab.on .a-bar3{animation-delay:.2s}
-.tab.on .a-orbit{animation:ti-spin 1.4s cubic-bezier(.6,0,.3,1) 1}
+.tab.on .a-jersey{animation:ti-swing 1s ease-in-out 1}
 .tab.on .a-swap1{animation:ti-r .9s ease-in-out 1}
 .tab.on .a-swap2{animation:ti-l .9s ease-in-out 1}
 @media (prefers-reduced-motion:reduce){.ti *{animation:none!important}}
@@ -1191,7 +1192,7 @@ button{font-family:inherit;color:inherit}
         <svg class="ti" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 42 H43"></path><rect class="a-bar" x="8" y="26" width="9" height="14" rx="2"></rect><rect class="a-bar a-bar2" x="20" y="16" width="9" height="24" rx="2"></rect><rect class="a-bar a-bar3" x="32" y="6" width="9" height="34" rx="2" style="fill:var(--accent)"></rect></svg>
       </sc-if>
       <sc-if value="{{ tb.isTeams }}" hint-placeholder-val="{{ false }}">
-        <svg class="ti" viewBox="0 0 48 48" fill="none" stroke-width="2" aria-hidden="true"><g class="a-orbit"><circle cx="16" cy="18" r="8" style="fill:oklch(var(--mgrL) 0.12 250);stroke:var(--bg)"></circle><circle cx="32" cy="18" r="8" style="fill:oklch(var(--mgrL) 0.12 150);stroke:var(--bg)"></circle><circle cx="24" cy="32" r="8" style="fill:oklch(var(--mgrL) 0.12 35);stroke:var(--bg)"></circle></g></svg>
+        <svg class="ti" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><g class="a-jersey"><path d="M18 6 L8 9 L3 19 L10 23 L13 20 V41 Q13 42 14 42 H34 Q35 42 35 41 V20 L38 23 L45 19 L40 9 L30 6 Q28 10 24 10 Q20 10 18 6 Z" style="fill:var(--accent)"></path><path d="M5.5 14 L11.5 17.5 M42.5 14 L36.5 17.5"></path><circle cx="24" cy="21.5" r="4"></circle><path d="M28 21.5 V30 Q28 33 24.5 33"></path></g></svg>
       </sc-if>
       <sc-if value="{{ tb.isWire }}" hint-placeholder-val="{{ false }}">
         <svg class="ti" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><g class="a-swap1"><path d="M8 16 H38 M31 9 L38 16 L31 23" style="stroke:var(--accent)"></path></g><g class="a-swap2"><path d="M40 32 H10 M17 25 L10 32 L17 39"></path></g></svg>
