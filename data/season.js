@@ -129,10 +129,10 @@ window.SEASON = {
       ['Kurt', 'Kurt hung 135.88 on Mr. G, the top score of the week. Mr. G’s 75.06 was the lowest, with Tyler Shough’s 24.80 on the bench.']
     ],
     4: [
-      ['Tony', 'Tony’s first loss: 90.82–96.38 to Andy, the lowest score of the week. Ollie Gordon II scored 17.00 on Tony’s bench while Bucky Irving started for 6.10, and Drake London’s 12.10 on Monday night closed it out.'],
-      ['Colin', 'Colin beat Tristan 129.92–125.88 with Ja’Marr Chase at 4.20 and Rashee Rice at 0.00. Kyren Williams (31.70) and 2:23 AM pickup Emanuel Wilson (25.50) covered for them, and Kyle Monangai’s 27.50 sat on the bench.'],
-      ['Matt', 'DLin beat Matt 114.68–92.08 with Tee Higgins at 21.20. Quinshon Judkins scored 18.60 on Matt’s bench, still short of the 22.60 gap.'],
-      ['Kurt', 'Jerger beat Kurt 113.66–112.22 when Chris Olave scored 15.60 on Monday night, 1.43 more than needed. Kurt had Jacory Croskey-Merritt’s 6.00 on the bench behind Saquon Barkley’s 1.50; that one swap wins it.'],
+      ['Tony', 'Tony scored 90.82, lowest of the week, and took a first loss by 5.56. Ollie Gordon II scored 17.00 on the bench while Bucky started for 6.10.'],
+      ['Tristan', 'Tristan scored 125.88, third-best of the week, and took a first loss anyway. The best bench swap comes up 0.54 short.'],
+      ['Matt', 'Watson scored 60.90 on Matt’s bench in Weeks 1–3. Matt finally started him against DLin, lost by 22.60, and Watson scored 6.20.'],
+      ['Kurt', 'Kurt lost to Jerger by 1.44 with JCM’s 6.00 on the bench. Saquon started and scored 1.50.'],
       ['Pablo', 'Pablo was projected for 88.77 on Thursday, lowest in the league, and scored 133.78, the top score of the week. Mr. G lost by 39.94 with Drake Maye’s 27.16 on the bench.']
     ]
   },
