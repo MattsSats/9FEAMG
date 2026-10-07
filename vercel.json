@@ -4,6 +4,10 @@
     {
       "source": "/p/:slug",
       "destination": "/api/parlay?slug=:slug"
+    },
+    {
+      "source": "/s/:name",
+      "destination": "/api/section?name=:name"
     }
   ],
   "crons": [
@@ -14,6 +18,9 @@
   ],
   "functions": {
     "api/og.js": {
+      "includeFiles": "api/_fonts/**"
+    },
+    "api/section.js": {
       "includeFiles": "api/_fonts/**"
     }
   }

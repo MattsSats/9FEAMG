@@ -2,44 +2,14 @@
 // drawn from the live data/season.js, so odds and HIT/MISS results show up
 // without regenerating anything.
 import { ImageResponse } from '@vercel/og';
-import { readFile } from 'node:fs/promises';
 import { loadSeason, findParlay, describe } from './_parlays.js';
 import { readJson } from './_yahoo.js';
+import { C, F, h, fonts } from './_ogkit.js';
 
-// Light-theme tokens from the 9FEAMG design system (same values as :root in src/app.html).
 // Open pills use surface2 so they stand out from the page instead of white on cream.
-const C = { bg: '#F7F5F0', surface2: '#EFECE5', line: '#E0DBD0', ink: '#191815', muted: '#5F5B52', accent: '#E4572E', accentInk: '#B23B15', pos: '#25784A', neg: '#B8233F', onStatus: '#FFFFFF' };
 const TAG = { open: [C.surface2, C.muted, 'OPEN'], hit: [C.pos, C.onStatus, 'HIT'], miss: [C.neg, C.onStatus, 'MISS'] };
 const STATUS = { OPEN: [C.surface2, C.muted], CASHED: [C.pos, C.onStatus], BUSTED: [C.neg, C.onStatus] };
 
-// The three fonts ship with the site (api/_fonts, SIL Open Font License) so previews don't
-// wait on Google. If a file is ever missing, fall back to Google Fonts, which serves TrueType
-// to clients it doesn't recognize (what Satori needs).
-const LOCAL = {
-  'Big Shoulders Display900': new URL('./_fonts/BigShouldersDisplay-900.ttf', import.meta.url),
-  'Instrument Sans600': new URL('./_fonts/InstrumentSans-600.ttf', import.meta.url),
-  'JetBrains Mono600': new URL('./_fonts/JetBrainsMono-600.ttf', import.meta.url)
-};
-const fontCache = new Map();
-async function font(family, weight) {
-  const key = family + weight;
-  if (!fontCache.has(key)) fontCache.set(key, (async () => {
-    try {
-      const buf = await readFile(LOCAL[key]);
-      return { name: family, weight, style: 'normal', data: buf.buffer.slice(buf.byteOffset, buf.byteOffset + buf.byteLength) };
-    } catch { /* not bundled: fetch from Google below */ }
-    const css = await (await fetch(`https://fonts.googleapis.com/css2?family=${family.replace(/ /g, '+')}:wght@${weight}`)).text();
-    const src = css.match(/src: url\((.+?)\) format\('(?:truetype|opentype)'\)/)?.[1];
-    if (!src) throw new Error('no ttf for ' + family);
-    return { name: family, weight, style: 'normal', data: await (await fetch(src)).arrayBuffer() };
-  })().catch(err => { fontCache.delete(key); throw err; }));
-  return fontCache.get(key);
-}
-
-// Tiny element helper: Satori takes React-style { type, props } objects.
-const h = (type, style, ...children) => ({ type, props: { style: { display: 'flex', ...style }, children: children.flat().filter(c => c != null && c !== false) } });
-
-// Up to six legs fit; past four the rows tighten up.
 const MAX_LEGS = 6;
 
 export default {
@@ -55,7 +25,7 @@ export default {
     const d = describe(found.week, found.p, taps);
     const shown = d.legs.slice(0, MAX_LEGS), extra = d.legs.length - shown.length;
     const [sBg, sFg] = STATUS[d.status];
-    const mono = 'JetBrains Mono', display = 'Big Shoulders Display', sans = 'Instrument Sans';
+    const { mono, display, sans } = F;
 
     const tight = shown.length > 4;
     const legRow = l => {
@@ -91,11 +61,8 @@ export default {
           h('div', { width: 12, height: 12, background: C.accent, marginBottom: 6 }))),
       h('div', { position: 'absolute', left: 0, right: 0, bottom: 0, height: 10, background: C.accent }));
 
-    const fonts = (await Promise.allSettled([font(display, 900), font(sans, 600), font(mono, 600)]))
-      .filter(r => r.status == 'fulfilled').map(r => r.value);
-
     return new ImageResponse(card, {
-      width: 1200, height: 630, fonts,
+      width: 1200, height: 630, fonts: await fonts(),
       headers: { 'cache-control': 'public, max-age=300, s-maxage=300' }
     });
   }

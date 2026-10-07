@@ -922,7 +922,8 @@ class Component extends DCLogic {
       linkPower: e => this.shareLink(location.origin + '/#power', '9FEAMG · Power rankings', e), shotPower: `Power rankings · through week ${NF}`,
       // Season charts: a link to the chart and an image of it.
       ...Object.fromEntries([['Pfpa', 'pfpa', 'Points for vs against'], ['Luck', 'luck', 'Luck'], ['Bench', 'bench', 'Points left on bench']].flatMap(([k, id, title]) => [
-        ['link' + k, e => this.shareLink(location.origin + '/#' + id, '9FEAMG · ' + title, e)], ['shot' + k, e => this.share(id, e)],
+        // Links go through /s/<chart> so chats show a preview image of the chart (api/section.js).
+        ['link' + k, e => this.shareLink(location.origin + '/s/' + id, '9FEAMG · ' + title, e)], ['shot' + k, e => this.share(id, e)],
         ['shotLabel' + k, S.sharing == id ? '…' : 'Image'], ['shotNote' + k, `${title} · through week ${NF}`]])),
       linkHero: e => this.shareLink(location.origin + '/#w' + S.week, '9FEAMG · Week ' + S.week, e),
       linkStandings: e => this.shareLink(location.origin + '/#season', '9FEAMG · Standings', e),
