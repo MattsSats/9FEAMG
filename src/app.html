@@ -4,6 +4,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>9FEAMG · 9 Fantasy Experts &amp; Mr. Glenn</title>
 <meta name="theme-color" content="#F7F5F0">
+<script>
+  // Apply a saved dark theme before anything draws, so a reload never flashes the other theme.
+  try { if (localStorage.getItem('9feamg-theme') == 'dark') { document.documentElement.dataset.theme = 'dark'; document.querySelector('meta[name="theme-color"]').content = '#0D1424'; } } catch (e) {}
+</script>
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
@@ -342,8 +346,9 @@
 }
 </style>
 <style>
-:root{--page:#070B14;--bg:#0D1424;--surface:#141C2F;--surface2:#1C2640;--surfaceHover:#18223A;--line:#28334F;--focus:#E4572E;--ink:#EEF2F8;--muted:#AFB9CD;--accent:#E4572E;--accentInk:#FF7A52;--pos:#72C690;--neg:#F2667A;--onAccent:#0D1424;--onStatus:#0D1424;--heat1:#3C2E3D;--heat2:#5C363A;--heat3:#7C3E37;--heat4:#9C4534;--heat5:#B04A33;--mgrL:0.76}
-:root[data-theme="light"]{--page:#E2DED4;--bg:#F7F5F0;--surface:#FFFFFF;--surface2:#EFECE5;--surfaceHover:#F1EEE8;--line:#E0DBD0;--focus:#E4572E;--ink:#191815;--muted:#5F5B52;--accent:#E4572E;--accentInk:#B23B15;--pos:#25784A;--neg:#B8233F;--onAccent:#141311;--onStatus:#FFFFFF;--heat1:#F4D7CF;--heat2:#F4C1B2;--heat3:#F2AA96;--heat4:#EF937A;--heat5:#EB7B5C;--mgrL:0.61}
+/* Light is the default; dark only when chosen, so nothing flashes dark before the app starts. */
+:root{--page:#E2DED4;--bg:#F7F5F0;--surface:#FFFFFF;--surface2:#EFECE5;--surfaceHover:#F1EEE8;--line:#E0DBD0;--focus:#E4572E;--ink:#191815;--muted:#5F5B52;--accent:#E4572E;--accentInk:#B23B15;--pos:#25784A;--neg:#B8233F;--onAccent:#141311;--onStatus:#FFFFFF;--heat1:#F4D7CF;--heat2:#F4C1B2;--heat3:#F2AA96;--heat4:#EF937A;--heat5:#EB7B5C;--mgrL:0.61}
+:root[data-theme="dark"]{--page:#070B14;--bg:#0D1424;--surface:#141C2F;--surface2:#1C2640;--surfaceHover:#18223A;--line:#28334F;--focus:#E4572E;--ink:#EEF2F8;--muted:#AFB9CD;--accent:#E4572E;--accentInk:#FF7A52;--pos:#72C690;--neg:#F2667A;--onAccent:#0D1424;--onStatus:#0D1424;--heat1:#3C2E3D;--heat2:#5C363A;--heat3:#7C3E37;--heat4:#9C4534;--heat5:#B04A33;--mgrL:0.76}
 html,body{margin:0;background:var(--page);color:var(--ink);font-family:'Instrument Sans',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
 *{box-sizing:border-box}
 a{color:var(--accentInk);text-decoration:none}
