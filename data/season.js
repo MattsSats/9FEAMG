@@ -175,10 +175,11 @@ window.SEASON = {
           // Odds: DraftKings via ESPN odds/props pages, Fri Oct 2.
           { text: 'Jahmyr Gibbs anytime TD', player: 'Jahmyr Gibbs', type: 'td', game: 'Sun 7:20 PM @ CAR', result: '1 rush TD', odds: '-330', status: 'hit' },
           { text: 'Drake London over 79.5 receiving yards', player: 'Drake London', type: 'over', stat: 'Rec Yds', line: 79.5, game: 'Mon 7:15 PM @ NO', result: '5-96 rec yds', odds: '-110', status: 'hit' },
-          { text: 'Ravens moneyline', player: 'Ravens', type: 'ml', game: 'Sun 12:00 PM vs TEN', result: 'Final W 24–18', odds: '-700', status: 'hit' }
-        ],
-        tailers: ['Tony'],
-        booth: 'Cashed. The Ravens won, Jahmyr Gibbs scored on Sunday night, and Drake London caught 5 for 96 yards on Monday. $10 paid $28.43, the only winner of eight Week 4 tickets. Tony tailed it, so Tony cashed too, on the same night Tony lost to Andy.'
+          // Andy bet the Ravens spread, not the moneyline, and it missed. His line and ticket
+          // price are still to come; until then the ticket shows Lines TBD. Nobody tailed it.
+          { text: 'Ravens spread vs Titans', player: 'Ravens', type: 'spread', team: 'Bal', line: null, teams: ['Ten', 'Bal'], game: 'Sun 12:00 PM vs TEN', result: 'Final 24–18 · won by 6', odds: null, status: 'miss' }
+        ]
+        // Booth line removed: it said the ticket cashed. The writer owes a new one.
       },
       {
         owner: 'Andy & Tony', owners: ['Andy', 'Tony'], init: 'A&T', title: 'The Truce',
