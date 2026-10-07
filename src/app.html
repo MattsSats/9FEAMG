@@ -389,6 +389,16 @@ button{font-family:inherit;color:inherit}
   .tiles{grid-template-columns:repeat(4,minmax(0,1fr))}
   .sheet-wrap{align-items:center!important}
 }
+/* Season: named spots so each column stacks on its own (no row gaps); phones keep source order. */
+@media (min-width:900px){
+  .cols.season-grid{grid-template-areas:"st ch" "st lk" "bn lk" "pw pw"}
+  .season-grid>*{align-self:start}
+  .season-grid>.sg-st{grid-area:st}.season-grid>.sg-ch{grid-area:ch}.season-grid>.sg-lk{grid-area:lk}.season-grid>.sg-bn{grid-area:bn}.season-grid>.sg-pw{grid-area:pw}
+}
+@media (min-width:1320px){
+  /* The last row takes Power rankings' extra height, so the first two rows stay snug. */
+  .cols.season-grid{grid-template-columns:repeat(3,minmax(0,1fr));grid-template-areas:"st ch pw" "st lk pw" "bn lk pw";grid-template-rows:auto auto 1fr}
+}
 /* Wide desktop: three columns on Gameday (featured + Booth | matchups | parlays). */
 @media (min-width:1320px){
   .app,.tabbar{max-width:1440px}
@@ -643,7 +653,7 @@ button{font-family:inherit;color:inherit}
             <span style="font-family:'JetBrains Mono';font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)">Risk</span>
             <span style="font-family:'JetBrains Mono';font-size:12px"><b style="color:var(--accentInk)">{{ reqForm.riskLabel }}</b> · {{ reqForm.riskRange }}</span>
           </div>
-          <input type="range" min="0" max="4" step="1" value="{{ reqForm.risk }}" data-req-risk="" aria-label="Total parlay odds" style="width:100%;margin-top:8px;accent-color:var(--accent)">
+          <input type="range" min="0" max="4" step="1" data-req-risk="" aria-label="Total parlay odds" style="width:100%;margin-top:8px;accent-color:var(--accent)">
           <div style="display:flex;justify-content:space-between;font-family:'JetBrains Mono';font-size:10px;color:var(--muted)"><span>Safe</span><span>{{ reqForm.riskPay }}</span><span>Lottery</span></div>
 
           <div style="font-family:'JetBrains Mono';font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-top:16px">Legs</div>
@@ -808,8 +818,8 @@ button{font-family:inherit;color:inherit}
   </sc-for>
 </div>
 
-<div class="cols">
-<div data-shot="standings" style="padding:30px 20px 0">
+<div class="cols season-grid">
+<div data-shot="standings" class="sg-st" style="padding:30px 20px 0">
   <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
     <div style="display:flex;align-items:center;gap:12px">
       <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:26px;text-transform:uppercase">Standings</div>
@@ -839,10 +849,10 @@ button{font-family:inherit;color:inherit}
   <div class="shot-footer"><b>9FEAMG</b><span>{{ shotStandings }}</span></div>
 </div>
 
-<div style="padding:30px 20px 0">
+<div id="pfpa" data-shot="pfpa" class="sg-ch" style="padding:30px 20px 0;scroll-margin-top:64px">
   <div style="display:flex;align-items:baseline;justify-content:space-between">
-    <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:26px;text-transform:uppercase">Points for vs against</div>
-    <div style="font-family:'JetBrains Mono';font-size:11px;color:var(--muted)">{{ hlHint }}</div>
+    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap"><div style="font-family:'Big Shoulders Display';font-weight:900;font-size:26px;text-transform:uppercase">Points for vs against</div><button class="share-btn no-shot" sc-camel-on-click="{{ linkPfpa }}" aria-label="Share a link to the points for vs against chart">Share</button><button class="share-btn no-shot" sc-camel-on-click="{{ shotPfpa }}" aria-label="Share the points for vs against chart as an image">{{ shotLabelPfpa }}</button></div>
+    <div class="no-shot" style="font-family:'JetBrains Mono';font-size:11px;color:var(--muted)">{{ hlHint }}</div>
   </div>
   <div style="margin-top:12px;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:14px 14px 10px">
     <div style="position:relative;height:340px;margin:0 4px 0 22px;border-left:1px solid var(--line);border-bottom:1px solid var(--line)">
@@ -861,11 +871,12 @@ button{font-family:inherit;color:inherit}
     </div>
     <div style="display:flex;justify-content:space-between;margin:6px 4px 0 22px;font-family:'JetBrains Mono';font-size:9px;color:var(--muted)"><span>{{ pfMin }}</span><span>PF →</span><span>{{ pfMax }}</span></div>
   </div>
+  <div class="shot-footer"><b>9FEAMG</b><span>{{ shotNotePfpa }}</span></div>
 </div>
 
-<div style="padding:30px 20px 0">
+<div id="luck" data-shot="luck" class="sg-lk" style="padding:30px 20px 0;scroll-margin-top:64px">
   <div style="display:flex;align-items:baseline;justify-content:space-between">
-    <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:26px;text-transform:uppercase;display:flex;align-items:center;gap:8px"><svg class="hi play" width="26" height="26" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><g class="a-dice vb"><rect x="8" y="8" width="32" height="32" rx="7"></rect><circle cx="16" cy="16" r="2.6" stroke="none" style="fill:var(--hi-a)"></circle><circle cx="32" cy="16" r="2.6" stroke="none" style="fill:var(--hi-a)"></circle><circle cx="24" cy="24" r="2.6" stroke="none" style="fill:var(--hi-a)"></circle><circle cx="16" cy="32" r="2.6" stroke="none" style="fill:var(--hi-a)"></circle><circle cx="32" cy="32" r="2.6" stroke="none" style="fill:var(--hi-a)"></circle></g></svg>Luck</div>
+    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap"><div style="font-family:'Big Shoulders Display';font-weight:900;font-size:26px;text-transform:uppercase;display:flex;align-items:center;gap:8px"><svg class="hi play" width="26" height="26" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><g class="a-dice vb"><rect x="8" y="8" width="32" height="32" rx="7"></rect><circle cx="16" cy="16" r="2.6" stroke="none" style="fill:var(--hi-a)"></circle><circle cx="32" cy="16" r="2.6" stroke="none" style="fill:var(--hi-a)"></circle><circle cx="24" cy="24" r="2.6" stroke="none" style="fill:var(--hi-a)"></circle><circle cx="16" cy="32" r="2.6" stroke="none" style="fill:var(--hi-a)"></circle><circle cx="32" cy="32" r="2.6" stroke="none" style="fill:var(--hi-a)"></circle></g></svg>Luck</div><button class="share-btn no-shot" sc-camel-on-click="{{ linkLuck }}" aria-label="Share a link to the luck chart">Share</button><button class="share-btn no-shot" sc-camel-on-click="{{ shotLuck }}" aria-label="Share the luck chart as an image">{{ shotLabelLuck }}</button></div>
     <div style="font-family:'JetBrains Mono';font-size:11px;color:var(--muted)">W − xW</div>
   </div>
   <div style="display:flex;flex-direction:column;gap:6px;margin-top:12px">
@@ -878,11 +889,12 @@ button{font-family:inherit;color:inherit}
       </div>
     </sc-for>
   </div>
+  <div class="shot-footer"><b>9FEAMG</b><span>{{ shotNoteLuck }}</span></div>
 </div>
 
-<div style="padding:30px 20px 0">
+<div id="bench" data-shot="bench" class="sg-bn" style="padding:30px 20px 0;scroll-margin-top:64px">
   <div style="display:flex;align-items:baseline;justify-content:space-between">
-    <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:26px;text-transform:uppercase">Points left on bench</div>
+    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap"><div style="font-family:'Big Shoulders Display';font-weight:900;font-size:26px;text-transform:uppercase">Points left on bench</div><button class="share-btn no-shot" sc-camel-on-click="{{ linkBench }}" aria-label="Share a link to the bench chart">Share</button><button class="share-btn no-shot" sc-camel-on-click="{{ shotBench }}" aria-label="Share the bench chart as an image">{{ shotLabelBench }}</button></div>
     <div style="font-family:'JetBrains Mono';font-size:11px;color:var(--muted)">PF of Max PF</div>
   </div>
   <div style="display:flex;flex-direction:column;gap:8px;margin-top:12px">
@@ -901,10 +913,11 @@ button{font-family:inherit;color:inherit}
     <span style="display:flex;align-items:center;gap:6px"><span style="width:10px;height:10px;border-radius:2px;background:var(--muted)"></span>Scored</span>
     <span style="display:flex;align-items:center;gap:6px"><span style="width:10px;height:10px;border-radius:2px;background:repeating-linear-gradient(135deg,var(--accent) 0 3px,transparent 3px 6px)"></span>Left on bench</span>
   </div>
+  <div class="shot-footer"><b>9FEAMG</b><span>{{ shotNoteBench }}</span></div>
 </div>
 
 <sc-if value="{{ hasPower }}" hint-placeholder-val="{{ true }}">
-<div id="power" data-shot="power" style="padding:30px 20px 0;scroll-margin-top:64px">
+<div id="power" data-shot="power" class="sg-pw" style="padding:30px 20px 0;scroll-margin-top:64px">
   <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
     <div style="display:flex;align-items:center;gap:12px">
       <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:26px;text-transform:uppercase">Power rankings</div>

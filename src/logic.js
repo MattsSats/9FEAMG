@@ -221,11 +221,13 @@ class Component extends DCLogic {
     // Parlay requests for the live week (api/requests.js). The slider and the game box are read
     // with plain listeners; everything else on the form is a tap.
     if (LW) this.loadRequests();
-    document.addEventListener('input', e => {
+    const onReq = e => {
       const el = e.target;
       if (el?.dataset?.reqRisk != null) this.setState({ req: { ...this.state.req, risk: +el.value } });
       else if (el?.dataset?.reqGame != null) this.state.req.game = el.value; // read on send; no re-render while typing
-    });
+    };
+    document.addEventListener('input', onReq); document.addEventListener('change', onReq);
+    setTimeout(() => this.syncRiskSlider(), 0);
     // Keep the newest week chips in view once the season gets long.
     setTimeout(() => { const el = document.querySelector('[data-weekchips]'); if (el) el.scrollLeft = el.scrollWidth; }, 0);
     // Preload the screenshot library so the first share is quick.
@@ -267,7 +269,8 @@ class Component extends DCLogic {
     const h = location.hash, wk = h.match(/^#w(\d+)$/), tm = h.match(/^#team-([\w-]+)$/);
     if (wk) { this.setState({ tab: 'Gameday', week: +wk[1], sheet: null }); window.scrollTo(0, 0); return; }
     if (h == '#season') { this.setState({ tab: 'Season', sheet: null }); window.scrollTo(0, 0); return; }
-    if (h == '#power') { this.setState({ tab: 'Season', sheet: null }); setTimeout(() => document.getElementById('power')?.scrollIntoView({ block: 'start' }), 350); return; }
+    // Season sections: #power, #pfpa, #luck, #bench open the Season tab scrolled to that section.
+    if (['#power', '#pfpa', '#luck', '#bench'].includes(h)) { this.setState({ tab: 'Season', sheet: null }); setTimeout(() => document.getElementById(h.slice(1))?.scrollIntoView({ block: 'start' }), 350); return; }
     if (tm) { const t = MGR.find(x => teamSlug(x) == tm[1]); if (t) { this.setState({ tab: 'Teams', team: t, sheet: null }); window.scrollTo(0, 0); } return; }
     const m = h.match(/^#w(\d+)-([\w-]+)$/);
     if (!m) return;
@@ -362,7 +365,13 @@ class Component extends DCLogic {
     setTimeout(() => URL.revokeObjectURL(a.href), 1000);
     this.toast('Image saved.');
   }
-  componentDidUpdate() { this.applyTheme(); }
+  componentDidUpdate() { this.applyTheme(); this.syncRiskSlider(); }
+  // The risk slider isn't bound to a value (a bound one is read-only here), so set its
+  // position from state when it first appears or the form resets.
+  syncRiskSlider() {
+    const el = document.querySelector('[data-req-risk]');
+    if (el && +el.value != this.state.req.risk) el.value = this.state.req.risk;
+  }
   // Light by default; a viewer's own pick is remembered on their device.
   theme() {
     if (this.state.theme) return this.state.theme;
@@ -788,6 +797,10 @@ class Component extends DCLogic {
       hasRecap, recap, recapTitle: `Week ${wk} · Final`, shareRecap: e => this.share('recap', e), recapLabel: S.sharing == 'recap' ? '…' : 'Image',
       powerRows, hasPower: powerRows.length > 0, powerSub: `Through week ${NF}`, sharePower: e => this.share('power', e), powerLabel: S.sharing == 'power' ? '…' : 'Image',
       linkPower: e => this.shareLink(location.origin + '/#power', '9FEAMG · Power rankings', e), shotPower: `Power rankings · through week ${NF}`,
+      // Season charts: a link to the chart and an image of it.
+      ...Object.fromEntries([['Pfpa', 'pfpa', 'Points for vs against'], ['Luck', 'luck', 'Luck'], ['Bench', 'bench', 'Points left on bench']].flatMap(([k, id, title]) => [
+        ['link' + k, e => this.shareLink(location.origin + '/#' + id, '9FEAMG · ' + title, e)], ['shot' + k, e => this.share(id, e)],
+        ['shotLabel' + k, S.sharing == id ? '…' : 'Image'], ['shotNote' + k, `${title} · through week ${NF}`]])),
       linkHero: e => this.shareLink(location.origin + '/#w' + S.week, '9FEAMG · Week ' + S.week, e),
       linkStandings: e => this.shareLink(location.origin + '/#season', '9FEAMG · Standings', e),
       linkTeam: e => this.shareLink(location.origin + '/#team-' + teamSlug(S.team), '9FEAMG · ' + S.team, e),
