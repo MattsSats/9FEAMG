@@ -4,10 +4,11 @@
 import { ImageResponse } from '@vercel/og';
 import { loadSeason, findParlay, describe } from './_parlays.js';
 
-// Dark-theme tokens from the 9FEAMG design system (same values as :root in src/app.html).
-const C = { bg: '#0D1424', surface: '#141C2F', line: '#28334F', ink: '#EEF2F8', muted: '#9AA6BD', accent: '#E4572E', accentInk: '#FF7A52', pos: '#72C690', neg: '#F2667A', onStatus: '#0D1424' };
-const TAG = { open: [C.surface, C.muted, 'OPEN'], hit: [C.pos, C.onStatus, 'HIT'], miss: [C.neg, C.onStatus, 'MISS'] };
-const STATUS = { OPEN: [C.surface, C.muted], CASHED: [C.pos, C.onStatus], BUSTED: [C.neg, C.onStatus] };
+// Light-theme tokens from the 9FEAMG design system (same values as :root in src/app.html).
+// Open pills use surface2 so they stand out from the page instead of white on cream.
+const C = { bg: '#F7F5F0', surface2: '#EFECE5', line: '#E0DBD0', ink: '#191815', muted: '#5F5B52', accent: '#E4572E', accentInk: '#B23B15', pos: '#25784A', neg: '#B8233F', onStatus: '#FFFFFF' };
+const TAG = { open: [C.surface2, C.muted, 'OPEN'], hit: [C.pos, C.onStatus, 'HIT'], miss: [C.neg, C.onStatus, 'MISS'] };
+const STATUS = { OPEN: [C.surface2, C.muted], CASHED: [C.pos, C.onStatus], BUSTED: [C.neg, C.onStatus] };
 
 // Google Fonts serves TrueType to clients it doesn't recognize, which is what Satori needs.
 const fontCache = new Map();

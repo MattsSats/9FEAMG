@@ -1,26 +1,31 @@
 <!doctype html>
-<!-- Source for the link-preview image (og.png, 1200x630) and the home-screen
-     icon (apple-touch-icon.png, 180x180). Open it in a browser and capture
-     #card and #icon at 1x to regenerate them. Not part of the site. -->
+<!-- Source for the link-preview image (og.png, 1200x630). Open it in a browser and
+     capture #card at 1x to regenerate it. Colors are the light theme's tokens from
+     :root in src/app.html; crests match the site's (shield shape, --mgrL 0.61). Not part of the site. -->
 <html><head><meta charset="utf-8">
 <link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800;900&family=Instrument+Sans:wght@500;600&family=JetBrains+Mono:wght@500;600&display=block" rel="stylesheet">
 <style>
+  :root{--bg:#F7F5F0;--line:#E0DBD0;--ink:#191815;--muted:#5F5B52;--accent:#E4572E;--accentInk:#B23B15;--onAccent:#141311}
   body{margin:0;background:#555;font-family:'Instrument Sans',sans-serif}
-  #card{width:1200px;height:630px;position:relative;overflow:hidden;background:#0D1424;color:#EEF2F8}
+  #card{width:1200px;height:630px;position:relative;overflow:hidden;background:var(--bg);color:var(--ink)}
   #card::before{content:"";position:absolute;inset:0;background:
-    radial-gradient(700px 420px at 100% 0%, rgba(228,87,46,.28), transparent 70%),
-    repeating-linear-gradient(90deg, rgba(255,255,255,.035) 0 1px, transparent 1px 120px)}
+    radial-gradient(700px 420px at 100% 0%, rgba(228,87,46,.16), transparent 70%),
+    repeating-linear-gradient(90deg, rgba(25,24,21,.045) 0 1px, transparent 1px 120px)}
   .wrap{position:absolute;inset:0;padding:64px 72px;display:flex;flex-direction:column;justify-content:space-between}
-  .kicker{font-family:'JetBrains Mono';font-weight:600;font-size:22px;letter-spacing:.18em;color:#FF7A52;text-transform:uppercase}
+  .kicker{font-family:'JetBrains Mono';font-weight:600;font-size:22px;letter-spacing:.18em;color:var(--accentInk);text-transform:uppercase}
   .title{font-family:'Big Shoulders Display';font-weight:900;font-size:250px;line-height:.82;letter-spacing:.01em;margin-top:18px}
-  .title span{color:#E4572E}
-  .sub{font-size:34px;font-weight:500;color:#9AA6BD;margin-top:22px}
+  .title span{color:var(--accent)}
+  .sub{font-size:34px;font-weight:500;color:var(--muted);margin-top:22px}
   .row{display:flex;align-items:center;justify-content:space-between}
   .avatars{display:flex;gap:10px}
-  .av{width:50px;height:50px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Big Shoulders Display';font-weight:800;font-size:20px;color:#0D1424}
-  .tabs{font-family:'JetBrains Mono';font-weight:500;font-size:20px;letter-spacing:.12em;color:#9AA6BD;text-align:right;line-height:1.6}
-  .tabs b{color:#EEF2F8;font-weight:600}
-  .bar{position:absolute;left:0;right:0;bottom:0;height:10px;background:#E4572E}
+  .av{width:50px;height:50px;display:flex;align-items:center;justify-content:center;font-family:'Big Shoulders Display';font-weight:800;font-size:20px;color:var(--onAccent);
+    -webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Cpath d='M24 2.5 L42.5 8 V22.5 C42.5 34 34.5 41.5 24 46 C13.5 41.5 5.5 34 5.5 22.5 V8 Z'/%3E%3C/svg%3E") center/100% 100% no-repeat;
+    mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Cpath d='M24 2.5 L42.5 8 V22.5 C42.5 34 34.5 41.5 24 46 C13.5 41.5 5.5 34 5.5 22.5 V8 Z'/%3E%3C/svg%3E") center/100% 100% no-repeat}
+  .av span{transform:translateY(-4%)}
+  .av.sm{font-size:16px;letter-spacing:-.02em}
+  .tabs{font-family:'JetBrains Mono';font-weight:500;font-size:20px;letter-spacing:.12em;color:var(--muted);text-align:right;line-height:1.6}
+  .tabs b{color:var(--ink);font-weight:600}
+  .bar{position:absolute;left:0;right:0;bottom:0;height:10px;background:var(--accent)}
 </style></head>
 <body>
 <div id="card"><div class="wrap">
@@ -34,12 +39,9 @@
     <div class="tabs"><b>SCORES · STANDINGS · LUCK</b><br>BENCH · WIRE · THE BOOTH</div>
   </div>
 </div><div class="bar"></div></div>
-<div id="icon" style="width:180px;height:180px;margin-top:20px;background:#0D1424;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden">
-  <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:104px;color:#EEF2F8;line-height:1;letter-spacing:.01em">9F</div>
-  <div style="position:absolute;left:0;right:0;bottom:0;height:14px;background:#E4572E"></div>
-</div>
 <script>
+// Initials and hues from data/season.js managers.
 const M=[['ASG',35],['TR',250],['AN',150],['MA',305],['KU',95],['JJ',205],['MG',0],['CO',125],['DL',340],['PA',65]];
-document.getElementById('av').innerHTML=M.map(([i,h])=>`<div class="av" style="background:oklch(0.76 0.12 ${h})">${i}</div>`).join('');
+document.getElementById('av').innerHTML=M.map(([i,h])=>`<div class="av${i.length>2?' sm':''}" style="background:oklch(0.61 0.12 ${h})"><span>${i}</span></div>`).join('');
 </script>
 </body></html>
