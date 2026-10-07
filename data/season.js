@@ -306,6 +306,18 @@ window.SEASON = {
           { text: 'Eagles moneyline vs Jaguars', player: 'Eagles', type: 'ml', team: 'Phi', teams: ['Phi', 'Jax'], game: 'Sun 8:30 AM · PHI vs JAX', odds: '+280', status: 'open' },
           { text: 'Chargers moneyline vs Broncos', type: 'ml', team: 'LAC', teams: ['Den', 'LAC'], game: 'Sun 3:05 PM · DEN @ LAC', odds: '+154', status: 'open' }
         ]
+      },
+      {
+        owner: 'Andy', title: 'Ground and Pound', request: 'Andy',
+        // Built by Claude for Andy's Balanced request (+250 to +600, any legs, Javonte Williams TD
+        // and Jahmyr Gibbs TD). Both TDs come to +75, so a third leg: the Giants moneyline (Andy
+        // starts Giants TE Isaiah Likely). One leg per game, so the odds multiply: +338.
+        // Odds: DraftKings via The Odds API, Wed Oct 7, 9:24 AM CT.
+        legs: [
+          { text: 'Javonte Williams anytime TD', player: 'Javonte Williams', type: 'td', count: 1, game: 'Thu 7:15 PM · TB @ DAL', odds: '-230', status: 'open' },
+          { text: 'Jahmyr Gibbs anytime TD', player: 'Jahmyr Gibbs', type: 'td', count: 1, game: 'Sun 3:25 PM · DET @ ARI', odds: '-450', status: 'open' },
+          { text: 'Giants moneyline at Commanders', player: 'Giants', type: 'ml', team: 'NYG', teams: ['NYG', 'Was'], game: 'Sun 12:00 PM · NYG @ WAS', odds: '+150', status: 'open' }
+        ]
       }
     ]
   },
