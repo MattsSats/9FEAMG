@@ -7,9 +7,12 @@
 //
 // Every call prints the time it was pulled and the credits left, so the ticket can cite
 // "DraftKings via The Odds API, <time>".
+import { readFileSync } from 'node:fs';
 try { process.loadEnvFile('.env.local'); } catch { /* fall back to the shell's environment */ }
+// A file holding just the key (no "ODDS_API_KEY=") works too.
+const bare = () => { try { const s = readFileSync('.env.local', 'utf8').trim(); return /^[\w-]+$/.test(s) ? s : ''; } catch { return ''; } };
 
-const KEY = process.env.ODDS_API_KEY;
+const KEY = process.env.ODDS_API_KEY || bare();
 const BASE = 'https://api.the-odds-api.com/v4/sports/americanfootball_nfl';
 const PROPS = ['player_anytime_td', 'player_pass_yds', 'player_rush_yds', 'player_reception_yds', 'player_receptions'];
 const ALT = ['player_pass_yds_alternate', 'player_rush_yds_alternate', 'player_reception_yds_alternate'];
