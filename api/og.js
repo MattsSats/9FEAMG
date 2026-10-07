@@ -65,8 +65,8 @@ export default {
         h('div', { flexDirection: 'column', marginTop: tight ? 10 : 16 },
           shown.map(legRow),
           extra > 0 ? h('div', { fontFamily: mono, fontSize: 22, color: C.muted, paddingTop: 12 }, `+ ${extra} more`) : null)),
-      h('div', { justifyContent: 'space-between', alignItems: 'center', padding: '20px 64px 34px', borderTop: `2px dashed ${C.line}`, marginTop: 'auto' },
-        h('div', { flexDirection: 'column', gap: 8 },
+      h('div', { justifyContent: 'space-between', alignItems: 'center', padding: d.with.length ? '12px 64px 26px' : '20px 64px 34px', borderTop: `2px dashed ${C.line}`, marginTop: 'auto' },
+        h('div', { flexDirection: 'column', gap: 4 },
         h('div', { alignItems: 'baseline', gap: 24 },
           // A finished ticket with a leg that was never priced has no total; say so instead of "lines TBD".
           h('div', { fontFamily: display, fontSize: 52, fontWeight: 900, lineHeight: 1 }, d.odds ? `PARLAY ${d.odds}` : d.status == 'OPEN' ? 'LINES TBD' : d.status),
