@@ -26,7 +26,8 @@ async function font(family, weight) {
 // Tiny element helper: Satori takes React-style { type, props } objects.
 const h = (type, style, ...children) => ({ type, props: { style: { display: 'flex', ...style }, children: children.flat().filter(c => c != null && c !== false) } });
 
-const MAX_LEGS = 4;
+// Up to six legs fit; past four the rows tighten up.
+const MAX_LEGS = 6;
 
 export default {
   async fetch(request) {
@@ -41,11 +42,12 @@ export default {
     const [sBg, sFg] = STATUS[d.status];
     const mono = 'JetBrains Mono', display = 'Big Shoulders Display', sans = 'Instrument Sans';
 
+    const tight = shown.length > 4;
     const legRow = l => {
       const [bg, fg, label] = TAG[l.status] || TAG.open;
-      return h('div', { alignItems: 'center', gap: 20, padding: '13px 0', borderBottom: `2px solid ${C.line}` },
-        h('div', { flex: 1, fontFamily: sans, fontSize: 30, fontWeight: 600, color: C.ink, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }, l.text),
-        l.odds ? h('div', { fontFamily: mono, fontSize: 26, fontWeight: 600, color: C.muted }, l.odds) : null,
+      return h('div', { alignItems: 'center', gap: 20, padding: tight ? '6px 0' : '13px 0', borderBottom: `2px solid ${C.line}` },
+        h('div', { flex: 1, fontFamily: sans, fontSize: tight ? 25 : 30, fontWeight: 600, color: C.ink, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }, l.text),
+        l.odds ? h('div', { fontFamily: mono, fontSize: tight ? 22 : 26, fontWeight: 600, color: C.muted }, l.odds) : null,
         h('div', { width: 92, justifyContent: 'center', fontFamily: mono, fontSize: 18, fontWeight: 600, letterSpacing: 2, padding: '6px 0', borderRadius: 8, background: bg, color: fg }, label));
     };
 
@@ -57,12 +59,14 @@ export default {
         h('div', { alignItems: 'baseline', gap: 24, marginTop: 14 },
           h('div', { fontFamily: display, fontSize: 80, fontWeight: 900, lineHeight: 1, textTransform: 'uppercase' }, d.title),
           h('div', { fontFamily: sans, fontSize: 28, fontWeight: 600, color: C.muted }, [d.who, `${d.legs.length} legs`].filter(Boolean).join(' · '))),
-        h('div', { flexDirection: 'column', marginTop: 16 },
+        h('div', { flexDirection: 'column', marginTop: tight ? 10 : 16 },
           shown.map(legRow),
           extra > 0 ? h('div', { fontFamily: mono, fontSize: 22, color: C.muted, paddingTop: 12 }, `+ ${extra} more`) : null)),
       h('div', { justifyContent: 'space-between', alignItems: 'center', padding: '20px 64px 34px', borderTop: `2px dashed ${C.line}`, marginTop: 'auto' },
         h('div', { alignItems: 'baseline', gap: 24 },
-          h('div', { fontFamily: display, fontSize: 52, fontWeight: 900, lineHeight: 1 }, d.odds ? `PARLAY ${d.odds}` : 'LINES TBD'),
+          // A finished ticket with a leg that was never priced has no total; say so instead of "lines TBD".
+          h('div', { fontFamily: display, fontSize: 52, fontWeight: 900, lineHeight: 1 }, d.odds ? `PARLAY ${d.odds}` : d.status == 'OPEN' ? 'LINES TBD' : d.status),
+          !d.odds && d.status != 'OPEN' ? h('div', { fontFamily: mono, fontSize: 24, fontWeight: 600, color: C.muted }, 'odds not recorded') : null,
           d.payout ? h('div', { fontFamily: mono, fontSize: 24, fontWeight: 600, color: C.muted }, `$10 ${d.status == 'CASHED' ? 'paid' : d.status == 'BUSTED' ? 'would have paid' : 'pays'} ${d.payout}` + (d.chance ? ` · ~${d.chance} to hit` : '')) : null),
         h('div', { alignItems: 'flex-end', gap: 4 },
           h('div', { fontFamily: display, fontSize: 48, fontWeight: 900, lineHeight: 1 }, '9FEAMG'),
