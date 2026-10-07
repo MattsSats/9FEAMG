@@ -774,7 +774,9 @@ button{font-family:inherit;color:inherit}
     <div style="font-family:'JetBrains Mono';font-size:11px;color:var(--muted)">{{ hlHint }}</div>
   </div>
   <div style="margin-top:12px;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:14px 14px 10px">
-    <div style="position:relative;height:300px;margin:0 4px 0 22px;border-left:1px solid var(--line);border-bottom:1px solid var(--line)">
+    <div style="position:relative;height:340px;margin:0 4px 0 22px;border-left:1px solid var(--line);border-bottom:1px solid var(--line)">
+      <span style="position:absolute;left:-22px;top:0;font-family:'JetBrains Mono';font-size:9px;color:var(--muted)">{{ paMax }}</span>
+      <span style="position:absolute;left:-22px;bottom:0;font-family:'JetBrains Mono';font-size:9px;color:var(--muted)">{{ paMin }}</span>
       <div style="position:absolute;left:{{ scatterMidX }};top:0;bottom:0;border-left:1px dashed var(--line)"></div>
       <div style="position:absolute;top:{{ scatterMidY }};left:0;right:0;border-top:1px dashed var(--line)"></div>
       <span style="position:absolute;right:6px;top:6px;font-family:'JetBrains Mono';font-size:9px;letter-spacing:.08em;color:var(--muted);text-align:right">GOOD, CURSED</span>
@@ -788,7 +790,6 @@ button{font-family:inherit;color:inherit}
     </div>
     <div style="display:flex;justify-content:space-between;margin:6px 4px 0 22px;font-family:'JetBrains Mono';font-size:9px;color:var(--muted)"><span>{{ pfMin }}</span><span>PF →</span><span>{{ pfMax }}</span></div>
   </div>
-</div>
 </div>
 
 <sc-if value="{{ hasPower }}" hint-placeholder-val="{{ true }}">
@@ -805,12 +806,12 @@ button{font-family:inherit;color:inherit}
     <span>#</span><span></span><span>MANAGER</span><span style="text-align:right">SCORE</span>
   </div>
   <sc-for list="{{ powerRows }}" as="p" hint-placeholder-count="10">
-    <div sc-camel-on-click="{{ p.open }}" class="hov shot-tight" tabindex="0" role="button" style="display:grid;grid-template-columns:22px 30px minmax(0,1fr) 48px;gap:8px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line);cursor:pointer">
+    <div sc-camel-on-click="{{ p.open }}" class="hov shot-tight" tabindex="0" role="button" style="display:grid;grid-template-columns:22px 30px minmax(0,1fr) 48px;gap:8px;align-items:start;padding:10px 0;border-bottom:1px solid var(--line);cursor:pointer">
       <span style="font-family:'Big Shoulders Display';font-weight:800;font-size:18px;color:var(--muted)">{{ p.rank }}</span>
       <span style="font-family:'JetBrains Mono';font-size:11px;font-weight:600;color:{{ p.moveColor }}">{{ p.move }}</span>
       <div style="display:flex;align-items:center;gap:10px;min-width:0">
         <div class="crest" style="width:28px;height:28px;background:{{ p.color }};color:var(--onAccent);display:flex;align-items:center;justify-content:center;font-family:'Big Shoulders Display';font-weight:800;font-size:12px;flex:none"><span class="ini" data-i="{{ p.init }}">{{ p.init }}</span></div>
-        <div style="min-width:0"><div style="font-weight:600;font-size:15px">{{ p.m }}</div><div class="no-shot" style="font-family:'JetBrains Mono';font-size:10px;color:var(--muted);margin-top:1px">{{ p.sub }}</div></div>
+        <div style="min-width:0"><div style="font-weight:600;font-size:15px">{{ p.m }}</div><div class="no-shot" style="font-family:'JetBrains Mono';font-size:10px;color:var(--muted);margin-top:1px">{{ p.sub }}</div><sc-if value="{{ p.hasNote }}" hint-placeholder-val="{{ false }}"><div style="font-size:13px;line-height:1.35;margin-top:3px;text-wrap:pretty">{{ p.note }}</div></sc-if></div>
       </div>
       <span style="text-align:right;font-family:'JetBrains Mono';font-size:13px;font-weight:600">{{ p.score }}</span>
     </div>
@@ -818,6 +819,7 @@ button{font-family:inherit;color:inherit}
   <div class="shot-footer"><b>9FEAMG</b><span>{{ shotPower }}</span></div>
 </div>
 </sc-if>
+</div>
 
 <div class="cols">
 <div style="padding:30px 20px 0">

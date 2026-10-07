@@ -548,7 +548,9 @@ class Component extends DCLogic {
     const prevRank = NF > 1 ? Object.fromEntries(power(NF - 1).map((r, i) => [r.m, i + 1])) : {};
     const powerRows = NF ? power(NF).map((r, i) => {
       const mv = prevRank[r.m] ? prevRank[r.m] - (i + 1) : 0;
-      return { rank: i + 1, m: r.m, init: INIT[r.m], color: col(r.m), score: f1(r.score), sub: r.wl + ' · all-play ' + r.ap,
+      // One-liner per team for the latest rankings (data/season.js -> powerNotes[week]), from the writer.
+      const note = boothOn ? D.powerNotes?.[NF]?.[r.m] || '' : '';
+      return { rank: i + 1, m: r.m, init: INIT[r.m], color: col(r.m), score: f1(r.score), sub: r.wl + ' · all-play ' + r.ap, note, hasNote: !!note,
         move: mv > 0 ? '▲' + mv : mv < 0 ? '▼' + -mv : '–', moveColor: mv > 0 ? 'var(--pos)' : mv < 0 ? 'var(--neg)' : 'var(--muted)',
         open: () => { this.setState({ tab: 'Teams', team: r.m }); window.scrollTo(0, 0); } };
     }) : [];
@@ -672,9 +674,20 @@ class Component extends DCLogic {
 
     // Charts
     const hl = S.hl, dim = m => hl && hl != m ? .3 : 1, pickHl = m => () => this.setState({ hl: S.hl == m ? null : m });
-    const pfs = ST.map(x => x.pf), pas = ST.map(x => x.pa), x0 = Math.floor(Math.min(...pfs) / 10) * 10 - 5, x1 = Math.ceil(Math.max(...pfs) / 10) * 10 + 5, y0 = Math.floor(Math.min(...pas) / 10) * 10 - 10, y1 = Math.ceil(Math.max(...pas) / 10) * 10 + 10;
+    // Extra room above and below keeps the top and bottom dots clear of the corner labels.
+    const pfs = ST.map(x => x.pf), pas = ST.map(x => x.pa), x0 = Math.floor(Math.min(...pfs) / 10) * 10 - 5, x1 = Math.ceil(Math.max(...pfs) / 10) * 10 + 5, y0 = Math.floor(Math.min(...pas) / 10) * 10 - 25, y1 = Math.ceil(Math.max(...pas) / 10) * 10 + 25;
     const avg = a => a.reduce((s, v) => s + v, 0) / a.length, sx = v => ((v - x0) / (x1 - x0) * 100).toFixed(1) + '%', sy = v => ((y1 - v) / (y1 - y0) * 100).toFixed(1) + '%';
-    const scatter = ST.map(x => ({ init: INIT[x.m], color: col(x.m), x: sx(x.pf), y: sy(x.pa), op: dim(x.m), ring: hl == x.m ? 'var(--ink)' : 'var(--bg)', z: hl == x.m ? 5 : 1, pick: pickHl(x.m) }));
+    // Nudge overlapping dots apart so every crest stays readable. DX/DY are a dot's size
+    // as a share of the plot on a phone, the narrowest it gets.
+    const pts = ST.map(x => ({ x: (x.pf - x0) / (x1 - x0), y: (y1 - x.pa) / (y1 - y0) })), DX = 0.1, DY = 0.09;
+    for (let it = 0; it < 80; it++) for (let i = 0; i < pts.length; i++) for (let j = i + 1; j < pts.length; j++) {
+      const a = pts[i], b = pts[j], dx = (b.x - a.x) / DX, dy = (b.y - a.y) / DY, d = Math.hypot(dx, dy);
+      if (d >= 1) continue;
+      const push = (1 - d) / 2, ux = d ? dx / d : 1, uy = d ? dy / d : 0;
+      a.x -= ux * push * DX; b.x += ux * push * DX; a.y -= uy * push * DY; b.y += uy * push * DY;
+    }
+    const pct = v => (Math.min(0.97, Math.max(0.03, v)) * 100).toFixed(1) + '%';
+    const scatter = ST.map((x, i) => ({ init: INIT[x.m], color: col(x.m), x: pct(pts[i].x), y: pct(pts[i].y), op: dim(x.m), ring: hl == x.m ? 'var(--ink)' : 'var(--bg)', z: hl == x.m ? 5 : 1, pick: pickHl(x.m) }));
     const maxL = Math.max(0.01, ...ST.map(x => Math.abs(x.luck)));
     const luckBars = [...ST].sort((a, b) => b.luck - a.luck).map(x => ({ m: x.m, v: sgn(x.luck), pos: x.luck > 0 ? (x.luck / maxL * 100) + '%' : '0%', neg: x.luck < 0 ? (-x.luck / maxL * 100) + '%' : '0%', color: x.luck > 0 ? 'var(--pos)' : x.luck < 0 ? 'var(--neg)' : 'var(--muted)', op: dim(x.m), pick: pickHl(x.m) }));
     const topMax = Math.max(...ST.map(x => x.max ?? x.pf));
@@ -682,7 +695,7 @@ class Component extends DCLogic {
 
     return {
       ok: true, dataError: false,
-      scatter, scatterMidX: sx(avg(pfs)), scatterMidY: sy(avg(pas)), pfMin: x0, pfMax: x1, luckBars, benchBars, hlHint: hl ? hl + ' · tap again to clear' : 'Tap a team',
+      scatter, scatterMidX: sx(avg(pfs)), scatterMidY: sy(avg(pas)), pfMin: x0, pfMax: x1, paMin: y0, paMax: y1, luckBars, benchBars, hlHint: hl ? hl + ' · tap again to clear' : 'Tap a team',
       themeLabel, toggleTheme,
       draftIconCls: S.tab == 'Draft' ? 'hi play inv' : 'hi', goHome: e => this.goHome(e), openDraft: () => { this.setState({ tab: 'Draft' }); window.scrollTo(0, 0); },
       draftBtnBg: S.tab == 'Draft' ? 'var(--accent)' : 'var(--surface)', draftBtnFg: S.tab == 'Draft' ? 'var(--onAccent)' : 'var(--ink)', draftBtnBorder: S.tab == 'Draft' ? 'var(--accent)' : 'var(--line)',

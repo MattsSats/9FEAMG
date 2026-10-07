@@ -265,6 +265,10 @@ window.SEASON = {
     ]
   },
 
+  // Power rankings one-liners, by the last final week the rankings cover: { Manager: text }.
+  // Written by the writer session; a team without a line just shows its numbers.
+  powerNotes: {},
+
   // One-liner on each team page.
   roasts: {
     Tony: '3–1 on 2 adds all season. The first loss came with 21.30 points on the bench.',
