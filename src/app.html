@@ -543,7 +543,7 @@ button{font-family:inherit;color:inherit}
 
 <sc-if value="{{ hasRecap }}" hint-placeholder-val="{{ false }}">
   <div style="margin:12px 20px 0;display:flex;justify-content:space-between;align-items:center;gap:8px;padding:10px 14px;border:1px dashed var(--line);border-radius:14px">
-    <span style="font-family:'JetBrains Mono';font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)">Week recap · scores + Booth</span>
+    <span style="font-family:'JetBrains Mono';font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)">{{ recapBar }}</span>
     <span style="display:flex;gap:6px">
       <button class="share-btn" sc-camel-on-click="{{ linkHero }}" aria-label="Share a link to this week">Share</button>
       <button class="share-btn" sc-camel-on-click="{{ shareRecap }}" aria-label="Share every score and Booth line from this week as an image">{{ recapLabel }}</button>
@@ -639,10 +639,16 @@ button{font-family:inherit;color:inherit}
       </div>
       <div style="display:flex;flex-direction:column;margin-top:10px">
         <sc-for list="{{ booth }}" as="b" hint-placeholder-count="3">
-          <div style="display:grid;grid-template-columns:32px minmax(0,1fr);gap:12px;padding:12px 0;border-top:1px solid var(--line)">
-            <div class="crest" style="width:32px;height:32px;background:{{ b.color }};color:var(--onAccent);display:flex;align-items:center;justify-content:center;font-family:'Big Shoulders Display';font-weight:800;font-size:13px;flex:none"><span class="ini" data-i="{{ b.init }}">{{ b.init }}</span></div>
-            <div style="min-width:0;padding-top:5px">
-              <sc-if value="{{ b.isPreview }}" hint-placeholder-val="{{ false }}"><div style="font-family:'JetBrains Mono';font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--accentInk);margin-bottom:3px">Preview</div></sc-if>
+          <div style="padding:12px 0;border-top:1px solid var(--line)">
+            <!-- Each line is about its matchup: both crests and "Matt vs Kurt". -->
+            <div style="display:flex;align-items:center;gap:6px">
+              <sc-for list="{{ b.crests }}" as="c" hint-placeholder-count="2">
+                <div class="crest" style="width:24px;height:24px;background:{{ c.color }};color:var(--onAccent);display:flex;align-items:center;justify-content:center;font-family:'Big Shoulders Display';font-weight:800;font-size:10px;flex:none"><span class="ini" data-i="{{ c.init }}">{{ c.init }}</span></div>
+              </sc-for>
+              <span style="font-family:'JetBrains Mono';font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-left:2px">{{ b.matchup }}</span>
+              <sc-if value="{{ b.isPreview }}" hint-placeholder-val="{{ false }}"><span style="margin-left:auto;font-family:'JetBrains Mono';font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--accentInk)">Preview</span></sc-if>
+            </div>
+            <div style="min-width:0;margin-top:6px">
               <div style="font-size:15px;line-height:1.4;text-wrap:pretty">{{ b.text }}</div>
               <sc-if value="{{ b.hasPreview }}" hint-placeholder-val="{{ false }}"><div style="margin-top:6px;font-size:13px;line-height:1.4;color:var(--muted);text-wrap:pretty"><span style="font-family:'JetBrains Mono';font-size:9.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;margin-right:6px">Preview</span>{{ b.preview }}</div></sc-if>
             </div>

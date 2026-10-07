@@ -579,11 +579,15 @@ class Component extends DCLogic {
     // Week recap (final weeks): every final score with its Booth line, for sharing.
     // booth[week] runs in schedule order, one line per matchup. Closest finish first;
     // one score row per matchup keeps the phone-width image short.
-    const hasRecap = wk <= NF && !!PAIRS[wk];
+    // The live week gets the same image as a preview: projections before kickoff (live points
+    // once games start) with each matchup's Booth preview line.
+    const isFinal = wk <= NF, livePreview = !isFinal && wk == LW && !!PAIRS[wk] && !!LIVE?.scores;
+    const hasRecap = (isFinal || livePreview) && !!PAIRS[wk];
+    const liveIdx = LIVE_STARTED ? 0 : 1;
     const recap = hasRecap ? PAIRS[wk].map(([a, b], i) => {
-      const sa = SC[a][wk - 1], sb = SC[b][wk - 1];
+      const sa = isFinal ? SC[a][wk - 1] : LIVE.scores[a]?.[liveIdx] ?? 0, sb = isFinal ? SC[b][wk - 1] : LIVE.scores[b]?.[liveIdx] ?? 0;
       const side = (m, s, win) => ({ m, init: INIT[m], color: col(m), score: f2(s), weight: win ? 800 : 500, fg: win ? 'var(--ink)' : 'var(--muted)' });
-      const line = boothOn ? D.booth?.[wk]?.[i]?.[1] || '' : '';
+      const line = boothOn ? (isFinal ? D.booth?.[wk]?.[i]?.[1] : D.boothPreview?.[wk]?.[i]?.[1]) || '' : '';
       return { a: side(a, sa, sa > sb), b: side(b, sb, sb > sa), booth: line, hasBooth: !!line, gap: Math.abs(sa - sb), winner: sa > sb ? a : b };
     }).sort((x, y) => x.gap - y.gap).map((r, i) => ({ ...r, wide: i == 0, wideLabel: `Closest finish · ${r.winner} by ${f2(r.gap)}` })) : [];
     // The Booth, per matchup slot: the recap (after Monday night) leads, with the preview
@@ -591,7 +595,9 @@ class Component extends DCLogic {
     const recaps = D.booth?.[wk] || [], previews = D.boothPreview?.[wk] || [];
     const boothLines = [...Array(Math.max(recaps.length, previews.length)).keys()].map(i => {
       const r = recaps[i], p = previews[i], main = r || p;
-      return main && { init: INIT[main[0]], color: col(main[0]), text: main[1], isPreview: !r, preview: r && p ? p[1] : '', hasPreview: !!(r && p) };
+      const pair = PAIRS[wk]?.[i] || [main[0]];
+      return main && { crests: pair.map(m => ({ m, init: INIT[m], color: col(m) })), matchup: pair.join(' vs '),
+        text: main[1], isPreview: !r, preview: r && p ? p[1] : '', hasPreview: !!(r && p) };
     }).filter(Boolean);
     // Parlay requests (live week only): who's asking, a risk slider, legs, and optional
     // players (their own starters) or a game. A published parlay with request: <manager> fills it.
@@ -911,7 +917,7 @@ class Component extends DCLogic {
       // Share buttons
       shareHero: e => this.share('hero', e), shareStandings: e => this.share('standings', e), shareTeam: e => this.share('team', e),
       shareLabel: { hero: S.sharing == 'hero' ? '…' : 'Image', standings: S.sharing == 'standings' ? '…' : 'Image', team: S.sharing == 'team' ? '…' : 'Image' },
-      hasRecap, recap, recapTitle: `Week ${wk} · Final`, shareRecap: e => this.share('recap', e), recapLabel: S.sharing == 'recap' ? '…' : 'Image',
+      hasRecap, recap, recapTitle: `Week ${wk} · ${isFinal ? 'Final' : LIVE_STARTED ? 'Live' : 'Preview'}`, recapBar: isFinal ? 'Week recap · scores + Booth' : LIVE_STARTED ? 'Live week · scores + Booth' : 'Week preview · projections + Booth', shareRecap: e => this.share('recap', e), recapLabel: S.sharing == 'recap' ? '…' : 'Image',
       powerRows, hasPower: powerRows.length > 0, powerSub: `Through week ${NF}`, sharePower: e => this.share('power', e), powerLabel: S.sharing == 'power' ? '…' : 'Image',
       linkPower: e => this.shareLink(location.origin + '/#power', '9FEAMG · Power rankings', e), shotPower: `Power rankings · through week ${NF}`,
       // Season charts: a link to the chart and an image of it.
