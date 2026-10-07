@@ -853,7 +853,7 @@ button{font-family:inherit;color:inherit}
     <div sc-camel-on-click="{{ p.open }}" class="hov shot-tight" tabindex="0" role="button" style="display:grid;grid-template-columns:22px 30px minmax(0,1fr) 48px;gap:8px;align-items:start;padding:10px 0;border-bottom:1px solid var(--line);cursor:pointer">
       <span style="font-family:'Big Shoulders Display';font-weight:800;font-size:18px;color:var(--muted)">{{ p.rank }}</span>
       <span style="font-family:'JetBrains Mono';font-size:11px;font-weight:600;color:{{ p.moveColor }}">{{ p.move }}</span>
-      <div style="display:flex;align-items:center;gap:10px;min-width:0">
+      <div style="display:flex;align-items:flex-start;gap:10px;min-width:0">
         <div class="crest" style="width:28px;height:28px;background:{{ p.color }};color:var(--onAccent);display:flex;align-items:center;justify-content:center;font-family:'Big Shoulders Display';font-weight:800;font-size:12px;flex:none"><span class="ini" data-i="{{ p.init }}">{{ p.init }}</span></div>
         <div style="min-width:0"><div style="font-weight:600;font-size:15px">{{ p.m }}</div><div class="no-shot" style="font-family:'JetBrains Mono';font-size:10px;color:var(--muted);margin-top:1px">{{ p.wl }} · luck <span style="color:{{ p.luckColor }};font-weight:600">{{ p.luck }}</span></div><sc-if value="{{ p.hasNote }}" hint-placeholder-val="{{ false }}"><div style="font-size:13px;line-height:1.35;margin-top:3px;text-wrap:pretty">{{ p.note }}</div></sc-if></div>
       </div>
