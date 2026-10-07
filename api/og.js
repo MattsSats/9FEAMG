@@ -2,6 +2,7 @@
 // drawn from the live data/season.js, so odds and HIT/MISS results show up
 // without regenerating anything.
 import { ImageResponse } from '@vercel/og';
+import { readFile } from 'node:fs/promises';
 import { loadSeason, findParlay, describe } from './_parlays.js';
 import { readJson } from './_yahoo.js';
 
@@ -11,11 +12,22 @@ const C = { bg: '#F7F5F0', surface2: '#EFECE5', line: '#E0DBD0', ink: '#191815',
 const TAG = { open: [C.surface2, C.muted, 'OPEN'], hit: [C.pos, C.onStatus, 'HIT'], miss: [C.neg, C.onStatus, 'MISS'] };
 const STATUS = { OPEN: [C.surface2, C.muted], CASHED: [C.pos, C.onStatus], BUSTED: [C.neg, C.onStatus] };
 
-// Google Fonts serves TrueType to clients it doesn't recognize, which is what Satori needs.
+// The three fonts ship with the site (api/_fonts, SIL Open Font License) so previews don't
+// wait on Google. If a file is ever missing, fall back to Google Fonts, which serves TrueType
+// to clients it doesn't recognize (what Satori needs).
+const LOCAL = {
+  'Big Shoulders Display900': new URL('./_fonts/BigShouldersDisplay-900.ttf', import.meta.url),
+  'Instrument Sans600': new URL('./_fonts/InstrumentSans-600.ttf', import.meta.url),
+  'JetBrains Mono600': new URL('./_fonts/JetBrainsMono-600.ttf', import.meta.url)
+};
 const fontCache = new Map();
 async function font(family, weight) {
   const key = family + weight;
   if (!fontCache.has(key)) fontCache.set(key, (async () => {
+    try {
+      const buf = await readFile(LOCAL[key]);
+      return { name: family, weight, style: 'normal', data: buf.buffer.slice(buf.byteOffset, buf.byteOffset + buf.byteLength) };
+    } catch { /* not bundled: fetch from Google below */ }
     const css = await (await fetch(`https://fonts.googleapis.com/css2?family=${family.replace(/ /g, '+')}:wght@${weight}`)).text();
     const src = css.match(/src: url\((.+?)\) format\('(?:truetype|opentype)'\)/)?.[1];
     if (!src) throw new Error('no ttf for ' + family);
