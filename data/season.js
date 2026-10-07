@@ -76,6 +76,10 @@ window.SEASON = {
     sheetNote: 'Projections until kickoff.'
   },
 
+  // Thursday of Week 1. Each leg's kickoff ('Thu 7:15 PM · TB @ DAL') counts from that week's
+  // Thursday, which is how tails lock when a ticket's first game starts.
+  week1Thursday: '2026-09-10',
+
   // Shown on the week after the live one.
   next: {
     week: 6,

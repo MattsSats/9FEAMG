@@ -14,6 +14,27 @@ export async function loadSeason(origin) {
 export const anchorFor = (week, p) =>
   `w${week}-` + String(p.id ?? p.title ?? p.owner).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 
+// A leg's kickoff as a Date: its day and time (Central) counted from that week's Thursday.
+const DAYS = { Thu: 0, Fri: 1, Sat: 2, Sun: 3, Mon: 4, Tue: 5, Wed: 6 };
+export function kickoff(season, week, game) {
+  const m = String(game || '').match(/^(Thu|Fri|Sat|Sun|Mon|Tue|Wed)\s+(\d{1,2}):(\d{2})\s*(AM|PM)/);
+  if (!m || !season?.week1Thursday) return null;
+  const d = new Date(season.week1Thursday + 'T12:00:00Z');
+  d.setUTCDate(d.getUTCDate() + 7 * (week - 1) + DAYS[m[1]]);
+  const h = (+m[2] % 12) + (m[4] == 'PM' ? 12 : 0), ymd = d.toISOString().slice(0, 10);
+  // Central Daylight Time until the first Sunday of November, Standard after.
+  const cdt = d.getUTCMonth() < 10 || (d.getUTCMonth() == 10 && d.getUTCDate() < 1 + ((7 - new Date(Date.UTC(d.getUTCFullYear(), 10, 1)).getUTCDay()) % 7));
+  return new Date(`${ymd}T${String(h).padStart(2, '0')}:${m[3]}:00${cdt ? '-05:00' : '-06:00'}`);
+}
+// Tails lock when the ticket's first game kicks off, or once any leg is graded.
+export function locked(season, week, p, now = Date.now()) {
+  if (p.legs.some(l => (l.status || 'open') != 'open')) return true;
+  const ks = p.legs.map(l => kickoff(season, week, l.game)).filter(Boolean);
+  return ks.length > 0 && now >= Math.min(...ks);
+}
+// Everyone on a ticket: placedBy and tailers from season.js plus taps saved through /api/tails.
+export const onIt = (p, taps = []) => [...new Set([...(p.placedBy || []), ...(p.tailers || []), ...taps])];
+
 export function findParlay(season, slug) {
   for (const [week, list] of Object.entries(season?.parlays || {})) {
     for (const p of list) if (anchorFor(week, p) == slug) return { week: +week, p };
@@ -54,7 +75,7 @@ const pct = x => x < 0.1 ? (Math.max(x, 0.001) * 100).toFixed(1) + '%' : Math.ro
 const toAmerican = d => d >= 2 ? '+' + Math.round((d - 1) * 100) : '−' + Math.round(100 / (d - 1));
 
 // Everything the preview needs about one parlay.
-export function describe(week, p) {
+export function describe(week, p, taps = []) {
   const st = p.legs.map(l => l.status || 'open');
   const status = st.includes('miss') ? 'BUSTED' : st.length && st.every(s => s == 'hit') ? 'CASHED' : 'OPEN';
   // A ticket-level odds (same-game parlays, priced by the book as one bet) overrides the leg math.
@@ -77,7 +98,9 @@ export function describe(week, p) {
     payout: priced ? (10 * dec).toFixed(2) : null,
     legs: p.legs.map(l => ({ text: l.text, odds: l.sgp ? 'SGP ' + l.sgp : l.odds ? String(l.odds).replace('-', '−') : '', status: l.status || 'open' })),
     // Changes whenever odds or results change, so chat apps fetch a fresh image.
-    version: `${p.odds}|${p.sgps}|` + p.legs.map(l => `${l.odds}:${l.status}`).join('|')
+    // Managers on the ticket; the owner tapping their own ticket means they placed it.
+    with: onIt(p, taps).map(m => (p.owners || [p.owner]).includes(m) ? `${m} (placed)` : m),
+    version: `${p.odds}|${p.sgps}|${onIt(p, taps)}|` + p.legs.map(l => `${l.odds}:${l.status}`).join('|')
   };
 }
 

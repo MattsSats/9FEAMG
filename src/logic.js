@@ -70,6 +70,20 @@ const NFL = { Ari: 'Cardinals', Atl: 'Falcons', Bal: 'Ravens', Buf: 'Bills', Car
 // The leg a picked player can be: anytime TD, a yardage over, or their team's moneyline.
 const PICK_LEGS = [{ k: 'td', label: () => 'TD' }, { k: 'yards', label: () => 'Yards' }, { k: 'ml', label: p => (NFL[p.nfl] || 'Team') + ' ML' }];
 const pickText = { td: 'TD', yards: 'yards', ml: 'ML' };
+// Leg kickoffs as real times (same rule as api/_parlays.js): the day and Central time in
+// legs[].game, counted from that week's Thursday. Tails lock at a ticket's first kickoff.
+const KICK_DAYS = { Thu: 0, Fri: 1, Sat: 2, Sun: 3, Mon: 4, Tue: 5, Wed: 6 };
+function kickoff(week, game) {
+  const m = String(game || '').match(/^(Thu|Fri|Sat|Sun|Mon|Tue|Wed)\s+(\d{1,2}):(\d{2})\s*(AM|PM)/);
+  if (!m || !D?.week1Thursday) return null;
+  const d = new Date(D.week1Thursday + 'T12:00:00Z');
+  d.setUTCDate(d.getUTCDate() + 7 * (week - 1) + KICK_DAYS[m[1]]);
+  const h = (+m[2] % 12) + (m[4] == 'PM' ? 12 : 0), ymd = d.toISOString().slice(0, 10);
+  const cdt = d.getUTCMonth() < 10 || (d.getUTCMonth() == 10 && d.getUTCDate() < 1 + ((7 - new Date(Date.UTC(d.getUTCFullYear(), 10, 1)).getUTCDay()) % 7));
+  return new Date(`${ymd}T${String(h).padStart(2, '0')}:${m[3]}:00${cdt ? '-05:00' : '-06:00'}`);
+}
+const tailsLocked = (week, p) => p.legs.some(l => (l.status || 'open') != 'open')
+  || (ks => ks.length > 0 && Date.now() >= Math.min(...ks))(p.legs.map(l => kickoff(week, l.game)).filter(Boolean));
 const legCount = l => l == 'any' ? null : l == '6+' ? 6 : +l;
 // A warning (never a block) when n legs of this type can't land in the risk range.
 function reqReach(risk, bt, legs) {
@@ -225,7 +239,7 @@ class Component extends DCLogic {
   state = { tab: this.props.startTab ?? 'Gameday', week: HOME_WK, theme: null, sheet: null, team: MGR[0], wire: '7 days', draftMode: 'By round', draftRound: 1, draftTeam: MGR[0], rosters: null, draft: null, tx: null, loaded: false,
     // Parlay request form: who's asking is remembered on this device.
     reqMgr: (() => { try { const m = localStorage.getItem('9feamg-req-mgr'); return MGR.includes(m) ? m : null; } catch { return null; } })(),
-    req: { risk: 1, legs: 'any', players: [], playerLegs: {}, game: '', sending: false }, reqs: null };
+    req: { risk: 1, legs: 'any', players: [], playerLegs: {}, game: '', sending: false }, tails: {}, tailAsk: null, tailBusy: null, reqs: null };
   componentDidMount() {
     // Keyboard: Enter or Space activates clickable rows (role="button"); Escape closes the lineup sheet.
     document.addEventListener('keydown', e => {
@@ -243,6 +257,7 @@ class Component extends DCLogic {
     // Parlay requests for the live week (api/requests.js). The slider and the game box are read
     // with plain listeners; everything else on the form is a tap.
     if (LW) this.loadRequests();
+    this.loadTails();
     const onReq = e => {
       const el = e.target;
       if (el?.dataset?.reqRisk != null) this.setState({ req: { ...this.state.req, risk: +el.value } });
@@ -262,6 +277,28 @@ class Component extends DCLogic {
   loadRequests() {
     fetch('/api/requests?week=' + LW, { cache: 'no-store' }).then(r => r.ok ? r.json() : null)
       .then(d => d && this.setState({ reqs: d.requests || {} })).catch(() => {});
+  }
+  // Who's on each ticket (/api/tails), for every week that has tickets.
+  loadTails() {
+    for (const w of Object.keys(D?.parlays || {}))
+      fetch('/api/tails?week=' + w, { cache: 'no-store' }).then(r => r.ok ? r.json() : null)
+        .then(d => d && this.setState({ tails: { ...this.state.tails, [w]: d.tails || {} } })).catch(() => {});
+  }
+  // "I'm on it": the first tap asks who you are (remembered with the request form's pick).
+  async toggleTail(week, slug, as) {
+    const m = as || this.state.reqMgr;
+    if (!m) return this.setState({ tailAsk: slug });
+    if (as) { try { localStorage.setItem('9feamg-req-mgr', as); } catch {} }
+    this.setState({ reqMgr: m, tailAsk: null, tailBusy: slug });
+    try {
+      const r = await fetch('/api/tails', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ week, slug, manager: m }) });
+      const d = await r.json().catch(() => ({}));
+      if (!r.ok) throw new Error(d.error || 'Couldn’t save that. Try again.');
+      this.setState({ tailBusy: null, tails: { ...this.state.tails, [week]: d.tails || {} } });
+    } catch (err) {
+      this.setState({ tailBusy: null });
+      this.toast(err.message || 'Couldn’t save that. Try again.');
+    }
   }
   async sendRequest(cancel) {
     const S = this.state, m = S.reqMgr;
@@ -630,7 +667,11 @@ class Component extends DCLogic {
       const proj = wk == LW ? LIVE.scores?.[p.owner]?.[1] : null, angle = [];
       if (mine) angle.push((mine == legs.length ? (mine == 1 ? 'The leg is' : `All ${mine} legs are`) : `${mine} of ${legs.length} legs ${mine == 1 ? 'is' : 'are'}`) + ` ${p.owner}’s starter${mine == 1 ? '' : 's'}.` + (proj ? ` If this cashes, that ${f2(proj)} projection is probably low.` : ''));
       if (theirs) angle.push(`${theirs == 1 ? 'One leg is' : theirs + ' legs are'} ${vs}’s starter${theirs == 1 ? '' : 's'}. ${p.owner} is betting on the opponent.`);
-      (p.tailers || []).filter(m => m == vs && mine).forEach(m => angle.push(`${m} is rooting against these players in the matchup and for them on the ticket.`));
+      // Everyone on the ticket: placedBy/tailers from season.js plus taps from the site.
+      const taps = S.tails?.[wk]?.[anchor] || [], fixed = [...(p.placedBy || []), ...(p.tailers || [])];
+      const onIt = [...new Set([...fixed, ...taps])], owners = p.owners || [p.owner], me = S.reqMgr;
+      const lockedNow = tailsLocked(wk, p), iTapped = !!me && taps.includes(me);
+      onIt.filter(m => m == vs && mine).forEach(m => angle.push(`${m} is rooting against these players in the matchup and for them on the ticket.`));
       // Joint tickets (owners: ['Andy', 'Tony']): how many legs come from each lineup.
       if (p.owners?.length > 1) {
         const per = p.owners.map(m => ({ m, n: legs.filter(l => l.spot && l.spot.m == m && l.spot.starter).length })).filter(x => x.n);
@@ -652,8 +693,15 @@ class Component extends DCLogic {
           return decs.map(x => x.toFixed(2)).join(' × ') + ` = ×${dec.toFixed(2)} · before kickoff about 1 in ${Math.max(1, Math.round(1 / prob))}`;
         })() : `${parlayParts(p).filter(o => toDecimal(o)).length} of ${parlayParts(p).length} ${p.sgps ? 'parts' : 'legs'} priced`,        payout: !priced ? 'Odds calculate once every leg has a line' : (status == 'CASHED' ? '$10 paid $' : status == 'BUSTED' ? '$10 would have paid $' : '$10 pays $') + (10 * dec).toFixed(2),
         angle: angle.join(' '), hasAngle: angle.length > 0,
-        // Tailing your own opponent's parlay is a hedge: you win the matchup or cash the ticket.
-        tailers: (p.tailers || []).map(m => ({ m, color: col(m), tag: m == vs ? 'HEDGE' : 'TAIL' })), hasTailers: !!p.tailers?.length,
+        // "On it" row: crests of everyone on the ticket. The owner on it means they placed it;
+        // tailing your own opponent's parlay is a hedge (win the matchup or cash the ticket).
+        withList: onIt.map(m => { const tag = owners.includes(m) ? 'PLACED' : m == vs ? 'HEDGE' : ''; return { m, init: INIT[m] ?? m.slice(0, 2).toUpperCase(), color: ownerCol(m), tag, hasTag: !!tag }; }),
+        hasWith: onIt.length > 0, withLabel: status == 'CASHED' ? 'Cashed with' : status == 'BUSTED' ? 'Busted with' : 'On it',
+        canTail: !lockedNow && !(me && fixed.includes(me)), showTails: onIt.length > 0 || !lockedNow,
+        tailLabel: S.tailBusy == anchor ? '…' : iTapped ? (owners.includes(me) ? 'Placed ✓' : 'You’re on it ✓') : me && owners.includes(me) ? 'I placed it' : 'I’m on it',
+        tailPressed: String(iTapped), tailBg: iTapped ? 'var(--accent)' : 'transparent', tailFg: iTapped ? 'var(--onAccent)' : 'var(--ink)', tailBorder: iTapped ? 'var(--accent)' : 'var(--line)',
+        tapTail: () => this.toggleTail(wk, anchor),
+        asking: S.tailAsk == anchor, askMgrs: MGR.map(m => ({ m, init: INIT[m], color: col(m), pick: () => this.toggleTail(wk, anchor, m) })), cancelAsk: () => this.setState({ tailAsk: null }),
         booth: p.booth || '', hasBooth: boothOn && !!p.booth,
         share: e => this.share(shot, e), shareLabel: S.sharing == shot ? '…' : 'Image',
         // /p/<anchor> serves a preview of this parlay to chat apps, then forwards to /#<anchor>.

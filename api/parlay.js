@@ -2,6 +2,7 @@
 // Open Graph tags describe this parlay and point at its generated image
 // (/api/og). People are redirected to the card on the site (/#<slug>).
 import { loadSeason, findParlay, describe, escapeHtml, hash } from './_parlays.js';
+import { readJson } from './_yahoo.js';
 
 const BOTS = /bot|crawl|spider|facebookexternalhit|facebot|twitterbot|slackbot|discordbot|whatsapp|telegram|linkedin|embedly|skype|iframely|preview/i;
 
@@ -20,7 +21,9 @@ export default {
     try { found = findParlay(await loadSeason(url.origin), slug); } catch { /* fall back to the site preview */ }
     if (!found) return Response.redirect(home.href, 302);
 
-    const d = describe(found.week, found.p);
+    let taps = [];
+    try { taps = (await readJson(`tails/w${found.week}.json`))?.tails?.[slug] || []; } catch { /* none yet */ }
+    const d = describe(found.week, found.p, taps);
     const title = `${d.title} · ${d.odds ? 'Parlay ' + d.odds : 'Week ' + d.week}${d.status != 'OPEN' ? ' · ' + d.status : ''}`;
     const desc = d.legs.map(l => l.text).join(' · ');
     const img = new URL(`/api/og?slug=${slug}&v=${hash(d.version)}`, url.origin).href;

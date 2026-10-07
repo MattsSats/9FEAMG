@@ -3,6 +3,7 @@
 // without regenerating anything.
 import { ImageResponse } from '@vercel/og';
 import { loadSeason, findParlay, describe } from './_parlays.js';
+import { readJson } from './_yahoo.js';
 
 // Light-theme tokens from the 9FEAMG design system (same values as :root in src/app.html).
 // Open pills use surface2 so they stand out from the page instead of white on cream.
@@ -37,7 +38,9 @@ export default {
     try { found = findParlay(await loadSeason(url.origin), slug); } catch { /* handled below */ }
     if (!found) return Response.redirect(new URL('/og.png', url.origin).href, 302);
 
-    const d = describe(found.week, found.p);
+    let taps = [];
+    try { taps = (await readJson(`tails/w${found.week}.json`))?.tails?.[slug] || []; } catch { /* none yet */ }
+    const d = describe(found.week, found.p, taps);
     const shown = d.legs.slice(0, MAX_LEGS), extra = d.legs.length - shown.length;
     const [sBg, sFg] = STATUS[d.status];
     const mono = 'JetBrains Mono', display = 'Big Shoulders Display', sans = 'Instrument Sans';
@@ -63,11 +66,14 @@ export default {
           shown.map(legRow),
           extra > 0 ? h('div', { fontFamily: mono, fontSize: 22, color: C.muted, paddingTop: 12 }, `+ ${extra} more`) : null)),
       h('div', { justifyContent: 'space-between', alignItems: 'center', padding: '20px 64px 34px', borderTop: `2px dashed ${C.line}`, marginTop: 'auto' },
+        h('div', { flexDirection: 'column', gap: 8 },
         h('div', { alignItems: 'baseline', gap: 24 },
           // A finished ticket with a leg that was never priced has no total; say so instead of "lines TBD".
           h('div', { fontFamily: display, fontSize: 52, fontWeight: 900, lineHeight: 1 }, d.odds ? `PARLAY ${d.odds}` : d.status == 'OPEN' ? 'LINES TBD' : d.status),
           !d.odds && d.status != 'OPEN' ? h('div', { fontFamily: mono, fontSize: 24, fontWeight: 600, color: C.muted }, 'odds not recorded') : null,
           d.payout ? h('div', { fontFamily: mono, fontSize: 24, fontWeight: 600, color: C.muted }, `$10 ${d.status == 'CASHED' ? 'paid' : d.status == 'BUSTED' ? 'would have paid' : 'pays'} ${d.payout}` + (d.chance ? ` · ~${d.chance} to hit` : '')) : null),
+          // Who's on it: "On it", or "Cashed with" / "Busted with" once it settles.
+          d.with.length ? h('div', { fontFamily: mono, fontSize: 20, fontWeight: 600, letterSpacing: 1, color: C.accentInk }, `${d.status == 'CASHED' ? 'CASHED WITH' : d.status == 'BUSTED' ? 'BUSTED WITH' : 'ON IT'}: ${d.with.join(', ')}`) : null),
         h('div', { alignItems: 'flex-end', gap: 4 },
           h('div', { fontFamily: display, fontSize: 48, fontWeight: 900, lineHeight: 1 }, '9FEAMG'),
           h('div', { width: 12, height: 12, background: C.accent, marginBottom: 6 }))),
