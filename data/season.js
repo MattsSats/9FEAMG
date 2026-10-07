@@ -108,30 +108,30 @@ window.SEASON = {
   // is whose crest shows next to the line (whoever the line is mostly about).
   booth: {
     1: [
-      ['Matt', 'Matt lost to Pablo by 4.80 with Christian Watson’s 29.70 on the bench while DeVonta Smith started for 6.80. Unlucky is one word for it.'],
+      ['Matt', 'Pablo beat Matt by 4.80 because Matt benched Watson’s 29.70 to start DeVonta’s 6.80. Unlucky is one word for it.'],
       ['Colin', 'Colin opened the season with 65.66, lowest of the week, and lost to Tony by 57.40. Tony thanks Colin for the service.'],
-      ['Tristan', 'Tristan put up 144.36, the top score of the week, and beat Kurt by 43.76. Ashton Jeanty had 29.70 and Bijan Robinson 27.30.'],
-      ['Jerger', 'Jerger scored 124.06 and lost to Andy by 15.28, with Jaxson Dart’s 26.60 on the bench. Some weeks the schedule picks you.'],
-      ['Mr. G', 'Mr. G put up 135.22 in Week 1 and beat DLin by 35.40. Frame it. It has been downhill since.']
+      ['Kurt', 'Tristan put up 144.36, the top score of the week, and beat Kurt by 43.76. Kurt started Loveland, who scored 0.00.'],
+      ['Jerger', 'Jerger scored 124.06, fourth-best of the week, and lost to Andy anyway. Starting Dart over Herbert still comes up 2.94 short.'],
+      ['Mr. G', 'Mr. G opened with 135.22, third-best of the week, and beat DLin by 35.40. Not bad for someone who’s definitely not a Boomer.']
     ],
     2: [
-      ['Kurt', 'Kurt lost to DLin by 11.20 with Saquon Barkley at 2.50 against a 13.79 projection. DLin won with Jared Goff’s 29.78 on the bench.'],
-      ['Tony', 'Tony dropped 154.52 on Mr. G, the top score of the season so far, and won by 70.10. Mr. G has asked that the tape not be shared.'],
-      ['Jerger', 'Jerger lost to Tristan by 11.50. Travis Kelce scored 20.60 on the bench while Malik Nabers started and scored 0.60.'],
+      ['Kurt', 'DLin beat Kurt by 11.20 with Goff’s 29.78 on the bench. Kurt’s first-round pick Saquon scored 2.50, and Kurt is 0–2.'],
+      ['Mr. G', 'Tony dropped 154.52 on Mr. G, the top score of the season so far, and won by 70.10. Mr. G has asked that the tape not be shared.'],
+      ['Jerger', 'Tristan beat Jerger by 11.50, and Jerger had Kelce’s 20.60 on the bench behind Nabers’ 0.60. Yahoo’s #1 fan, everybody.'],
       ['Andy', 'Andy scored 75.96 and lost to Matt by 29.68. DJ Moore started and finished at −0.10. The gibbing has paused.'],
-      ['Pablo', 'Pablo posted 70.92, lowest of the week. Colin benched Davante Adams for 35.50 and still won by 29.16.']
+      ['Pablo', 'Colin benched Davante’s 35.50 and still beat Pablo by 29.16. Pablo’s 70.92 was the lowest score of the week.']
     ],
     3: [
-      ['Colin', 'Colin lost to Andy by 3.84 with Joe Burrow’s 22.58 on the bench while Patrick Mahomes started for 16.94. That swap wins it.'],
-      ['Pablo', 'Pablo lost to Tony by 9.04 with Geno Smith (26.04) and Juwan Johnson (19.30) on the bench. Either one wins it.'],
-      ['Matt', 'Christian Watson on Matt’s bench, again: 19.10 while Justin Jefferson started for 4.20. Matt lost to Tristan by 7.16.'],
-      ['DLin', 'DLin managed 82.52 and lost to Jerger by 19.62, with Harold Fannin Jr. (20.60) and Michael Wilson (20.40) on the bench. Toilet Bowl King is starting to look like a mission statement.'],
-      ['Kurt', 'Kurt hung 135.88 on Mr. G, the top score of the week. Mr. G’s 75.06 was the lowest, with Tyler Shough’s 24.80 on the bench.']
+      ['Colin', 'Colin lost to Andy by 3.84 with Burrow’s 22.58 on the bench while Mahomes started for 16.94. That swap wins it.'],
+      ['Tony', 'Tony went to 3–0 with 95.42, seventh-best of the week, because Pablo started Schultz (4.50) over Juwan Johnson (19.30). Fraud watch begins.'],
+      ['Matt', 'Matt lost to Tristan by 7.16 with Watson’s 19.10 on the bench, again. Jefferson started and scored 4.20.'],
+      ['DLin', 'DLin managed 82.52 and lost to Jerger by 19.62 with Fannin’s 20.60 on the bench. Toilet Bowl King is starting to look like a mission statement.'],
+      ['Mr. G', 'Mr. G started Maye over Shough for the second straight week: Maye 5.76, Shough 24.80. Kurt won by 60.82 for a first win.']
     ],
     4: [
       ['Tony', 'Andy won by 5.56 because Tony benched Ollie Gordon II’s 17.00 for Bucky’s 6.10. Tony’s first loss was self-inflicted.'],
-      ['Tristan', 'Tristan scored 125.88, third-best in the league, and still lost to Colin. Wrong week to draw the second-best score.'],
-      ['Matt', 'DLin beat Matt by 22.60. Matt’s starting receivers combined for 13.50, while Judkins scored 18.60 on the bench by himself.'],
+      ['Tristan', 'Tristan scored 125.88, third-best in the league, lost to Colin anyway, and declared the season over. Tristan is still in first.'],
+      ['Matt', 'Matt lost by 22.60 to the reigning Toilet Bowl King. DLin’s JT and Higgins outscored Matt’s three starting receivers by 29.90.'],
       ['Kurt', 'Jerger left Nabers’ 20.20 on the bench and still won, because Kurt started Saquon (1.50) over JCM (6.00). Two bad lineups, one loser.'],
       ['Mr. G', 'Pablo was projected to lose to Mr. G by 30.35 and won by 39.94. Opponents keep saving their best for Mr. G.']
     ]
