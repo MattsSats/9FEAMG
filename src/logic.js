@@ -251,7 +251,8 @@ class Component extends DCLogic {
     setTimeout(() => this.loadShotLib().catch(() => {}), 1500);
     // Parlay deep links: #w4-the-truce opens that week and scrolls to the card.
     this.openHash();
-    window.addEventListener('hashchange', () => this.openHash());
+    // Back/forward and typed hashes (popstate fires for both).
+    window.addEventListener('popstate', () => this.openHash(true));
   }
   loadRequests() {
     fetch('/api/requests?week=' + LW, { cache: 'no-store' }).then(r => r.ok ? r.json() : null)
@@ -281,9 +282,11 @@ class Component extends DCLogic {
     if (location.pathname != '/' || location.search || location.hash) history.pushState(null, '', '/');
     window.scrollTo(0, 0);
   }
-  openHash() {
-    // #w5 opens that week, #season the standings, #team-mr-g a team page.
+  openHash(nav) {
+    // #w5 opens that week, #season the standings, #team-mr-g a team page, #wire and #draft those tabs.
     const h = location.hash, wk = h.match(/^#w(\d+)$/), tm = h.match(/^#team-([\w-]+)$/);
+    if (!h && nav) { this.setState({ tab: 'Gameday', week: HOME_WK, sheet: null }); window.scrollTo(0, 0); return; }
+    if (h == '#wire' || h == '#draft') { this.setState({ tab: h == '#wire' ? 'Wire' : 'Draft', sheet: null }); window.scrollTo(0, 0); return; }
     if (wk) { this.setState({ tab: 'Gameday', week: +wk[1], sheet: null }); window.scrollTo(0, 0); return; }
     if (h == '#season') { this.setState({ tab: 'Season', sheet: null }); window.scrollTo(0, 0); return; }
     // Season sections: #power, #pfpa, #luck, #bench open the Season tab scrolled to that section.
@@ -382,7 +385,21 @@ class Component extends DCLogic {
     setTimeout(() => URL.revokeObjectURL(a.href), 1000);
     this.toast('Image saved.');
   }
-  componentDidUpdate() { this.applyTheme(); this.syncRiskSlider(); }
+  componentDidUpdate() { this.applyTheme(); this.syncRiskSlider(); this.syncUrl(); }
+  // The address bar follows the tabs, so it's always a link to what's on screen:
+  // / for this week's Gameday, #w3 for another week, #season, #team-mr-g, #wire, #draft.
+  // A deep link that's already more specific (#w4-the-truce, #power) stays put.
+  syncUrl() {
+    const S = this.state, h = location.hash;
+    const want = S.tab == 'Gameday' ? (S.week == HOME_WK ? '' : '#w' + S.week)
+      : S.tab == 'Season' ? '#season' : S.tab == 'Teams' ? '#team-' + teamSlug(S.team)
+      : S.tab == 'Wire' ? '#wire' : S.tab == 'Draft' ? '#draft' : null;
+    if (want == null || h == want) return;
+    if (S.tab == 'Gameday' && (h == '#w' + S.week || h.startsWith('#w' + S.week + '-'))) return;
+    if (S.tab == 'Season' && ['#power', '#pfpa', '#luck', '#bench'].includes(h)) return;
+    if (!want && !h) return;
+    history.pushState(null, '', want || location.pathname + location.search);
+  }
   // The risk slider isn't bound to a value (a bound one is read-only here), so set its
   // position from state when it first appears or the form resets.
   syncRiskSlider() {

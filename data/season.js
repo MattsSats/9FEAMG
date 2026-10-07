@@ -97,9 +97,9 @@ window.SEASON = {
   // matchup can change, so tie the caption to it: { pair: ['Matt', 'DLin'], text }.
   // If another matchup takes over, the site writes a plain caption from the scores.
   captions: {
-    1: 'Pablo held off Matt by 4.8. Pablo would like this one framed, since it may be a while.',
-    2: 'DLin beat Kurt 100.6–89.4. Neither fan base was reached for comment.',
-    3: 'Andy beat Colin by 3.9. Colin is expected to blame the kicker, the refs and Yahoo.',
+    1: 'Pablo held off Matt by 4.80. Pablo would like this one framed, since it may be a while.',
+    2: 'DLin beat Kurt 100.56–89.36. Neither fan base was reached for comment.',
+    3: 'Andy beat Colin by 3.84. Colin is expected to blame the kicker, the refs and Yahoo.',
     4: 'Jerger beat Kurt 113.66–112.22. Chris Olave needed 14.17 on Monday night and scored 15.60.'
   },
 
