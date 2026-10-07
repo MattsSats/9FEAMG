@@ -509,6 +509,7 @@ button{font-family:inherit;color:inherit}
     <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;padding:14px 16px 0;min-height:46px">
       <span style="font-family:'JetBrains Mono';font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--accentInk);font-weight:600">{{ heroLabel }}</span>
       <span class="no-shot" style="display:flex;align-items:center;gap:12px">
+        <button class="share-btn" sc-camel-on-click="{{ linkHero }}" aria-label="Share a link to this week">Share</button>
         <button class="share-btn" sc-camel-on-click="{{ shareHero }}" aria-label="Share this matchup as an image">{{ shareLabel.hero }}</button>
         <span style="font-family:'JetBrains Mono';font-size:11px;color:var(--muted)">Lineups ›</span>
       </span>
@@ -593,7 +594,7 @@ button{font-family:inherit;color:inherit}
         <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;padding:14px 16px 0">
           <span style="font-family:'JetBrains Mono';font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--accentInk);font-weight:600">{{ pr.by }}</span>
           <span style="display:flex;align-items:center;gap:8px">
-            <button class="share-btn no-shot" sc-camel-on-click="{{ pr.copyLink }}" aria-label="Copy a link to this parlay">Link</button>
+            <button class="share-btn no-shot" sc-camel-on-click="{{ pr.shareLink }}" aria-label="Share a link to this parlay">Share</button>
             <button class="share-btn no-shot" sc-camel-on-click="{{ pr.share }}" aria-label="Share this parlay as an image">{{ pr.shareLabel }}</button>
             <span style="font-family:'JetBrains Mono';font-size:10px;font-weight:700;letter-spacing:.1em;padding:5px 9px;border-radius:999px;background:{{ pr.statusBg }};color:{{ pr.statusFg }}">{{ pr.status }}</span>
           </span>
@@ -698,6 +699,7 @@ button{font-family:inherit;color:inherit}
   <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
     <div style="display:flex;align-items:center;gap:12px">
       <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:26px;text-transform:uppercase">Standings</div>
+      <button class="share-btn no-shot" sc-camel-on-click="{{ linkStandings }}" aria-label="Share a link to the standings">Share</button>
       <button class="share-btn no-shot" sc-camel-on-click="{{ shareStandings }}" aria-label="Share the standings as an image">{{ shareLabel.standings }}</button>
     </div>
     <div style="font-family:'JetBrains Mono';font-size:11px;color:var(--muted)">Luck = W − xW</div>
@@ -847,8 +849,11 @@ button{font-family:inherit;color:inherit}
 <div class="cols">
 <div data-shot="team">
 <div style="position:relative;margin:16px 20px 0;padding:20px;border-radius:20px;background:var(--surface);border:1px solid var(--line)">
-  <button class="share-btn no-shot" sc-camel-on-click="{{ shareTeam }}" aria-label="Share this team as an image" style="position:absolute;top:14px;right:14px">{{ shareLabel.team }}</button>
-  <div style="display:flex;gap:14px;align-items:center;padding-right:64px">
+  <span class="no-shot" style="position:absolute;top:14px;right:14px;display:flex;gap:6px">
+    <button class="share-btn" sc-camel-on-click="{{ linkTeam }}" aria-label="Share a link to this team">Share</button>
+    <button class="share-btn" sc-camel-on-click="{{ shareTeam }}" aria-label="Share this team as an image">{{ shareLabel.team }}</button>
+  </span>
+  <div style="display:flex;gap:14px;align-items:center;padding-right:140px">
     <div class="crest" style="width:64px;height:64px;background:{{ team.color }};color:var(--onAccent);display:flex;align-items:center;justify-content:center;font-family:'Big Shoulders Display';font-weight:900;font-size:26px;flex:none"><span class="ini" data-i="{{ team.init }}">{{ team.init }}</span></div>
     <div style="min-width:0">
       <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:34px;line-height:.95;text-transform:uppercase">{{ team.m }}</div>

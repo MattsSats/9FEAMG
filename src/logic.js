@@ -24,6 +24,8 @@ function mergeYahoo(S, Y) {
 }
 const D = mergeYahoo(window.SEASON, window.YAHOO);
 const MGR = D ? D.managers.map(x => x.m) : [];
+// Team link slugs: 'Mr. G' → 'mr-g' (#team-mr-g).
+const teamSlug = m => m.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 const INIT = D ? Object.fromEntries(D.managers.map(x => [x.m, x.init])) : {};
 // Three-letter initials (Tony's ASG) shrink to fit inside the crest.
 if (D && typeof document != 'undefined' && !document.getElementById('ini-fit')) {
@@ -195,7 +197,12 @@ class Component extends DCLogic {
     window.scrollTo(0, 0);
   }
   openHash() {
-    const m = location.hash.match(/^#w(\d+)-([\w-]+)$/);
+    // #w5 opens that week, #season the standings, #team-mr-g a team page.
+    const h = location.hash, wk = h.match(/^#w(\d+)$/), tm = h.match(/^#team-([\w-]+)$/);
+    if (wk) { this.setState({ tab: 'Gameday', week: +wk[1], sheet: null }); window.scrollTo(0, 0); return; }
+    if (h == '#season') { this.setState({ tab: 'Season', sheet: null }); window.scrollTo(0, 0); return; }
+    if (tm) { const t = MGR.find(x => teamSlug(x) == tm[1]); if (t) { this.setState({ tab: 'Teams', team: t, sheet: null }); window.scrollTo(0, 0); } return; }
+    const m = h.match(/^#w(\d+)-([\w-]+)$/);
     if (!m) return;
     this.setState({ tab: 'Gameday', week: +m[1], bustedOpen: true, prOpen: { ...this.state.prOpen, [m[0].slice(1)]: true } });
     setTimeout(() => {
@@ -205,10 +212,13 @@ class Component extends DCLogic {
       el.classList.remove('flash'); void el.offsetWidth; el.classList.add('flash');
     }, 350);
   }
-  async copyLink(anchor, e) {
+  // Shares a link through the phone's share sheet where there is one, otherwise copies it.
+  async shareLink(url, title, e) {
     e?.stopPropagation?.();
-    // /p/<anchor> serves a preview of this parlay to chat apps, then forwards to /#<anchor>.
-    const url = location.origin + '/p/' + anchor;
+    if (navigator.share) {
+      try { await navigator.share({ title, url }); return; }
+      catch (err) { if (err.name == 'AbortError') return; }
+    }
     try { await navigator.clipboard.writeText(url); }
     catch {
       // Older browsers: copy through a temporary text field.
@@ -449,8 +459,9 @@ class Component extends DCLogic {
         // Tailing your own opponent's parlay is a hedge: you win the matchup or cash the ticket.
         tailers: (p.tailers || []).map(m => ({ m, color: col(m), tag: m == vs ? 'HEDGE' : 'TAIL' })), hasTailers: !!p.tailers?.length,
         booth: p.booth || '', hasBooth: boothOn && !!p.booth,
-        share: e => this.share(shot, e), shareLabel: S.sharing == shot ? '…' : 'Share',
-        anchor, copyLink: e => this.copyLink(anchor, e),
+        share: e => this.share(shot, e), shareLabel: S.sharing == shot ? '…' : 'Image',
+        // /p/<anchor> serves a preview of this parlay to chat apps, then forwards to /#<anchor>.
+        anchor, shareLink: e => this.shareLink(location.origin + '/p/' + anchor, p.title, e),
         // Parlays start collapsed to the header and payout; a deep link opens its card.
         expanded: String(!!S.prOpen?.[anchor]), bodyDisplay: S.prOpen?.[anchor] ? 'block' : 'none',
         legCount: legs.length + (legs.length == 1 ? ' leg' : ' legs'), toggleLabel: S.prOpen?.[anchor] ? 'Hide legs ▴' : 'Show legs ▾',
@@ -631,7 +642,10 @@ class Component extends DCLogic {
       sheetOpen: !!S.sheet, sheet, closeSheet: () => this.setState({ sheet: null }),
       // Share buttons
       shareHero: e => this.share('hero', e), shareStandings: e => this.share('standings', e), shareTeam: e => this.share('team', e),
-      shareLabel: { hero: S.sharing == 'hero' ? '…' : 'Share', standings: S.sharing == 'standings' ? '…' : 'Share', team: S.sharing == 'team' ? '…' : 'Share' },
+      shareLabel: { hero: S.sharing == 'hero' ? '…' : 'Image', standings: S.sharing == 'standings' ? '…' : 'Image', team: S.sharing == 'team' ? '…' : 'Image' },
+      linkHero: e => this.shareLink(location.origin + '/#w' + S.week, '9FEAMG · Week ' + S.week, e),
+      linkStandings: e => this.shareLink(location.origin + '/#season', '9FEAMG · Standings', e),
+      linkTeam: e => this.shareLink(location.origin + '/#team-' + teamSlug(S.team), '9FEAMG · ' + S.team, e),
       shotHero: `Week ${wk} · ${wk == LW ? 'Live' : 'Final'}`, shotStandings: `Standings · through week ${NF}`, shotTeam: `${tm} · through week ${NF}`,
       toastOn: !!S.toast, toastText: S.toast?.text ?? '', toastAct: !!S.toast?.file,
       toastDo: () => { const f = S.toast?.file; this.setState({ toast: null }); if (f) navigator.share({ files: [f] }).catch(() => {}); }
