@@ -86,6 +86,24 @@ const ST = MGR.map(m => {
   return { m, w, l, pf, pa, max: null, xw, luck: Math.round((w - xw) * 100) / 100 };
 }).sort((a, b) => b.w - a.w || b.pf - a.pf);
 
+// Power rankings through week n, scored 0–100: half season all-play win %, a quarter
+// actual win %, a quarter all-play win % over the last two weeks (form). Ties go to PF.
+function power(n) {
+  const k = MGR.length - 1;
+  return MGR.map(m => {
+    let ap = 0, apW = 0, w = 0, g = 0, form = 0, fg = 0, pf = 0;
+    for (let i = 1; i <= n; i++) {
+      if (!opp(m, i)) continue;
+      const a = allPlay(m, i).w;
+      ap += a / k; apW += a; g++; pf += SC[m][i - 1];
+      if (won(m, i)) w++;
+      if (i > n - 2) { form += a / k; fg++; }
+    }
+    const score = g ? 100 * (0.5 * ap / g + 0.25 * w / g + 0.25 * (fg ? form / fg : 0)) : 0;
+    return { m, score, pf, wl: w + '–' + (g - w), ap: apW + '–' + (g * k - apW) };
+  }).sort((a, b) => b.score - a.score || b.pf - a.pf);
+}
+
 // Max PF: the best legal lineup each final week from that week's starters + bench
 // (IR can't start). Filling the fixed slots with the top scorers at each position,
 // then the FLEX with the best remaining RB/WR/TE, is optimal for this lineup shape.
@@ -201,6 +219,7 @@ class Component extends DCLogic {
     const h = location.hash, wk = h.match(/^#w(\d+)$/), tm = h.match(/^#team-([\w-]+)$/);
     if (wk) { this.setState({ tab: 'Gameday', week: +wk[1], sheet: null }); window.scrollTo(0, 0); return; }
     if (h == '#season') { this.setState({ tab: 'Season', sheet: null }); window.scrollTo(0, 0); return; }
+    if (h == '#power') { this.setState({ tab: 'Season', sheet: null }); setTimeout(() => document.getElementById('power')?.scrollIntoView({ block: 'start' }), 350); return; }
     if (tm) { const t = MGR.find(x => teamSlug(x) == tm[1]); if (t) { this.setState({ tab: 'Teams', team: t, sheet: null }); window.scrollTo(0, 0); } return; }
     const m = h.match(/^#w(\d+)-([\w-]+)$/);
     if (!m) return;
@@ -411,6 +430,15 @@ class Component extends DCLogic {
     if (hasWeek) { const all = PAIRS[wk].map(p => this.match(p, wk)).sort((x, y) => Math.abs(x.a.raw - x.b.raw) - Math.abs(y.a.raw - y.b.raw)); hero = all[0]; matchups = all.slice(1); }
     const blank = { a: {}, b: {}, share: '50%' };
     const isNext = !hasWeek;
+    // Week recap (final weeks): every final score with its Booth line, for sharing.
+    // booth[week] runs in schedule order, one line per matchup.
+    const hasRecap = wk <= NF && !!PAIRS[wk];
+    const recap = hasRecap ? PAIRS[wk].map(([a, b], i) => {
+      const sa = SC[a][wk - 1], sb = SC[b][wk - 1];
+      const side = (m, s, win) => ({ m, init: INIT[m], color: col(m), score: f2(s), weight: win ? 800 : 500, fg: win ? 'var(--ink)' : 'var(--muted)' });
+      const line = boothOn ? D.booth?.[wk]?.[i]?.[1] || '' : '';
+      return { a: side(a, sa, sa > sb), b: side(b, sb, sb > sa), booth: line, hasBooth: !!line };
+    }) : [];
     const nextTitle = NEXT && wk == NEXT.week ? 'Not yet' : 'No matchups';
     const nextNote = NEXT && wk == NEXT.week ? NEXT.note : 'Add this week to the schedule in data/season.js.';
     // Booth parlays for the selected week (data/season.js -> parlays[week]).
@@ -496,6 +524,14 @@ class Component extends DCLogic {
 
     // Season
     const P = D.playoffTeams;
+    // Power rankings, with movement since the week before.
+    const prevRank = NF > 1 ? Object.fromEntries(power(NF - 1).map((r, i) => [r.m, i + 1])) : {};
+    const powerRows = NF ? power(NF).map((r, i) => {
+      const mv = prevRank[r.m] ? prevRank[r.m] - (i + 1) : 0;
+      return { rank: i + 1, m: r.m, init: INIT[r.m], color: col(r.m), score: f1(r.score), sub: r.wl + ' · all-play ' + r.ap,
+        move: mv > 0 ? '▲' + mv : mv < 0 ? '▼' + -mv : '–', moveColor: mv > 0 ? 'var(--pos)' : mv < 0 ? 'var(--neg)' : 'var(--muted)',
+        open: () => { this.setState({ tab: 'Teams', team: r.m }); window.scrollTo(0, 0); } };
+    }) : [];
     const standings = ST.map((s, i) => ({ rank: i + 1, m: s.m, init: INIT[s.m], color: col(s.m), pa: f1(s.pa), max: s.max == null ? '—' : f1(s.max), wl: s.w + '–' + s.l, pf: f1(s.pf), luck: sgn(s.luck), luckColor: s.luck > 0 ? 'var(--pos)' : s.luck < 0 ? 'var(--neg)' : 'var(--muted)', cut: i == P - 1, open: () => { this.setState({ tab: 'Teams', team: s.m }); window.scrollTo(0, 0); } }));
     const allS = Object.values(SC).flat(), lo = Math.min(...allS), hi = Math.max(...allS);
     const heatHead = chipWeeks.filter(w => w <= NF).map(w => 'W' + w).concat(LW ? ['W' + LW] : []);
@@ -643,6 +679,9 @@ class Component extends DCLogic {
       // Share buttons
       shareHero: e => this.share('hero', e), shareStandings: e => this.share('standings', e), shareTeam: e => this.share('team', e),
       shareLabel: { hero: S.sharing == 'hero' ? '…' : 'Image', standings: S.sharing == 'standings' ? '…' : 'Image', team: S.sharing == 'team' ? '…' : 'Image' },
+      hasRecap, recap, recapTitle: `Week ${wk} · Final`, shareRecap: e => this.share('recap', e), recapLabel: S.sharing == 'recap' ? '…' : 'Image',
+      powerRows, hasPower: powerRows.length > 0, powerSub: `Through week ${NF}`, sharePower: e => this.share('power', e), powerLabel: S.sharing == 'power' ? '…' : 'Image',
+      linkPower: e => this.shareLink(location.origin + '/#power', '9FEAMG · Power rankings', e), shotPower: `Power rankings · through week ${NF}`,
       linkHero: e => this.shareLink(location.origin + '/#w' + S.week, '9FEAMG · Week ' + S.week, e),
       linkStandings: e => this.shareLink(location.origin + '/#season', '9FEAMG · Standings', e),
       linkTeam: e => this.shareLink(location.origin + '/#team-' + teamSlug(S.team), '9FEAMG · ' + S.team, e),

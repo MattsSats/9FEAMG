@@ -361,6 +361,8 @@ button{font-family:inherit;color:inherit}
 .share-btn:hover{color:var(--ink);border-color:var(--muted)}
 .shot-footer{display:none;justify-content:space-between;align-items:baseline;gap:12px;padding:14px 0 16px;font-family:'JetBrains Mono';font-size:10px;letter-spacing:.08em;color:var(--muted)}
 .capturing .shot-footer{display:flex}
+/* Cards that exist only to be captured as share images. */
+.offstage{position:fixed;left:-10000px;top:0;width:420px;pointer-events:none}
 /* A parlay opened from a copied link pulses once. */
 .flash>[data-shot]{animation:flash 1.8s ease-out}
 @keyframes flash{0%,30%{box-shadow:0 0 0 3px var(--accent)}100%{box-shadow:0 0 0 3px transparent}}
@@ -494,6 +496,38 @@ button{font-family:inherit;color:inherit}
   </sc-for>
 </div>
 <div style="padding:12px 20px 0;font-family:'JetBrains Mono';font-size:11px;color:var(--muted)">{{ weekStatus }}</div>
+
+<sc-if value="{{ hasRecap }}" hint-placeholder-val="{{ false }}">
+  <div style="margin:12px 20px 0;display:flex;justify-content:space-between;align-items:center;gap:8px;padding:10px 14px;border:1px dashed var(--line);border-radius:14px">
+    <span style="font-family:'JetBrains Mono';font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)">Week recap · scores + Booth</span>
+    <span style="display:flex;gap:6px">
+      <button class="share-btn" sc-camel-on-click="{{ linkHero }}" aria-label="Share a link to this week">Share</button>
+      <button class="share-btn" sc-camel-on-click="{{ shareRecap }}" aria-label="Share every score and Booth line from this week as an image">{{ recapLabel }}</button>
+    </span>
+  </div>
+  <!-- The recap image renders from this off-screen card. -->
+  <div class="offstage" aria-hidden="true">
+    <div data-shot="recap" style="padding:20px 20px 0;background:var(--bg)">
+      <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:34px;line-height:1;text-transform:uppercase">{{ recapTitle }}</div>
+      <sc-for list="{{ recap }}" as="r" hint-placeholder-count="5">
+        <div style="margin-top:12px;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:12px 14px">
+          <div style="display:grid;grid-template-columns:26px minmax(0,1fr) auto;column-gap:10px;row-gap:6px;align-items:center">
+            <div class="crest" style="width:26px;height:26px;background:{{ r.a.color }};color:var(--onAccent);display:flex;align-items:center;justify-content:center;font-family:'Big Shoulders Display';font-weight:800;font-size:11px"><span class="ini" data-i="{{ r.a.init }}">{{ r.a.init }}</span></div>
+            <span style="font-size:15px;font-weight:{{ r.a.weight }};color:{{ r.a.fg }}">{{ r.a.m }}</span>
+            <span style="font-family:'Big Shoulders Display';font-weight:900;font-size:24px;line-height:1;color:{{ r.a.fg }}">{{ r.a.score }}</span>
+            <div class="crest" style="width:26px;height:26px;background:{{ r.b.color }};color:var(--onAccent);display:flex;align-items:center;justify-content:center;font-family:'Big Shoulders Display';font-weight:800;font-size:11px"><span class="ini" data-i="{{ r.b.init }}">{{ r.b.init }}</span></div>
+            <span style="font-size:15px;font-weight:{{ r.b.weight }};color:{{ r.b.fg }}">{{ r.b.m }}</span>
+            <span style="font-family:'Big Shoulders Display';font-weight:900;font-size:24px;line-height:1;color:{{ r.b.fg }}">{{ r.b.score }}</span>
+          </div>
+          <sc-if value="{{ r.hasBooth }}" hint-placeholder-val="{{ true }}">
+            <div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--line);font-size:14px;line-height:1.4;text-wrap:pretty">{{ r.booth }}</div>
+          </sc-if>
+        </div>
+      </sc-for>
+      <div class="shot-footer"><b>9FEAMG</b><span>The Booth · on the record</span></div>
+    </div>
+  </div>
+</sc-if>
 
 <sc-if value="{{ isW5 }}" hint-placeholder-val="{{ false }}">
   <div style="margin:20px;padding:44px 24px;border:1px dashed var(--line);border-radius:16px;text-align:center">
@@ -747,6 +781,34 @@ button{font-family:inherit;color:inherit}
   </div>
 </div>
 </div>
+
+<sc-if value="{{ hasPower }}" hint-placeholder-val="{{ true }}">
+<div id="power" data-shot="power" style="padding:30px 20px 0;scroll-margin-top:64px">
+  <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+    <div style="display:flex;align-items:center;gap:12px">
+      <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:26px;text-transform:uppercase">Power rankings</div>
+      <button class="share-btn no-shot" sc-camel-on-click="{{ linkPower }}" aria-label="Share a link to the power rankings">Share</button>
+      <button class="share-btn no-shot" sc-camel-on-click="{{ sharePower }}" aria-label="Share the power rankings as an image">{{ powerLabel }}</button>
+    </div>
+  </div>
+  <div style="font-family:'JetBrains Mono';font-size:10px;color:var(--muted);margin-top:8px;line-height:1.5;text-wrap:pretty">{{ powerSub }}. Site’s math, not Tristan’s: 50% season all-play, 25% record, 25% all-play over the last two weeks.</div>
+  <div style="display:grid;grid-template-columns:22px 30px minmax(0,1fr) 48px;gap:8px;padding:14px 0 8px;font-family:'JetBrains Mono';font-size:10px;letter-spacing:.08em;color:var(--muted);border-bottom:1px solid var(--line)">
+    <span>#</span><span></span><span>MANAGER</span><span style="text-align:right">SCORE</span>
+  </div>
+  <sc-for list="{{ powerRows }}" as="p" hint-placeholder-count="10">
+    <div sc-camel-on-click="{{ p.open }}" class="hov" tabindex="0" role="button" style="display:grid;grid-template-columns:22px 30px minmax(0,1fr) 48px;gap:8px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line);cursor:pointer">
+      <span style="font-family:'Big Shoulders Display';font-weight:800;font-size:18px;color:var(--muted)">{{ p.rank }}</span>
+      <span style="font-family:'JetBrains Mono';font-size:11px;font-weight:600;color:{{ p.moveColor }}">{{ p.move }}</span>
+      <div style="display:flex;align-items:center;gap:10px;min-width:0">
+        <div class="crest" style="width:28px;height:28px;background:{{ p.color }};color:var(--onAccent);display:flex;align-items:center;justify-content:center;font-family:'Big Shoulders Display';font-weight:800;font-size:12px;flex:none"><span class="ini" data-i="{{ p.init }}">{{ p.init }}</span></div>
+        <div style="min-width:0"><div style="font-weight:600;font-size:15px">{{ p.m }}</div><div style="font-family:'JetBrains Mono';font-size:10px;color:var(--muted);margin-top:1px">{{ p.sub }}</div></div>
+      </div>
+      <span style="text-align:right;font-family:'JetBrains Mono';font-size:13px;font-weight:600">{{ p.score }}</span>
+    </div>
+  </sc-for>
+  <div class="shot-footer"><b>9FEAMG</b><span>{{ shotPower }}</span></div>
+</div>
+</sc-if>
 
 <div class="cols">
 <div style="padding:30px 20px 0">
