@@ -67,8 +67,9 @@ const BET_TYPES = [
 ];
 // NFL team names by Yahoo's abbreviation, for "→ Packers moneyline".
 const NFL = { Ari: 'Cardinals', Atl: 'Falcons', Bal: 'Ravens', Buf: 'Bills', Car: 'Panthers', Chi: 'Bears', Cin: 'Bengals', Cle: 'Browns', Dal: 'Cowboys', Den: 'Broncos', Det: 'Lions', GB: 'Packers', Hou: 'Texans', Ind: 'Colts', Jax: 'Jaguars', KC: 'Chiefs', LAC: 'Chargers', LAR: 'Rams', LV: 'Raiders', Mia: 'Dolphins', Min: 'Vikings', NE: 'Patriots', NO: 'Saints', NYG: 'Giants', NYJ: 'Jets', Phi: 'Eagles', Pit: 'Steelers', SF: '49ers', Sea: 'Seahawks', TB: 'Buccaneers', Ten: 'Titans', Was: 'Commanders' };
-// What a picked player becomes on the ticket for each bet type.
-const pickLeg = (bt, p) => bt == 'td' ? 'anytime TD' : bt == 'yards' ? 'yardage over' : bt == 'lines' ? (NFL[p.nfl] || p.nfl || 'their team') + ' moneyline' : 'we’ll pick the leg';
+// The leg a picked player can be: anytime TD, a yardage over, or their team's moneyline.
+const PICK_LEGS = [{ k: 'td', label: () => 'TD' }, { k: 'yards', label: () => 'Yards' }, { k: 'ml', label: p => (NFL[p.nfl] || 'Team') + ' ML' }];
+const pickText = { td: 'TD', yards: 'yards', ml: 'ML' };
 const legCount = l => l == 'any' ? null : l == '6+' ? 6 : +l;
 // A warning (never a block) when n legs of this type can't land in the risk range.
 function reqReach(risk, bt, legs) {
@@ -224,7 +225,7 @@ class Component extends DCLogic {
   state = { tab: this.props.startTab ?? 'Gameday', week: HOME_WK, theme: null, sheet: null, team: MGR[0], wire: '7 days', draftMode: 'By round', draftRound: 1, draftTeam: MGR[0], rosters: null, draft: null, tx: null, loaded: false,
     // Parlay request form: who's asking is remembered on this device.
     reqMgr: (() => { try { const m = localStorage.getItem('9feamg-req-mgr'); return MGR.includes(m) ? m : null; } catch { return null; } })(),
-    req: { risk: 1, legs: 'any', betType: 'mix', players: [], game: '', sending: false }, reqs: null };
+    req: { risk: 1, legs: 'any', players: [], playerLegs: {}, sending: false }, reqs: null };
   componentDidMount() {
     // Keyboard: Enter or Space activates clickable rows (role="button"); Escape closes the lineup sheet.
     document.addEventListener('keydown', e => {
@@ -245,7 +246,6 @@ class Component extends DCLogic {
     const onReq = e => {
       const el = e.target;
       if (el?.dataset?.reqRisk != null) this.setState({ req: { ...this.state.req, risk: +el.value } });
-      else if (el?.dataset?.reqGame != null) this.state.req.game = el.value; // read on send; no re-render while typing
     };
     document.addEventListener('input', onReq); document.addEventListener('change', onReq);
     setTimeout(() => this.syncRiskSlider(), 0);
@@ -266,7 +266,7 @@ class Component extends DCLogic {
     const S = this.state, m = S.reqMgr;
     if (!m || S.req.sending) return;
     const body = cancel ? { week: LW, manager: m, cancel: true }
-      : { week: LW, manager: m, risk: RISKS[S.req.risk].k, legs: S.req.legs, betType: S.req.betType, players: S.req.players, game: S.req.betType == 'lines' ? S.req.game : '' };
+      : { week: LW, manager: m, risk: RISKS[S.req.risk].k, legs: S.req.legs, betType: 'mix', players: S.req.players, playerLegs: S.req.playerLegs };
     this.setState({ req: { ...S.req, sending: true } });
     try {
       const r = await fetch('/api/requests', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) });
@@ -557,26 +557,34 @@ class Component extends DCLogic {
     const hasReq = !!LW && wk == LW, R = S.req, rk = RISKS[R.risk], rm = S.reqMgr, mine = S.reqs?.[rm];
     const builtFor = m => (D.parlays?.[LW] || []).find(p => p.request == m);
     const anchorOf = p => `w${LW}-` + String(p.id ?? p.title ?? p.owner).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
-    const pickMgr = m => () => { try { localStorage.setItem('9feamg-req-mgr', m); } catch {} this.setState({ reqMgr: m, req: { ...R, players: [] } }); };
+    const pickMgr = m => () => { try { localStorage.setItem('9feamg-req-mgr', m); } catch {} this.setState({ reqMgr: m, reqPicking: false, req: { ...R, players: [], playerLegs: {} } }); };
     const reqForm = !hasReq ? {} : {
       mgrs: MGR.map(m => ({ m, init: INIT[m], color: col(m), ring: m == rm ? 'var(--ink)' : 'transparent', fg: m == rm ? 'var(--ink)' : 'var(--muted)', pick: pickMgr(m), pressed: String(m == rm) })),
+      // Once someone's picked, the ten crests fold into "Requesting as Matt · Change".
+      showMgrs: !rm || !!S.reqPicking, mgrCollapsed: !!rm && !S.reqPicking, me: rm ? { m: rm, init: INIT[rm], color: col(rm) } : {}, changeMgr: () => this.setState({ reqPicking: true }),
       hasMgr: !!rm, risk: R.risk, riskLabel: rk.label, riskRange: riskText(rk), riskPay: riskPay(rk),
-      betTypes: BET_TYPES.map(b => ({ label: b.label, bg: R.betType == b.k ? 'var(--ink)' : 'transparent', fg: R.betType == b.k ? 'var(--bg)' : 'var(--ink)', pressed: String(R.betType == b.k), pick: () => this.setState({ req: { ...R, betType: b.k, game: b.k == 'lines' ? R.game : '' } }) })),
-      reach: reqReach(rk, R.betType, R.legs), hasReach: !!reqReach(rk, R.betType, R.legs),
+      reach: reqReach(rk, 'mix', R.legs), hasReach: !!reqReach(rk, 'mix', R.legs),
       legs: ['any', '2', '3', '4', '5', '6+'].map(l => ({ label: l == 'any' ? 'Any' : l, bg: R.legs == l ? 'var(--ink)' : 'transparent', fg: R.legs == l ? 'var(--bg)' : 'var(--ink)', pressed: String(R.legs == l), pick: () => this.setState({ req: { ...R, legs: l } }) })),
-      showGame: R.betType == 'lines',
-      pickLines: !rm ? [] : R.players.map(n => { const p = this.players(rm).find(x => x.name == n) || { name: n }; return { text: `${n} → ${pickLeg(R.betType, p)}` }; }),
       players: !rm ? [] : this.players(rm).filter(p => p.slot == 'starter' && !['K', 'DEF'].includes(p.pos)).map(p => {
         const on = R.players.includes(p.name);
-        return { name: p.name, bg: on ? 'var(--accent)' : 'transparent', fg: on ? 'var(--onAccent)' : 'var(--ink)', border: on ? 'var(--accent)' : 'var(--line)', pressed: String(on),
-          pick: () => this.setState({ req: { ...R, players: on ? R.players.filter(x => x != p.name) : [...R.players, p.name].slice(-3) } }) };
+        const toggle = () => { const players = on ? R.players.filter(x => x != p.name) : [...R.players, p.name].slice(-3), playerLegs = {};
+          for (const n of players) playerLegs[n] = R.playerLegs[n] || 'td';
+          this.setState({ req: { ...R, players, playerLegs } }); };
+        return { name: p.name, bg: on ? 'var(--accent)' : 'transparent', fg: on ? 'var(--onAccent)' : 'var(--ink)', border: on ? 'var(--accent)' : 'var(--line)', pressed: String(on), pick: toggle };
       }),
+      // Each picked player gets a leg: TD, Yards or their team's moneyline.
+      picks: !rm ? [] : R.players.map(n => { const p = this.players(rm).find(x => x.name == n) || { name: n }, cur = R.playerLegs[n] || 'td';
+        return { name: n, opts: PICK_LEGS.map(o => ({ label: o.label(p), pressed: String(cur == o.k), bg: cur == o.k ? 'var(--ink)' : 'transparent', fg: cur == o.k ? 'var(--bg)' : 'var(--ink)',
+          pick: () => this.setState({ req: { ...R, playerLegs: { ...R.playerLegs, [n]: o.k } } }) })) }; }),
+      hasPicks: R.players.length > 0,
       sendLabel: R.sending ? 'Sending…' : mine ? 'Update request' : 'Request parlay', send: () => this.sendRequest(false),
       hasMine: !!mine && !builtFor(rm), cancel: () => this.sendRequest(true)
     };
     const reqList = Object.values(S.reqs || {}).sort((a, b) => a.at < b.at ? -1 : 1).map(r => {
       const band = RISKS.find(x => x.k == r.risk) || RISKS[1], built = builtFor(r.manager);
-      const bits = [band.label + ' (' + riskText(band) + ')', (BET_TYPES.find(x => x.k == r.betType) || BET_TYPES[0]).label, r.legs == 'any' ? 'any legs' : r.legs + ' legs', r.players?.length ? 'with ' + r.players.join(', ') : '', r.game || ''].filter(Boolean);
+      // Older requests may carry a bet type or a typed game bet; show them if so.
+      const who = (r.players || []).map(n => r.playerLegs?.[n] ? `${n} ${pickText[r.playerLegs[n]]}` : n);
+      const bits = [band.label + ' (' + riskText(band) + ')', r.betType && r.betType != 'mix' ? (BET_TYPES.find(x => x.k == r.betType) || {}).label : '', r.legs == 'any' ? 'any legs' : r.legs + ' legs', who.length ? 'with ' + who.join(', ') : '', r.game || ''].filter(Boolean);
       return { m: r.manager, init: INIT[r.manager], color: col(r.manager), text: bits.join(' · '), status: built ? 'Built ›' : 'Waiting for sync',
         statusFg: built ? 'var(--pos)' : 'var(--muted)', href: built ? '#' + anchorOf(built) : null, hasHref: !!built, waiting: !built };
     });

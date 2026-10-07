@@ -662,15 +662,25 @@ button{font-family:inherit;color:inherit}
           <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:24px;text-transform:uppercase">Request a parlay</div>
           <div style="font-family:'JetBrains Mono';font-size:10px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase">Built on the next sync</div>
         </div>
+        <sc-if value="{{ reqForm.mgrCollapsed }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;align-items:center;gap:8px;margin-top:14px">
+            <span style="font-family:'JetBrains Mono';font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)">Requesting as</span>
+            <span class="crest" style="width:22px;height:22px;background:{{ reqForm.me.color }};color:var(--onAccent);display:flex;align-items:center;justify-content:center;font-family:'Big Shoulders Display';font-weight:800;font-size:9px"><span class="ini" data-i="{{ reqForm.me.init }}">{{ reqForm.me.init }}</span></span>
+            <b style="font-size:14px">{{ reqForm.me.m }}</b>
+            <button sc-camel-on-click="{{ reqForm.changeMgr }}" style="margin-left:auto;min-height:32px;padding:0 12px;border:1px solid var(--line);border-radius:999px;background:transparent;color:var(--muted);font-size:13px;cursor:pointer">Change</button>
+          </div>
+        </sc-if>
+        <sc-if value="{{ reqForm.showMgrs }}" hint-placeholder-val="{{ true }}">
         <div style="font-family:'JetBrains Mono';font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-top:14px">Who’s asking</div>
-        <div class="scroll-x" style="display:flex;gap:6px;margin-top:8px;padding-bottom:2px">
+        <div style="display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px;margin-top:8px">
           <sc-for list="{{ reqForm.mgrs }}" as="mg" hint-placeholder-count="10">
-            <button sc-camel-on-click="{{ mg.pick }}" aria-pressed="{{ mg.pressed }}" aria-label="{{ mg.m }}" style="flex:none;display:flex;flex-direction:column;align-items:center;gap:3px;padding:4px;border:2px solid {{ mg.ring }};border-radius:10px;background:transparent;cursor:pointer">
+            <button sc-camel-on-click="{{ mg.pick }}" aria-pressed="{{ mg.pressed }}" aria-label="{{ mg.m }}" style="min-width:0;display:flex;flex-direction:column;align-items:center;gap:3px;padding:4px;border:2px solid {{ mg.ring }};border-radius:10px;background:transparent;cursor:pointer">
               <span class="crest" style="width:30px;height:30px;background:{{ mg.color }};color:var(--onAccent);display:flex;align-items:center;justify-content:center;font-family:'Big Shoulders Display';font-weight:800;font-size:12px"><span class="ini" data-i="{{ mg.init }}">{{ mg.init }}</span></span>
               <span style="font-size:11px;font-weight:600;color:{{ mg.fg }}">{{ mg.m }}</span>
             </button>
           </sc-for>
         </div>
+        </sc-if>
         <sc-if value="{{ reqForm.hasMgr }}" hint-placeholder-val="{{ true }}">
           <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-top:16px">
             <span style="font-family:'JetBrains Mono';font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)">Risk</span>
@@ -678,13 +688,6 @@ button{font-family:inherit;color:inherit}
           </div>
           <input type="range" min="0" max="4" step="1" data-req-risk="" aria-label="Total parlay odds" style="width:100%;margin-top:8px;accent-color:var(--accent)">
           <div style="display:flex;justify-content:space-between;font-family:'JetBrains Mono';font-size:10px;color:var(--muted)"><span>Safe</span><span>{{ reqForm.riskPay }}</span><span>Lottery</span></div>
-
-          <div style="font-family:'JetBrains Mono';font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-top:16px">Bet type</div>
-          <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px">
-            <sc-for list="{{ reqForm.betTypes }}" as="bt" hint-placeholder-count="4">
-              <button sc-camel-on-click="{{ bt.pick }}" aria-pressed="{{ bt.pressed }}" style="min-height:34px;padding:0 13px;border:1px solid var(--line);border-radius:999px;background:{{ bt.bg }};color:{{ bt.fg }};font-size:13px;font-weight:600;cursor:pointer">{{ bt.label }}</button>
-            </sc-for>
-          </div>
 
           <div style="font-family:'JetBrains Mono';font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-top:16px">Legs</div>
           <div style="display:flex;gap:6px;margin-top:8px">
@@ -702,13 +705,19 @@ button{font-family:inherit;color:inherit}
               <button sc-camel-on-click="{{ pl.pick }}" aria-pressed="{{ pl.pressed }}" style="min-height:32px;padding:0 11px;border:1px solid {{ pl.border }};border-radius:999px;background:{{ pl.bg }};color:{{ pl.fg }};font-size:13px;cursor:pointer">{{ pl.name }}</button>
             </sc-for>
           </div>
-          <div aria-live="polite" style="display:flex;flex-direction:column;gap:2px;margin-top:6px;font-family:'JetBrains Mono';font-size:11px;color:var(--accentInk)">
-            <sc-for list="{{ reqForm.pickLines }}" as="pk" hint-placeholder-count="0"><span>{{ pk.text }}</span></sc-for>
+          <sc-if value="{{ reqForm.hasPicks }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;flex-direction:column;gap:8px;margin-top:12px">
+            <sc-for list="{{ reqForm.picks }}" as="pk" hint-placeholder-count="1">
+              <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+                <span style="flex:1;min-width:110px;font-size:13px;font-weight:600">{{ pk.name }}</span>
+                <span style="display:flex;gap:4px">
+                  <sc-for list="{{ pk.opts }}" as="o" hint-placeholder-count="3">
+                    <button sc-camel-on-click="{{ o.pick }}" aria-pressed="{{ o.pressed }}" style="min-height:30px;padding:0 10px;border:1px solid var(--line);border-radius:999px;background:{{ o.bg }};color:{{ o.fg }};font-size:12px;font-weight:600;cursor:pointer">{{ o.label }}</button>
+                  </sc-for>
+                </span>
+              </div>
+            </sc-for>
           </div>
-          <sc-if value="{{ reqForm.showGame }}" hint-placeholder-val="{{ false }}">
-          <label style="display:block;font-family:'JetBrains Mono';font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-top:16px">Add a game bet (optional)
-            <input type="text" data-req-game="" maxlength="60" placeholder="e.g. Lions ML, Bills –3.5, Chiefs–Raiders over" style="display:block;width:100%;margin-top:8px;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink);font:15px 'Instrument Sans',system-ui,sans-serif;text-transform:none;letter-spacing:0">
-          </label>
           </sc-if>
 
           <div style="display:flex;gap:8px;align-items:center;margin-top:16px">
