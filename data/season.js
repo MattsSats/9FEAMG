@@ -104,35 +104,36 @@ window.SEASON = {
   },
 
   // "The Booth" lines by week: [manager, text].
+  // Five per week: one per matchup, in the same order as schedule[week]. The manager
+  // is whose crest shows next to the line (whoever the line is mostly about).
   booth: {
     1: [
-      ['Colin', 'Colin opened his season with 65.7. Tony thanks him for his service.'],
-      ['Mr. G', 'Mr. G put up 135.2 in Week 1. Frame it. It has been downhill since.'],
-      ['Jerger', 'Jerger scored 124.1 and lost. Some weeks the schedule picks you.'],
-      ['Matt', 'Matt lost by 4.80 with Christian Watson’s 29.70 on his bench. DeVonta Smith started and scored 6.80. Unlucky is one word for it.']
+      ['Matt', 'Matt lost to Pablo by 4.80 with Christian Watson’s 29.70 on the bench while DeVonta Smith started for 6.80. Unlucky is one word for it.'],
+      ['Colin', 'Colin opened the season with 65.66, lowest of the week, and lost to Tony by 57.40. Tony thanks Colin for the service.'],
+      ['Tristan', 'Tristan put up 144.36, the top score of the week, and beat Kurt by 43.76. Ashton Jeanty had 29.70 and Bijan Robinson 27.30.'],
+      ['Jerger', 'Jerger scored 124.06 and lost to Andy by 15.28, with Jaxson Dart’s 26.60 on the bench. Some weeks the schedule picks you.'],
+      ['Mr. G', 'Mr. G put up 135.22 in Week 1 and beat DLin by 35.40. Frame it. It has been downhill since.']
     ],
     2: [
-      ['Tony', 'Tony dropped 154.5 on Mr. G. Mr. G has asked that the tape not be shared.'],
-      ['Andy', 'Andy scored 76.0. The gibbing has paused.'],
-      ['Pablo', 'Pablo posted 70.9, lowest of the week. He was #1. Past tense.'],
-      ['Jerger', 'Jerger lost by 11.50. Travis Kelce scored 20.60 on his bench while Malik Nabers started and scored 0.60.'],
-      ['Colin', 'Colin benched Davante Adams for 35.50, the best bench score of the season. He won anyway, which will not help.']
+      ['Kurt', 'Kurt lost to DLin by 11.20 with Saquon Barkley at 2.50 against a 13.79 projection. DLin won with Jared Goff’s 29.78 on the bench.'],
+      ['Tony', 'Tony dropped 154.52 on Mr. G, the top score of the season so far, and won by 70.10. Mr. G has asked that the tape not be shared.'],
+      ['Jerger', 'Jerger lost to Tristan by 11.50. Travis Kelce scored 20.60 on the bench while Malik Nabers started and scored 0.60.'],
+      ['Andy', 'Andy scored 75.96 and lost to Matt by 29.68. DJ Moore started and finished at −0.10. The gibbing has paused.'],
+      ['Pablo', 'Pablo posted 70.92, lowest of the week. Colin benched Davante Adams for 35.50 and still won by 29.16.']
     ],
     3: [
-      ['Kurt', 'Kurt hung 135.9 on Mr. G, the top score of the week.'],
-      ['Mr. G', 'Mr. G: 75.1, his second straight week under 85 and the lowest score of the week. The team name says Definitely not a Boomer. The box score disagrees.'],
-      ['DLin', 'DLin managed 82.5. Toilet Bowl King is starting to look like a mission statement.'],
-      ['Pablo', 'Pablo lost by 9.04 with Geno Smith (26.04) and Juwan Johnson (19.30) on his bench. Either one wins it.'],
-      ['Matt', 'Christian Watson on Matt’s bench, again: 19.10 while Justin Jefferson started for 4.20. Matt lost by 7.16. Same lesson, Week 3 edition.'],
-      ['Colin', 'Colin lost by 3.84 with Joe Burrow on his bench for 22.58. Patrick Mahomes started and scored 16.94.']
+      ['Colin', 'Colin lost to Andy by 3.84 with Joe Burrow’s 22.58 on the bench while Patrick Mahomes started for 16.94. That swap wins it.'],
+      ['Pablo', 'Pablo lost to Tony by 9.04 with Geno Smith (26.04) and Juwan Johnson (19.30) on the bench. Either one wins it.'],
+      ['Matt', 'Christian Watson on Matt’s bench, again: 19.10 while Justin Jefferson started for 4.20. Matt lost to Tristan by 7.16.'],
+      ['DLin', 'DLin managed 82.52 and lost to Jerger by 19.62, with Harold Fannin Jr. (20.60) and Michael Wilson (20.40) on the bench. Toilet Bowl King is starting to look like a mission statement.'],
+      ['Kurt', 'Kurt hung 135.88 on Mr. G, the top score of the week. Mr. G’s 75.06 was the lowest, with Tyler Shough’s 24.80 on the bench.']
     ],
     4: [
-      ['Kurt', 'Kurt lost to Jerger by 1.44 with Jacory Croskey-Merritt’s 6.00 on the bench and Saquon Barkley starting for 1.50. That one swap wins it. Kurt is 1–3 instead, with the worst luck in the league at −1.00.'],
-      ['Tony', 'Tony’s first loss: 90.82–96.38 to Andy, the lowest score of the week. Ollie Gordon II scored 17.00 on Tony’s bench while Bucky Irving started for 6.10. That swap alone flips it.'],
-      ['Andy', 'Drake London caught 5 for 96 yards on Monday night: 12.10 points to finish off Tony, and the last leg of Chalk Talk. One ticket of eight cashed this week, and it was Andy’s.'],
-      ['Pablo', 'On Thursday Pablo was projected for 88.77, lowest in the league. Pablo scored 133.78, the top score of the week, with Tetairoa McMillan at 38.20 against a 15.04 projection.'],
+      ['Tony', 'Tony’s first loss: 90.82–96.38 to Andy, the lowest score of the week. Ollie Gordon II scored 17.00 on Tony’s bench while Bucky Irving started for 6.10, and Drake London’s 12.10 on Monday night closed it out.'],
       ['Colin', 'Colin beat Tristan 129.92–125.88 with Ja’Marr Chase at 4.20 and Rashee Rice at 0.00. Kyren Williams (31.70) and 2:23 AM pickup Emanuel Wilson (25.50) covered for them, and Kyle Monangai’s 27.50 sat on the bench.'],
-      ['Mr. G', 'Mr. G lost to Pablo by 39.94 with Drake Maye’s 27.16 on the bench, and has now allowed 524.00 points, 76.16 more than anyone else.']
+      ['Matt', 'DLin beat Matt 114.68–92.08 with Tee Higgins at 21.20. Quinshon Judkins scored 18.60 on Matt’s bench, still short of the 22.60 gap.'],
+      ['Kurt', 'Jerger beat Kurt 113.66–112.22 when Chris Olave scored 15.60 on Monday night, 1.43 more than needed. Kurt had Jacory Croskey-Merritt’s 6.00 on the bench behind Saquon Barkley’s 1.50; that one swap wins it.'],
+      ['Pablo', 'Pablo was projected for 88.77 on Thursday, lowest in the league, and scored 133.78, the top score of the week. Mr. G lost by 39.94 with Drake Maye’s 27.16 on the bench.']
     ]
   },
 
