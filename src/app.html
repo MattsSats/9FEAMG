@@ -375,7 +375,7 @@ button{font-family:inherit;color:inherit}
   .cols>*{min-width:0}
   .cols>.col-wide{grid-column:1/-1;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:0 12px;align-items:start}
   .cols>.col-wide>*{min-width:0}
-  .cols>.col-wide>.ledger,.cols>.col-wide>.col-head{grid-column:1/-1}
+  .cols>.col-wide>.ledger,.cols>.col-wide>.col-head,.cols>.col-wide>.busted-bar{grid-column:1/-1}
   .tiles{grid-template-columns:repeat(4,minmax(0,1fr))}
   .sheet-wrap{align-items:center!important}
 }
@@ -620,7 +620,7 @@ button{font-family:inherit;color:inherit}
   </sc-if>
   <sc-for list="{{ parlays }}" as="pr" hint-placeholder-count="1">
     <sc-if value="{{ pr.firstBusted }}" hint-placeholder-val="{{ false }}">
-      <div style="padding:12px 20px 0">
+      <div class="busted-bar" style="padding:12px 20px 0">
         <button class="hov" sc-camel-on-click="{{ pr.toggleBusted }}" aria-expanded="{{ pr.bustedExpanded }}" style="width:100%;display:flex;justify-content:space-between;align-items:center;min-height:44px;padding:0 14px;border:1px dashed var(--line);border-radius:14px;background:transparent;cursor:pointer;font-family:'JetBrains Mono';font-size:11px;letter-spacing:.06em;color:var(--muted)">
           <span style="text-transform:uppercase">{{ pr.bustedLabel }}</span><span style="color:var(--accentInk);font-weight:600">{{ pr.bustedToggleLabel }}</span>
         </button>
