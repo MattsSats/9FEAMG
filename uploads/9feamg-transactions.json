@@ -1,5 +1,53 @@
 [
   {
+    "when": "Oct 6, 6:08 am",
+    "yahooTeam": "it's gibbing time",
+    "manager": "Andy",
+    "action": "drop",
+    "player": "Noah Fant",
+    "nfl": "NO",
+    "pos": "TE",
+    "faab": null,
+    "via": "Waivers",
+    "notes": "Yahoo sync queue Tue Oct 6, 10:10 AM CT"
+  },
+  {
+    "when": "Oct 6, 2:12 am",
+    "yahooTeam": "#1 Y! Fan",
+    "manager": "Jerger",
+    "action": "drop",
+    "player": "Harrison Butker",
+    "nfl": "KC",
+    "pos": "K",
+    "faab": null,
+    "via": "Waivers",
+    "notes": "Yahoo sync queue Tue Oct 6, 10:10 AM CT"
+  },
+  {
+    "when": "Oct 6, 2:00 am",
+    "yahooTeam": "C Lambs Biggest Hater",
+    "manager": "Colin",
+    "action": "drop",
+    "player": "Bills",
+    "nfl": "Buf",
+    "pos": "DEF",
+    "faab": null,
+    "via": "Waivers",
+    "notes": "Yahoo sync queue Tue Oct 6, 10:10 AM CT"
+  },
+  {
+    "when": "Oct 5, 9:38 pm",
+    "yahooTeam": "C Lambs Biggest Hater",
+    "manager": "Colin",
+    "action": "drop",
+    "player": "Alvin Kamara",
+    "nfl": "NO",
+    "pos": "RB",
+    "faab": null,
+    "via": "Waivers",
+    "notes": "Yahoo sync queue Tue Oct 6, 10:10 AM CT"
+  },
+  {
     "when": "Oct 4, 4:07 pm",
     "yahooTeam": "C Lambs Biggest Hater",
     "manager": "Colin",

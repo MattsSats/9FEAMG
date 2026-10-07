@@ -38,199 +38,49 @@ window.SEASON = {
     1: [['Pablo', 'Matt'], ['Tony', 'Colin'], ['Tristan', 'Kurt'], ['Andy', 'Jerger'], ['Mr. G', 'DLin']],
     2: [['DLin', 'Kurt'], ['Tony', 'Mr. G'], ['Tristan', 'Jerger'], ['Matt', 'Andy'], ['Colin', 'Pablo']],
     3: [['Andy', 'Colin'], ['Tony', 'Pablo'], ['Tristan', 'Matt'], ['DLin', 'Jerger'], ['Kurt', 'Mr. G']],
-    4: [['Tony', 'Andy'], ['Tristan', 'Colin'], ['Matt', 'DLin'], ['Jerger', 'Kurt'], ['Mr. G', 'Pablo']]
+    4: [['Tony', 'Andy'], ['Tristan', 'Colin'], ['Matt', 'DLin'], ['Jerger', 'Kurt'], ['Mr. G', 'Pablo']],
+    5: [['Matt', 'Kurt'], ['Tristan', 'Tony'], ['Jerger', 'Mr. G'], ['Colin', 'DLin'], ['Andy', 'Pablo']]
   },
 
   // Final scores (Yahoo, two decimals), one per completed week.
   scores: {
-    Tony: [123.06, 154.52, 95.42],
-    Tristan: [144.36, 104.10, 121.64],
-    Andy: [139.34, 75.96, 127.98],
-    Matt: [107.86, 105.64, 114.48],
-    Kurt: [100.60, 89.36, 135.88],
-    Jerger: [124.06, 92.60, 102.14],
-    'Mr. G': [135.22, 84.42, 75.06],
-    Colin: [65.66, 100.08, 124.14],
-    DLin: [99.82, 100.56, 82.52],
-    Pablo: [112.66, 70.92, 86.38]
+    Tony: [123.06, 154.52, 95.42, 90.82],
+    Tristan: [144.36, 104.10, 121.64, 125.88],
+    Andy: [139.34, 75.96, 127.98, 96.38],
+    Matt: [107.86, 105.64, 114.48, 92.08],
+    Kurt: [100.60, 89.36, 135.88, 112.22],
+    Jerger: [124.06, 92.60, 102.14, 113.66],
+    'Mr. G': [135.22, 84.42, 75.06, 93.84],
+    Colin: [65.66, 100.08, 124.14, 129.92],
+    DLin: [99.82, 100.56, 82.52, 114.68],
+    Pablo: [112.66, 70.92, 86.38, 133.78]
   },
 
   // The week in progress. Set to null between weeks.
   live: {
-    week: 4,
-    status: 'Live · ATL @ NO kicks off at 7:15 PM; everything else final',
+    week: 5,
+    status: 'Kicks off Thursday',
     // [current points, projected final]
-    // Yahoo live as of Mon Oct 5, 6:50 PM CT.
+    // Yahoo Week 5 projections as of Tue Oct 6, 10:10 AM CT (before waivers).
     scores: {
-      Matt: [92.08, 92.08], DLin: [114.68, 114.68],
-      Tristan: [98.68, 118.75], Colin: [129.92, 129.92],
-      Jerger: [98.06, 113.62], Kurt: [112.22, 112.22],
-      Tony: [90.82, 90.82], Andy: [84.28, 98.25],
-      'Mr. G': [77.90, 97.08], Pablo: [133.78, 133.78]
+      Matt: [0, 95.68], DLin: [0, 100.11],
+      Tristan: [0, 100.77], Colin: [0, 99.30],
+      Jerger: [0, 96.22], Kurt: [0, 98.81],
+      Tony: [0, 106.42], Andy: [0, 111.46],
+      'Mr. G': [0, 110.62], Pablo: [0, 89.98]
     },
     // Points so far for every player whose game has started (starters and bench).
     // Players listed in inProgress are still playing; the rest are final.
-    playerPoints: {
-      'Jordan Love': 14.08,
-      'Christian McCaffrey': 14.50,
-      'Chuba Hubbard': 25.40,
-      'Garrett Wilson': 4.20,
-      'Christian Watson': 6.20,
-      'Trey McBride': 6.60,
-      'Josh Downs': 3.10,
-      'Cameron Dicker': 12.00,
-      'Steelers': 6.00,
-      'Justin Jefferson': 0.00,
-      'Quinshon Judkins': 18.60,
-      'Chris Godwin Jr.': 6.10,
-      'Wan\'Dale Robinson': 9.50,
-      'Xavier Worthy': 9.00,
-      'MarShawn Lloyd': 7.40,
-      'DeVonta Smith': 0.00,
-      'Jayden Daniels': 0.00,
-      'Jared Goff': 20.48,
-      'Jonathan Taylor': 22.20,
-      'Cam Skattebo': 7.10,
-      'George Pickens': 8.50,
-      'Tee Higgins': 21.20,
-      'Harold Fannin Jr.': 10.20,
-      'Michael Wilson': 13.00,
-      'Tyler Loop': 8.00,
-      'Chiefs': 4.00,
-      'Jalen Hurts': 13.52,
-      'Jake Ferguson': 2.60,
-      'Stefon Diggs': 6.00,
-      'Brian Thomas Jr.': 8.70,
-      'Kenny Gainwell': 9.70,
-      'RJ Harvey': 14.30,
-      'De\'Von Achane': 0.00,
-      'Rico Dowdle': 0.00,
-      'Lamar Jackson': 18.88,
-      'Ashton Jeanty': 15.60,
-      'KC Concepcion Jr.': 8.90,
-      'Mike Evans': 10.10,
-      'Sam LaPorta': 18.40,
-      'Aaron Jones Sr.': 14.80,
-      'Evan McPherson': 5.00,
-      'Bears': 7.00,
-      'Ladd McConkey': 0.00,
-      'Bhayshul Tuten': 10.10,
-      'Rome Odunze': 12.40,
-      'Blake Corum': 2.60,
-      'Josh Jacobs': 0.00,
-      'Bo Nix': 13.56,
-      'A.J. Brown': 0.00,
-      'Joe Burrow': 25.72,
-      'Kyren Williams': 31.70,
-      'Emanuel Wilson': 25.50,
-      'Ja\'Marr Chase': 4.20,
-      'Rashee Rice': 0.00,
-      'Brock Bowers': 17.60,
-      'Davante Adams': 5.20,
-      'Spencer Shrader': 16.00,
-      'Bills': 4.00,
-      'Kyle Monangai': 27.50,
-      'Patrick Mahomes': 17.00,
-      'Denzel Boston': 10.90,
-      'Jadarian Price': 0.00,
-      'Zach Charbonnet': 0.00,
-      'Bryce Young': 21.46,
-      'James Cook III': 15.30,
-      'David Montgomery': 4.30,
-      'CeeDee Lamb': 32.80,
-      'Travis Kelce': 2.50,
-      'Braelon Allen': 7.70,
-      'Harrison Butker': 6.00,
-      'Vikings': 8.00,
-      'Malik Nabers': 20.20,
-      'Tucker Kraft': 13.50,
-      'Jalen Coker': 0.00,
-      'Justin Herbert': 11.56,
-      'J.K. Dobbins': 6.20,
-      'Jameson Williams': 13.20,
-      'Brock Purdy': 19.62,
-      'Saquon Barkley': 1.50,
-      'Kenneth Walker III': 30.40,
-      'Zay Flowers': 21.80,
-      'Jordan Addison': 7.10,
-      'Colston Loveland': 8.70,
-      'Jaylen Warren': 14.10,
-      'Harrison Mevis': 7.00,
-      'Broncos': 2.00,
-      'Dak Prescott': 18.10,
-      'Terry McLaurin': 0.00,
-      'Emeka Egbuka': 2.30,
-      'Courtland Sutton': 0.90,
-      'Jacory Croskey-Merritt': 6.00,
-      'Alec Pierce': 0.00,
-      'Josh Allen': 19.52,
-      'Bucky Irving': 6.10,
-      'Omarion Hampton': 12.30,
-      'Jaxon Smith-Njigba': 10.10,
-      'Matthew Golden': 10.20,
-      'Tyler Warren': 6.60,
-      'George Kittle': 15.00,
-      'Jason Myers': 6.00,
-      'Eagles': 5.00,
-      'TreVeyon Henderson': 4.20,
-      'Dalton Kincaid': 1.20,
-      'Carnell Tate': 17.00,
-      'Matthew Stafford': 11.68,
-      'Mike Washington Jr.': 2.20,
-      'Ollie Gordon II': 17.00,
-      'Trevor Lawrence': 13.08,
-      'Jahmyr Gibbs': 15.70,
-      'Javonte Williams': 28.80,
-      'DJ Moore': 2.20,
-      'Isaiah Likely': 10.10,
-      'D\'Andre Swift': 6.40,
-      'Chase McLaughlin': 2.00,
-      'Ravens': 6.00,
-      'Jaylen Waddle': 12.00,
-      'Mark Andrews': 11.20,
-      'Tre Tucker': 6.40,
-      'Kalif Raymond': 1.60,
-      'Rams': 5.00,
-      'Isiah Pacheco': 0.00,
-      'Chase Brown': 13.60,
-      'Jeremiyah Love': 6.00,
-      'Amon-Ra St. Brown': 11.50,
-      'Nico Collins': 27.30,
-      'Kenyon Sadiq': 0.00,
-      'Parker Washington': 1.50,
-      'Eddy Pineiro': 6.00,
-      'Seahawks': 12.00,
-      'DK Metcalf': 14.00,
-      'Drake Maye': 27.16,
-      'Luther Burden III': 9.40,
-      'Rhamondre Stevenson': 16.90,
-      'Kyler Murray': 11.48,
-      'Dallas Goedert': 0.00,
-      'C.J. Stroud': 23.08,
-      'Derrick Henry': 14.90,
-      'Tony Pollard': 12.00,
-      'Tetairoa McMillan': 38.20,
-      'Quentin Johnston': 4.50,
-      'Dalton Schultz': 1.90,
-      'Puka Nacua': 23.20,
-      'Brandon Aubrey': 12.00,
-      'Texans': 4.00,
-      'Breece Hall': 0.00,
-      'Caleb Williams': 0.00,
-      'Geno Smith': 8.76,
-      'Cairo Santos': 11.00
-    },
-    inProgress: [
-
-    ],
-    sheetNote: 'Live as of 6:50 PM CT. Each player is tagged Final, Live or proj.'
+    playerPoints: {},
+    inProgress: [],
+    sheetNote: 'Projections until kickoff.'
   },
 
   // Shown on the week after the live one.
   next: {
-    week: 5,
-    dates: 'Oct 8–12',
-    note: 'Week 5 matchups post once Week 4 goes final. Plenty of time to set a lineup, Pablo.'
+    week: 6,
+    dates: 'Oct 15–19',
+    note: 'Week 6 matchups post once Week 5 goes final.'
   },
 
   // Player projections for the live week, used when the roster file has none.
@@ -239,7 +89,7 @@ window.SEASON = {
   projections: {},
 
   // Wire tab: transactions newer than asOf minus windowDays show under "7 days".
-  wire: { asOf: '2026-10-05T00:42:00', windowDays: 7 },
+  wire: { asOf: '2026-10-06T10:10:00', windowDays: 7 },
 
   // ---- Trash talk (hidden when the trashTalk setting is off) ----
 
@@ -250,7 +100,7 @@ window.SEASON = {
     1: 'Pablo held off Matt by 4.8. Pablo would like this one framed, since it may be a while.',
     2: 'DLin beat Kurt 100.6–89.4. Neither fan base was reached for comment.',
     3: 'Andy beat Colin by 3.9. Colin is expected to blame the kicker, the refs and Yahoo.',
-    4: { pair: ['Matt', 'DLin'], text: 'Matt 114.79, DLin 114.46. A 0.33 projection gap. DLin leads 10.20–6.00 after Thursday, and Matt only pulled ahead by benching an injured Justin Jefferson for Josh Downs.' }
+    4: 'Jerger beat Kurt 113.66–112.22. Chris Olave needed 14.17 on Monday night and scored 15.60.'
   },
 
   // "The Booth" lines by week: [manager, text].
@@ -277,12 +127,12 @@ window.SEASON = {
       ['Colin', 'Colin lost by 3.84 with Joe Burrow on his bench for 22.58. Patrick Mahomes started and scored 16.94.']
     ],
     4: [
-      ['Matt', 'Quinshon Judkins scored 18.60 on Matt’s bench on Thursday. Matt lost to DLin by 22.60, so the bench didn’t decide it, but it didn’t help either.'],
-      ['Colin', 'Colin was projected to beat Tristan by 0.59. Colin scored 129.92 instead, with Kyren Williams at 31.70 and another 27.50 from Kyle Monangai sitting on the bench. Tristan needs 31.25 from Bijan Robinson tonight.'],
-      ['Tony', 'Tony was projected to lose to Andy by 8.43. Tony finished at 90.82 and leads 90.82–84.28, so Andy needs 6.55 from Drake London tonight. London is also the last leg of Andy’s Chalk Talk parlay.'],
-      ['Kurt', 'Kurt finished at 112.22. Jerger sits at 98.06, with CeeDee Lamb’s 32.80 already in and Chris Olave left. Olave needs 14.17 tonight, or Jerger falls to 1–3.'],
-      ['Pablo', 'On Thursday Pablo was projected for 88.77, lowest in the league. Pablo scored 133.78, the top score of the week so far. Mr. G’s victory lap is on hold: Tyler Shough would need 55.89 tonight.'],
-      ['Colin', 'Colin made 8 adds this week, four times Tony’s 2 for the whole season. One of them, Emanuel Wilson, was picked up at 2:23 AM Sunday and scored 25.50.']
+      ['Kurt', 'Kurt lost to Jerger by 1.44 with Jacory Croskey-Merritt’s 6.00 on the bench and Saquon Barkley starting for 1.50. That one swap wins it. Kurt is 1–3 instead, with the worst luck in the league at −1.00.'],
+      ['Tony', 'Tony’s first loss: 90.82–96.38 to Andy, the lowest score of the week. Ollie Gordon II scored 17.00 on Tony’s bench while Bucky Irving started for 6.10. That swap alone flips it.'],
+      ['Andy', 'Drake London caught 5 for 96 yards on Monday night: 12.10 points to finish off Tony, and the last leg of Chalk Talk. One ticket of eight cashed this week, and it was Andy’s.'],
+      ['Pablo', 'On Thursday Pablo was projected for 88.77, lowest in the league. Pablo scored 133.78, the top score of the week, with Tetairoa McMillan at 38.20 against a 15.04 projection.'],
+      ['Colin', 'Colin beat Tristan 129.92–125.88 with Ja’Marr Chase at 4.20 and Rashee Rice at 0.00. Kyren Williams (31.70) and 2:23 AM pickup Emanuel Wilson (25.50) covered for them, and Kyle Monangai’s 27.50 sat on the bench.'],
+      ['Mr. G', 'Mr. G lost to Pablo by 39.94 with Drake Maye’s 27.16 on the bench, and has now allowed 524.00 points, 76.16 more than anyone else.']
     ]
   },
 
@@ -323,11 +173,11 @@ window.SEASON = {
         legs: [
           // Odds: DraftKings via ESPN odds/props pages, Fri Oct 2.
           { text: 'Jahmyr Gibbs anytime TD', player: 'Jahmyr Gibbs', type: 'td', game: 'Sun 7:20 PM @ CAR', result: '1 rush TD', odds: '-330', status: 'hit' },
-          { text: 'Drake London over 79.5 receiving yards', player: 'Drake London', type: 'over', stat: 'Rec Yds', line: 79.5, game: 'Mon 7:15 PM @ NO', odds: '-110', status: 'open' },
+          { text: 'Drake London over 79.5 receiving yards', player: 'Drake London', type: 'over', stat: 'Rec Yds', line: 79.5, game: 'Mon 7:15 PM @ NO', result: '5-96 rec yds', odds: '-110', status: 'hit' },
           { text: 'Ravens moneyline', player: 'Ravens', type: 'ml', game: 'Sun 12:00 PM vs TEN', result: 'Final W 24–18', odds: '-700', status: 'hit' }
         ],
         tailers: ['Tony'],
-        booth: 'Andy asked for a “lock parlay.” There is no such thing. Tony is tailing it and is also Andy’s opponent this week, so Tony cashes either way.'
+        booth: 'Cashed. The Ravens won, Jahmyr Gibbs scored on Sunday night, and Drake London caught 5 for 96 yards on Monday. $10 paid $28.43, the only winner of eight Week 4 tickets. Tony tailed it, so Tony cashed too, on the same night Tony lost to Andy.'
       },
       {
         owner: 'Andy & Tony', owners: ['Andy', 'Tony'], init: 'A&T', title: 'The Truce',
@@ -345,7 +195,7 @@ window.SEASON = {
         // Odds: DraftKings via ESPN props pages, Fri Oct 2.
         legs: [
           { text: 'Lamar Jackson anytime TD', player: 'Lamar Jackson', type: 'td', game: 'Sun 12:00 PM vs TEN', result: '0 TD', odds: '+240', status: 'miss' },
-          { text: 'Bijan Robinson over 88.5 rushing yards', player: 'Bijan Robinson', type: 'over', stat: 'Rush Yds', line: 88.5, game: 'Mon 7:15 PM @ NO', odds: '-111', status: 'open' },
+          { text: 'Bijan Robinson over 88.5 rushing yards', player: 'Bijan Robinson', type: 'over', stat: 'Rush Yds', line: 88.5, game: 'Mon 7:15 PM @ NO', result: '19-145 rush yds', odds: '-111', status: 'hit' },
           { text: 'Ja’Marr Chase over 84.5 receiving yards', player: "Ja'Marr Chase", type: 'over', stat: 'Rec Yds', line: 84.5, game: 'Sun 12:00 PM vs JAX', result: '4.20 fantasy pts, so 42 rec yds at most', odds: '-110', status: 'miss' },
           { text: 'Brock Bowers over 73.5 receiving yards', player: 'Brock Bowers', type: 'over', stat: 'Rec Yds', line: 73.5, game: 'Sun 3:25 PM vs KC', odds: '-111', status: 'open' }
         ],
@@ -415,15 +265,15 @@ window.SEASON = {
 
   // One-liner on each team page.
   roasts: {
-    Tony: '3–0 on 2 adds all season. Set it, forget it, collect wins.',
-    Tristan: 'Undefeated and quiet about it. Suspicious.',
-    Andy: 'Lost Week 2 with 76.0. Still has the second-best Max PF in the league.',
-    Matt: 'Unluckiest manager in the league. Would like you to know that.',
-    Kurt: 'Week 3 hero, Weeks 1 and 2 villain.',
-    Jerger: 'Has left 64.6 points on the bench. The bench is having a great season.',
-    'Mr. G': 'Most points allowed in the league by 36. Opponents save their best for him.',
-    Colin: 'Twenty adds, one win. The grind continues.',
+    Tony: '3–1 on 2 adds all season. The first loss came with 21.30 points on the bench.',
+    Tristan: 'First at 3–1, with the most points scored (495.98) and the fewest left on the bench (30.30).',
+    Andy: 'Lost Week 2 with 75.96 and is 3–1 anyway. 11 adds, second only to Colin.',
+    Matt: 'Second-unluckiest manager in the league at −0.89. Would still like you to know that.',
+    Kurt: 'Unluckiest manager in the league at −1.00. Lost Week 4 by 1.44 with the fix sitting on the bench.',
+    Jerger: 'Has left 91.52 points on the bench. Chris Olave bailed out Week 4 anyway.',
+    'Mr. G': 'Most points allowed in the league: 524.00, 76.16 more than anyone. Opponents save their best for Mr. G.',
+    Colin: '23 adds, two wins, and the most bench points in the league (110.74). Somehow it’s working.',
     DLin: 'Toilet Bowl King. Not a prediction, a title defense.',
-    Pablo: 'Left 90.9 on the bench, the most in the league. Geno Smith alone had 26.04 of it.'
+    Pablo: 'Projected last in Week 4, finished first with 133.78. Still has 99.56 bench points, second only to Colin.'
   }
 };
