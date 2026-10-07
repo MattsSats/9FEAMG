@@ -53,6 +53,15 @@ const HOME_WK = LW && (LIVE_STARTED || !NF) ? LW : NF;
 const PPROJ = D?.projections || {};
 const PAIRS = D ? D.schedule : {};
 const PROJ = Object.fromEntries(MGR.map(m => [m, LIVE?.scores?.[m]?.[1] ?? 0]));
+// Parlay request risk levels: total American odds, low to high (null = no top).
+const RISKS = [
+  { k: 'safe', label: 'Safe', lo: 100, hi: 250 }, { k: 'balanced', label: 'Balanced', lo: 250, hi: 600 },
+  { k: 'spicy', label: 'Spicy', lo: 600, hi: 1500 }, { k: 'longshot', label: 'Long shot', lo: 1500, hi: 5000 },
+  { k: 'lottery', label: 'Lottery', lo: 5000, hi: null }
+];
+const pay10 = a => '$' + Math.round(10 * (1 + a / 100));
+const riskText = r => '+' + r.lo + (r.hi ? ' to +' + r.hi : ' and up');
+const riskPay = r => '$10 pays ' + pay10(r.lo) + (r.hi ? '–' + pay10(r.hi) : '+');
 // Share images: CSS width they render at, at 3× pixels. Wide enough to stay short in a chat,
 // narrow enough that the text still reads in an iMessage bubble.
 const SHOT_W = 400;
@@ -191,7 +200,10 @@ function setMaxPF(box) {
 }
 
 class Component extends DCLogic {
-  state = { tab: this.props.startTab ?? 'Gameday', week: HOME_WK, theme: null, sheet: null, team: MGR[0], wire: '7 days', draftMode: 'By round', draftRound: 1, draftTeam: MGR[0], rosters: null, draft: null, tx: null, loaded: false };
+  state = { tab: this.props.startTab ?? 'Gameday', week: HOME_WK, theme: null, sheet: null, team: MGR[0], wire: '7 days', draftMode: 'By round', draftRound: 1, draftTeam: MGR[0], rosters: null, draft: null, tx: null, loaded: false,
+    // Parlay request form: who's asking is remembered on this device.
+    reqMgr: (() => { try { const m = localStorage.getItem('9feamg-req-mgr'); return MGR.includes(m) ? m : null; } catch { return null; } })(),
+    req: { risk: 1, legs: 'any', players: [], game: '', sending: false }, reqs: null };
   componentDidMount() {
     // Keyboard: Enter or Space activates clickable rows (role="button"); Escape closes the lineup sheet.
     document.addEventListener('keydown', e => {
@@ -206,6 +218,14 @@ class Component extends DCLogic {
         // Yahoo fills box-score weeks the uploads file doesn't have.
         for (const [w, Wk] of Object.entries(window.YAHOO?.weeks || {})) if (Wk.status == 'postevent' && Wk.box && !box?.weeks?.[w]) { box ||= { weeks: {} }; box.weeks ||= {}; box.weeks[w] = Wk.box; }
         setMaxPF(box); this.setState({ rosters, draft, tx, box, loaded: true }); });
+    // Parlay requests for the live week (api/requests.js). The slider and the game box are read
+    // with plain listeners; everything else on the form is a tap.
+    if (LW) this.loadRequests();
+    document.addEventListener('input', e => {
+      const el = e.target;
+      if (el?.dataset?.reqRisk != null) this.setState({ req: { ...this.state.req, risk: +el.value } });
+      else if (el?.dataset?.reqGame != null) this.state.req.game = el.value; // read on send; no re-render while typing
+    });
     // Keep the newest week chips in view once the season gets long.
     setTimeout(() => { const el = document.querySelector('[data-weekchips]'); if (el) el.scrollLeft = el.scrollWidth; }, 0);
     // Preload the screenshot library so the first share is quick.
@@ -213,6 +233,27 @@ class Component extends DCLogic {
     // Parlay deep links: #w4-the-truce opens that week and scrolls to the card.
     this.openHash();
     window.addEventListener('hashchange', () => this.openHash());
+  }
+  loadRequests() {
+    fetch('/api/requests?week=' + LW, { cache: 'no-store' }).then(r => r.ok ? r.json() : null)
+      .then(d => d && this.setState({ reqs: d.requests || {} })).catch(() => {});
+  }
+  async sendRequest(cancel) {
+    const S = this.state, m = S.reqMgr;
+    if (!m || S.req.sending) return;
+    const body = cancel ? { week: LW, manager: m, cancel: true }
+      : { week: LW, manager: m, risk: RISKS[S.req.risk].k, legs: S.req.legs, players: S.req.players, game: S.req.game };
+    this.setState({ req: { ...S.req, sending: true } });
+    try {
+      const r = await fetch('/api/requests', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) });
+      const d = await r.json().catch(() => ({}));
+      if (!r.ok) throw new Error(d.error || 'Couldn’t save that. Try again.');
+      this.setState({ reqs: d.requests || {}, req: { ...this.state.req, sending: false } });
+      this.toast(cancel ? 'Request canceled.' : 'Requested. The Booth builds it with real lines on the next sync.');
+    } catch (err) {
+      this.setState({ req: { ...this.state.req, sending: false } });
+      this.toast(err.message || 'Couldn’t save that. Try again.');
+    }
   }
   // Home: Gameday on the current week, back at the top, with a clean URL (drops #parlay links and ?query).
   goHome(e) {
@@ -464,6 +505,30 @@ class Component extends DCLogic {
       const r = recaps[i], p = previews[i], main = r || p;
       return main && { init: INIT[main[0]], color: col(main[0]), text: main[1], isPreview: !r, preview: r && p ? p[1] : '', hasPreview: !!(r && p) };
     }).filter(Boolean);
+    // Parlay requests (live week only): who's asking, a risk slider, legs, and optional
+    // players (their own starters) or a game. A published parlay with request: <manager> fills it.
+    const hasReq = !!LW && wk == LW, R = S.req, rk = RISKS[R.risk], rm = S.reqMgr, mine = S.reqs?.[rm];
+    const builtFor = m => (D.parlays?.[LW] || []).find(p => p.request == m);
+    const anchorOf = p => `w${LW}-` + String(p.id ?? p.title ?? p.owner).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+    const pickMgr = m => () => { try { localStorage.setItem('9feamg-req-mgr', m); } catch {} this.setState({ reqMgr: m, req: { ...R, players: [] } }); };
+    const reqForm = !hasReq ? {} : {
+      mgrs: MGR.map(m => ({ m, init: INIT[m], color: col(m), ring: m == rm ? 'var(--ink)' : 'transparent', fg: m == rm ? 'var(--ink)' : 'var(--muted)', pick: pickMgr(m), pressed: String(m == rm) })),
+      hasMgr: !!rm, risk: R.risk, riskLabel: rk.label, riskRange: riskText(rk), riskPay: riskPay(rk),
+      legs: ['any', '2', '3', '4', '5', '6+'].map(l => ({ label: l == 'any' ? 'Any' : l, bg: R.legs == l ? 'var(--ink)' : 'transparent', fg: R.legs == l ? 'var(--bg)' : 'var(--ink)', pressed: String(R.legs == l), pick: () => this.setState({ req: { ...R, legs: l } }) })),
+      players: !rm ? [] : this.players(rm).filter(p => p.slot == 'starter' && !['K', 'DEF'].includes(p.pos)).map(p => {
+        const on = R.players.includes(p.name);
+        return { name: p.name, bg: on ? 'var(--accent)' : 'transparent', fg: on ? 'var(--onAccent)' : 'var(--ink)', border: on ? 'var(--accent)' : 'var(--line)', pressed: String(on),
+          pick: () => this.setState({ req: { ...R, players: on ? R.players.filter(x => x != p.name) : [...R.players, p.name].slice(-3) } }) };
+      }),
+      sendLabel: R.sending ? 'Sending…' : mine ? 'Update request' : 'Request parlay', send: () => this.sendRequest(false),
+      hasMine: !!mine && !builtFor(rm), cancel: () => this.sendRequest(true)
+    };
+    const reqList = Object.values(S.reqs || {}).sort((a, b) => a.at < b.at ? -1 : 1).map(r => {
+      const band = RISKS.find(x => x.k == r.risk) || RISKS[1], built = builtFor(r.manager);
+      const bits = [band.label + ' (' + riskText(band) + ')', r.legs == 'any' ? 'any legs' : r.legs + ' legs', r.players?.length ? 'with ' + r.players.join(', ') : '', r.game || ''].filter(Boolean);
+      return { m: r.manager, init: INIT[r.manager], color: col(r.manager), text: bits.join(' · '), status: built ? 'Built ›' : 'Waiting for sync',
+        statusFg: built ? 'var(--pos)' : 'var(--muted)', href: built ? '#' + anchorOf(built) : null, hasHref: !!built, waiting: !built };
+    });
     const nextTitle = NEXT && wk == NEXT.week ? 'Not yet' : 'No matchups';
     const nextNote = NEXT && wk == NEXT.week ? NEXT.note : 'Add this week to the schedule in data/season.js.';
     // Booth parlays for the selected week (data/season.js -> parlays[week]).
@@ -709,6 +774,7 @@ class Component extends DCLogic {
       tabs, tabGameday: S.tab == 'Gameday', tabSeason: S.tab == 'Season', tabTeams: S.tab == 'Teams', tabDraft: S.tab == 'Draft', tabWire: S.tab == 'Wire',
       weekChips, isW5: isNext, nextTitle, nextNote, hasWeek, hero: hero || blank, matchups, heroLabel: wk == LW ? 'Matchup of the week' : 'Closest finish', heroCaption: this.heroCaption(wk, hero),
       weekStatus, parlays, hasParlays: parlays.length > 0, hasLedger: allParlays.length > 0, ledgerLine, ledgerOwners,
+      hasReq, reqForm, reqList, hasReqList: reqList.length > 0,
       showBooth: boothOn, booth: boothLines, hasBooth: boothOn && boothLines.length > 0,
       seasonSub, seasonTiles, standings, playoffLine: `Playoff line · top ${P} of ${MGR.length}`,
       heat, heatHead, heatCols, heatMinW, restLabel, hasRest: !!restLabel, liveCol: !!LW,
