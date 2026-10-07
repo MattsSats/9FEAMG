@@ -12,7 +12,7 @@ const MANAGERS = Object.values(TEAMS);
 const RISK = { safe: [100, 250], balanced: [250, 600], spicy: [600, 1500], longshot: [1500, 5000], lottery: [5000, null] };
 const LEGS = ['any', '2', '3', '4', '5', '6+'];
 // What kind of legs to build with. The form now always sends mix (older requests may differ);
-// game is likewise only on older requests.
+// game is the form's "Add a leg?" text: a player or team (older requests: a typed game bet).
 const BET_TYPES = ['mix', 'td', 'yards', 'lines'];
 const PICK_LEGS = ['td', 'yards', 'ml'];
 const json = (body, status = 200) => new Response(JSON.stringify(body), {

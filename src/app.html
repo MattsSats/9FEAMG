@@ -700,11 +700,19 @@ button{font-family:inherit;color:inherit}
           </sc-if>
 
           <div style="font-family:'JetBrains Mono';font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-top:16px">Your players (optional, up to 3)</div>
-          <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px">
+          <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin-top:8px">
+            <sc-for list="{{ reqForm.suggest }}" as="pl" hint-placeholder-count="2">
+              <button sc-camel-on-click="{{ pl.pick }}" aria-pressed="{{ pl.pressed }}" aria-label="{{ pl.name }}" title="{{ pl.name }}" style="min-width:0;min-height:36px;padding:0 8px;border:1px solid {{ pl.border }};border-radius:999px;background:{{ pl.bg }};color:{{ pl.fg }};font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer">{{ pl.short }}</button>
+            </sc-for>
+            <button sc-camel-on-click="{{ reqForm.team.toggle }}" aria-expanded="{{ reqForm.team.open }}" style="min-width:0;min-height:36px;padding:0 8px;border:1px solid {{ reqForm.team.border }};border-radius:999px;background:{{ reqForm.team.bg }};color:{{ reqForm.team.fg }};font-size:13px;font-weight:600;white-space:nowrap;cursor:pointer">{{ reqForm.team.label }}</button>
+          </div>
+          <sc-if value="{{ reqForm.teamOpen }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;padding-top:8px;border-top:1px dashed var(--line)">
             <sc-for list="{{ reqForm.players }}" as="pl" hint-placeholder-count="7">
               <button sc-camel-on-click="{{ pl.pick }}" aria-pressed="{{ pl.pressed }}" style="min-height:32px;padding:0 11px;border:1px solid {{ pl.border }};border-radius:999px;background:{{ pl.bg }};color:{{ pl.fg }};font-size:13px;cursor:pointer">{{ pl.name }}</button>
             </sc-for>
           </div>
+          </sc-if>
           <sc-if value="{{ reqForm.hasPicks }}" hint-placeholder-val="{{ false }}">
           <div style="display:flex;flex-direction:column;gap:8px;margin-top:12px">
             <sc-for list="{{ reqForm.picks }}" as="pk" hint-placeholder-count="1">
@@ -718,6 +726,11 @@ button{font-family:inherit;color:inherit}
               </div>
             </sc-for>
           </div>
+          </sc-if>
+
+          <button sc-camel-on-click="{{ reqForm.toggleAdd }}" aria-expanded="{{ reqForm.addOpen }}" style="display:block;margin-top:14px;padding:4px 0;border:0;background:transparent;font-family:'JetBrains Mono';font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);cursor:pointer">{{ reqForm.addLabel }}</button>
+          <sc-if value="{{ reqForm.addOpen }}" hint-placeholder-val="{{ false }}">
+            <input type="text" data-req-game="" maxlength="60" aria-label="Add a leg: a player or team" placeholder="Player or team, e.g. Puka Nacua" style="display:block;width:100%;margin-top:6px;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink);font:15px 'Instrument Sans',system-ui,sans-serif">
           </sc-if>
 
           <div style="display:flex;gap:8px;align-items:center;margin-top:16px">

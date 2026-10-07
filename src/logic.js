@@ -225,7 +225,7 @@ class Component extends DCLogic {
   state = { tab: this.props.startTab ?? 'Gameday', week: HOME_WK, theme: null, sheet: null, team: MGR[0], wire: '7 days', draftMode: 'By round', draftRound: 1, draftTeam: MGR[0], rosters: null, draft: null, tx: null, loaded: false,
     // Parlay request form: who's asking is remembered on this device.
     reqMgr: (() => { try { const m = localStorage.getItem('9feamg-req-mgr'); return MGR.includes(m) ? m : null; } catch { return null; } })(),
-    req: { risk: 1, legs: 'any', players: [], playerLegs: {}, sending: false }, reqs: null };
+    req: { risk: 1, legs: 'any', players: [], playerLegs: {}, game: '', sending: false }, reqs: null };
   componentDidMount() {
     // Keyboard: Enter or Space activates clickable rows (role="button"); Escape closes the lineup sheet.
     document.addEventListener('keydown', e => {
@@ -246,6 +246,7 @@ class Component extends DCLogic {
     const onReq = e => {
       const el = e.target;
       if (el?.dataset?.reqRisk != null) this.setState({ req: { ...this.state.req, risk: +el.value } });
+      else if (el?.dataset?.reqGame != null) this.state.req.game = el.value; // read on send; no re-render while typing
     };
     document.addEventListener('input', onReq); document.addEventListener('change', onReq);
     setTimeout(() => this.syncRiskSlider(), 0);
@@ -266,7 +267,7 @@ class Component extends DCLogic {
     const S = this.state, m = S.reqMgr;
     if (!m || S.req.sending) return;
     const body = cancel ? { week: LW, manager: m, cancel: true }
-      : { week: LW, manager: m, risk: RISKS[S.req.risk].k, legs: S.req.legs, betType: 'mix', players: S.req.players, playerLegs: S.req.playerLegs };
+      : { week: LW, manager: m, risk: RISKS[S.req.risk].k, legs: S.req.legs, betType: 'mix', players: S.req.players, playerLegs: S.req.playerLegs, game: S.reqAddOpen ? S.req.game.trim() : '' };
     this.setState({ req: { ...S.req, sending: true } });
     try {
       const r = await fetch('/api/requests', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) });
@@ -409,6 +410,9 @@ class Component extends DCLogic {
   syncRiskSlider() {
     const el = document.querySelector('[data-req-risk]');
     if (el && +el.value != this.state.req.risk) el.value = this.state.req.risk;
+    // Same for the "Add a leg?" box, which is unbound so typing isn't interrupted.
+    const g = document.querySelector('[data-req-game]');
+    if (g && g.value != this.state.req.game) g.value = this.state.req.game;
   }
   // Light by default; a viewer's own pick is remembered on their device.
   theme() {
@@ -558,6 +562,15 @@ class Component extends DCLogic {
     const builtFor = m => (D.parlays?.[LW] || []).find(p => p.request == m);
     const anchorOf = p => `w${LW}-` + String(p.id ?? p.title ?? p.owner).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
     const pickMgr = m => () => { try { localStorage.setItem('9feamg-req-mgr', m); } catch {} this.setState({ reqMgr: m, reqPicking: false, req: { ...R, players: [], playerLegs: {} } }); };
+    // The requester's starters (no K or DEF), and the two with the best points per game in final weeks.
+    const reqStarters = !hasReq || !rm ? [] : this.players(rm).filter(p => p.slot == 'starter' && !['K', 'DEF'].includes(p.pos));
+    const ppg = n => { let t = 0, g = 0; for (let w = 1; w <= NF; w++) { const v = this.fantasyPts(n, w); if (v != null) { t += v; g++; } } return g ? t / g : 0; };
+    const suggNames = reqStarters.map(p => [p.name, ppg(p.name)]).sort((a, b) => b[1] - a[1]).slice(0, 2).map(x => x[0]);
+    const togglePlayer = n => () => { const on = R.players.includes(n), players = on ? R.players.filter(x => x != n) : [...R.players, n].slice(-3), playerLegs = {};
+      for (const x of players) playerLegs[x] = R.playerLegs[x] || 'td';
+      this.setState({ req: { ...R, players, playerLegs } }); };
+    const chip = n => { const on = R.players.includes(n); return { name: n, short: n.replace(/^(\S)\S*\s+/, '$1. '), bg: on ? 'var(--accent)' : 'transparent', fg: on ? 'var(--onAccent)' : 'var(--ink)', border: on ? 'var(--accent)' : 'var(--line)', pressed: String(on), pick: togglePlayer(n) }; };
+    const sugg = suggNames.map(chip), otherPicks = R.players.filter(n => !suggNames.includes(n)).length;
     const reqForm = !hasReq ? {} : {
       mgrs: MGR.map(m => ({ m, init: INIT[m], color: col(m), ring: m == rm ? 'var(--ink)' : 'transparent', fg: m == rm ? 'var(--ink)' : 'var(--muted)', pick: pickMgr(m), pressed: String(m == rm) })),
       // Once someone's picked, the ten crests fold into "Requesting as Matt · Change".
@@ -565,18 +578,20 @@ class Component extends DCLogic {
       hasMgr: !!rm, risk: R.risk, riskLabel: rk.label, riskRange: riskText(rk), riskPay: riskPay(rk),
       reach: reqReach(rk, 'mix', R.legs), hasReach: !!reqReach(rk, 'mix', R.legs),
       legs: ['any', '2', '3', '4', '5', '6+'].map(l => ({ label: l == 'any' ? 'Any' : l, bg: R.legs == l ? 'var(--ink)' : 'transparent', fg: R.legs == l ? 'var(--bg)' : 'var(--ink)', pressed: String(R.legs == l), pick: () => this.setState({ req: { ...R, legs: l } }) })),
-      players: !rm ? [] : this.players(rm).filter(p => p.slot == 'starter' && !['K', 'DEF'].includes(p.pos)).map(p => {
-        const on = R.players.includes(p.name);
-        const toggle = () => { const players = on ? R.players.filter(x => x != p.name) : [...R.players, p.name].slice(-3), playerLegs = {};
-          for (const n of players) playerLegs[n] = R.playerLegs[n] || 'td';
-          this.setState({ req: { ...R, players, playerLegs } }); };
-        return { name: p.name, bg: on ? 'var(--accent)' : 'transparent', fg: on ? 'var(--onAccent)' : 'var(--ink)', border: on ? 'var(--accent)' : 'var(--line)', pressed: String(on), pick: toggle };
-      }),
+      players: reqStarters.map(p => chip(p.name)),
       // Each picked player gets a leg: TD, Yards or their team's moneyline.
       picks: !rm ? [] : R.players.map(n => { const p = this.players(rm).find(x => x.name == n) || { name: n }, cur = R.playerLegs[n] || 'td';
         return { name: n, opts: PICK_LEGS.map(o => ({ label: o.label(p), pressed: String(cur == o.k), bg: cur == o.k ? 'var(--ink)' : 'transparent', fg: cur == o.k ? 'var(--bg)' : 'var(--ink)',
           pick: () => this.setState({ req: { ...R, playerLegs: { ...R.playerLegs, [n]: o.k } } }) })) }; }),
       hasPicks: R.players.length > 0,
+      // Two suggested players (best points per game so far), then "Your team" opens the full list.
+      suggest: sugg, teamOpen: !!S.reqTeamOpen,
+      team: { open: String(!!S.reqTeamOpen), label: (S.reqTeamOpen ? 'Hide team' : 'Your team') + (otherPicks ? ' · ' + otherPicks : ''),
+        bg: otherPicks ? 'var(--accent)' : S.reqTeamOpen ? 'var(--ink)' : 'transparent', fg: otherPicks ? 'var(--onAccent)' : S.reqTeamOpen ? 'var(--bg)' : 'var(--ink)', border: otherPicks ? 'var(--accent)' : S.reqTeamOpen ? 'var(--ink)' : 'var(--line)',
+        toggle: () => this.setState({ reqTeamOpen: !S.reqTeamOpen }) },
+      // "Add a leg?": a typed player or team, folded away until asked for. Opening or closing it starts fresh.
+      addOpen: !!S.reqAddOpen, addLabel: S.reqAddOpen ? '− Add a leg?' : '+ Add a leg?',
+      toggleAdd: () => this.setState({ reqAddOpen: !this.state.reqAddOpen, req: { ...this.state.req, game: '' } }),
       sendLabel: R.sending ? 'Sending…' : mine ? 'Update request' : 'Request parlay', send: () => this.sendRequest(false),
       hasMine: !!mine && !builtFor(rm), cancel: () => this.sendRequest(true)
     };
