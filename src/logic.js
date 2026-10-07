@@ -59,6 +59,23 @@ const RISKS = [
   { k: 'spicy', label: 'Spicy', lo: 600, hi: 1500 }, { k: 'longshot', label: 'Long shot', lo: 1500, hi: 5000 },
   { k: 'lottery', label: 'Lottery', lo: 5000, hi: null }
 ];
+// Parlay request bet types, with a rough range of what one leg of that kind pays (decimal odds),
+// used only to warn when a risk level and leg count are out of reach.
+const BET_TYPES = [
+  { k: 'mix', label: 'Mix it up', lo: 1.2, hi: 7 }, { k: 'td', label: 'Anytime TD', lo: 1.5, hi: 7 },
+  { k: 'yards', label: 'Yardage overs', lo: 1.6, hi: 4 }, { k: 'lines', label: 'Game lines', lo: 1.2, hi: 5 }
+];
+const legCount = l => l == 'any' ? null : l == '6+' ? 6 : +l;
+// A warning (never a block) when n legs of this type can't land in the risk range.
+function reqReach(risk, bt, legs) {
+  const n = legCount(legs), b = BET_TYPES.find(x => x.k == bt) || BET_TYPES[0];
+  if (!n) return '';
+  const minD = b.lo ** n, maxD = b.hi ** n, lo = 1 + risk.lo / 100, hi = risk.hi ? 1 + risk.hi / 100 : Infinity;
+  const what = `${n} ${{ mix: 'legs', td: 'anytime TD legs', yards: 'yardage overs', lines: 'game-line legs' }[b.k]}`;
+  if (minD > hi) return `Hard to hit: ${what} usually pay more than ${risk.label}. Send it anyway and it’s built as close as the lines allow, flagged.`;
+  if (maxD < lo) return `Hard to hit: ${what} rarely reach ${risk.label}. Send it anyway and it’s built as close as the lines allow, flagged.`;
+  return '';
+}
 const pay10 = a => '$' + Math.round(10 * (1 + a / 100));
 const riskText = r => '+' + r.lo + (r.hi ? ' to +' + r.hi : ' and up');
 const riskPay = r => '$10 pays ' + pay10(r.lo) + (r.hi ? '–' + pay10(r.hi) : '+');
@@ -203,7 +220,7 @@ class Component extends DCLogic {
   state = { tab: this.props.startTab ?? 'Gameday', week: HOME_WK, theme: null, sheet: null, team: MGR[0], wire: '7 days', draftMode: 'By round', draftRound: 1, draftTeam: MGR[0], rosters: null, draft: null, tx: null, loaded: false,
     // Parlay request form: who's asking is remembered on this device.
     reqMgr: (() => { try { const m = localStorage.getItem('9feamg-req-mgr'); return MGR.includes(m) ? m : null; } catch { return null; } })(),
-    req: { risk: 1, legs: 'any', players: [], game: '', sending: false }, reqs: null };
+    req: { risk: 1, legs: 'any', betType: 'mix', players: [], game: '', sending: false }, reqs: null };
   componentDidMount() {
     // Keyboard: Enter or Space activates clickable rows (role="button"); Escape closes the lineup sheet.
     document.addEventListener('keydown', e => {
@@ -244,7 +261,7 @@ class Component extends DCLogic {
     const S = this.state, m = S.reqMgr;
     if (!m || S.req.sending) return;
     const body = cancel ? { week: LW, manager: m, cancel: true }
-      : { week: LW, manager: m, risk: RISKS[S.req.risk].k, legs: S.req.legs, players: S.req.players, game: S.req.game };
+      : { week: LW, manager: m, risk: RISKS[S.req.risk].k, legs: S.req.legs, betType: S.req.betType, players: S.req.players, game: S.req.game };
     this.setState({ req: { ...S.req, sending: true } });
     try {
       const r = await fetch('/api/requests', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) });
@@ -523,6 +540,8 @@ class Component extends DCLogic {
     const reqForm = !hasReq ? {} : {
       mgrs: MGR.map(m => ({ m, init: INIT[m], color: col(m), ring: m == rm ? 'var(--ink)' : 'transparent', fg: m == rm ? 'var(--ink)' : 'var(--muted)', pick: pickMgr(m), pressed: String(m == rm) })),
       hasMgr: !!rm, risk: R.risk, riskLabel: rk.label, riskRange: riskText(rk), riskPay: riskPay(rk),
+      betTypes: BET_TYPES.map(b => ({ label: b.label, bg: R.betType == b.k ? 'var(--ink)' : 'transparent', fg: R.betType == b.k ? 'var(--bg)' : 'var(--ink)', pressed: String(R.betType == b.k), pick: () => this.setState({ req: { ...R, betType: b.k } }) })),
+      reach: reqReach(rk, R.betType, R.legs), hasReach: !!reqReach(rk, R.betType, R.legs),
       legs: ['any', '2', '3', '4', '5', '6+'].map(l => ({ label: l == 'any' ? 'Any' : l, bg: R.legs == l ? 'var(--ink)' : 'transparent', fg: R.legs == l ? 'var(--bg)' : 'var(--ink)', pressed: String(R.legs == l), pick: () => this.setState({ req: { ...R, legs: l } }) })),
       players: !rm ? [] : this.players(rm).filter(p => p.slot == 'starter' && !['K', 'DEF'].includes(p.pos)).map(p => {
         const on = R.players.includes(p.name);
@@ -534,7 +553,7 @@ class Component extends DCLogic {
     };
     const reqList = Object.values(S.reqs || {}).sort((a, b) => a.at < b.at ? -1 : 1).map(r => {
       const band = RISKS.find(x => x.k == r.risk) || RISKS[1], built = builtFor(r.manager);
-      const bits = [band.label + ' (' + riskText(band) + ')', r.legs == 'any' ? 'any legs' : r.legs + ' legs', r.players?.length ? 'with ' + r.players.join(', ') : '', r.game || ''].filter(Boolean);
+      const bits = [band.label + ' (' + riskText(band) + ')', (BET_TYPES.find(x => x.k == r.betType) || BET_TYPES[0]).label, r.legs == 'any' ? 'any legs' : r.legs + ' legs', r.players?.length ? 'with ' + r.players.join(', ') : '', r.game || ''].filter(Boolean);
       return { m: r.manager, init: INIT[r.manager], color: col(r.manager), text: bits.join(' · '), status: built ? 'Built ›' : 'Waiting for sync',
         statusFg: built ? 'var(--pos)' : 'var(--muted)', href: built ? '#' + anchorOf(built) : null, hasHref: !!built, waiting: !built };
     });

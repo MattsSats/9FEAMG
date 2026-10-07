@@ -1,6 +1,6 @@
 // /api/requests : parlay requests from the live week's Gameday tab.
 //   GET  ?week=5  -> { week, requests: { [manager]: request } }. Public: the league sees who asked.
-//   POST { week, manager, risk, legs, players, game }  -> saves the manager's request for the week,
+//   POST { week, manager, risk, legs, betType, players, game }  -> saves the manager's request for the week,
 //        replacing any earlier one. { week, manager, cancel: true } removes it.
 // Claude Code reads these on "sync", builds each parlay from real book lines and publishes it
 // in data/season.js with request: <manager>, which the site shows as the request being filled.
@@ -11,6 +11,8 @@ const MANAGERS = Object.values(TEAMS);
 // Total-odds bands the slider picks from (American odds).
 const RISK = { safe: [100, 250], balanced: [250, 600], spicy: [600, 1500], longshot: [1500, 5000], lottery: [5000, null] };
 const LEGS = ['any', '2', '3', '4', '5', '6+'];
+// What kind of legs to build with: anything, anytime TDs, yardage overs or game lines.
+const BET_TYPES = ['mix', 'td', 'yards', 'lines'];
 const json = (body, status = 200) => new Response(JSON.stringify(body), {
   status, headers: { 'content-type': 'application/json', 'cache-control': 'no-store' }
 });
@@ -47,8 +49,9 @@ export default {
     } else {
       if (!(b.risk in RISK)) return json({ error: 'Pick a risk level.' }, 400);
       const legs = LEGS.includes(String(b.legs)) ? String(b.legs) : 'any';
+      const betType = BET_TYPES.includes(b.betType) ? b.betType : 'mix';
       const players = (Array.isArray(b.players) ? b.players : []).map(p => clean(p, 40)).filter(Boolean).slice(0, 3);
-      doc.requests[manager] = { manager, risk: b.risk, odds: RISK[b.risk], legs, players, game: clean(b.game, 60), at: new Date().toISOString() };
+      doc.requests[manager] = { manager, risk: b.risk, odds: RISK[b.risk], legs, betType, players, game: clean(b.game, 60), at: new Date().toISOString() };
     }
     await writeJson(path(week), doc);
     return json({ week, requests: doc.requests });

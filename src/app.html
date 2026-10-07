@@ -662,12 +662,22 @@ button{font-family:inherit;color:inherit}
           <input type="range" min="0" max="4" step="1" data-req-risk="" aria-label="Total parlay odds" style="width:100%;margin-top:8px;accent-color:var(--accent)">
           <div style="display:flex;justify-content:space-between;font-family:'JetBrains Mono';font-size:10px;color:var(--muted)"><span>Safe</span><span>{{ reqForm.riskPay }}</span><span>Lottery</span></div>
 
+          <div style="font-family:'JetBrains Mono';font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-top:16px">Bet type</div>
+          <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px">
+            <sc-for list="{{ reqForm.betTypes }}" as="bt" hint-placeholder-count="4">
+              <button sc-camel-on-click="{{ bt.pick }}" aria-pressed="{{ bt.pressed }}" style="min-height:34px;padding:0 13px;border:1px solid var(--line);border-radius:999px;background:{{ bt.bg }};color:{{ bt.fg }};font-size:13px;font-weight:600;cursor:pointer">{{ bt.label }}</button>
+            </sc-for>
+          </div>
+
           <div style="font-family:'JetBrains Mono';font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-top:16px">Legs</div>
           <div style="display:flex;gap:6px;margin-top:8px">
             <sc-for list="{{ reqForm.legs }}" as="lg" hint-placeholder-count="6">
               <button sc-camel-on-click="{{ lg.pick }}" aria-pressed="{{ lg.pressed }}" style="flex:1;min-height:36px;border:1px solid var(--line);border-radius:999px;background:{{ lg.bg }};color:{{ lg.fg }};font-family:'JetBrains Mono';font-size:12px;font-weight:600;cursor:pointer">{{ lg.label }}</button>
             </sc-for>
           </div>
+          <sc-if value="{{ reqForm.hasReach }}" hint-placeholder-val="{{ false }}">
+            <div role="status" style="margin-top:8px;padding:8px 10px;border-left:3px solid var(--accent);border-radius:0 8px 8px 0;background:var(--surface2);font-size:12.5px;line-height:1.4;color:var(--ink)">{{ reqForm.reach }}</div>
+          </sc-if>
 
           <div style="font-family:'JetBrains Mono';font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-top:16px">Include your players <span style="text-transform:none;letter-spacing:0">(optional, up to 3)</span></div>
           <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px">
