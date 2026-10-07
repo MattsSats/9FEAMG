@@ -65,6 +65,10 @@ const BET_TYPES = [
   { k: 'mix', label: 'Mix it up', lo: 1.2, hi: 7 }, { k: 'td', label: 'Anytime TD', lo: 1.5, hi: 7 },
   { k: 'yards', label: 'Yardage overs', lo: 1.6, hi: 4 }, { k: 'lines', label: 'Game lines', lo: 1.2, hi: 5 }
 ];
+// NFL team names by Yahoo's abbreviation, for "→ Packers moneyline".
+const NFL = { Ari: 'Cardinals', Atl: 'Falcons', Bal: 'Ravens', Buf: 'Bills', Car: 'Panthers', Chi: 'Bears', Cin: 'Bengals', Cle: 'Browns', Dal: 'Cowboys', Den: 'Broncos', Det: 'Lions', GB: 'Packers', Hou: 'Texans', Ind: 'Colts', Jax: 'Jaguars', KC: 'Chiefs', LAC: 'Chargers', LAR: 'Rams', LV: 'Raiders', Mia: 'Dolphins', Min: 'Vikings', NE: 'Patriots', NO: 'Saints', NYG: 'Giants', NYJ: 'Jets', Phi: 'Eagles', Pit: 'Steelers', SF: '49ers', Sea: 'Seahawks', TB: 'Buccaneers', Ten: 'Titans', Was: 'Commanders' };
+// What a picked player becomes on the ticket for each bet type.
+const pickLeg = (bt, p) => bt == 'td' ? 'anytime TD' : bt == 'yards' ? 'yardage over' : bt == 'lines' ? (NFL[p.nfl] || p.nfl || 'their team') + ' moneyline' : 'we’ll pick the leg';
 const legCount = l => l == 'any' ? null : l == '6+' ? 6 : +l;
 // A warning (never a block) when n legs of this type can't land in the risk range.
 function reqReach(risk, bt, legs) {
@@ -262,7 +266,7 @@ class Component extends DCLogic {
     const S = this.state, m = S.reqMgr;
     if (!m || S.req.sending) return;
     const body = cancel ? { week: LW, manager: m, cancel: true }
-      : { week: LW, manager: m, risk: RISKS[S.req.risk].k, legs: S.req.legs, betType: S.req.betType, players: S.req.players, game: S.req.game };
+      : { week: LW, manager: m, risk: RISKS[S.req.risk].k, legs: S.req.legs, betType: S.req.betType, players: S.req.players, game: S.req.betType == 'lines' ? S.req.game : '' };
     this.setState({ req: { ...S.req, sending: true } });
     try {
       const r = await fetch('/api/requests', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) });
@@ -557,9 +561,11 @@ class Component extends DCLogic {
     const reqForm = !hasReq ? {} : {
       mgrs: MGR.map(m => ({ m, init: INIT[m], color: col(m), ring: m == rm ? 'var(--ink)' : 'transparent', fg: m == rm ? 'var(--ink)' : 'var(--muted)', pick: pickMgr(m), pressed: String(m == rm) })),
       hasMgr: !!rm, risk: R.risk, riskLabel: rk.label, riskRange: riskText(rk), riskPay: riskPay(rk),
-      betTypes: BET_TYPES.map(b => ({ label: b.label, bg: R.betType == b.k ? 'var(--ink)' : 'transparent', fg: R.betType == b.k ? 'var(--bg)' : 'var(--ink)', pressed: String(R.betType == b.k), pick: () => this.setState({ req: { ...R, betType: b.k } }) })),
+      betTypes: BET_TYPES.map(b => ({ label: b.label, bg: R.betType == b.k ? 'var(--ink)' : 'transparent', fg: R.betType == b.k ? 'var(--bg)' : 'var(--ink)', pressed: String(R.betType == b.k), pick: () => this.setState({ req: { ...R, betType: b.k, game: b.k == 'lines' ? R.game : '' } }) })),
       reach: reqReach(rk, R.betType, R.legs), hasReach: !!reqReach(rk, R.betType, R.legs),
       legs: ['any', '2', '3', '4', '5', '6+'].map(l => ({ label: l == 'any' ? 'Any' : l, bg: R.legs == l ? 'var(--ink)' : 'transparent', fg: R.legs == l ? 'var(--bg)' : 'var(--ink)', pressed: String(R.legs == l), pick: () => this.setState({ req: { ...R, legs: l } }) })),
+      showGame: R.betType == 'lines',
+      pickLines: !rm ? [] : R.players.map(n => { const p = this.players(rm).find(x => x.name == n) || { name: n }; return { text: `${n} → ${pickLeg(R.betType, p)}` }; }),
       players: !rm ? [] : this.players(rm).filter(p => p.slot == 'starter' && !['K', 'DEF'].includes(p.pos)).map(p => {
         const on = R.players.includes(p.name);
         return { name: p.name, bg: on ? 'var(--accent)' : 'transparent', fg: on ? 'var(--onAccent)' : 'var(--ink)', border: on ? 'var(--accent)' : 'var(--line)', pressed: String(on),

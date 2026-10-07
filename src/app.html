@@ -696,15 +696,20 @@ button{font-family:inherit;color:inherit}
             <div role="status" style="margin-top:8px;padding:8px 10px;border-left:3px solid var(--accent);border-radius:0 8px 8px 0;background:var(--surface2);font-size:12.5px;line-height:1.4;color:var(--ink)">{{ reqForm.reach }}</div>
           </sc-if>
 
-          <div style="font-family:'JetBrains Mono';font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-top:16px">Include your players <span style="text-transform:none;letter-spacing:0">(optional, up to 3)</span></div>
+          <div style="font-family:'JetBrains Mono';font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-top:16px">Your players (optional, up to 3)</div>
           <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px">
             <sc-for list="{{ reqForm.players }}" as="pl" hint-placeholder-count="7">
               <button sc-camel-on-click="{{ pl.pick }}" aria-pressed="{{ pl.pressed }}" style="min-height:32px;padding:0 11px;border:1px solid {{ pl.border }};border-radius:999px;background:{{ pl.bg }};color:{{ pl.fg }};font-size:13px;cursor:pointer">{{ pl.name }}</button>
             </sc-for>
           </div>
-          <label style="display:block;font-family:'JetBrains Mono';font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-top:16px">Add a game bet <span style="text-transform:none;letter-spacing:0">(optional)</span>
+          <div aria-live="polite" style="display:flex;flex-direction:column;gap:2px;margin-top:6px;font-family:'JetBrains Mono';font-size:11px;color:var(--accentInk)">
+            <sc-for list="{{ reqForm.pickLines }}" as="pk" hint-placeholder-count="0"><span>{{ pk.text }}</span></sc-for>
+          </div>
+          <sc-if value="{{ reqForm.showGame }}" hint-placeholder-val="{{ false }}">
+          <label style="display:block;font-family:'JetBrains Mono';font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-top:16px">Add a game bet (optional)
             <input type="text" data-req-game="" maxlength="60" placeholder="e.g. Lions ML, Bills –3.5, Chiefs–Raiders over" style="display:block;width:100%;margin-top:8px;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink);font:15px 'Instrument Sans',system-ui,sans-serif;text-transform:none;letter-spacing:0">
           </label>
+          </sc-if>
 
           <div style="display:flex;gap:8px;align-items:center;margin-top:16px">
             <button sc-camel-on-click="{{ reqForm.send }}" style="flex:1;min-height:44px;border:0;border-radius:999px;background:var(--accent);color:var(--onAccent);font-weight:700;font-size:15px;cursor:pointer">{{ reqForm.sendLabel }}</button>
