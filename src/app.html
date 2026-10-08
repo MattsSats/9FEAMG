@@ -1172,9 +1172,9 @@ button{font-family:inherit;color:inherit}
   <div style="font-family:'JetBrains Mono';font-size:11px;color:var(--muted);margin-top:10px">{{ draftInfo }}</div>
 </div>
 <div style="margin:16px 20px 0;padding:16px;border-radius:16px;border:1px dashed var(--line);display:flex;justify-content:space-between;align-items:center;gap:12px">
-  <div><div style="font-family:'JetBrains Mono';font-size:10px;letter-spacing:.1em;color:var(--muted)">ARCHIVED · READ ONLY</div><div style="font-size:14px;margin-top:4px;text-wrap:pretty">Draft-night tool with ADP values and Yahoo grades, saved for next season.</div></div>
+  <div><div style="font-family:'JetBrains Mono';font-size:10px;letter-spacing:.1em;color:var(--muted)">DRAFT TOOL</div><div style="font-size:14px;margin-top:4px;text-wrap:pretty">ADP values, Yahoo grades and the draft-night tool, with a blank board for next season.</div></div>
   <sc-if value="{{ hasDraftTool }}" hint-placeholder-val="{{ true }}">
-  <a href="{{ draftToolUrl }}" target="_blank" rel="noopener" style="flex:none;display:inline-flex;align-items:center;min-height:44px;padding:0 16px;border-radius:999px;background:var(--accent);color:var(--onAccent);font-weight:700;font-size:14px;text-decoration:none">Open tool</a>
+  <a href="{{ draftToolUrl }}" style="flex:none;display:inline-flex;align-items:center;min-height:44px;padding:0 16px;border-radius:999px;background:var(--accent);color:var(--onAccent);font-weight:700;font-size:14px;text-decoration:none">Open tool</a>
   </sc-if>
 </div>
 <sc-if value="{{ draftMsg }}" hint-placeholder-val="{{ false }}">

@@ -6,6 +6,10 @@
       "destination": "/api/parlay?slug=:slug"
     },
     {
+      "source": "/draft",
+      "destination": "/draft/index.html"
+    },
+    {
       "source": "/s/:name",
       "destination": "/api/section?name=:name"
     }

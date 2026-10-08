@@ -17,7 +17,7 @@ window.SEASON = {
   faabBudget: 100,
   draftInfo: 'Sep 6 · 10-team snake · 15 rounds · Half-PPR',
   // Draft tab "Open tool" button. Set to null to hide the button.
-  draftToolUrl: 'https://9feamg.grok.me/draft',
+  draftToolUrl: '/draft',  // the old Grok tool, copied into draft/, assets/ and docs/
 
   // Display order and avatar color (hue 0-360) for each manager.
   managers: [
