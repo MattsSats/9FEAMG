@@ -1,5 +1,77 @@
 [
   {
+    "when": "Oct 8, 7:44 am",
+    "yahooTeam": "11 Shots In",
+    "manager": "Tony",
+    "action": "add",
+    "player": "Commanders",
+    "nfl": "Was",
+    "pos": "DEF",
+    "faab": null,
+    "via": "Free Agency",
+    "notes": "Yahoo facts Thu Oct 8, 8:41 AM CT"
+  },
+  {
+    "when": "Oct 8, 7:44 am",
+    "yahooTeam": "11 Shots In",
+    "manager": "Tony",
+    "action": "drop",
+    "player": "Eagles",
+    "nfl": "Phi",
+    "pos": "DEF",
+    "faab": null,
+    "via": "Waivers",
+    "notes": "Yahoo facts Thu Oct 8, 8:41 AM CT"
+  },
+  {
+    "when": "Oct 8, 2:00 am",
+    "yahooTeam": "C Lambs Biggest Hater",
+    "manager": "Colin",
+    "action": "add",
+    "player": "Marvin Harrison Jr.",
+    "nfl": "Ari",
+    "pos": "WR",
+    "faab": null,
+    "via": "Free Agency",
+    "notes": "Yahoo facts Thu Oct 8, 8:41 AM CT"
+  },
+  {
+    "when": "Oct 8, 2:00 am",
+    "yahooTeam": "C Lambs Biggest Hater",
+    "manager": "Colin",
+    "action": "drop",
+    "player": "Devaughn Vele",
+    "nfl": "NO",
+    "pos": "WR",
+    "faab": null,
+    "via": "Waivers",
+    "notes": "Yahoo facts Thu Oct 8, 8:41 AM CT"
+  },
+  {
+    "when": "Oct 7, 6:19 pm",
+    "yahooTeam": "Squirtle Squad",
+    "manager": "Tristan",
+    "action": "add",
+    "player": "Romeo Doubs",
+    "nfl": "NE",
+    "pos": "WR",
+    "faab": null,
+    "via": "Free Agency",
+    "notes": "Yahoo facts Thu Oct 8, 8:41 AM CT"
+  },
+  {
+    "when": "Oct 7, 6:19 pm",
+    "yahooTeam": "Squirtle Squad",
+    "manager": "Tristan",
+    "action": "drop",
+    "player": "Blake Corum",
+    "nfl": "LAR",
+    "pos": "RB",
+    "faab": null,
+    "via": "Waivers",
+    "notes": "Yahoo facts Thu Oct 8, 8:41 AM CT"
+  },
+  {
     "when": "Oct 7, 1:29 pm",
     "yahooTeam": "C Lambs Biggest Hater",
     "manager": "Colin",

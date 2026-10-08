@@ -61,13 +61,13 @@ window.SEASON = {
     week: 5,
     status: 'Kicks off Thursday',
     // [current points, projected final]
-    // Yahoo Week 5 projections as of Wed Oct 7, 4:05 PM CT (after waivers).
+    // Yahoo Week 5 projections as of Thu Oct 8, 8:41 AM CT (before TB @ DAL).
     scores: {
-      Matt: [0, 115.97], DLin: [0, 105.60],
-      Tristan: [0, 114.53], Colin: [0, 114.00],
-      Jerger: [0, 106.11], Kurt: [0, 100.38],
-      Tony: [0, 109.27], Andy: [0, 119.39],
-      'Mr. G': [0, 116.31], Pablo: [0, 91.24]
+      Matt: [0, 116.21], DLin: [0, 105.59],
+      Tristan: [0, 115.92], Colin: [0, 106.96],
+      Jerger: [0, 106.17], Kurt: [0, 100.44],
+      Tony: [0, 111.02], Andy: [0, 119.39],
+      'Mr. G': [0, 116.66], Pablo: [0, 91.32]
     },
     // Points so far for every player whose game has started (starters and bench).
     // Players listed in inProgress are still playing; the rest are final.
@@ -148,7 +148,7 @@ window.SEASON = {
       ['Matt', 'The 1–3 bowl, between the two unluckiest teams in the league: Kurt at −1.00 and Matt at −0.89. Projected 115.63–100.37, Matt. There is no 2nd best is 9th.'],
       ['Tony', 'First vs. second, both 3–1, projected 114.57–109.42 for Tristan. Tony has the league’s best luck at +1.11 and the 7th-best power ranking. Fraud watch is on.'],
       ['Mr. G', 'Mr. G is projected to beat Jerger 116.16–106.04. Mr. G has also allowed 524.00 points in four weeks, so Jerger knows the assignment.'],
-      ['Colin', 'Both 2–2, Colin 5th and DLin 7th, with the playoff line between them. Colin has 26 adds this season and the worst lineup efficiency in the league, 79.1%.'],
+      ['Colin', 'Both 2–2, Colin 5th and DLin 7th, with the playoff line between them. Colin has 27 adds this season and the worst lineup efficiency in the league, 79.1%.'],
       ['Pablo', 'Andy is 3–1. Pablo is 2–2 and 6th, right on the playoff line, a week after putting up the top score at 133.78. The team name is He was #1, and it was, for one week.']
     ]
   },

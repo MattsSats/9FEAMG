@@ -1,5 +1,5 @@
 {
-  "asOf": "2026-10-07T16:05:00-05:00",
+  "asOf": "2026-10-08T08:41:00-05:00",
   "source": "Signed-in Yahoo Fantasy league 935526 team roster pages (full reconcile)",
   "week": 5,
   "baseline": "yahoo-live",
@@ -175,14 +175,8 @@
         {
           "name": "Rome Odunze",
           "pos": "WR",
-          "slot": "starter",
-          "nfl": "Chi"
-        },
-        {
-          "name": "Blake Corum",
-          "pos": "RB",
           "slot": "bench",
-          "nfl": "LAR"
+          "nfl": "Chi"
         },
         {
           "name": "Josh Jacobs",
@@ -213,6 +207,12 @@
           "pos": "DEF",
           "slot": "starter",
           "nfl": "NYJ"
+        },
+        {
+          "name": "Romeo Doubs",
+          "pos": "WR",
+          "slot": "starter",
+          "nfl": "NE"
         }
       ]
     },
@@ -244,7 +244,7 @@
         {
           "name": "Ja'Marr Chase",
           "pos": "WR",
-          "slot": "starter",
+          "slot": "bench",
           "nfl": "Cin"
         },
         {
@@ -280,7 +280,7 @@
         {
           "name": "Denzel Boston",
           "pos": "WR",
-          "slot": "bench",
+          "slot": "starter",
           "nfl": "Cle"
         },
         {
@@ -302,12 +302,6 @@
           "nfl": "Ind"
         },
         {
-          "name": "Devaughn Vele",
-          "pos": "WR",
-          "slot": "bench",
-          "nfl": "NO"
-        },
-        {
           "name": "Jaguars",
           "pos": "DEF",
           "slot": "starter",
@@ -324,6 +318,12 @@
           "pos": "WR",
           "slot": "bench",
           "nfl": "Hou"
+        },
+        {
+          "name": "Marvin Harrison Jr.",
+          "pos": "WR",
+          "slot": "bench",
+          "nfl": "Ari"
         }
       ]
     },
@@ -617,16 +617,16 @@
           "nfl": "Sea"
         },
         {
-          "name": "Eagles",
-          "pos": "DEF",
-          "slot": "starter",
-          "nfl": "Phi"
-        },
-        {
           "name": "Will Reichard",
           "pos": "K",
           "slot": "starter",
           "nfl": "Min"
+        },
+        {
+          "name": "Commanders",
+          "pos": "DEF",
+          "slot": "starter",
+          "nfl": "Was"
         }
       ]
     },
@@ -1560,6 +1560,51 @@
         "SEA"
       ],
       "note": "Yahoo facts Wed Oct 7, 4:05 PM CT"
+    },
+    {
+      "date": "2026-10-07",
+      "manager": "Tristan",
+      "add": [
+        "Romeo Doubs",
+        "WR",
+        "NE"
+      ],
+      "drop": [
+        "Blake Corum",
+        "RB",
+        "LAR"
+      ],
+      "note": "Yahoo facts Thu Oct 8, 8:41 AM CT"
+    },
+    {
+      "date": "2026-10-08",
+      "manager": "Colin",
+      "add": [
+        "Marvin Harrison Jr.",
+        "WR",
+        "ARI"
+      ],
+      "drop": [
+        "Devaughn Vele",
+        "WR",
+        "NO"
+      ],
+      "note": "Yahoo facts Thu Oct 8, 8:41 AM CT"
+    },
+    {
+      "date": "2026-10-08",
+      "manager": "Tony",
+      "add": [
+        "Commanders",
+        "DEF",
+        "WAS"
+      ],
+      "drop": [
+        "Eagles",
+        "DEF",
+        "PHI"
+      ],
+      "note": "Yahoo facts Thu Oct 8, 8:41 AM CT"
     }
   ],
   "gaps": [],
