@@ -1,5 +1,5 @@
 {
-  "asOf": "2026-10-08T08:41:00-05:00",
+  "asOf": "2026-10-08T21:03:00-05:00",
   "source": "Signed-in Yahoo Fantasy league 935526 team roster pages (full reconcile)",
   "week": 5,
   "baseline": "yahoo-live",
@@ -395,12 +395,6 @@
           "nfl": "Was"
         },
         {
-          "name": "Brian Thomas Jr.",
-          "pos": "WR",
-          "slot": "bench",
-          "nfl": "Jax"
-        },
-        {
           "name": "Kenny Gainwell",
           "pos": "RB",
           "slot": "bench",
@@ -429,6 +423,12 @@
           "pos": "K",
           "slot": "starter",
           "nfl": "Bal"
+        },
+        {
+          "name": "Cowboys",
+          "pos": "DEF",
+          "slot": "starter",
+          "nfl": "Dal"
         }
       ]
     },
@@ -459,7 +459,7 @@
         },
         {
           "name": "Tetairoa McMillan",
-          "pos": "WR",
+          "pos": "WRT",
           "slot": "starter",
           "nfl": "Car"
         },
@@ -477,7 +477,7 @@
         },
         {
           "name": "Puka Nacua",
-          "pos": "WRT",
+          "pos": "WR",
           "slot": "starter",
           "nfl": "LAR"
         },
@@ -553,7 +553,7 @@
         {
           "name": "Omarion Hampton",
           "pos": "RB",
-          "slot": "starter",
+          "slot": "bench",
           "nfl": "LAC"
         },
         {
@@ -607,7 +607,7 @@
         {
           "name": "Ollie Gordon II",
           "pos": "RB",
-          "slot": "bench",
+          "slot": "starter",
           "nfl": "Mia"
         },
         {
@@ -868,7 +868,7 @@
         {
           "name": "David Montgomery",
           "pos": "RB",
-          "slot": "starter",
+          "slot": "bench",
           "nfl": "Hou"
         },
         {
@@ -892,7 +892,7 @@
         {
           "name": "Braelon Allen",
           "pos": "RB",
-          "slot": "bench",
+          "slot": "starter",
           "nfl": "NYJ"
         },
         {
@@ -1605,6 +1605,21 @@
         "PHI"
       ],
       "note": "Yahoo facts Thu Oct 8, 8:41 AM CT"
+    },
+    {
+      "date": "2026-10-08",
+      "manager": "DLin",
+      "add": [
+        "Cowboys",
+        "DEF",
+        "DAL"
+      ],
+      "drop": [
+        "Brian Thomas Jr.",
+        "WR",
+        "JAX"
+      ],
+      "note": "Yahoo facts Thu Oct 8, 9:03 PM CT"
     }
   ],
   "gaps": [],

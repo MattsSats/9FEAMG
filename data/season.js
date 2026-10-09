@@ -59,21 +59,30 @@ window.SEASON = {
   // The week in progress. Set to null between weeks.
   live: {
     week: 5,
-    status: 'Kicks off Thursday',
+    status: 'Live · TB @ DAL in the 3rd quarter, TB 14–10',
     // [current points, projected final]
-    // Yahoo Week 5 projections as of Thu Oct 8, 8:41 AM CT (before TB @ DAL).
+    // Yahoo live as of Thu Oct 8, 9:03 PM CT (Q3 12:07). Andy is 13.90: Javonte ticked up to
+    // 11.90 right after the league page read 13.70.
     scores: {
-      Matt: [0, 116.21], DLin: [0, 105.59],
-      Tristan: [0, 115.92], Colin: [0, 106.96],
-      Jerger: [0, 106.17], Kurt: [0, 100.44],
-      Tony: [0, 111.02], Andy: [0, 119.39],
-      'Mr. G': [0, 116.66], Pablo: [0, 91.32]
+      Matt: [0, 116.22], DLin: [9.30, 106.80],
+      Tristan: [0, 115.72], Colin: [0, 106.79],
+      Jerger: [0.90, 100.48], Kurt: [16.90, 101.14],
+      Tony: [17.70, 121.50], Andy: [13.90, 120.44],
+      'Mr. G': [0, 116.83], Pablo: [5.00, 91.72]
     },
     // Points so far for every player whose game has started (starters and bench).
     // Players listed in inProgress are still playing; the rest are final.
-    playerPoints: {},
-    inProgress: [],
-    sheetNote: 'Projections until kickoff.'
+    playerPoints: {
+      'Bucky Irving': 17.70, 'Emeka Egbuka': 10.90, 'Dak Prescott': 6.00,
+      'Javonte Williams': 11.90, 'Chase McLaughlin': 2.00, 'George Pickens': 8.30,
+      'Cowboys': 1.00, 'Jake Ferguson': 0.70, 'Kenny Gainwell': 2.90,
+      'CeeDee Lamb': 0.90, 'Brandon Aubrey': 5.00, 'Chris Godwin Jr.': 5.50
+    },
+    inProgress: [
+      'Bucky Irving', 'Emeka Egbuka', 'Dak Prescott', 'Javonte Williams', 'Chase McLaughlin', 'George Pickens',
+      'Cowboys', 'Jake Ferguson', 'Kenny Gainwell', 'CeeDee Lamb', 'Brandon Aubrey', 'Chris Godwin Jr.'
+    ],
+    sheetNote: 'Live as of 9:03 PM CT Thursday. Each player is tagged Final, Live or proj.'
   },
 
   // Thursday of Week 1. Each leg's kickoff ('Thu 7:15 PM · TB @ DAL') counts from that week's
@@ -319,7 +328,7 @@ window.SEASON = {
         // starts Giants TE Isaiah Likely). One leg per game, so the odds multiply: +338.
         // Odds: DraftKings via The Odds API, Wed Oct 7, 9:24 AM CT.
         legs: [
-          { text: 'Javonte Williams anytime TD', player: 'Javonte Williams', type: 'td', count: 1, game: 'Thu 7:15 PM · TB @ DAL', odds: '-230', status: 'open' },
+          { text: 'Javonte Williams anytime TD', player: 'Javonte Williams', type: 'td', count: 1, game: 'Thu 7:15 PM · TB @ DAL', odds: '-230', result: 'Rushing TD by the 3rd quarter', status: 'hit' },
           { text: 'Jahmyr Gibbs anytime TD', player: 'Jahmyr Gibbs', type: 'td', count: 1, game: 'Sun 3:25 PM · DET @ ARI', odds: '-450', status: 'open' },
           { text: 'Giants moneyline at Commanders', player: 'Giants', type: 'ml', team: 'NYG', teams: ['NYG', 'Was'], game: 'Sun 12:00 PM · NYG @ WAS', odds: '+150', status: 'open' }
         ]

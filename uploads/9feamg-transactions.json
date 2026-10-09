@@ -1,5 +1,29 @@
 [
   {
+    "when": "Oct 8, 6:34 pm",
+    "yahooTeam": "Toilet Bowl King",
+    "manager": "DLin",
+    "action": "add",
+    "player": "Cowboys",
+    "nfl": "Dal",
+    "pos": "DEF",
+    "faab": null,
+    "via": "Free Agency",
+    "notes": "Yahoo facts Thu Oct 8, 9:03 PM CT"
+  },
+  {
+    "when": "Oct 8, 6:34 pm",
+    "yahooTeam": "Toilet Bowl King",
+    "manager": "DLin",
+    "action": "drop",
+    "player": "Brian Thomas Jr.",
+    "nfl": "Jax",
+    "pos": "WR",
+    "faab": null,
+    "via": "Waivers",
+    "notes": "Yahoo facts Thu Oct 8, 9:03 PM CT"
+  },
+  {
     "when": "Oct 8, 7:44 am",
     "yahooTeam": "11 Shots In",
     "manager": "Tony",
