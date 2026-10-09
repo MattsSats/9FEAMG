@@ -59,30 +59,28 @@ window.SEASON = {
   // The week in progress. Set to null between weeks.
   live: {
     week: 5,
-    status: 'Live · TB @ DAL in the 3rd quarter, TB 14–10',
+    status: 'Live · Thursday final (TB 24, DAL 16) · Sunday next',
     // [current points, projected final]
-    // Yahoo live as of Thu Oct 8, 9:03 PM CT (Q3 12:07). Andy is 13.90: Javonte ticked up to
-    // 11.90 right after the league page read 13.70.
+    // Yahoo live as of Thu Oct 8, 10:19 PM CT, after TB @ DAL went final. Yahoo showed all of
+    // Tristan's players on the bench and projected him 0.00; nobody of his has played, so this
+    // keeps his 9:03 PM projection until a later pull shows whether the lineup was reset.
     scores: {
-      Matt: [0, 116.22], DLin: [9.30, 106.80],
+      Matt: [0, 116.22], DLin: [24.50, 117.54],
       Tristan: [0, 115.72], Colin: [0, 106.79],
-      Jerger: [0.90, 100.48], Kurt: [16.90, 101.14],
-      Tony: [17.70, 121.50], Andy: [13.90, 120.44],
-      'Mr. G': [0, 116.83], Pablo: [5.00, 91.72]
+      Jerger: [1.90, 94.08], Kurt: [28.84, 99.54],
+      Tony: [30.50, 128.77], Andy: [20.20, 116.62],
+      'Mr. G': [0, 116.83], Pablo: [5.00, 87.48]
     },
     // Points so far for every player whose game has started (starters and bench).
     // Players listed in inProgress are still playing; the rest are final.
     playerPoints: {
-      'Bucky Irving': 17.70, 'Emeka Egbuka': 10.90, 'Dak Prescott': 6.00,
-      'Javonte Williams': 11.90, 'Chase McLaughlin': 2.00, 'George Pickens': 8.30,
-      'Cowboys': 1.00, 'Jake Ferguson': 0.70, 'Kenny Gainwell': 2.90,
-      'CeeDee Lamb': 0.90, 'Brandon Aubrey': 5.00, 'Chris Godwin Jr.': 5.50
+      'Bucky Irving': 30.50, 'Emeka Egbuka': 14.20, 'Dak Prescott': 14.64,
+      'Javonte Williams': 13.20, 'Chase McLaughlin': 7.00, 'George Pickens': 23.50,
+      'Cowboys': 1.00, 'Jake Ferguson': 3.40, 'Kenny Gainwell': 4.30,
+      'CeeDee Lamb': 1.90, 'Brandon Aubrey': 5.00, 'Chris Godwin Jr.': 5.50
     },
-    inProgress: [
-      'Bucky Irving', 'Emeka Egbuka', 'Dak Prescott', 'Javonte Williams', 'Chase McLaughlin', 'George Pickens',
-      'Cowboys', 'Jake Ferguson', 'Kenny Gainwell', 'CeeDee Lamb', 'Brandon Aubrey', 'Chris Godwin Jr.'
-    ],
-    sheetNote: 'Live as of 9:03 PM CT Thursday. Each player is tagged Final, Live or proj.'
+    inProgress: [],
+    sheetNote: 'Thursday final as of 10:19 PM CT. Each player is tagged Final, Live or proj.'
   },
 
   // Thursday of Week 1. Each leg's kickoff ('Thu 7:15 PM · TB @ DAL') counts from that week's
@@ -328,7 +326,7 @@ window.SEASON = {
         // starts Giants TE Isaiah Likely). One leg per game, so the odds multiply: +338.
         // Odds: DraftKings via The Odds API, Wed Oct 7, 9:24 AM CT.
         legs: [
-          { text: 'Javonte Williams anytime TD', player: 'Javonte Williams', type: 'td', count: 1, game: 'Thu 7:15 PM · TB @ DAL', odds: '-230', result: 'Rushing TD by the 3rd quarter', status: 'hit' },
+          { text: 'Javonte Williams anytime TD', player: 'Javonte Williams', type: 'td', count: 1, game: 'Thu 7:15 PM · TB @ DAL', odds: '-230', result: '1 rush TD (12-45)', status: 'hit' },
           { text: 'Jahmyr Gibbs anytime TD', player: 'Jahmyr Gibbs', type: 'td', count: 1, game: 'Sun 3:25 PM · DET @ ARI', odds: '-450', status: 'open' },
           { text: 'Giants moneyline at Commanders', player: 'Giants', type: 'ml', team: 'NYG', teams: ['NYG', 'Was'], game: 'Sun 12:00 PM · NYG @ WAS', odds: '+150', status: 'open' }
         ]
@@ -339,7 +337,7 @@ window.SEASON = {
         // need two TDs instead of one; the Giants moneyline stays. Not marked placed.
         // Odds: DraftKings via The Odds API, Wed Oct 7, 3:32 PM CT.
         legs: [
-          { text: 'Javonte Williams 2+ TDs', player: 'Javonte Williams', type: 'td', count: 2, game: 'Thu 7:15 PM · TB @ DAL', odds: '+245', status: 'open' },
+          { text: 'Javonte Williams 2+ TDs', player: 'Javonte Williams', type: 'td', count: 2, game: 'Thu 7:15 PM · TB @ DAL', odds: '+245', result: '1 rush TD (12-45)', status: 'miss' },
           { text: 'Jahmyr Gibbs 2+ TDs', player: 'Jahmyr Gibbs', type: 'td', count: 2, game: 'Sun 3:25 PM · DET @ ARI', odds: '+115', status: 'open' },
           { text: 'Giants moneyline at Commanders', player: 'Giants', type: 'ml', team: 'NYG', teams: ['NYG', 'Was'], game: 'Sun 12:00 PM · NYG @ WAS', odds: '+150', status: 'open' }
         ]
