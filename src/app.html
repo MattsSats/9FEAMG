@@ -804,13 +804,22 @@ button{font-family:inherit;color:inherit}
                 <span style="display:inline-flex;align-items:center;gap:5px;font-size:13px;font-weight:600"><span class="crest" style="width:20px;height:20px;background:{{ tl.color }};color:var(--onAccent);display:flex;align-items:center;justify-content:center;font-family:'Big Shoulders Display';font-weight:800;font-size:9px;flex:none"><span class="ini" data-i="{{ tl.init }}">{{ tl.init }}</span></span>{{ tl.m }}<sc-if value="{{ tl.hasTag }}" hint-placeholder-val="{{ false }}"><span style="font-family:'JetBrains Mono';font-size:9px;font-weight:700;letter-spacing:.1em;padding:3px 6px;border-radius:5px;background:var(--accent);color:var(--onAccent)">{{ tl.tag }}</span></sc-if></span>
               </sc-for>
             </sc-if>
+            <sc-if value="{{ pr.hasPassed }}" hint-placeholder-val="{{ false }}">
+              <span style="font-family:'JetBrains Mono';font-size:11px;color:var(--muted)">{{ pr.passedLine }}</span>
+              <sc-if value="{{ pr.canUndoPass }}" hint-placeholder-val="{{ false }}">
+                <button class="no-shot" sc-camel-on-click="{{ pr.undoPass }}" style="min-height:32px;padding:0 6px;border:0;background:transparent;color:var(--muted);font-size:12px;text-decoration:underline;cursor:pointer">Undo</button>
+              </sc-if>
+            </sc-if>
+            <sc-if value="{{ pr.canPass }}" hint-placeholder-val="{{ false }}">
+              <button class="no-shot" sc-camel-on-click="{{ pr.tapPass }}" style="margin-left:auto;min-height:32px;padding:0 12px;border:1px dashed var(--line);border-radius:999px;background:transparent;color:var(--muted);font-size:13px;font-weight:600;cursor:pointer">{{ pr.passLabel }}</button>
+            </sc-if>
             <sc-if value="{{ pr.canTail }}" hint-placeholder-val="{{ false }}">
               <button class="no-shot" sc-camel-on-click="{{ pr.tapTail }}" aria-pressed="{{ pr.tailPressed }}" style="margin-left:auto;min-height:32px;padding:0 12px;border:1px solid {{ pr.tailBorder }};border-radius:999px;background:{{ pr.tailBg }};color:{{ pr.tailFg }};font-size:13px;font-weight:600;cursor:pointer">{{ pr.tailLabel }}</button>
             </sc-if>
           </div>
           <sc-if value="{{ pr.asking }}" hint-placeholder-val="{{ false }}">
             <div class="no-shot" style="padding:10px 16px 0">
-              <div style="display:flex;justify-content:space-between;align-items:center"><span style="font-family:'JetBrains Mono';font-size:11px;color:var(--muted)">Who’s on it? Remembered on this phone.</span><button sc-camel-on-click="{{ pr.cancelAsk }}" style="border:0;background:transparent;color:var(--muted);font-size:12px;cursor:pointer;padding:4px">Cancel</button></div>
+              <div style="display:flex;justify-content:space-between;align-items:center"><span style="font-family:'JetBrains Mono';font-size:11px;color:var(--muted)">{{ pr.askLabel }}</span><button sc-camel-on-click="{{ pr.cancelAsk }}" style="border:0;background:transparent;color:var(--muted);font-size:12px;cursor:pointer;padding:4px">Cancel</button></div>
               <div class="scroll-x" style="display:flex;gap:4px;margin-top:6px;padding-bottom:2px">
                 <sc-for list="{{ pr.askMgrs }}" as="am" hint-placeholder-count="10">
                   <button sc-camel-on-click="{{ am.pick }}" aria-label="{{ am.m }}" style="flex:none;min-width:52px;display:flex;flex-direction:column;align-items:center;gap:3px;padding:4px;border:0;border-radius:10px;background:transparent;cursor:pointer"><span class="crest" style="width:28px;height:28px;background:{{ am.color }};color:var(--onAccent);display:flex;align-items:center;justify-content:center;font-family:'Big Shoulders Display';font-weight:800;font-size:11px"><span class="ini" data-i="{{ am.init }}">{{ am.init }}</span></span><span style="font-size:11px;font-weight:600;color:var(--muted)">{{ am.m }}</span></button>

@@ -20,9 +20,9 @@ export default {
     try { found = findParlay(await loadSeason(url.origin), slug); } catch { /* handled below */ }
     if (!found) return Response.redirect(new URL('/og.png', url.origin).href, 302);
 
-    let taps = [];
-    try { taps = (await readJson(`tails/w${found.week}.json`))?.tails?.[slug] || []; } catch { /* none yet */ }
-    const d = describe(found.week, found.p, taps);
+    let taps = [], passes = [];
+    try { const t = await readJson(`tails/w${found.week}.json`); taps = t?.tails?.[slug] || []; passes = t?.passes?.[slug] || []; } catch { /* none yet */ }
+    const d = describe(found.week, found.p, taps, passes);
     const shown = d.legs.slice(0, MAX_LEGS), extra = d.legs.length - shown.length;
     const [sBg, sFg] = STATUS[d.status];
     const { mono, display, sans } = F;

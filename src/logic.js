@@ -241,7 +241,7 @@ class Component extends DCLogic {
   state = { tab: this.props.startTab ?? 'Gameday', week: HOME_WK, theme: null, sheet: null, team: MGR[0], wire: '7 days', draftMode: 'By round', draftRound: 1, draftTeam: MGR[0], rosters: null, draft: null, tx: null, loaded: false,
     // Parlay request form: who's asking is remembered on this device.
     reqMgr: (() => { try { const m = localStorage.getItem('9feamg-req-mgr'); return MGR.includes(m) ? m : null; } catch { return null; } })(),
-    req: { risk: 1, legs: 'any', players: [], playerLegs: {}, game: '', sending: false }, tails: {}, tailAsk: null, tailBusy: null, reqs: null };
+    req: { risk: 1, legs: 'any', players: [], playerLegs: {}, game: '', sending: false }, tails: {}, passes: {}, tailAsk: null, tailAskPass: false, tailBusy: null, reqs: null };
   componentDidMount() {
     // Keyboard: Enter or Space activates clickable rows (role="button"); Escape closes the lineup sheet.
     document.addEventListener('keydown', e => {
@@ -284,19 +284,20 @@ class Component extends DCLogic {
   loadTails() {
     for (const w of Object.keys(D?.parlays || {}))
       fetch('/api/tails?week=' + w, { cache: 'no-store' }).then(r => r.ok ? r.json() : null)
-        .then(d => d && this.setState({ tails: { ...this.state.tails, [w]: d.tails || {} } })).catch(() => {});
+        .then(d => d && this.setState({ tails: { ...this.state.tails, [w]: d.tails || {} }, passes: { ...this.state.passes, [w]: d.passes || {} } })).catch(() => {});
   }
   // "I'm on it": the first tap asks who you are (remembered with the request form's pick).
-  async toggleTail(week, slug, as) {
+  // "Didn't bet it" (pass) goes through the same endpoint; only the ticket's owner or requester can.
+  async toggleTail(week, slug, as, pass = this.state.tailAskPass) {
     const m = as || this.state.reqMgr;
-    if (!m) return this.setState({ tailAsk: slug });
+    if (!m) return this.setState({ tailAsk: slug, tailAskPass: pass });
     if (as) { try { localStorage.setItem('9feamg-req-mgr', as); } catch {} }
-    this.setState({ reqMgr: m, tailAsk: null, tailBusy: slug });
+    this.setState({ reqMgr: m, tailAsk: null, tailAskPass: false, tailBusy: slug });
     try {
-      const r = await fetch('/api/tails', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ week, slug, manager: m }) });
+      const r = await fetch('/api/tails', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ week, slug, manager: m, ...(pass ? { pass: true } : {}) }) });
       const d = await r.json().catch(() => ({}));
       if (!r.ok) throw new Error(d.error || 'Couldn’t save that. Try again.');
-      this.setState({ tailBusy: null, tails: { ...this.state.tails, [week]: d.tails || {} } });
+      this.setState({ tailBusy: null, tails: { ...this.state.tails, [week]: d.tails || {} }, passes: { ...this.state.passes, [week]: d.passes || {} } });
     } catch (err) {
       this.setState({ tailBusy: null });
       this.toast(err.message || 'Couldn’t save that. Try again.');
@@ -676,8 +677,10 @@ class Component extends DCLogic {
       if (mine) angle.push((mine == legs.length ? (mine == 1 ? 'The leg is' : `All ${mine} legs are`) : `${mine} of ${legs.length} legs ${mine == 1 ? 'is' : 'are'}`) + ` ${p.owner}’s starter${mine == 1 ? '' : 's'}.` + (proj ? ` If this cashes, that ${f2(proj)} projection is probably low.` : ''));
       if (theirs) angle.push(`${theirs == 1 ? 'One leg is' : theirs + ' legs are'} ${vs}’s starter${theirs == 1 ? '' : 's'}. ${p.owner} is betting on the opponent.`);
       // Everyone on the ticket: placedBy/tailers from season.js plus taps from the site.
-      const taps = S.tails?.[wk]?.[anchor] || [], fixed = [...(p.placedBy || []), ...(p.tailers || [])];
-      const onIt = [...new Set([...fixed, ...taps])], owners = p.owners || [p.owner], me = S.reqMgr;
+      // Anyone who said they didn't bet it (owner or requester) comes off.
+      const taps = S.tails?.[wk]?.[anchor] || [], fixed = [...(p.placedBy || []), ...(p.tailers || [])], passes = S.passes?.[wk]?.[anchor] || [];
+      const owners = p.owners || [p.owner], me = S.reqMgr, onIt = [...new Set([...fixed, ...taps])].filter(m => !passes.includes(m));
+      const makers = [...new Set([...owners, p.request].filter(m => MGR.includes(m)))], iPassed = !!me && passes.includes(me);
       const lockedNow = tailsLocked(wk, p), iTapped = !!me && taps.includes(me);
       onIt.filter(m => m == vs && mine).forEach(m => angle.push(`${m} is rooting against these players in the matchup and for them on the ticket.`));
       // Joint tickets (owners: ['Andy', 'Tony']): how many legs come from each lineup.
@@ -705,11 +708,18 @@ class Component extends DCLogic {
         // tailing your own opponent's parlay is a hedge (win the matchup or cash the ticket).
         withList: onIt.map(m => { const tag = owners.includes(m) ? 'PLACED' : m == vs ? 'HEDGE' : ''; return { m, init: INIT[m] ?? m.slice(0, 2).toUpperCase(), color: ownerCol(m), tag, hasTag: !!tag }; }),
         hasWith: onIt.length > 0, withLabel: status == 'CASHED' ? 'Cashed with' : status == 'BUSTED' ? 'Busted with' : 'On it',
-        canTail: !lockedNow && !(me && fixed.includes(me)), showTails: onIt.length > 0 || !lockedNow,
+        canTail: !lockedNow && !(me && fixed.includes(me)) && !iPassed, showTails: onIt.length > 0 || !lockedNow || passes.length > 0 || (!!me && makers.includes(me)),
+        // "Didn't bet": shown to the ticket's owner or requester once the phone knows who you are.
+        canPass: !!me && makers.includes(me) && !iPassed,
+        passLabel: S.tailBusy == anchor ? '…' : 'Didn’t bet',
+        tapPass: () => this.toggleTail(wk, anchor, null, true),
+        hasPassed: passes.length > 0, passedLine: passes.join(' & ') + ' didn’t bet this one.',
+        canUndoPass: iPassed, undoPass: () => this.toggleTail(wk, anchor, null, true),
         tailLabel: S.tailBusy == anchor ? '…' : iTapped ? (owners.includes(me) ? 'Placed ✓' : 'You’re on it ✓') : me && owners.includes(me) ? 'I placed it' : 'I’m on it',
         tailPressed: String(iTapped), tailBg: iTapped ? 'var(--accent)' : 'transparent', tailFg: iTapped ? 'var(--onAccent)' : 'var(--ink)', tailBorder: iTapped ? 'var(--accent)' : 'var(--line)',
-        tapTail: () => this.toggleTail(wk, anchor),
-        asking: S.tailAsk == anchor, askMgrs: MGR.map(m => ({ m, init: INIT[m], color: col(m), pick: () => this.toggleTail(wk, anchor, m) })), cancelAsk: () => this.setState({ tailAsk: null }),
+        tapTail: () => this.toggleTail(wk, anchor, null, false),
+        asking: S.tailAsk == anchor, askLabel: S.tailAskPass ? 'Who didn’t bet it? Remembered on this phone.' : 'Who’s on it? Remembered on this phone.',
+        askMgrs: (S.tailAskPass ? makers : MGR).map(m => ({ m, init: INIT[m], color: col(m), pick: () => this.toggleTail(wk, anchor, m) })), cancelAsk: () => this.setState({ tailAsk: null, tailAskPass: false }),
         booth: p.booth || '', hasBooth: boothOn && !!p.booth,
         share: e => this.share(shot, e), shareLabel: S.sharing == shot ? '…' : 'Image',
         // /p/<anchor> serves a preview of this parlay to chat apps, then forwards to /#<anchor>.
@@ -740,7 +750,8 @@ class Component extends DCLogic {
     const ledger = { w: 0, l: 0, open: 0, net: 0, unpriced: 0 }, paper = { w: 0, l: 0, open: 0 }, byOwner = {};
     allParlays.forEach(([w, p]) => {
       const s = parlayState(p), k = s.status == 'CASHED' ? 'w' : s.status == 'BUSTED' ? 'l' : 'open';
-      const bettors = [...new Set([...(p.placedBy || []), ...(p.tailers || []), ...(S.tails?.[w]?.[ticketSlug(w, p)] || [])])];
+      const slug = ticketSlug(w, p), passed = S.passes?.[w]?.[slug] || [];
+      const bettors = [...new Set([...(p.placedBy || []), ...(p.tailers || []), ...(S.tails?.[w]?.[slug] || [])])].filter(m => !passed.includes(m));
       if (!bettors.length) return paper[k]++;
       bettors.forEach(m => {
         const o = byOwner[m] ??= { m, w: 0, l: 0, open: 0 };

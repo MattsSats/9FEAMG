@@ -33,7 +33,8 @@ export function locked(season, week, p, now = Date.now()) {
   return ks.length > 0 && now >= Math.min(...ks);
 }
 // Everyone on a ticket: placedBy and tailers from season.js plus taps saved through /api/tails.
-export const onIt = (p, taps = []) => [...new Set([...(p.placedBy || []), ...(p.tailers || []), ...taps])];
+// Everyone on a ticket, minus anyone who said they didn't bet it (passes).
+export const onIt = (p, taps = [], passes = []) => [...new Set([...(p.placedBy || []), ...(p.tailers || []), ...taps])].filter(m => !passes.includes(m));
 
 export function findParlay(season, slug) {
   for (const [week, list] of Object.entries(season?.parlays || {})) {
@@ -75,7 +76,7 @@ const pct = x => x < 0.1 ? (Math.max(x, 0.001) * 100).toFixed(1) + '%' : Math.ro
 const toAmerican = d => d >= 2 ? '+' + Math.round((d - 1) * 100) : '−' + Math.round(100 / (d - 1));
 
 // Everything the preview needs about one parlay.
-export function describe(week, p, taps = []) {
+export function describe(week, p, taps = [], passes = []) {
   const st = p.legs.map(l => l.status || 'open');
   const status = st.includes('miss') ? 'BUSTED' : st.length && st.every(s => s == 'hit') ? 'CASHED' : 'OPEN';
   // A ticket-level odds (same-game parlays, priced by the book as one bet) overrides the leg math.
@@ -99,8 +100,8 @@ export function describe(week, p, taps = []) {
     legs: p.legs.map(l => ({ text: l.text, odds: l.sgp ? 'SGP ' + l.sgp : l.odds ? String(l.odds).replace('-', '−') : '', status: l.status || 'open' })),
     // Changes whenever odds or results change, so chat apps fetch a fresh image.
     // Managers on the ticket; the owner tapping their own ticket means they placed it.
-    with: onIt(p, taps).map(m => (p.owners || [p.owner]).includes(m) ? `${m} (placed)` : m),
-    version: `${p.odds}|${p.sgps}|${onIt(p, taps)}|` + p.legs.map(l => `${l.odds}:${l.status}`).join('|')
+    with: onIt(p, taps, passes).map(m => (p.owners || [p.owner]).includes(m) ? `${m} (placed)` : m),
+    version: `${p.odds}|${p.sgps}|${onIt(p, taps, passes)}|` + p.legs.map(l => `${l.odds}:${l.status}`).join('|')
   };
 }
 

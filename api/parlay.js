@@ -21,9 +21,9 @@ export default {
     try { found = findParlay(await loadSeason(url.origin), slug); } catch { /* fall back to the site preview */ }
     if (!found) return Response.redirect(home.href, 302);
 
-    let taps = [];
-    try { taps = (await readJson(`tails/w${found.week}.json`))?.tails?.[slug] || []; } catch { /* none yet */ }
-    const d = describe(found.week, found.p, taps);
+    let taps = [], passes = [];
+    try { const t = await readJson(`tails/w${found.week}.json`); taps = t?.tails?.[slug] || []; passes = t?.passes?.[slug] || []; } catch { /* none yet */ }
+    const d = describe(found.week, found.p, taps, passes);
     const title = `${d.title} · ${d.odds ? 'Parlay ' + d.odds : 'Week ' + d.week}${d.status != 'OPEN' ? ' · ' + d.status : ''}`;
     const desc = d.legs.map(l => l.text).join(' · ');
     const img = new URL(`/api/og?slug=${slug}&v=${hash(d.version)}`, url.origin).href;
