@@ -336,6 +336,7 @@ class Component extends DCLogic {
     if (h == '#season') { this.setState({ tab: 'Season', sheet: null }); window.scrollTo(0, 0); return; }
     // Season sections: #power, #pfpa, #luck, #bench open the Season tab scrolled to that section.
     if (['#power', '#pfpa', '#luck', '#bench'].includes(h)) { this.setState({ tab: 'Season', sheet: null }); setTimeout(() => document.getElementById(h.slice(1))?.scrollIntoView({ block: 'start' }), 350); return; }
+    if (h == '#ledger') { this.setState({ tab: 'Gameday', week: HOME_WK, sheet: null }); setTimeout(() => document.getElementById('ledger')?.scrollIntoView({ block: 'start' }), 350); return; }
     if (tm) { const t = MGR.find(x => teamSlug(x) == tm[1]); if (t) { this.setState({ tab: 'Teams', team: t, sheet: null }); window.scrollTo(0, 0); } return; }
     const m = h.match(/^#w(\d+)-([\w-]+)$/);
     if (!m) return;
@@ -440,7 +441,7 @@ class Component extends DCLogic {
       : S.tab == 'Season' ? '#season' : S.tab == 'Teams' ? '#team-' + teamSlug(S.team)
       : S.tab == 'Wire' ? '#wire' : S.tab == 'Draft' ? '#draft' : null;
     if (want == null || h == want) return;
-    if (S.tab == 'Gameday' && (h == '#w' + S.week || h.startsWith('#w' + S.week + '-'))) return;
+    if (S.tab == 'Gameday' && (h == '#w' + S.week || h.startsWith('#w' + S.week + '-') || h == '#ledger')) return;
     if (S.tab == 'Season' && ['#power', '#pfpa', '#luck', '#bench'].includes(h)) return;
     if (!want && !h) return;
     history.pushState(null, '', want || location.pathname + location.search);
@@ -754,16 +755,26 @@ class Component extends DCLogic {
       const bettors = [...new Set([...(p.placedBy || []), ...(p.tailers || []), ...(S.tails?.[w]?.[slug] || [])])].filter(m => !passed.includes(m));
       if (!bettors.length) return paper[k]++;
       bettors.forEach(m => {
-        const o = byOwner[m] ??= { m, w: 0, l: 0, open: 0 };
+        const o = byOwner[m] ??= { m, w: 0, l: 0, open: 0, net: 0 };
         ledger[k]++; o[k]++;
-        if (k == 'w') { if (s.priced) ledger.net += 10 * (s.dec - 1); else ledger.unpriced++; }
-        else if (k == 'l') ledger.net -= 10;
+        const won = k == 'w' ? (s.priced ? 10 * (s.dec - 1) : 0) : k == 'l' ? -10 : 0;
+        ledger.net += won; o.net += won;
+        if (k == 'w' && !s.priced) ledger.unpriced++;
       });
     });
-    const ledgerLine = `${ledger.w}–${ledger.l}` + (ledger.open ? ` · ${ledger.open} open` : '') + ` · ${ledger.net < 0 ? '−' : '+'}$${Math.abs(ledger.net).toFixed(2)}` + (ledger.unpriced ? ` (${ledger.unpriced} cashed without a line)` : '');
-    const rec = o => `${o.w}–${o.l}` + (o.open ? ` · ${o.open} open` : '');
-    const ledgerOwners = [...Object.values(byOwner).map(o => ({ m: o.m, color: ownerCol(o.m), rec: rec(o) })),
-      ...(paper.w + paper.l + paper.open ? [{ m: 'Paper (nobody on it)', color: 'transparent', rec: rec(paper) }] : [])];
+    const money = n => (n < 0 ? '−' : n > 0 ? '+' : '') + '$' + Math.abs(n).toFixed(2), moneyCol = n => n > 0 ? 'var(--pos)' : n < 0 ? 'var(--neg)' : 'var(--muted)';
+    const bets = ledger.w + ledger.l + ledger.open;
+    const ledgerTiles = [
+      { label: 'RECORD', value: `${ledger.w}–${ledger.l}`, color: 'var(--ink)' },
+      { label: 'NET', value: money(ledger.net), color: moneyCol(ledger.net) },
+      { label: 'OPEN', value: String(ledger.open), color: 'var(--ink)' }];
+    const ledgerSub = `${bets} ${bets == 1 ? 'bet' : 'bets'} · $10 each` + (ledger.unpriced ? ` · ${ledger.unpriced} cashed without a line` : '');
+    // Best net first; each row: crest, record, open count, net.
+    const ledgerOwners = Object.values(byOwner).sort((a, b) => b.net - a.net || b.w - a.w || a.l - b.l).map(o => ({
+      m: o.m, init: INIT[o.m] ?? o.m.slice(0, 2).toUpperCase(), color: ownerCol(o.m), rec: `${o.w}–${o.l}`,
+      open: o.open ? o.open + ' open' : '', net: money(o.net), netColor: moneyCol(o.net) }));
+    const hasPaper = paper.w + paper.l + paper.open > 0;
+    const paperLine = `${paper.w}–${paper.l}` + (paper.open ? ` · ${paper.open} open` : '');
     const weekStatus = wk == LW ? `Week ${wk} · ${LIVE.status}` : NEXT && wk == NEXT.week ? `Week ${wk} · ${NEXT.dates}` : `Week ${wk} · Final`;
 
     // Season
@@ -927,7 +938,9 @@ class Component extends DCLogic {
       draftBtnBg: S.tab == 'Draft' ? 'var(--accent)' : 'var(--surface)', draftBtnFg: S.tab == 'Draft' ? 'var(--onAccent)' : 'var(--ink)', draftBtnBorder: S.tab == 'Draft' ? 'var(--accent)' : 'var(--line)',
       tabs, tabGameday: S.tab == 'Gameday', tabSeason: S.tab == 'Season', tabTeams: S.tab == 'Teams', tabDraft: S.tab == 'Draft', tabWire: S.tab == 'Wire',
       weekChips, isW5: isNext, nextTitle, nextNote, hasWeek, hero: hero || blank, matchups, heroLabel: wk == LW ? 'Matchup of the week' : 'Closest finish', heroCaption: this.heroCaption(wk, hero),
-      weekStatus, parlays, hasParlays: parlays.length > 0, hasLedger: allParlays.length > 0, ledgerLine, ledgerOwners,
+      weekStatus, parlays, hasParlays: parlays.length > 0, hasLedger: allParlays.length > 0, ledgerTiles, ledgerSub, ledgerOwners, hasLedgerRows: ledgerOwners.length > 0, hasPaper, paperLine,
+      shareLedger: e => this.share('ledger', e), ledgerLabel: S.sharing == 'ledger' ? '…' : 'Image',
+      linkLedger: e => this.shareLink(location.origin + '/#ledger', '9FEAMG · Parlay ledger', e), shotLedger: `Parlay ledger · through week ${LW}`,
       hasReq, reqForm, reqList, hasReqList: reqList.length > 0,
       showBooth: boothOn, booth: boothLines, hasBooth: boothOn && boothLines.length > 0,
       seasonSub, seasonTiles, standings, playoffLine: `Playoff line · top ${P} of ${MGR.length}`,
