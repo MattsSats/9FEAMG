@@ -329,7 +329,12 @@ class Component extends DCLogic {
   // Your team, picked once on this phone.
   setMine(m) {
     try { localStorage.setItem('9feamg-req-mgr', m); localStorage.setItem('9feamg-team-asked', '1'); } catch {}
-    this.setState({ reqMgr: m, askTeam: false, team: this.state.tab == 'Teams' ? this.state.team : m });
+    this.setState({ reqMgr: m, askTeam: false, changingTeam: false, team: this.state.tab == 'Teams' ? this.state.team : m });
+  }
+  // "No team": forget the pick on this phone (and don't ask again).
+  clearMine() {
+    try { localStorage.removeItem('9feamg-req-mgr'); localStorage.setItem('9feamg-team-asked', '1'); } catch {}
+    this.setState({ reqMgr: null, askTeam: false, changingTeam: false });
   }
   // One Share button per card: a sheet offers the link or the image.
   shareMenu(title, link, img) { return e => { e?.stopPropagation?.(); this.setState({ shareSheet: { title, link, img } }); }; }
@@ -1016,7 +1021,10 @@ class Component extends DCLogic {
       gamedaySub: hasRecap ? (isFinal ? 'Week recap · scores + Booth' : LIVE_STARTED ? 'Live week · scores + Booth' : 'Week preview · projections + Booth') : '9 Fantasy Experts & Mr. Glenn',
       gamedayShare: hasRecap ? this.shareMenu(`Week ${wk}`, e => this.shareLink(location.origin + '/#w' + wk, '9FEAMG · Week ' + wk, e), e => this.share('recap', e)) : null, hasGamedayShare: !!hasRecap,
       jumps: hasWeek ? [['Matchups', 'matchups'], ...(boothOn && boothLines.length ? [['Booth', 'booth']] : []), ...(parlays.length || hasReq ? [['Parlays', 'parlays']] : [])].map(([label, id]) => ({ label, go: () => this.jump(id) })) : [], hasJumps: hasWeek,
-      askTeam: S.askTeam && !S.reqMgr && S.tab == 'Gameday', askTeamMgrs: MGR.map(m => ({ m, init: INIT[m], color: col(m), pick: () => this.setMine(m) })), skipAsk: () => { try { localStorage.setItem('9feamg-team-asked', '1'); } catch {} this.setState({ askTeam: false }); },
+      askTeam: S.askTeam && (!S.reqMgr || S.changingTeam) && S.tab == 'Gameday', askTeamTitle: S.changingTeam ? 'Change your team' : 'Which team is yours?',
+      askTeamMgrs: MGR.map(m => ({ m, init: INIT[m], color: col(m), pick: () => this.setMine(m), ring: m == S.reqMgr ? 'var(--ink)' : 'transparent' })), skipAsk: () => { try { localStorage.setItem('9feamg-team-asked', '1'); } catch {} this.setState({ askTeam: false, changingTeam: false }); },
+      canClearTeam: !!S.reqMgr, clearTeam: () => this.clearMine(), skipLabel: S.changingTeam ? 'Cancel' : 'Not now',
+      heroMine, changeTeam: e => { e?.stopPropagation?.(); this.setState({ askTeam: true, changingTeam: true }); window.scrollTo({ top: 0, behavior: 'smooth' }); },
       scoresAsOf: wk == LW && LIVE?.asOf ? asOfLabel(LIVE.asOf) : '', hasAsOf: wk == LW && !!LIVE?.asOf,
       newScores: !!S.newScores, refreshNow: () => this.refreshInPlace(),
       reqOpen: !!S.reqOpen, reqClosed: !S.reqOpen, openReq: () => this.setState({ reqOpen: true }), closeReq: () => this.setState({ reqOpen: false }),

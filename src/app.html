@@ -574,11 +574,11 @@ button{font-family:inherit;color:inherit}
   </sc-if>
   <sc-if value="{{ askTeam }}" hint-placeholder-val="{{ false }}">
     <div style="margin-top:14px;padding:12px 14px;border:1px solid var(--line);border-radius:16px;background:var(--surface)">
-      <div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><span style="font-size:14px;font-weight:600">Which team is yours?</span><button sc-camel-on-click="{{ skipAsk }}" style="border:0;background:transparent;color:var(--muted);font-size:12px;cursor:pointer;padding:4px">Not now</button></div>
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><span style="font-size:14px;font-weight:600">{{ askTeamTitle }}</span><span style="display:flex;gap:4px"><sc-if value="{{ canClearTeam }}" hint-placeholder-val="{{ false }}"><button sc-camel-on-click="{{ clearTeam }}" style="border:0;background:transparent;color:var(--accentInk);font-size:12px;font-weight:600;cursor:pointer;padding:4px">No team</button></sc-if><button sc-camel-on-click="{{ skipAsk }}" style="border:0;background:transparent;color:var(--muted);font-size:12px;cursor:pointer;padding:4px">{{ skipLabel }}</button></span></div>
       <div style="font-size:12px;color:var(--muted);margin-top:2px">Your matchup goes first, and Standings and Teams open on you. Remembered on this phone.</div>
       <div class="scroll-x" style="display:flex;gap:4px;margin-top:8px;padding-bottom:2px">
         <sc-for list="{{ askTeamMgrs }}" as="am" hint-placeholder-count="10">
-          <button sc-camel-on-click="{{ am.pick }}" aria-label="{{ am.m }}" style="flex:none;min-width:52px;display:flex;flex-direction:column;align-items:center;gap:3px;padding:4px;border:0;border-radius:10px;background:transparent;cursor:pointer"><span class="crest" style="width:28px;height:28px;background:{{ am.color }};color:var(--onAccent);display:flex;align-items:center;justify-content:center;font-family:'Big Shoulders Display';font-weight:800;font-size:11px"><span class="ini" data-i="{{ am.init }}">{{ am.init }}</span></span><span style="font-size:11px;font-weight:600;color:var(--muted)">{{ am.m }}</span></button>
+          <button sc-camel-on-click="{{ am.pick }}" aria-label="{{ am.m }}" style="flex:none;min-width:52px;display:flex;flex-direction:column;align-items:center;gap:3px;padding:4px;border:0;border-radius:10px;background:transparent;cursor:pointer"><span class="crest" style="width:28px;height:28px;background:{{ am.color }};color:var(--onAccent);display:flex;align-items:center;justify-content:center;font-family:'Big Shoulders Display';font-weight:800;font-size:11px"><span class="ini" data-i="{{ am.init }}">{{ am.init }}</span></span><span style="font-size:11px;font-weight:600;color:var(--muted);border-bottom:2px solid {{ am.ring }}">{{ am.m }}</span></button>
         </sc-for>
       </div>
     </div>
@@ -638,7 +638,7 @@ button{font-family:inherit;color:inherit}
 <div id="matchups" class="jump-to">
   <div data-shot="hero" sc-camel-on-click="{{ hero.open }}" tabindex="0" role="button" style="margin:16px 20px 0;background:var(--surface);border:1px solid var(--line);border-radius:20px;overflow:hidden;cursor:pointer">
     <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;padding:14px 16px 0;min-height:46px">
-      <span style="font-family:'JetBrains Mono';font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--accentInk);font-weight:600">{{ heroLabel }}</span>
+      <span style="display:flex;align-items:baseline;gap:8px;min-width:0"><span style="font-family:'JetBrains Mono';font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--accentInk);font-weight:600">{{ heroLabel }}</span><sc-if value="{{ heroMine }}" hint-placeholder-val="{{ false }}"><button class="no-shot" sc-camel-on-click="{{ changeTeam }}" style="border:0;background:transparent;padding:4px 0;color:var(--muted);font-size:12px;text-decoration:underline;cursor:pointer;white-space:nowrap">Not you?</button></sc-if></span>
       <span class="no-shot" style="display:flex;align-items:center;gap:12px">
 <button class="share-btn" sc-camel-on-click="{{ menuHero }}" aria-label="Share this matchup">Share</button>
         <span style="font-family:'JetBrains Mono';font-size:11px;color:var(--muted)">Lineups ›</span>
