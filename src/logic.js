@@ -214,6 +214,8 @@ function parlayParts(p) {
   }
   return parts;
 }
+// A ticket's link and tails key: 'w5-ground-and-pound' (id, else title, else owner).
+const ticketSlug = (wk, p) => `w${wk}-` + String(p.id ?? p.title ?? p.owner).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 // A parlay's state from its legs: any miss = BUSTED, all hit = CASHED, else OPEN.
 // A ticket-level odds (same-game parlays, priced by the book as one bet) overrides the leg math.
 function parlayState(p) {
@@ -655,7 +657,7 @@ class Component extends DCLogic {
       const { status, dec, priced } = parlayState(p), chance = hitChance(p);
       const vs = p.vs ?? opp(p.owner, wk), shot = 'parlay-' + i;
       // Stable link name from the parlay's id, title or owner: 'w4-the-truce'.
-      const anchor = `w${wk}-` + String(p.id ?? p.title ?? p.owner).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+      const anchor = ticketSlug(wk, p);
       const legs = p.legs.map(l => {
         const spot = l.player ? this.rosterSpot(l.player, wk) : null, pts = l.player ? this.fantasyPts(l.player, wk) : null;
         // Game legs (totals, moneylines) list the managers starting someone in that game.
@@ -732,16 +734,25 @@ class Component extends DCLogic {
       x.bustedExpanded = String(bustOpen);
       x.toggleBusted = () => this.setState({ bustedOpen: !bustOpen });
     });
-    // Season ledger across every week's parlays. Stakes are a flat $10.
-    const allParlays = Object.values(D.parlays || {}).flat(), ledger = { w: 0, l: 0, open: 0, net: 0, unpriced: 0 }, byOwner = {};
-    allParlays.forEach(p => {
-      const s = parlayState(p), o = byOwner[p.owner] ??= { m: p.owner, w: 0, l: 0, open: 0 };
-      if (s.status == 'CASHED') { ledger.w++; o.w++; if (s.priced) ledger.net += 10 * (s.dec - 1); else ledger.unpriced++; }
-      else if (s.status == 'BUSTED') { ledger.l++; o.l++; ledger.net -= 10; }
-      else { ledger.open++; o.open++; }
+    // Season ledger: real bets only, a flat $10 each. Everyone who placed or tailed a ticket
+    // (placedBy, tailers, "I'm on it" taps) is one bet; tickets nobody is on count as paper.
+    const allParlays = Object.entries(D.parlays || {}).flatMap(([w, ps]) => ps.map(p => [w, p]));
+    const ledger = { w: 0, l: 0, open: 0, net: 0, unpriced: 0 }, paper = { w: 0, l: 0, open: 0 }, byOwner = {};
+    allParlays.forEach(([w, p]) => {
+      const s = parlayState(p), k = s.status == 'CASHED' ? 'w' : s.status == 'BUSTED' ? 'l' : 'open';
+      const bettors = [...new Set([...(p.placedBy || []), ...(p.tailers || []), ...(S.tails?.[w]?.[ticketSlug(w, p)] || [])])];
+      if (!bettors.length) return paper[k]++;
+      bettors.forEach(m => {
+        const o = byOwner[m] ??= { m, w: 0, l: 0, open: 0 };
+        ledger[k]++; o[k]++;
+        if (k == 'w') { if (s.priced) ledger.net += 10 * (s.dec - 1); else ledger.unpriced++; }
+        else if (k == 'l') ledger.net -= 10;
+      });
     });
     const ledgerLine = `${ledger.w}–${ledger.l}` + (ledger.open ? ` · ${ledger.open} open` : '') + ` · ${ledger.net < 0 ? '−' : '+'}$${Math.abs(ledger.net).toFixed(2)}` + (ledger.unpriced ? ` (${ledger.unpriced} cashed without a line)` : '');
-    const ledgerOwners = Object.values(byOwner).map(o => ({ m: o.m, color: ownerCol(o.m), rec: `${o.w}–${o.l}` + (o.open ? ` · ${o.open} open` : '') }));
+    const rec = o => `${o.w}–${o.l}` + (o.open ? ` · ${o.open} open` : '');
+    const ledgerOwners = [...Object.values(byOwner).map(o => ({ m: o.m, color: ownerCol(o.m), rec: rec(o) })),
+      ...(paper.w + paper.l + paper.open ? [{ m: 'Paper (nobody on it)', color: 'transparent', rec: rec(paper) }] : [])];
     const weekStatus = wk == LW ? `Week ${wk} · ${LIVE.status}` : NEXT && wk == NEXT.week ? `Week ${wk} · ${NEXT.dates}` : `Week ${wk} · Final`;
 
     // Season

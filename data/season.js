@@ -182,6 +182,8 @@ window.SEASON = {
   //                 real lines. Once every leg has odds, the combined parlay
   //                 odds and $10 payout calculate themselves.
   //   legs[].status 'open', 'hit' or 'miss'. Any miss = BUSTED, all hit = CASHED.
+  //   placedBy      managers who actually bet it (a real slip). The ledger counts only
+  //                 placed and tailed tickets, plus "I'm on it" taps on the site.
   //   tailers       managers riding along; tailing your own opponent shows HEDGE.
   //   odds          optional book price for the whole ticket ('+2350'). Use it for
   //                 same-game parlays, which the book prices as one bet; it
@@ -195,7 +197,7 @@ window.SEASON = {
   parlays: {
     4: [
       {
-        owner: 'Andy', title: 'Chalk Talk', id: 'andy', // id keeps the original link (#w4-andy)
+        owner: 'Andy', title: 'Chalk Talk', id: 'andy', placedBy: ['Andy'], // id keeps the original link (#w4-andy)
         legs: [
           // Odds: DraftKings via ESPN odds/props pages, Fri Oct 2.
           { text: 'Jahmyr Gibbs anytime TD', player: 'Jahmyr Gibbs', type: 'td', game: 'Sun 7:20 PM @ CAR', result: '1 rush TD', odds: '-330', status: 'hit' },
@@ -240,7 +242,7 @@ window.SEASON = {
         booth: 'The Booth’s noon special: the highest total on the early slate, a Cowboys upset that runs straight through Pablo’s QB and defense, and Matt’s Jordan Love against an 0–3 Bucs team. For fun, not a lock.'
       },
       {
-        owner: 'Andy', title: 'London Lottery', odds: '+2350', // book price for the whole ticket (same-game parlay)
+        owner: 'Andy', title: 'London Lottery', placedBy: ['Andy'], odds: '+2350', // book price for the whole ticket (same-game parlay)
         legs: [
           { text: 'Jonathan Taylor anytime TD', player: 'Jonathan Taylor', type: 'td', game: 'Sun 8:30 AM · IND @ WAS (London)', result: '2 rush TD', odds: null, status: 'hit' },
           { text: 'Jacory Croskey-Merritt anytime TD', player: 'Jacory Croskey-Merritt', type: 'td', game: 'Sun 8:30 AM · IND @ WAS (London)', result: '15 rush yds, 2-35 rec, no TD', odds: null, status: 'miss' },
@@ -251,7 +253,7 @@ window.SEASON = {
         booth: 'Andy needed Tony’s tight end to score against Tony. Tyler Warren caught five balls and found no end zone, so Tony wins that subplot. Jonathan Taylor scored twice and DLin keeps the 22.20 in the matchup, so the tail only cost ten bucks.'
       },
       {
-        owner: 'Andy', title: 'Breakfast in London', odds: '+1000', // book price for the whole ticket (same-game parlay)
+        owner: 'Andy', title: 'Breakfast in London', placedBy: ['Andy'], odds: '+1000', // book price for the whole ticket (same-game parlay)
         legs: [
           { text: 'Commanders moneyline vs Colts', type: 'ml', team: 'Was', teams: ['Ind', 'Was'], game: 'Sun 8:30 AM · IND @ WAS (London)', result: 'Lost 13–30', odds: null, status: 'miss' },
           { text: 'Jonathan Taylor anytime TD', player: 'Jonathan Taylor', type: 'td', game: 'Sun 8:30 AM · IND @ WAS (London)', result: '2 rush TD', odds: null, status: 'hit' },
@@ -260,7 +262,7 @@ window.SEASON = {
         booth: 'A Commanders win with two Jonathan Taylor touchdowns. Taylor delivered both. The Commanders lost by 17 before most of the league had coffee.'
       },
       {
-        owner: 'Andy', title: 'Two-Score Moonshot',
+        owner: 'Andy', title: 'Two-Score Moonshot', placedBy: ['Andy'],
         // Three same-game parlays; each SGP's book price, from Andy's ticket.
         sgps: ['+345', '+650', '+440'],
         legs: [
@@ -274,7 +276,7 @@ window.SEASON = {
         booth: 'Six legs across three games, with Derrick Henry, Josh Allen and Kenneth Walker III each asked to score twice. Allen is Tony’s quarterback, in the week Andy plays Tony. A $10 bet that pays about $1,800 if all of it lands.'
       },
       {
-        owner: 'Andy', title: 'The Sensible Six',
+        owner: 'Andy', title: 'The Sensible Six', placedBy: ['Andy'],
         // Three same-game parlays; each SGP's book price, from Andy's ticket.
         sgps: ['+210', '+106', '+112'],
         legs: [
