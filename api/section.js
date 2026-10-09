@@ -1,19 +1,69 @@
-// /s/<chart> (rewritten here by vercel.json) for the Season charts: luck, bench, pfpa.
+// /s/<chart> (rewritten here by vercel.json) for the Season charts (luck, bench, pfpa) and the
+// Gameday parlay ledger (ledger).
 // Link-preview bots get a page whose Open Graph tags point at a 1200x630 image of the chart
 // (this same function with &img=1); people are sent to the chart on the site (/#<chart>).
 // Numbers come from the live data/season.js and box scores, so the image is always current.
 import { ImageResponse } from '@vercel/og';
-import { loadSeason, escapeHtml, hash } from './_parlays.js';
+import { loadSeason, escapeHtml, hash, anchorFor, describe } from './_parlays.js';
+import { readJson } from './_yahoo.js';
 import { seasonStats, loadBox } from './_stats.js';
 import { C, F, h, fonts, mgrColor } from './_ogkit.js';
 
 const BOTS = /bot|crawl|spider|facebookexternalhit|facebot|twitterbot|slackbot|discordbot|whatsapp|telegram|linkedin|embedly|skype|iframely|preview/i;
-const CHARTS = { luck: 'Luck', bench: 'Points left on bench', pfpa: 'Points for vs against' };
+const CHARTS = { luck: 'Luck', bench: 'Points left on bench', pfpa: 'Points for vs against', ledger: 'Parlay ledger' };
 const f1 = n => n.toFixed(1), f2 = n => n.toFixed(2);
+const money = n => (n < 0 ? '−' : n > 0 ? '+' : '') + '$' + Math.abs(n).toFixed(2);
+const moneyCol = n => n > 0 ? C.pos : n < 0 ? C.neg : C.muted;
 const sgn = n => n > 0 ? '+' + f2(n) : n < 0 ? '−' + f2(-n) : '0.00';
 
+// The parlay ledger, counted like the site: each manager who placed or tailed a ticket (placedBy,
+// tailers, "I'm on it" taps, minus "Didn't bet" passes) is one $10 bet; the rest is paper.
+async function ledgerOf(season) {
+  const all = { w: 0, l: 0, open: 0, net: 0 }, paper = { w: 0, l: 0, open: 0 }, by = {};
+  for (const [week, list] of Object.entries(season.parlays || {})) {
+    let t = null;
+    try { t = await readJson(`tails/w${week}.json`); } catch { /* none saved */ }
+    for (const p of list) {
+      const slug = anchorFor(week, p), d = describe(week, p), k = d.status == 'CASHED' ? 'w' : d.status == 'BUSTED' ? 'l' : 'open';
+      const passes = t?.passes?.[slug] || [];
+      const who = [...new Set([...(p.placedBy || []), ...(p.tailers || []), ...(t?.tails?.[slug] || [])])].filter(m => !passes.includes(m));
+      if (!who.length) { paper[k]++; continue; }
+      const won = k == 'w' ? (d.payout ? +d.payout - 10 : 0) : k == 'l' ? -10 : 0;
+      for (const m of who) {
+        const o = by[m] ??= { m, w: 0, l: 0, open: 0, net: 0 };
+        o[k]++; all[k]++; o.net += won; all.net += won;
+      }
+    }
+  }
+  return { all, paper, rows: Object.values(by).sort((a, b) => b.net - a.net || b.w - a.w || a.l - b.l) };
+}
+
+function ledgerCard(L, st) {
+  const look = Object.fromEntries(st.rows.map(r => [r.m, r]));
+  const tile = (label, value, color) => h('div', { flexDirection: 'column', padding: '16px 22px', borderRadius: 18, background: C.surface2 },
+    h('div', { fontFamily: F.mono, fontSize: 18, fontWeight: 600, letterSpacing: 3, color: C.muted }, label),
+    h('div', { fontFamily: F.display, fontSize: 64, fontWeight: 900, lineHeight: 1, marginTop: 8, color }, value));
+  const rows = L.rows.slice(0, 8);
+  return h('div', { gap: 40, marginTop: 26 },
+    h('div', { flexDirection: 'column', gap: 12, width: 300 },
+      tile('RECORD', `${L.all.w}–${L.all.l}`, C.ink), tile('NET', money(L.all.net), moneyCol(L.all.net)), tile('OPEN', String(L.all.open), C.ink)),
+    h('div', { flexDirection: 'column', flex: 1 },
+      rows.map(o => h('div', { alignItems: 'center', height: 46, borderTop: `2px solid ${C.line}` },
+        h('div', { width: 34, height: 34, borderRadius: 999, background: look[o.m] ? mgrColor(look[o.m].hue) : C.muted, alignItems: 'center', justifyContent: 'center', fontFamily: F.display, fontSize: 15, fontWeight: 900, color: C.onAccent }, look[o.m]?.init || o.m.slice(0, 2).toUpperCase()),
+        h('div', { flex: 1, marginLeft: 14, fontFamily: F.sans, fontSize: 26, fontWeight: 600, color: C.ink }, o.m),
+        h('div', { width: 170, justifyContent: 'flex-end', fontFamily: F.mono, fontSize: 22, fontWeight: 600, color: C.muted }, `${o.w}–${o.l}` + (o.open ? ` · ${o.open} open` : '')),
+        h('div', { width: 150, justifyContent: 'flex-end', fontFamily: F.mono, fontSize: 24, fontWeight: 600, color: moneyCol(o.net) }, money(o.net)))),
+      rows.length ? null : h('div', { fontFamily: F.sans, fontSize: 26, color: C.muted, paddingTop: 12 }, 'Nobody has bet a ticket yet.'),
+      L.paper.w + L.paper.l + L.paper.open ? h('div', { justifyContent: 'space-between', paddingTop: 12, borderTop: `2px dashed ${C.line}`, fontFamily: F.mono, fontSize: 18, fontWeight: 600, letterSpacing: 2, color: C.muted },
+        'PAPER · NOBODY BET THESE', `${L.paper.w}–${L.paper.l}` + (L.paper.open ? ` · ${L.paper.open} open` : '')) : null));
+}
+
 // One line for the chat preview text.
-function summary(name, st) {
+function summary(name, st, L) {
+  if (name == 'ledger') {
+    const bets = L.all.w + L.all.l + L.all.open, best = L.rows[0];
+    return `${L.all.w}–${L.all.l} on ${bets} ${bets == 1 ? 'bet' : 'bets'}, ${money(L.all.net)} at $10 each.` + (best ? ` Best: ${best.m}, ${money(best.net)}.` : '') + (L.all.open ? ` ${L.all.open} still open.` : '');
+  }
   const r = st.rows;
   if (name == 'luck') { const s = [...r].sort((a, b) => b.luck - a.luck); return `Luckiest: ${s[0].m} ${sgn(s[0].luck)}. Unluckiest: ${s.at(-1).m} ${sgn(s.at(-1).luck)}. Luck = real wins minus expected wins.`; }
   if (name == 'bench') { const s = [...r].sort((a, b) => (b.max - b.pf) - (a.max - a.pf)); return `Most left on the bench: ${s[0].m}, ${f1(s[0].max - s[0].pf)}. Least: ${s.at(-1).m}, ${f1(s.at(-1).max - s.at(-1).pf)}.`; }
@@ -21,10 +71,10 @@ function summary(name, st) {
   return `Most points for: ${pf.m}, ${f1(pf.pf)}. Most points against: ${pa.m}, ${f1(pa.pa)}.`;
 }
 
-// Header shared by all three: kicker, big title, a note on the right.
-const header = (title, note, NF) => h('div', { justifyContent: 'space-between', alignItems: 'flex-end' },
+// Header shared by all of them: kicker, big title, a note on the right.
+const header = (title, note, NF, kicker = 'SEASON') => h('div', { justifyContent: 'space-between', alignItems: 'flex-end' },
   h('div', { flexDirection: 'column' },
-    h('div', { fontFamily: F.mono, fontSize: 22, fontWeight: 600, letterSpacing: 4, color: C.accentInk }, `SEASON · THROUGH WEEK ${NF}`),
+    h('div', { fontFamily: F.mono, fontSize: 22, fontWeight: 600, letterSpacing: 4, color: C.accentInk }, `${kicker} · THROUGH WEEK ${NF}`),
     h('div', { fontFamily: F.display, fontSize: 76, fontWeight: 900, lineHeight: 1, marginTop: 10, textTransform: 'uppercase', color: C.ink }, title)),
   note);
 
@@ -78,15 +128,16 @@ function pfpaChart(st) {
     r.map((x, i) => h('div', { position: 'absolute', left: clamp(pts[i].x) * W - D / 2, top: clamp(pts[i].y) * H - D / 2, width: D, height: D, borderRadius: 999, border: `3px solid ${C.bg}`, background: mgrColor(x.hue), alignItems: 'center', justifyContent: 'center', fontFamily: F.display, fontSize: x.init.length > 2 ? 17 : 21, fontWeight: 900, color: C.onAccent }, x.init)));
 }
 
-async function image(name, st) {
-  const note = name == 'luck' ? h('div', { fontFamily: F.mono, fontSize: 22, fontWeight: 600, color: C.muted, marginBottom: 8 }, 'W − xW')
+async function image(name, st, L, LW) {
+  const note = name == 'ledger' ? h('div', { fontFamily: F.mono, fontSize: 22, fontWeight: 600, color: C.muted, marginBottom: 8 }, '$10 a bet')
+    : name == 'luck' ? h('div', { fontFamily: F.mono, fontSize: 22, fontWeight: 600, color: C.muted, marginBottom: 8 }, 'W − xW')
     : name == 'bench' ? h('div', { gap: 22, fontFamily: F.mono, fontSize: 20, fontWeight: 600, color: C.muted, marginBottom: 8 },
       h('div', { alignItems: 'center', gap: 8 }, h('div', { width: 18, height: 18, borderRadius: 4, background: C.muted }), 'Scored'),
       h('div', { alignItems: 'center', gap: 8 }, h('div', { width: 18, height: 18, borderRadius: 4, background: C.accent }), 'Left on bench'))
     : h('div', { fontFamily: F.mono, fontSize: 22, fontWeight: 600, color: C.muted, marginBottom: 8 }, 'Dashed lines: league average');
-  const body = name == 'luck' ? luckChart(st) : name == 'bench' ? benchChart(st) : pfpaChart(st);
+  const body = name == 'ledger' ? ledgerCard(L, st) : name == 'luck' ? luckChart(st) : name == 'bench' ? benchChart(st) : pfpaChart(st);
   const card = h('div', { width: '100%', height: '100%', flexDirection: 'column', background: C.bg, padding: '40px 64px 0', position: 'relative' },
-    header(CHARTS[name], note, st.NF), body,
+    name == 'ledger' ? header(CHARTS[name], note, LW, 'PARLAYS') : header(CHARTS[name], note, st.NF), body,
     h('div', { position: 'absolute', right: 64, top: 40, alignItems: 'flex-end', gap: 4 },
       h('div', { fontFamily: F.display, fontSize: 40, fontWeight: 900, lineHeight: 1, color: C.ink }, '9FEAMG'),
       h('div', { width: 10, height: 10, background: C.accent, marginBottom: 5 })),
@@ -103,13 +154,19 @@ export default {
     if (!isImg && !BOTS.test(request.headers.get('user-agent') || '')) {
       return new Response(null, { status: 302, headers: { location: new URL('/#' + name, url.origin).href, 'cache-control': 'private, no-store', vary: 'User-Agent' } });
     }
-    let st;
-    try { st = seasonStats(await loadSeason(url.origin), await loadBox(url.origin)); } catch { return Response.redirect(new URL('/og.png', url.origin).href, 302); }
+    let st, L = null, LW;
+    try {
+      const season = await loadSeason(url.origin);
+      st = seasonStats(season, await loadBox(url.origin));
+      LW = season.live?.week ?? st.NF;
+      if (name == 'ledger') L = await ledgerOf(season);
+    } catch { return Response.redirect(new URL('/og.png', url.origin).href, 302); }
     if (name == 'bench' && !st.maxOk) return isImg ? Response.redirect(new URL('/og.png', url.origin).href, 302) : Response.redirect(new URL('/#bench', url.origin).href, 302);
-    if (isImg) return image(name, st);
+    if (isImg) return image(name, st, L, LW);
 
-    const title = `${CHARTS[name]} · through week ${st.NF} · 9FEAMG`, desc = summary(name, st), e = escapeHtml;
-    const img = new URL(`/api/section?name=${name}&img=1&v=${hash(JSON.stringify(st.rows.map(r => [r.pf, r.pa, r.luck, r.max])))}`, url.origin).href;
+    const title = `${CHARTS[name]} · through week ${name == 'ledger' ? LW : st.NF} · 9FEAMG`, desc = summary(name, st, L), e = escapeHtml;
+    const v = hash(JSON.stringify(name == 'ledger' ? L : st.rows.map(r => [r.pf, r.pa, r.luck, r.max])));
+    const img = new URL(`/api/section?name=${name}&img=1&v=${v}`, url.origin).href;
     return new Response(`<!doctype html><html><head><meta charset="utf-8">
 <title>${e(title)}</title>
 <meta name="description" content="${e(desc)}">

@@ -940,7 +940,7 @@ class Component extends DCLogic {
       weekChips, isW5: isNext, nextTitle, nextNote, hasWeek, hero: hero || blank, matchups, heroLabel: wk == LW ? 'Matchup of the week' : 'Closest finish', heroCaption: this.heroCaption(wk, hero),
       weekStatus, parlays, hasParlays: parlays.length > 0, hasLedger: allParlays.length > 0, ledgerTiles, ledgerSub, ledgerOwners, hasLedgerRows: ledgerOwners.length > 0, hasPaper, paperLine,
       shareLedger: e => this.share('ledger', e), ledgerLabel: S.sharing == 'ledger' ? '…' : 'Image',
-      linkLedger: e => this.shareLink(location.origin + '/#ledger', '9FEAMG · Parlay ledger', e), shotLedger: `Parlay ledger · through week ${LW}`,
+      linkLedger: e => this.shareLink(location.origin + '/s/ledger', '9FEAMG · Parlay ledger', e), shotLedger: `Parlay ledger · through week ${LW}`,
       hasReq, reqForm, reqList, hasReqList: reqList.length > 0,
       showBooth: boothOn, booth: boothLines, hasBooth: boothOn && boothLines.length > 0,
       seasonSub, seasonTiles, standings, playoffLine: `Playoff line · top ${P} of ${MGR.length}`,
