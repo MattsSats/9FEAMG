@@ -366,14 +366,14 @@ window.SEASON = {
 
   // One-liner on each team page.
   roasts: {
-    Tony: '3–1 on 2 adds all season. The first loss came with 21.30 points on the bench.',
+    Tony: '3–1 with the fewest points against in the league (332.84). Power rankings have Tony 7th.',
     Tristan: 'First at 3–1, with the most points scored (495.98) and the fewest left on the bench (30.30).',
-    Andy: 'Lost Week 2 with 75.96 and is 3–1 anyway. 11 adds, second only to Colin.',
+    Andy: '3–1 while being outscored 444.66–439.66 on the season. 12 adds, second only to Colin.',
     Matt: 'Second-unluckiest manager in the league at −0.89. Would still like you to know that.',
     Kurt: 'Unluckiest manager in the league at −1.00. Lost Week 4 by 1.44 with the fix sitting on the bench.',
-    Jerger: 'Has left 91.52 points on the bench. Chris Olave bailed out Week 4 anyway.',
+    Jerger: 'Two straight wins after an 0–2 start. Still has 91.52 points left on the bench.',
     'Mr. G': 'Most points allowed in the league: 524.00, 76.16 more than anyone. Opponents save their best for Mr. G.',
-    Colin: '23 adds, two wins, and the most bench points in the league (110.74). Somehow it’s working.',
+    Colin: '27 adds, more than double anyone else, and the most points left on the bench (110.74). Somehow 2–2.',
     DLin: 'Toilet Bowl King. Not a prediction, a title defense.',
     Pablo: 'Projected last in Week 4, finished first with 133.78. Still has 99.56 bench points, second only to Colin.'
   }
