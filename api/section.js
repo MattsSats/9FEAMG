@@ -55,7 +55,7 @@ function ledgerCard(L, st) {
         h('div', { width: 150, justifyContent: 'flex-end', fontFamily: F.mono, fontSize: 24, fontWeight: 600, color: moneyCol(o.net) }, money(o.net)))),
       rows.length ? null : h('div', { fontFamily: F.sans, fontSize: 26, color: C.muted, paddingTop: 12 }, 'Nobody has bet a ticket yet.'),
       L.paper.w + L.paper.l + L.paper.open ? h('div', { justifyContent: 'space-between', paddingTop: 12, borderTop: `2px dashed ${C.line}`, fontFamily: F.mono, fontSize: 18, fontWeight: 600, letterSpacing: 2, color: C.muted },
-        'PAPER · NOBODY BET THESE', `${L.paper.w}–${L.paper.l}` + (L.paper.open ? ` · ${L.paper.open} open` : '')) : null));
+        h('div', {}, 'PAPER · NOBODY BET THESE'), h('div', {}, `${L.paper.w}–${L.paper.l}` + (L.paper.open ? ` · ${L.paper.open} open` : ''))) : null));
 }
 
 // One line for the chat preview text.
