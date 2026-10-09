@@ -17,7 +17,7 @@ function mergeYahoo(S, Y) {
   if (live) {
     const Wk = Y.weeks[live], same = S.live?.week == live, pp = { ...(same ? S.live.playerPoints : {}) };
     for (const t of Object.values(Wk.box || {})) for (const r of [...t.starters, ...t.bench]) if (r[4]) pp[r[1]] = r[4];
-    S.live = { status: 'Live', sheetNote: 'Live from Yahoo. Orange = points so far; the rest are projections.', ...(same ? S.live : {}), week: live, playerPoints: pp,
+    S.live = { status: 'Live', sheetNote: 'Live from Yahoo. Orange = points so far; the rest are projections.', ...(same ? S.live : {}), week: live, playerPoints: pp, asOf: Y.syncedAt,
       scores: Object.fromEntries(S.managers.map(x => [x.m, [Wk.teams[x.m].pts, Wk.teams[x.m].proj]])) };
   } else if (S.live && Y.weeks[S.live.week]?.status == 'postevent' && full(S.live.week)) S.live = null;
   return S;
@@ -51,6 +51,11 @@ const PLAYING = new Set(LIVE?.inProgress || []);
 const LIVE_STARTED = !!LIVE && (Object.keys(LIVEPTS).length > 0 || Object.values(LIVE.scores || {}).some(s => s[0] > 0));
 const HOME_WK = LW && (LIVE_STARTED || !NF) ? LW : NF;
 const PPROJ = D?.projections || {};
+// "Your team": the manager this phone picked (request form, "I'm on it" or the Gameday prompt).
+const MY_TEAM = (() => { try { const m = localStorage.getItem('9feamg-req-mgr'); return MGR.includes(m) ? m : null; } catch { return null; } })();
+const TEAM_ASKED = (() => { try { return !!localStorage.getItem('9feamg-team-asked'); } catch { return true; } })();
+// "Scores as of Thu 10:19 PM" (Central).
+const asOfLabel = iso => { const d = new Date(iso); return isNaN(d) ? '' : 'Scores as of ' + d.toLocaleString('en-US', { weekday: 'short', hour: 'numeric', minute: '2-digit', timeZone: 'America/Chicago' }).replace(',', ''); };
 const PAIRS = D ? D.schedule : {};
 const PROJ = Object.fromEntries(MGR.map(m => [m, LIVE?.scores?.[m]?.[1] ?? 0]));
 // Parlay request risk levels: total American odds, low to high (null = no top).
@@ -238,9 +243,9 @@ function setMaxPF(box) {
 }
 
 class Component extends DCLogic {
-  state = { tab: this.props.startTab ?? 'Gameday', week: HOME_WK, theme: null, sheet: null, team: MGR[0], wire: '7 days', draftMode: 'By round', draftRound: 1, draftTeam: MGR[0], rosters: null, draft: null, tx: null, loaded: false,
+  state = { tab: this.props.startTab ?? 'Gameday', week: HOME_WK, theme: null, sheet: null, team: MY_TEAM || MGR[0], wire: '7 days', draftMode: 'By round', draftRound: 1, draftTeam: MGR[0], rosters: null, draft: null, tx: null, loaded: false,
     // Parlay request form: who's asking is remembered on this device.
-    reqMgr: (() => { try { const m = localStorage.getItem('9feamg-req-mgr'); return MGR.includes(m) ? m : null; } catch { return null; } })(),
+    reqMgr: MY_TEAM, askTeam: !MY_TEAM && !TEAM_ASKED, reqOpen: false, shareSheet: null, newScores: false, compact: false,
     req: { risk: 1, legs: 'any', players: [], playerLegs: {}, game: '', sending: false }, tails: {}, passes: {}, tailAsk: null, tailAskPass: false, tailBusy: null, reqs: null };
   componentDidMount() {
     // Keyboard: Enter or Space activates clickable rows (role="button"); Escape closes the lineup sheet.
@@ -267,8 +272,17 @@ class Component extends DCLogic {
     };
     document.addEventListener('input', onReq); document.addEventListener('change', onReq);
     setTimeout(() => this.syncRiskSlider(), 0);
-    // Keep the newest week chips in view once the season gets long.
-    setTimeout(() => { const el = document.querySelector('[data-weekchips]'); if (el) el.scrollLeft = el.scrollWidth; }, 0);
+    // Week chips start at W1; once the season is long, scroll just enough to show the open week.
+    setTimeout(() => { const el = document.querySelector('[data-weekchips] [data-on="1"]'); if (el) el.scrollIntoView({ block: 'nearest', inline: 'nearest' }); }, 0);
+    this.restoreAfterRefresh();
+    this.pollScores();
+    // Phones: tuck the header and week row down to a slim bar while scrolling down; back on the way up.
+    let lastY = window.scrollY;
+    window.addEventListener('scroll', () => {
+      const y = window.scrollY, c = y > 120 && y > lastY ? true : y < lastY - 4 || y < 60 ? false : this.state.compact;
+      lastY = y;
+      if (c != this.state.compact) this.setState({ compact: c });
+    }, { passive: true });
     // Preload the screenshot library so the first share is quick.
     setTimeout(() => this.loadShotLib().catch(() => {}), 1500);
     // Parlay deep links: #w4-the-truce opens that week and scrolls to the card.
@@ -276,6 +290,50 @@ class Component extends DCLogic {
     // Back/forward and typed hashes (popstate fires for both).
     window.addEventListener('popstate', () => this.openHash(true));
   }
+  // Game days (Thursday, Sunday, Monday and the early hours after): check season.js and the Yahoo
+  // feed every 3 minutes. New numbers refresh the page in place unless someone is mid-something,
+  // in which case a "New scores" button does it.
+  pollScores() {
+    if (!LW) return;
+    const read = () => Promise.all(['/data/season.js', '/api/league?format=js'].map(u => fetch(u, { cache: 'no-store' }).then(r => r.ok ? r.text() : '').catch(() => ''))).then(a => a.join('\n'));
+    const gameDay = () => {
+      const d = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/Chicago' })), day = d.getDay(), h = d.getHours();
+      return [4, 0, 1].includes(day) || ([5, 2].includes(day) && h < 2);
+    };
+    let base = null;
+    read().then(t => { base = t; });
+    setInterval(async () => {
+      if (base == null || document.hidden || !gameDay()) return;
+      const t = await read();
+      if (!t || t == base) return;
+      base = t;
+      if (this.isIdle()) this.refreshInPlace(); else this.setState({ newScores: true });
+    }, 180000);
+  }
+  isIdle() {
+    const S = this.state, a = document.activeElement;
+    return !S.sheet && !S.shareSheet && !S.tailAsk && !S.sharing && !S.reqOpen && !(a && /^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName));
+  }
+  refreshInPlace() {
+    const S = this.state;
+    try { sessionStorage.setItem('9feamg-restore', JSON.stringify({ t: Date.now(), y: window.scrollY, tab: S.tab, week: S.week, team: S.team })); } catch {}
+    location.reload();
+  }
+  restoreAfterRefresh() {
+    let r = null;
+    try { r = JSON.parse(sessionStorage.getItem('9feamg-restore') || 'null'); sessionStorage.removeItem('9feamg-restore'); } catch {}
+    if (!r || Date.now() - r.t > 60000) return;
+    this.setState({ tab: r.tab, week: r.week, team: r.team });
+    setTimeout(() => window.scrollTo(0, r.y), 50);
+  }
+  // Your team, picked once on this phone.
+  setMine(m) {
+    try { localStorage.setItem('9feamg-req-mgr', m); localStorage.setItem('9feamg-team-asked', '1'); } catch {}
+    this.setState({ reqMgr: m, askTeam: false, team: this.state.tab == 'Teams' ? this.state.team : m });
+  }
+  // One Share button per card: a sheet offers the link or the image.
+  shareMenu(title, link, img) { return e => { e?.stopPropagation?.(); this.setState({ shareSheet: { title, link, img } }); }; }
+  jump(id) { document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
   loadRequests() {
     fetch('/api/requests?week=' + LW, { cache: 'no-store' }).then(r => r.ok ? r.json() : null)
       .then(d => d && this.setState({ reqs: d.requests || {} })).catch(() => {});
@@ -582,10 +640,17 @@ class Component extends DCLogic {
     const chipWeeks = [...Array(NF).keys()].map(i => i + 1);
     if (LW) chipWeeks.push(LW);
     if (NEXT && NEXT.week != LW) chipWeeks.push(NEXT.week);
-    const weekChips = chipWeeks.map(w => { const on = w == wk; return { label: 'W' + w, live: w == LW, sub: w == LW ? 'LIVE' : w <= NF ? 'FINAL' : 'NEXT', bg: on ? 'var(--accent)' : 'var(--surface)', fg: on ? 'var(--onAccent)' : (w == LW ? 'var(--accentInk)' : 'var(--ink)'), border: on ? 'var(--accent)' : 'var(--line)', pick: () => { this.setState({ week: w }); if (window.scrollY > 150) window.scrollTo(0, 0); } }; });
+    const weekChips = chipWeeks.map(w => { const on = w == wk; return { label: 'W' + w, on: on ? '1' : '0', live: w == LW, sub: w == LW ? 'LIVE' : w <= NF ? 'FINAL' : 'NEXT', bg: on ? 'var(--accent)' : 'var(--surface)', fg: on ? 'var(--onAccent)' : (w == LW ? 'var(--accentInk)' : 'var(--ink)'), border: on ? 'var(--accent)' : 'var(--line)', pick: () => { this.setState({ week: w }); if (window.scrollY > 150) window.scrollTo(0, 0); } }; });
     const hasWeek = (wk <= NF || wk == LW) && !!PAIRS[wk];
     let matchups = [], hero = null;
-    if (hasWeek) { const all = PAIRS[wk].map(p => this.match(p, wk)).sort((x, y) => Math.abs(x.a.raw - x.b.raw) - Math.abs(y.a.raw - y.b.raw)); hero = all[0]; matchups = all.slice(1); }
+    let heroMine = false;
+    if (hasWeek) {
+      const all = PAIRS[wk].map(p => this.match(p, wk)).sort((x, y) => Math.abs(x.a.raw - x.b.raw) - Math.abs(y.a.raw - y.b.raw));
+      // Your matchup leads, with you on top; otherwise the closest one.
+      const mine = S.reqMgr ? all.find(x => x.a.m == S.reqMgr || x.b.m == S.reqMgr) : null;
+      hero = mine || all[0]; heroMine = !!mine; matchups = all.filter(x => x != hero);
+      if (mine && mine.b.m == S.reqMgr) hero = { ...mine, a: mine.b, b: mine.a };
+    }
     const blank = { a: {}, b: {}, share: '50%' };
     const isNext = !hasWeek;
     // Week recap (final weeks): every final score with its Booth line, for sharing.
@@ -734,6 +799,7 @@ class Component extends DCLogic {
         share: e => this.share(shot, e), shareLabel: S.sharing == shot ? '…' : 'Image',
         // /p/<anchor> serves a preview of this parlay to chat apps, then forwards to /#<anchor>.
         anchor, shareLink: e => this.shareLink(location.origin + '/p/' + anchor, p.title, e),
+        menu: this.shareMenu(p.title ?? p.owner + '’s parlay', e => this.shareLink(location.origin + '/p/' + anchor, p.title, e), e => this.share(shot, e)),
         // Parlays start collapsed to the header and payout; a deep link opens its card.
         expanded: String(!!S.prOpen?.[anchor]), bodyDisplay: S.prOpen?.[anchor] ? 'block' : 'none',
         legCount: legs.length + (legs.length == 1 ? ' leg' : ' legs'), toggleLabel: S.prOpen?.[anchor] ? 'Hide legs ▴' : 'Show legs ▾',
@@ -798,7 +864,7 @@ class Component extends DCLogic {
         move: mv > 0 ? '▲' + mv : mv < 0 ? '▼' + -mv : '–', moveColor: mv > 0 ? 'var(--pos)' : mv < 0 ? 'var(--neg)' : 'var(--muted)',
         open: () => { this.setState({ tab: 'Teams', team: r.m }); window.scrollTo(0, 0); } };
     }) : [];
-    const standings = ST.map((s, i) => ({ rank: i + 1, m: s.m, init: INIT[s.m], color: col(s.m), pa: f1(s.pa), max: s.max == null ? '—' : f1(s.max), wl: s.w + '–' + s.l, pf: f1(s.pf), luck: sgn(s.luck), luckColor: s.luck > 0 ? 'var(--pos)' : s.luck < 0 ? 'var(--neg)' : 'var(--muted)', cut: i == P - 1, open: () => { this.setState({ tab: 'Teams', team: s.m }); window.scrollTo(0, 0); } }));
+    const standings = ST.map((s, i) => ({ rank: i + 1, m: s.m, rowBg: s.m == S.reqMgr ? 'var(--surface2)' : 'transparent', rowEdge: s.m == S.reqMgr ? col(s.m) : 'transparent', you: s.m == S.reqMgr, init: INIT[s.m], color: col(s.m), pa: f1(s.pa), max: s.max == null ? '—' : f1(s.max), wl: s.w + '–' + s.l, pf: f1(s.pf), luck: sgn(s.luck), luckColor: s.luck > 0 ? 'var(--pos)' : s.luck < 0 ? 'var(--neg)' : 'var(--muted)', cut: i == P - 1, open: () => { this.setState({ tab: 'Teams', team: s.m }); window.scrollTo(0, 0); } }));
     const allS = Object.values(SC).flat(), lo = Math.min(...allS), hi = Math.max(...allS);
     const heatHead = chipWeeks.filter(w => w <= NF).map(w => 'W' + w).concat(LW ? ['W' + LW] : []);
     const restFrom = (LW ?? NF) + 1, total = D.regularSeasonWeeks;
@@ -946,7 +1012,21 @@ class Component extends DCLogic {
       draftIconCls: S.tab == 'Draft' ? 'hi play inv' : 'hi', goHome: e => this.goHome(e), openDraft: () => { this.setState({ tab: 'Draft' }); window.scrollTo(0, 0); },
       draftBtnBg: S.tab == 'Draft' ? 'var(--accent)' : 'var(--surface)', draftBtnFg: S.tab == 'Draft' ? 'var(--onAccent)' : 'var(--ink)', draftBtnBorder: S.tab == 'Draft' ? 'var(--accent)' : 'var(--line)',
       tabs, tabGameday: S.tab == 'Gameday', tabSeason: S.tab == 'Season', tabTeams: S.tab == 'Teams', tabDraft: S.tab == 'Draft', tabWire: S.tab == 'Wire',
-      weekChips, isW5: isNext, nextTitle, nextNote, hasWeek, hero: hero || blank, matchups, heroLabel: wk == LW ? 'Matchup of the week' : 'Closest finish', heroCaption: this.heroCaption(wk, hero),
+      // Gameday header, jump links, your-team prompt, scores time, request toggle, share sheet.
+      gamedaySub: hasRecap ? (isFinal ? 'Week recap · scores + Booth' : LIVE_STARTED ? 'Live week · scores + Booth' : 'Week preview · projections + Booth') : '9 Fantasy Experts & Mr. Glenn',
+      gamedayShare: hasRecap ? this.shareMenu(`Week ${wk}`, e => this.shareLink(location.origin + '/#w' + wk, '9FEAMG · Week ' + wk, e), e => this.share('recap', e)) : null, hasGamedayShare: !!hasRecap,
+      jumps: hasWeek ? [['Matchups', 'matchups'], ...(boothOn && boothLines.length ? [['Booth', 'booth']] : []), ...(parlays.length || hasReq ? [['Parlays', 'parlays']] : [])].map(([label, id]) => ({ label, go: () => this.jump(id) })) : [], hasJumps: hasWeek,
+      askTeam: S.askTeam && !S.reqMgr && S.tab == 'Gameday', askTeamMgrs: MGR.map(m => ({ m, init: INIT[m], color: col(m), pick: () => this.setMine(m) })), skipAsk: () => { try { localStorage.setItem('9feamg-team-asked', '1'); } catch {} this.setState({ askTeam: false }); },
+      scoresAsOf: wk == LW && LIVE?.asOf ? asOfLabel(LIVE.asOf) : '', hasAsOf: wk == LW && !!LIVE?.asOf,
+      newScores: !!S.newScores, refreshNow: () => this.refreshInPlace(),
+      reqOpen: !!S.reqOpen, reqClosed: !S.reqOpen, openReq: () => this.setState({ reqOpen: true }), closeReq: () => this.setState({ reqOpen: false }),
+      hasShareSheet: !!S.shareSheet, shareSheetTitle: S.shareSheet?.title || '',
+      sheetLink: e => { const f = S.shareSheet?.link; this.setState({ shareSheet: null }); f?.(e); },
+      sheetImg: e => { const f = S.shareSheet?.img; this.setState({ shareSheet: null }); f?.(e); },
+      closeShareSheet: () => this.setState({ shareSheet: null }), stopTap: e => e.stopPropagation(),
+      compactCls: S.compact ? 'app compact' : 'app',
+      deskTabs: tabs,
+      weekChips, isW5: isNext, nextTitle, nextNote, hasWeek, hero: hero || blank, matchups, heroLabel: heroMine ? 'Your matchup' : wk == LW ? 'Matchup of the week' : 'Closest finish', heroCaption: this.heroCaption(wk, hero),
       weekStatus, parlays, hasParlays: parlays.length > 0, hasLedger: allParlays.length > 0, ledgerTiles, ledgerSub, ledgerOwners, hasLedgerRows: ledgerOwners.length > 0, hasPaper, paperLine,
       shareLedger: e => this.share('ledger', e), ledgerLabel: S.sharing == 'ledger' ? '…' : 'Image',
       linkLedger: e => this.shareLink(location.origin + '/s/ledger', '9FEAMG · Parlay ledger', e), shotLedger: `Parlay ledger · through week ${LW}`,
@@ -959,6 +1039,13 @@ class Component extends DCLogic {
       wireSub: 'Adds, drops, trades and FAAB · through ' + shortDate(now), wireModes, wireSeason: seasonMode && txOk, wireDays: days, noMoves, activity, wireRoast, wireBanner: boothOn || !txOk, faab, faabBudget: '$' + budget + ' budget', txOk,
       sheetOpen: !!S.sheet, sheet, closeSheet: () => this.setState({ sheet: null }),
       // Share buttons
+      menuHero: this.shareMenu('This matchup', e => this.shareLink(location.origin + '/#w' + S.week, '9FEAMG · Week ' + S.week, e), e => this.share('hero', e)),
+      menuStandings: this.shareMenu('Standings', e => this.shareLink(location.origin + '/#season', '9FEAMG · Standings', e), e => this.share('standings', e)),
+      menuPower: this.shareMenu('Power rankings', e => this.shareLink(location.origin + '/#power', '9FEAMG · Power rankings', e), e => this.share('power', e)),
+      menuTeam: this.shareMenu(S.team, e => this.shareLink(location.origin + '/#team-' + teamSlug(S.team), '9FEAMG · ' + S.team, e), e => this.share('team', e)),
+      menuLedger: this.shareMenu('Parlay ledger', e => this.shareLink(location.origin + '/s/ledger', '9FEAMG · Parlay ledger', e), e => this.share('ledger', e)),
+      ...Object.fromEntries([['Pfpa', 'pfpa', 'Points for vs against'], ['Luck', 'luck', 'Luck'], ['Bench', 'bench', 'Points left on bench']].map(([k, id, title]) =>
+        ['menu' + k, this.shareMenu(title, e => this.shareLink(location.origin + '/s/' + id, '9FEAMG · ' + title, e), e => this.share(id, e))])),
       shareHero: e => this.share('hero', e), shareStandings: e => this.share('standings', e), shareTeam: e => this.share('team', e),
       shareLabel: { hero: S.sharing == 'hero' ? '…' : 'Image', standings: S.sharing == 'standings' ? '…' : 'Image', team: S.sharing == 'team' ? '…' : 'Image' },
       hasRecap, recap, recapTitle: `Week ${wk} · ${isFinal ? 'Final' : LIVE_STARTED ? 'Live' : 'Preview'}`, recapBar: isFinal ? 'Week recap · scores + Booth' : LIVE_STARTED ? 'Live week · scores + Booth' : 'Week preview · projections + Booth', shareRecap: e => this.share('recap', e), recapLabel: S.sharing == 'recap' ? '…' : 'Image',

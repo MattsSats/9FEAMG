@@ -394,6 +394,33 @@ button{font-family:inherit;color:inherit}
   .tiles{grid-template-columns:repeat(4,minmax(0,1fr))}
   .sheet-wrap{align-items:center!important}
 }
+/* Header height, which the sticky week row sits under; phones slim both while scrolling down. */
+.app{--hdrH:61px}
+.hdr,.hdr .logo,.wk,.wchip{transition:padding .2s ease,min-height .2s ease,font-size .2s ease,top .2s ease}
+.desk-tabs{display:none}
+.jump-to{scroll-margin-top:150px}
+.wchip[data-on="1"]{box-shadow:none}
+@media (max-width:899px){
+  .compact{--hdrH:47px}
+  .compact .hdr{padding-top:6px!important;padding-bottom:6px!important}
+  .compact .hdr .logo{font-size:20px!important}
+  .compact .hdr-btns button{min-height:30px!important}
+  .compact .wk{padding-top:6px!important;padding-bottom:6px!important}
+  .compact .wchip{min-height:30px!important}
+  .compact .wsub{display:none!important}
+  .compact .jump-to{scroll-margin-top:100px}
+}
+/* Desktop: tabs up top, no bottom bar, and a compact week row. */
+@media (min-width:900px){
+  .desk-tabs{display:flex;gap:2px;margin-right:auto;margin-left:18px}
+  .desk-tabs .on{background:var(--surface2)!important;color:var(--ink)!important}
+  .tabbar{display:none!important}
+  .app{padding-bottom:40px!important}
+  .wk .wchip{flex:none!important;min-height:34px!important;flex-direction:row!important;gap:6px!important;padding:0 12px!important}
+  .wk .wchip>span:first-child{font-size:16px!important}
+  .share-sheet{align-items:center!important}
+  .share-panel{border-radius:20px!important}
+}
 /* Section headers: title left, share buttons right, caption underneath. */
 .sec-head{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:2px 10px}
 .sec-head>:first-child{line-height:1.05}
@@ -505,14 +532,20 @@ button{font-family:inherit;color:inherit}
 </style>
 </helmet>
 <div style="min-height:100vh;background:var(--page);display:flex;justify-content:center">
-<div class="app" style="width:100%;min-height:100vh;background:var(--bg);position:relative;padding-bottom:104px">
+<div class="{{ compactCls }}" style="width:100%;min-height:100vh;background:var(--bg);position:relative;padding-bottom:104px">
 
-<div style="position:sticky;top:0;z-index:20;background:var(--bg);display:flex;align-items:center;justify-content:space-between;padding:14px 20px 12px;border-bottom:1px solid var(--line)">
+<div class="hdr" style="position:sticky;top:0;z-index:20;background:var(--bg);display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 20px 12px;border-bottom:1px solid var(--line)">
   <a href="/" sc-camel-on-click="{{ goHome }}" aria-label="9FEAMG home" style="display:flex;gap:8px;color:inherit;text-decoration:none;min-height:34px;align-items:center">
-    <span style="font-family:'Big Shoulders Display';font-weight:900;font-size:26px;letter-spacing:.02em;line-height:1">9FEAMG</span>
+    <span class="logo" style="font-family:'Big Shoulders Display';font-weight:900;font-size:26px;letter-spacing:.02em;line-height:1">9FEAMG</span>
     <span style="font-family:'JetBrains Mono';font-size:11px;color:var(--accentInk);letter-spacing:.06em">2026</span>
   </a>
-  <div style="display:flex;gap:8px">
+  <!-- Desktop: the tabs live up here instead of the bottom bar. -->
+  <nav class="desk-tabs" aria-label="Sections">
+    <sc-for list="{{ deskTabs }}" as="dt" hint-placeholder-count="4">
+      <button aria-current="{{ dt.cur }}" sc-camel-on-click="{{ dt.pick }}" style="min-height:34px;padding:0 14px;border:0;border-radius:999px;background:transparent;color:{{ dt.fg }};font-family:'JetBrains Mono';font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;cursor:pointer" class="{{ dt.cls }}">{{ dt.label }}</button>
+    </sc-for>
+  </nav>
+  <div class="hdr-btns" style="display:flex;gap:8px">
     <button sc-camel-on-click="{{ openDraft }}" aria-label="Draft results" style="background:{{ draftBtnBg }};color:{{ draftBtnFg }};border:1px solid {{ draftBtnBorder }};border-radius:999px;padding:0 14px;font-family:'JetBrains Mono';font-size:11px;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;min-height:34px;display:flex;align-items:center;gap:6px"><svg class="{{ draftIconCls }}" width="16" height="16" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 5 H29 M24 5 V9"></path><circle class="trk" cx="24" cy="25" r="16" style="stroke:var(--line)"></circle><circle class="a-ring" cx="24" cy="25" r="16" transform="rotate(-90 24 25)" style="stroke:var(--hi-a)"></circle><path class="a-hand" d="M24 25 V15"></path><circle cx="24" cy="25" r="2" stroke="none" style="fill:var(--hi-a)"></circle></svg>Draft</button>
     <button sc-camel-on-click="{{ toggleTheme }}" style="background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:0 14px;font-family:'JetBrains Mono';font-size:11px;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;min-height:34px">{{ themeLabel }}</button>
   </div>
@@ -527,28 +560,48 @@ button{font-family:inherit;color:inherit}
 
 <sc-if value="{{ tabGameday }}" hint-placeholder-val="{{ true }}">
 <div style="padding:22px 20px 0">
-  <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:48px;line-height:.9;text-transform:uppercase">Gameday</div>
-  <div style="font-size:14px;color:var(--muted);margin-top:8px">9 Fantasy Experts &amp; Mr. Glenn</div>
+  <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:12px">
+    <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:48px;line-height:.9;text-transform:uppercase">Gameday</div>
+    <sc-if value="{{ hasGamedayShare }}" hint-placeholder-val="{{ true }}"><button class="share-btn" sc-camel-on-click="{{ gamedayShare }}" aria-label="Share this week">Share</button></sc-if>
+  </div>
+  <div style="font-family:'JetBrains Mono';font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-top:10px">{{ gamedaySub }}</div>
+  <sc-if value="{{ hasJumps }}" hint-placeholder-val="{{ true }}">
+    <nav class="jumps" aria-label="On this page" style="display:flex;gap:6px;margin-top:12px">
+      <sc-for list="{{ jumps }}" as="j" hint-placeholder-count="3">
+        <button sc-camel-on-click="{{ j.go }}" class="hov" style="min-height:32px;padding:0 12px;border:1px solid var(--line);border-radius:999px;background:transparent;color:var(--ink);font-size:13px;font-weight:600;cursor:pointer">{{ j.label }}</button>
+      </sc-for>
+    </nav>
+  </sc-if>
+  <sc-if value="{{ askTeam }}" hint-placeholder-val="{{ false }}">
+    <div style="margin-top:14px;padding:12px 14px;border:1px solid var(--line);border-radius:16px;background:var(--surface)">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><span style="font-size:14px;font-weight:600">Which team is yours?</span><button sc-camel-on-click="{{ skipAsk }}" style="border:0;background:transparent;color:var(--muted);font-size:12px;cursor:pointer;padding:4px">Not now</button></div>
+      <div style="font-size:12px;color:var(--muted);margin-top:2px">Your matchup goes first, and Standings and Teams open on you. Remembered on this phone.</div>
+      <div class="scroll-x" style="display:flex;gap:4px;margin-top:8px;padding-bottom:2px">
+        <sc-for list="{{ askTeamMgrs }}" as="am" hint-placeholder-count="10">
+          <button sc-camel-on-click="{{ am.pick }}" aria-label="{{ am.m }}" style="flex:none;min-width:52px;display:flex;flex-direction:column;align-items:center;gap:3px;padding:4px;border:0;border-radius:10px;background:transparent;cursor:pointer"><span class="crest" style="width:28px;height:28px;background:{{ am.color }};color:var(--onAccent);display:flex;align-items:center;justify-content:center;font-family:'Big Shoulders Display';font-weight:800;font-size:11px"><span class="ini" data-i="{{ am.init }}">{{ am.init }}</span></span><span style="font-size:11px;font-weight:600;color:var(--muted)">{{ am.m }}</span></button>
+        </sc-for>
+      </div>
+    </div>
+  </sc-if>
 </div>
 <!-- Week buttons stay pinned under the header while Gameday scrolls. -->
-<div data-weekchips="" class="scroll-x" style="position:sticky;top:60px;z-index:19;background:var(--bg);display:flex;gap:6px;margin-top:8px;padding:10px 20px">
+<div data-weekchips="" class="scroll-x wk" style="position:sticky;top:var(--hdrH);z-index:19;background:var(--bg);display:flex;gap:6px;margin-top:8px;padding:10px 20px">
   <sc-for list="{{ weekChips }}" as="w" hint-placeholder-count="5">
-    <button sc-camel-on-click="{{ w.pick }}" style="flex:1 0 56px;min-height:48px;border-radius:10px;border:1px solid {{ w.border }};background:{{ w.bg }};color:{{ w.fg }};cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:4px 0">
+    <button sc-camel-on-click="{{ w.pick }}" data-on="{{ w.on }}" class="wchip" style="flex:1 0 48px;min-height:48px;border-radius:10px;border:1px solid {{ w.border }};background:{{ w.bg }};color:{{ w.fg }};cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:4px 0">
       <span style="font-family:'Big Shoulders Display';font-weight:800;font-size:20px;line-height:1">{{ w.label }}</span>
-      <span style="font-family:'JetBrains Mono';font-size:9px;letter-spacing:.1em;font-weight:600;opacity:.85;display:flex;align-items:center;gap:3px"><sc-if value="{{ w.live }}" hint-placeholder-val="{{ false }}"><svg class="hi play" style="--hi-a:currentColor" width="11" height="11" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle class="a-rip" cx="24" cy="24" r="11" style="stroke:var(--hi-a)"></circle><circle class="a-rip a-rip2" cx="24" cy="24" r="11" style="stroke:var(--hi-a)"></circle><circle class="a-rip a-rip3" cx="24" cy="24" r="11" style="stroke:var(--hi-a)"></circle><circle class="a-dot" cx="24" cy="24" r="6" stroke="none" style="fill:var(--hi-a)"></circle></svg></sc-if>{{ w.sub }}</span>
+      <span class="wsub" style="font-family:'JetBrains Mono';font-size:9px;letter-spacing:.1em;font-weight:600;opacity:.85;display:flex;align-items:center;gap:3px"><sc-if value="{{ w.live }}" hint-placeholder-val="{{ false }}"><svg class="hi play" style="--hi-a:currentColor" width="11" height="11" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle class="a-rip" cx="24" cy="24" r="11" style="stroke:var(--hi-a)"></circle><circle class="a-rip a-rip2" cx="24" cy="24" r="11" style="stroke:var(--hi-a)"></circle><circle class="a-rip a-rip3" cx="24" cy="24" r="11" style="stroke:var(--hi-a)"></circle><circle class="a-dot" cx="24" cy="24" r="6" stroke="none" style="fill:var(--hi-a)"></circle></svg></sc-if>{{ w.sub }}</span>
     </button>
   </sc-for>
 </div>
-<div style="padding:2px 20px 0;font-family:'JetBrains Mono';font-size:11px;color:var(--muted)">{{ weekStatus }}</div>
+<div style="padding:2px 20px 0;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:4px 12px;font-family:'JetBrains Mono';font-size:11px;color:var(--muted)">
+  <span>{{ weekStatus }}</span>
+  <sc-if value="{{ hasAsOf }}" hint-placeholder-val="{{ false }}"><span style="color:var(--ink)">{{ scoresAsOf }}</span></sc-if>
+</div>
+<sc-if value="{{ newScores }}" hint-placeholder-val="{{ false }}">
+  <div style="padding:8px 20px 0"><button sc-camel-on-click="{{ refreshNow }}" style="width:100%;min-height:40px;border:0;border-radius:999px;background:var(--accent);color:var(--onAccent);font-weight:700;font-size:14px;cursor:pointer">New scores · Update</button></div>
+</sc-if>
 
 <sc-if value="{{ hasRecap }}" hint-placeholder-val="{{ false }}">
-  <div style="margin:12px 20px 0;display:flex;justify-content:space-between;align-items:center;gap:8px;padding:10px 14px;border:1px dashed var(--line);border-radius:14px">
-    <span style="font-family:'JetBrains Mono';font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)">{{ recapBar }}</span>
-    <span style="display:flex;gap:6px">
-      <button class="share-btn" sc-camel-on-click="{{ linkHero }}" aria-label="Share a link to this week">Share</button>
-      <button class="share-btn" sc-camel-on-click="{{ shareRecap }}" aria-label="Share every score and Booth line from this week as an image">{{ recapLabel }}</button>
-    </span>
-  </div>
   <!-- The recap image renders from this off-screen card. -->
   <div class="offstage" aria-hidden="true" style="width:400px">
     <div data-shot="recap" style="padding:14px 16px 0;background:var(--bg)">
@@ -582,13 +635,12 @@ button{font-family:inherit;color:inherit}
 
 <sc-if value="{{ hasWeek }}" hint-placeholder-val="{{ true }}">
 <div class="cols">
-<div>
+<div id="matchups" class="jump-to">
   <div data-shot="hero" sc-camel-on-click="{{ hero.open }}" tabindex="0" role="button" style="margin:16px 20px 0;background:var(--surface);border:1px solid var(--line);border-radius:20px;overflow:hidden;cursor:pointer">
     <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;padding:14px 16px 0;min-height:46px">
       <span style="font-family:'JetBrains Mono';font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--accentInk);font-weight:600">{{ heroLabel }}</span>
       <span class="no-shot" style="display:flex;align-items:center;gap:12px">
-        <button class="share-btn" sc-camel-on-click="{{ linkHero }}" aria-label="Share a link to this week">Share</button>
-        <button class="share-btn" sc-camel-on-click="{{ shareHero }}" aria-label="Share this matchup as an image">{{ shareLabel.hero }}</button>
+<button class="share-btn" sc-camel-on-click="{{ menuHero }}" aria-label="Share this matchup">Share</button>
         <span style="font-family:'JetBrains Mono';font-size:11px;color:var(--muted)">Lineups ›</span>
       </span>
     </div>
@@ -632,7 +684,7 @@ button{font-family:inherit;color:inherit}
 
 <div>
   <sc-if value="{{ hasBooth }}" hint-placeholder-val="{{ true }}">
-    <div style="padding:28px 20px 0">
+    <div id="booth" class="jump-to" style="padding:28px 20px 0">
       <div style="display:flex;align-items:baseline;justify-content:space-between">
         <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:26px;text-transform:uppercase;display:flex;align-items:center;gap:8px"><svg class="hi play" width="26" height="26" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="18" y="5" width="12" height="21" rx="6" style="fill:var(--hi-a)"></rect><path d="M12 22 a12 12 0 0 0 24 0 M24 34 V42 M17 42 H31"></path><path class="a-wr" d="M38 12 q4 6 0 12"></path><path class="a-wr a-w2" d="M42 8 q7 10 0 20"></path><path class="a-wl" d="M10 12 q-4 6 0 12"></path><path class="a-wl a-w2" d="M6 8 q-7 10 0 20"></path></svg>The Booth</div>
         <div style="font-family:'JetBrains Mono';font-size:10px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase">On the record</div>
@@ -659,14 +711,19 @@ button{font-family:inherit;color:inherit}
   </sc-if>
 </div>
 
-<div class="col-wide">
+<div id="parlays" class="col-wide jump-to">
   <!-- Parlay requests (live week): who's asking, risk slider, legs, optional players or game. -->
   <sc-if value="{{ hasReq }}" hint-placeholder-val="{{ false }}">
     <div class="col-head" style="padding:28px 20px 0">
       <div style="background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:16px">
-        <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px">
+        <sc-if value="{{ reqClosed }}" hint-placeholder-val="{{ true }}">
+          <button sc-camel-on-click="{{ openReq }}" style="width:100%;min-height:48px;border:0;border-radius:999px;background:var(--accent);color:var(--onAccent);font-weight:700;font-size:15px;cursor:pointer">Request a parlay</button>
+          <div style="font-family:'JetBrains Mono';font-size:10px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;text-align:center;margin-top:8px">Built with real DraftKings odds on the next sync</div>
+        </sc-if>
+        <sc-if value="{{ reqOpen }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
           <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:24px;text-transform:uppercase">Request a parlay</div>
-          <div style="font-family:'JetBrains Mono';font-size:10px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase">Built on the next sync</div>
+          <button sc-camel-on-click="{{ closeReq }}" style="border:0;background:transparent;color:var(--muted);font-size:13px;cursor:pointer;padding:6px">Close</button>
         </div>
         <sc-if value="{{ reqForm.mgrCollapsed }}" hint-placeholder-val="{{ false }}">
           <div style="display:flex;align-items:center;gap:8px;margin-top:14px">
@@ -746,6 +803,7 @@ button{font-family:inherit;color:inherit}
             </sc-if>
           </div>
         </sc-if>
+        </sc-if>
 
         <sc-if value="{{ hasReqList }}" hint-placeholder-val="{{ false }}">
           <div style="margin-top:16px;border-top:1px solid var(--line)">
@@ -784,8 +842,7 @@ button{font-family:inherit;color:inherit}
         <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;padding:14px 16px 0">
           <span style="font-family:'JetBrains Mono';font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--accentInk);font-weight:600">{{ pr.by }}</span>
           <span style="display:flex;align-items:center;gap:8px">
-            <button class="share-btn no-shot" sc-camel-on-click="{{ pr.shareLink }}" aria-label="Share a link to this parlay">Share</button>
-            <button class="share-btn no-shot" sc-camel-on-click="{{ pr.share }}" aria-label="Share this parlay as an image">{{ pr.shareLabel }}</button>
+            <button class="share-btn no-shot" sc-camel-on-click="{{ pr.menu }}" aria-label="Share this parlay">Share</button>
             <span style="font-family:'JetBrains Mono';font-size:10px;font-weight:700;letter-spacing:.1em;padding:5px 9px;border-radius:999px;background:{{ pr.statusBg }};color:{{ pr.statusFg }}">{{ pr.status }}</span>
           </span>
         </div>
@@ -877,7 +934,7 @@ button{font-family:inherit;color:inherit}
       <div data-shot="ledger" style="background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:16px 16px 0">
         <div class="sec-head">
           <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:26px;text-transform:uppercase">Parlay ledger</div>
-          <span class="sec-btns no-shot"><button class="share-btn" sc-camel-on-click="{{ linkLedger }}" aria-label="Share a link to the parlay ledger">Share</button><button class="share-btn" sc-camel-on-click="{{ shareLedger }}" aria-label="Share the parlay ledger as an image">{{ ledgerLabel }}</button></span>
+          <span class="sec-btns no-shot"><button class="share-btn" sc-camel-on-click="{{ menuLedger }}" aria-label="Share the parlay ledger">Share</button></span>
           <div class="sec-cap">{{ ledgerSub }}</div>
         </div>
         <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:14px">
@@ -932,14 +989,14 @@ button{font-family:inherit;color:inherit}
 <div data-shot="standings" class="sg-st" style="padding:30px 20px 0">
   <div class="sec-head">
     <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:26px;text-transform:uppercase">Standings</div>
-    <span class="sec-btns no-shot"><button class="share-btn" sc-camel-on-click="{{ linkStandings }}" aria-label="Share a link to the standings">Share</button><button class="share-btn" sc-camel-on-click="{{ shareStandings }}" aria-label="Share the standings as an image">{{ shareLabel.standings }}</button></span>
+    <span class="sec-btns no-shot"><button class="share-btn" sc-camel-on-click="{{ menuStandings }}" aria-label="Share the standings">Share</button></span>
     <div class="sec-cap">Luck = W − xW</div>
   </div>
   <div style="display:grid;grid-template-columns:22px minmax(0,1fr) 40px 52px 52px 48px;gap:8px;padding:14px 0 8px;font-family:'JetBrains Mono';font-size:10px;letter-spacing:.08em;color:var(--muted);border-bottom:1px solid var(--line)">
     <span>#</span><span>MANAGER</span><span style="text-align:right">W–L</span><span style="text-align:right">PF</span><span style="text-align:right">MAX PF</span><span style="text-align:right">LUCK</span>
   </div>
   <sc-for list="{{ standings }}" as="s" hint-placeholder-count="10">
-    <div sc-camel-on-click="{{ s.open }}" class="hov shot-tight" tabindex="0" role="button" style="display:grid;grid-template-columns:22px minmax(0,1fr) 40px 52px 52px 48px;gap:8px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line);cursor:pointer">
+    <div sc-camel-on-click="{{ s.open }}" class="hov shot-tight" tabindex="0" role="button" style="display:grid;grid-template-columns:22px minmax(0,1fr) 40px 52px 52px 48px;gap:8px;align-items:center;padding:10px 6px;margin:0 -6px;border-radius:8px;background:{{ s.rowBg }};box-shadow:inset 3px 0 0 {{ s.rowEdge }};border-bottom:1px solid var(--line);cursor:pointer">
       <span style="font-family:'Big Shoulders Display';font-weight:800;font-size:18px;color:var(--muted)">{{ s.rank }}</span>
       <div style="display:flex;align-items:center;gap:10px;min-width:0">
         <div class="crest" style="width:28px;height:28px;background:{{ s.color }};color:var(--onAccent);display:flex;align-items:center;justify-content:center;font-family:'Big Shoulders Display';font-weight:800;font-size:12px;flex:none"><span class="ini" data-i="{{ s.init }}">{{ s.init }}</span></div>
@@ -961,7 +1018,7 @@ button{font-family:inherit;color:inherit}
 <div id="power" data-shot="power" data-shot-w="560" class="sg-pw" style="padding:30px 20px 0;scroll-margin-top:64px">
   <div class="sec-head">
     <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:26px;text-transform:uppercase">Power rankings</div>
-    <span class="sec-btns no-shot"><button class="share-btn" sc-camel-on-click="{{ linkPower }}" aria-label="Share a link to the power rankings">Share</button><button class="share-btn" sc-camel-on-click="{{ sharePower }}" aria-label="Share the power rankings as an image">{{ powerLabel }}</button></span>
+    <span class="sec-btns no-shot"><button class="share-btn" sc-camel-on-click="{{ menuPower }}" aria-label="Share the power rankings">Share</button></span>
   </div>
   <div class="no-shot" style="font-family:'JetBrains Mono';font-size:10px;color:var(--muted);margin-top:8px;line-height:1.5;text-wrap:pretty">{{ powerSub }} · Score: 50% all-play, 25% record, 25% recent all-play</div>
   <div style="display:grid;grid-template-columns:22px 30px minmax(0,1fr) 48px;gap:8px;padding:14px 0 8px;font-family:'JetBrains Mono';font-size:10px;letter-spacing:.08em;color:var(--muted);border-bottom:1px solid var(--line)">
@@ -985,7 +1042,7 @@ button{font-family:inherit;color:inherit}
 <div id="pfpa" data-shot="pfpa" class="sg-ch" style="padding:30px 20px 0;scroll-margin-top:64px">
   <div class="sec-head">
     <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:26px;text-transform:uppercase">Points for vs against</div>
-    <span class="sec-btns no-shot"><button class="share-btn" sc-camel-on-click="{{ linkPfpa }}" aria-label="Share a link to the points for vs against chart">Share</button><button class="share-btn" sc-camel-on-click="{{ shotPfpa }}" aria-label="Share the points for vs against chart as an image">{{ shotLabelPfpa }}</button></span>
+    <span class="sec-btns no-shot"><button class="share-btn" sc-camel-on-click="{{ menuPfpa }}" aria-label="Share the points for vs against chart">Share</button></span>
     <div class="sec-cap no-shot">{{ hlHint }}</div>
   </div>
   <div style="margin-top:12px;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:14px 14px 10px">
@@ -1011,7 +1068,7 @@ button{font-family:inherit;color:inherit}
 <div id="luck" data-shot="luck" class="sg-lk" style="padding:30px 20px 0;scroll-margin-top:64px">
   <div class="sec-head">
     <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:26px;text-transform:uppercase;display:flex;align-items:center;gap:8px"><svg class="hi play" width="26" height="26" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><g class="a-dice vb"><rect x="8" y="8" width="32" height="32" rx="7"></rect><circle cx="16" cy="16" r="2.6" stroke="none" style="fill:var(--hi-a)"></circle><circle cx="32" cy="16" r="2.6" stroke="none" style="fill:var(--hi-a)"></circle><circle cx="24" cy="24" r="2.6" stroke="none" style="fill:var(--hi-a)"></circle><circle cx="16" cy="32" r="2.6" stroke="none" style="fill:var(--hi-a)"></circle><circle cx="32" cy="32" r="2.6" stroke="none" style="fill:var(--hi-a)"></circle></g></svg>Luck</div>
-    <span class="sec-btns no-shot"><button class="share-btn" sc-camel-on-click="{{ linkLuck }}" aria-label="Share a link to the luck chart">Share</button><button class="share-btn" sc-camel-on-click="{{ shotLuck }}" aria-label="Share the luck chart as an image">{{ shotLabelLuck }}</button></span>
+    <span class="sec-btns no-shot"><button class="share-btn" sc-camel-on-click="{{ menuLuck }}" aria-label="Share the luck chart">Share</button></span>
     <div class="sec-cap">W − xW</div>
   </div>
   <div style="display:flex;flex-direction:column;gap:6px;margin-top:12px">
@@ -1030,7 +1087,7 @@ button{font-family:inherit;color:inherit}
 <div id="bench" data-shot="bench" class="sg-bn" style="padding:30px 20px 0;scroll-margin-top:64px">
   <div class="sec-head">
     <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:26px;text-transform:uppercase">Points left on bench</div>
-    <span class="sec-btns no-shot"><button class="share-btn" sc-camel-on-click="{{ linkBench }}" aria-label="Share a link to the bench chart">Share</button><button class="share-btn" sc-camel-on-click="{{ shotBench }}" aria-label="Share the bench chart as an image">{{ shotLabelBench }}</button></span>
+    <span class="sec-btns no-shot"><button class="share-btn" sc-camel-on-click="{{ menuBench }}" aria-label="Share the bench chart">Share</button></span>
     <div class="sec-cap">Scored vs. best possible lineup</div>
   </div>
   <div style="display:flex;flex-direction:column;gap:8px;margin-top:12px">
@@ -1115,10 +1172,9 @@ button{font-family:inherit;color:inherit}
 <div data-shot="team">
 <div style="position:relative;margin:16px 20px 0;padding:20px;border-radius:20px;background:var(--surface);border:1px solid var(--line)">
   <span class="no-shot" style="position:absolute;top:14px;right:14px;display:flex;gap:6px">
-    <button class="share-btn" sc-camel-on-click="{{ linkTeam }}" aria-label="Share a link to this team">Share</button>
-    <button class="share-btn" sc-camel-on-click="{{ shareTeam }}" aria-label="Share this team as an image">{{ shareLabel.team }}</button>
+    <button class="share-btn" sc-camel-on-click="{{ menuTeam }}" aria-label="Share this team">Share</button>
   </span>
-  <div class="team-head" style="display:flex;gap:14px;align-items:center;padding-right:140px">
+  <div class="team-head" style="display:flex;gap:14px;align-items:center;padding-right:76px">
     <div class="crest" style="width:64px;height:64px;background:{{ team.color }};color:var(--onAccent);display:flex;align-items:center;justify-content:center;font-family:'Big Shoulders Display';font-weight:900;font-size:26px;flex:none"><span class="ini" data-i="{{ team.init }}">{{ team.init }}</span></div>
     <div style="min-width:0">
       <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:34px;line-height:.95;text-transform:uppercase">{{ team.m }}</div>
@@ -1376,6 +1432,19 @@ button{font-family:inherit;color:inherit}
   </div>
 </sc-if>
 
+<sc-if value="{{ hasShareSheet }}" hint-placeholder-val="{{ false }}">
+  <div class="share-sheet" sc-camel-on-click="{{ closeShareSheet }}" style="position:fixed;inset:0;z-index:60;background:rgba(0,0,0,.35);display:flex;align-items:flex-end;justify-content:center">
+    <div role="dialog" aria-label="Share" sc-camel-on-click="{{ stopTap }}" class="share-panel" style="width:100%;max-width:440px;background:var(--bg);border-radius:20px 20px 0 0;padding:16px 16px 28px">
+      <div style="font-family:'JetBrains Mono';font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)">Share</div>
+      <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:24px;text-transform:uppercase;margin-top:2px">{{ shareSheetTitle }}</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px">
+        <button sc-camel-on-click="{{ sheetLink }}" style="min-height:64px;padding:10px 12px;border:1px solid var(--line);border-radius:14px;background:var(--surface);color:var(--ink);cursor:pointer;text-align:left"><div style="font-weight:700;font-size:15px">Send link</div><div style="font-size:12px;color:var(--muted);margin-top:2px">Chats show a preview</div></button>
+        <button sc-camel-on-click="{{ sheetImg }}" style="min-height:64px;padding:10px 12px;border:1px solid var(--line);border-radius:14px;background:var(--surface);color:var(--ink);cursor:pointer;text-align:left"><div style="font-weight:700;font-size:15px">Send image</div><div style="font-size:12px;color:var(--muted);margin-top:2px">A picture of the card</div></button>
+      </div>
+      <button sc-camel-on-click="{{ closeShareSheet }}" style="width:100%;min-height:44px;margin-top:10px;border:0;background:transparent;color:var(--muted);font-size:14px;cursor:pointer">Cancel</button>
+    </div>
+  </div>
+</sc-if>
 <sc-if value="{{ toastOn }}" hint-placeholder-val="{{ false }}">
   <div role="status" style="position:fixed;left:50%;bottom:96px;transform:translateX(-50%);z-index:60;display:flex;align-items:center;gap:12px;max-width:calc(100% - 32px);padding:10px 10px 10px 16px;border-radius:999px;background:var(--ink);color:var(--bg);font-size:14px;font-weight:600;box-shadow:0 6px 24px rgba(0,0,0,.35)">
     <span>{{ toastText }}</span>

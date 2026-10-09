@@ -60,6 +60,8 @@ window.SEASON = {
   live: {
     week: 5,
     status: 'Live · Thursday final (TB 24, DAL 16) · Sunday next',
+    // When these numbers were pulled from Yahoo (Central); shows as "Scores as of Thu 10:19 PM".
+    asOf: '2026-10-08T22:19:00-05:00',
     // [current points, projected final]
     // Yahoo live as of Thu Oct 8, 10:19 PM CT, after TB @ DAL went final. Yahoo showed all of
     // Tristan's players on the bench and projected him 0.00; nobody of his has played, so this
