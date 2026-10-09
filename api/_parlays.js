@@ -90,7 +90,8 @@ export function describe(week, p, taps = [], passes = []) {
   const priced = !!ticket || (decs.length > 0 && decs.every(d => d != null));
   const dec = ticket ?? (priced ? decs.reduce((a, b) => a * b, 1) : null);
   const title = p.title ?? `${p.owner}’s parlay`;
-  const who = p.owners ? p.owners.join(' + ') : title.includes(p.owner) ? null : p.owner;
+  // Joint tickets name both owners; a single owner is already in the "Andy's parlay" line.
+  const who = p.owners ? p.owners.join(' + ') : null;
   return {
     title, who, week, status,
     by: (p.owners ? p.owners.join(' & ') : p.owner) + '’s Parlay',

@@ -389,8 +389,16 @@ class Component extends DCLogic {
     if (!el || this.state.sharing) return;
     this.setState({ sharing: name });
     const stage = document.createElement('div');
-    stage.className = 'offstage'; stage.style.width = SHOT_W + 'px';
+    stage.className = 'offstage'; stage.style.width = (+el.dataset.shotW || SHOT_W) + 'px';
     const copy = el.cloneNode(true);
+    // Icon colors like fill:var(--hi-a) come out blank in the image, so bake in the real color.
+    const vSrc = el.querySelectorAll('[style*="var(--"]'), vDst = copy.querySelectorAll('[style*="var(--"]');
+    vSrc.forEach((n, i) => {
+      const d = vDst[i], cs = getComputedStyle(n), st = n.getAttribute('style');
+      if (!d) return;
+      if (/fill:\s*var/.test(st)) d.style.fill = cs.fill;
+      if (/stroke:\s*var/.test(st)) d.style.stroke = cs.stroke;
+    });
     copy.removeAttribute('id'); copy.querySelectorAll('[id]').forEach(n => n.removeAttribute('id'));
     // Drop what images leave out before layout, so the card closes up around the gap.
     copy.querySelectorAll('.no-shot').forEach(n => n.remove());
@@ -661,10 +669,11 @@ class Component extends DCLogic {
       // Stable link name from the parlay's id, title or owner: 'w4-the-truce'.
       const anchor = ticketSlug(wk, p);
       const legs = p.legs.map(l => {
-        const spot = l.player ? this.rosterSpot(l.player, wk) : null, pts = l.player ? this.fantasyPts(l.player, wk) : null;
+        const who = l.type == 'ml' ? null : l.player;
+        const spot = who ? this.rosterSpot(who, wk) : null, pts = who ? this.fantasyPts(who, wk) : null;
         // Game legs (totals, moneylines) list the managers starting someone in that game.
-        const stakes = !l.player && l.teams ? this.gameStakes(l.teams, wk) : null;
-        const owner = spot ? spot.m + '’s ' + (spot.starter ? spot.pos : 'bench') : l.player ? 'Free agent'
+        const stakes = !who && l.teams ? this.gameStakes(l.teams, wk) : null;
+        const owner = spot ? spot.m + '’s ' + (spot.starter ? spot.pos : 'bench') : who ? 'Free agent'
           : stakes ? (stakes.length ? 'Starters in this game: ' + stakes.join(', ') : 'No league starters in this game') : '';
         const meta = [l.result || (pts != null ? f2(pts) + ' fantasy pts' : l.game), l.line != null && !l.text.includes(String(l.line)) ? 'line ' + l.line : null].filter(Boolean).join(' · ');
         const d = toDecimal(l.odds), ip = impliedProb(l.odds), g = l.sgp ? p.sgps?.[l.sgp - 1] : null;
