@@ -643,7 +643,7 @@ class Component extends DCLogic {
     return this.players(m).filter(p => p.slot == 'starter').sort((a, b) => (ORD[a.pos] ?? 9) - (ORD[b.pos] ?? 9)).map(p => {
       const lp = live ? LIVEPTS[p.name] : null;
       const v = lp ?? (live ? (p.proj ?? p.projected ?? p.projections?.[wk] ?? PPROJ[p.name]) : (p.points?.[wk] ?? p.weeks?.[wk] ?? p.pts?.[wk]));
-      return { slot: p.pos == 'WRT' ? 'FLEX' : p.pos, name: p.name, meta: (p.nfl ? p.nfl.toUpperCase() : '—') + (lp != null ? (PLAYING.has(p.name) ? ' · Live' : ' · Final') : live ? this.preGame(p, wk) + (v != null ? ' · proj' : '') : ''), pts: v != null ? f2(+v) : '—', ptsColor: lp != null ? (PLAYING.has(p.name) ? 'var(--ink)' : 'var(--accentInk)') : v != null && !live ? 'var(--ink)' : 'var(--muted)' };
+      return { slot: p.pos == 'WRT' ? 'FLEX' : p.pos, name: p.name, meta: (p.nfl ? p.nfl.toUpperCase() : '—') + (lp != null ? (PLAYING.has(p.name) ? ' · Live' : ' · Final') : live ? (pg => pg + (v != null && !nflGame(p.nfl, wk) && !onBye(p.nfl, wk) ? ' · proj' : ''))(this.preGame(p, wk)) : ''), pts: v != null ? f2(+v) : '—', ptsColor: lp != null ? (PLAYING.has(p.name) ? 'var(--ink)' : 'var(--accentInk)') : v != null && !live ? 'var(--ink)' : 'var(--muted)' };
     });
   }
   side(m, o, wk) {
@@ -654,7 +654,7 @@ class Component extends DCLogic {
       return { m, init: INIT[m], color: col(m), rec: rec(m, NF) + ' · ' + place, info: rec(m, NF) + ' · ' + place, left: left == null ? '' : left ? left + ' left' : 'done', score: f2(p), raw: p, now: f2(c), status: 'Now ' + f2(c), scoreColor: p < op ? 'var(--muted)' : 'var(--ink)', nowColor: c < (LIVE.scores[o] || [0])[0] ? 'var(--muted)' : 'var(--ink)' };
     }
     const s = SC[m][wk - 1], os = SC[o][wk - 1], win = s > os;
-    return { m, init: INIT[m], color: col(m), rec: rec(m, wk - 1), info: rec(m, wk - 1), score: f2(s), raw: s, now: '', status: win ? 'Won' : 'Lost', scoreColor: win ? 'var(--ink)' : 'var(--muted)', nowColor: 'var(--muted)' };
+    return { m, init: INIT[m], color: col(m), rec: rec(m, wk), info: rec(m, wk), score: f2(s), raw: s, now: '', status: win ? 'Won' : 'Lost', scoreColor: win ? 'var(--ink)' : 'var(--muted)', nowColor: 'var(--muted)' };
   }
   match(pair, wk) {
     const [a, b] = pair, A = this.side(a, b, wk), B = this.side(b, a, wk), gap = Math.abs(A.raw - B.raw), live = wk == LW;
@@ -673,7 +673,7 @@ class Component extends DCLogic {
   preGame(p, wk) {
     if (onBye(p.nfl, wk)) return ' · Bye';
     const g = nflGame(p.nfl, wk), inj = INJ[String(p.inj || '').toUpperCase()];
-    return (g ? ' · ' + g.split(' · ')[0] : '') + (inj ? ' · ' + inj : '');
+    return (g ? ' · ' + g.split(' · ')[0].replace(':00 ', ' ') : '') + (inj ? ' · ' + inj : '');
   }
   // Lineup alerts for the live week: starters who can't score (bye, listed Out) and empty slots.
   // A player's alert clears once his game kicks off; bye and empty-slot alerts clear once the
@@ -1055,7 +1055,7 @@ class Component extends DCLogic {
       lineupTitle: `Week ${lineupWeek} lineup`, proj: LW ? 'Proj ' + f2(PROJ[tm]) : '',
       stats: [{ label: 'PF', value: f1(s.pf), sub: ord(pfRank) + ' in league' }, { label: 'PA', value: f1(s.pa), sub: ord(paRank) + ' fewest' }, { label: 'Luck', value: sgn(s.luck), sub: 'W − xW', color: s.luck > 0 ? 'var(--pos)' : s.luck < 0 ? 'var(--neg)' : 'var(--ink)' }, { label: 'xW', value: s.xw.toFixed(2), sub: 'vs ' + s.w + ' real wins' }, { label: 'Max PF', value: maxOk ? f1(s.max) : '—', sub: maxOk ? ord(maxRank) + ' best possible' : 'Best possible lineup' }, { label: 'Bench', value: maxOk ? f1(bn) : '—', sub: 'Points left sitting' }, { label: 'FAAB left', value: txOk ? '$' + (budget - spent[tm]) : '—', sub: 'of $' + budget }, { label: 'Adds', value: txOk ? String(adds[tm]) : '—', sub: 'This season' }].map(x => ({ color: 'var(--ink)', isLuck: x.label == 'Luck', isBench: x.label == 'Bench', ...x })),
       log, starters: this.starters(tm, lineupWeek), alerts: this.lineupAlerts(tm, lineupWeek).map(t => ({ t })), hasAlerts: this.lineupAlerts(tm, lineupWeek).length > 0,
-      bench: pl.filter(p => p.slot != 'starter').map(p => { const lp = LIVEPTS[p.name]; const v = lp ?? p.proj ?? p.projected ?? p.projections?.[lineupWeek] ?? PPROJ[p.name]; return { slot: p.slot == 'IR' ? 'IR' : p.pos, name: p.name, meta: (p.nfl || '').toUpperCase() + (lp == null && p.slot != 'IR' && lineupWeek == LW ? this.preGame(p, lineupWeek) : '') + (lp == null && v != null && p.slot != 'IR' ? ' · proj' : lp != null && PLAYING.has(p.name) ? ' · live' : ''), pts: p.slot == 'IR' ? '' : (v != null ? f2(+v) : '—') }; }),
+      bench: pl.filter(p => p.slot != 'starter').map(p => { const lp = LIVEPTS[p.name]; const v = lp ?? p.proj ?? p.projected ?? p.projections?.[lineupWeek] ?? PPROJ[p.name]; return { slot: p.slot == 'IR' ? 'IR' : p.pos, name: p.name, meta: (p.nfl || '').toUpperCase() + (lp == null && p.slot != 'IR' && lineupWeek == LW ? this.preGame(p, lineupWeek) : '') + (lp == null && v != null && p.slot != 'IR' && !(lineupWeek == LW && (nflGame(p.nfl, lineupWeek) || onBye(p.nfl, lineupWeek))) ? ' · proj' : lp != null && PLAYING.has(p.name) ? ' · live' : ''), pts: p.slot == 'IR' ? '' : (v != null ? f2(+v) : '—') }; }),
       benchCount: pl.filter(p => p.slot != 'starter').length, lineupMsg, hasLineup: !lineupMsg
     };
     const teamPicker = MGR.map(m => ({ m, init: INIT[m], color: col(m), ring: m == tm ? '2px solid var(--accent)' : '2px solid transparent', ringFill: m == tm ? 'var(--accent)' : 'transparent', op: m == tm ? 1 : .75, fg: m == tm ? 'var(--ink)' : 'var(--muted)', pick: () => this.setState({ team: m }) }));

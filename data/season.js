@@ -169,11 +169,11 @@ window.SEASON = {
   boothPreviewAt: { 5: '2026-10-07' },
   boothPreview: {
     5: [
-      ['Matt', 'The 1–3 bowl, between the two unluckiest teams in the league: Kurt at −1.00 and Matt at −0.89. Projected 115.63–100.37, Matt. There is no 2nd best is 9th.'],
+      ['Matt', 'The 1–3 bowl, between the two unluckiest teams in the league: Kurt at −1.00 and Matt at −0.89. Projected 115.63–100.37, Matt. “There is no 2nd best” is 9th.'],
       ['Tony', 'First vs. second, both 3–1, projected 114.57–109.42 for Tristan. Tony has the league’s best luck at +1.11 and the 7th-best power ranking. Fraud watch is on.'],
       ['Mr. G', 'Mr. G is projected to beat Jerger 116.16–106.04. Mr. G has also allowed 524.00 points in four weeks, so Jerger knows the assignment.'],
       ['Colin', 'Both 2–2, Colin 5th and DLin 7th, with the playoff line between them. Colin has 28 adds this season and the worst lineup efficiency in the league, 79.1%.'],
-      ['Pablo', 'Andy is 3–1. Pablo is 2–2 and 6th, right on the playoff line, a week after putting up the top score at 133.78. The team name is He was #1, and it was, for one week.']
+      ['Pablo', 'Andy is 3–1. Pablo is 2–2 and 6th, right on the playoff line, a week after putting up the top score at 133.78. The team name is “He was #1,” and it was, for one week.']
     ]
   },
 
