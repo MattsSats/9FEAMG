@@ -368,6 +368,9 @@ button{font-family:inherit;color:inherit}
 .share-btn:hover{color:var(--ink);border-color:var(--muted)}
 .shot-footer{display:none;justify-content:space-between;align-items:baseline;gap:12px;padding:14px 0 16px;font-family:'JetBrains Mono';font-size:10px;letter-spacing:.08em;color:var(--muted)}
 .capturing .shot-footer{display:flex}
+/* Bigger tap areas for small pill buttons, without making them look bigger. */
+.share-btn,.jumps button,.hdr-btns button,.wchip{position:relative}
+.share-btn::after,.jumps button::after,.compact .hdr-btns button::after,.compact .wchip::after{content:'';position:absolute;inset:-5px 0}
 /* Only in shared images (the Wire line on the Wire card). */
 .shot-only{display:none}
 .capturing .shot-only{display:block}
@@ -591,7 +594,7 @@ button{font-family:inherit;color:inherit}
   <div class="hdr-btns" style="display:flex;gap:8px">
     <button sc-camel-on-click="{{ openTeamSheet }}" aria-label="{{ meLabel }}" title="{{ meLabel }}" style="min-height:34px;min-width:34px;padding:0 4px;border:1px solid var(--line);border-radius:999px;background:var(--surface);cursor:pointer;display:flex;align-items:center;justify-content:center">
       <sc-if value="{{ hasMe }}" hint-placeholder-val="{{ false }}"><span class="crest" style="width:24px;height:24px;background:{{ meColor }};color:var(--onAccent);display:flex;align-items:center;justify-content:center;font-family:'Big Shoulders Display';font-weight:800;font-size:10px"><span class="ini" data-i="{{ meInit }}">{{ meInit }}</span></span></sc-if>
-      <sc-if value="{{ noMe }}" hint-placeholder-val="{{ true }}"><span style="padding:0 8px;font-family:'JetBrains Mono';font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink)">You?</span></sc-if>
+      <sc-if value="{{ noMe }}" hint-placeholder-val="{{ true }}"><span style="padding:0 8px;font-family:'JetBrains Mono';font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink);white-space:nowrap">Pick team</span></sc-if>
     </button>
     <button sc-camel-on-click="{{ openDraft }}" aria-label="Draft results" style="background:{{ draftBtnBg }};color:{{ draftBtnFg }};border:1px solid {{ draftBtnBorder }};border-radius:999px;padding:0 14px;font-family:'JetBrains Mono';font-size:11px;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;min-height:34px;display:flex;align-items:center;gap:6px"><svg class="{{ draftIconCls }}" width="16" height="16" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 5 H29 M24 5 V9"></path><circle class="trk" cx="24" cy="25" r="16" style="stroke:var(--line)"></circle><circle class="a-ring" cx="24" cy="25" r="16" transform="rotate(-90 24 25)" style="stroke:var(--hi-a)"></circle><path class="a-hand" d="M24 25 V15"></path><circle cx="24" cy="25" r="2" stroke="none" style="fill:var(--hi-a)"></circle></svg>Draft</button>
     <button sc-camel-on-click="{{ toggleTheme }}" style="background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:0 14px;font-family:'JetBrains Mono';font-size:11px;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;min-height:34px">{{ themeLabel }}</button>
@@ -601,7 +604,8 @@ button{font-family:inherit;color:inherit}
 <sc-if value="{{ dataError }}" hint-placeholder-val="{{ false }}">
   <div style="margin:40px 20px;padding:44px 24px;border:1px dashed var(--line);border-radius:16px;text-align:center">
     <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:32px;text-transform:uppercase">Scores unavailable</div>
-    <div style="font-size:14px;color:var(--muted);margin-top:8px;text-wrap:pretty">The season data didn’t load. Try refreshing in a minute.</div>
+    <div style="font-size:14px;color:var(--muted);margin-top:8px;text-wrap:pretty">The season data didn’t load. Try again in a minute.</div>
+    <button onclick="location.reload()" style="margin-top:16px;min-height:44px;padding:0 20px;border:0;border-radius:999px;background:var(--accent);color:var(--onAccent);font-weight:700;font-size:15px;cursor:pointer">Try again</button>
   </div>
 </sc-if>
 
@@ -612,6 +616,9 @@ button{font-family:inherit;color:inherit}
     <sc-if value="{{ hasGamedayShare }}" hint-placeholder-val="{{ true }}"><button class="share-btn" sc-camel-on-click="{{ gamedayShare }}" aria-label="Share this week">Share</button></sc-if>
   </div>
   <div style="font-family:'JetBrains Mono';font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-top:10px">{{ gamedaySub }}</div>
+  <sc-if value="{{ noMe }}" hint-placeholder-val="{{ false }}">
+    <button class="hov" sc-camel-on-click="{{ openTeamSheet }}" style="display:flex;justify-content:space-between;align-items:center;gap:10px;width:100%;min-height:44px;margin-top:12px;padding:0 14px;border:1px dashed var(--accent);border-radius:12px;background:transparent;color:var(--ink);font-size:14px;font-weight:600;text-align:left;cursor:pointer">Which team is yours? It puts your matchup first.<span style="flex:none;color:var(--accentInk)">Pick ›</span></button>
+  </sc-if>
   <sc-if value="{{ hasJumps }}" hint-placeholder-val="{{ true }}">
     <nav class="jumps" aria-label="On this page" style="display:flex;gap:6px;margin-top:12px">
       <sc-for list="{{ jumps }}" as="j" hint-placeholder-count="3">
@@ -684,11 +691,11 @@ button{font-family:inherit;color:inherit}
       <span></span><span></span><span style="font-family:'JetBrains Mono';font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);text-align:right">{{ hero.colNow }}</span><span style="font-family:'JetBrains Mono';font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);text-align:right">{{ hero.colScore }}</span>
       <div class="crest" style="width:44px;height:44px;background:{{ hero.a.color }};color:var(--onAccent);display:flex;align-items:center;justify-content:center;font-family:'Big Shoulders Display';font-weight:800;font-size:18px;flex:none"><span class="ini" data-i="{{ hero.a.init }}">{{ hero.a.init }}</span></div>
       <div style="min-width:0"><div style="font-weight:700;font-size:17px">{{ hero.a.m }}</div><div style="font-family:'JetBrains Mono';font-size:11px;color:var(--muted);margin-top:2px">{{ hero.a.info }}</div></div>
-      <div style="text-align:right;font-family:'JetBrains Mono'"><div style="font-size:15px;color:{{ hero.a.nowColor }}">{{ hero.a.now }}</div><div style="font-size:10px;color:var(--muted);margin-top:2px;white-space:nowrap">{{ hero.a.left }}</div></div>
+      <div style="text-align:right;font-family:'JetBrains Mono'"><div style="font-size:15px;color:{{ hero.a.nowColor }}">{{ hero.a.now }}</div><div style="font-size:11px;color:var(--muted);margin-top:2px;white-space:nowrap">{{ hero.a.left }}</div></div>
       <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:clamp(34px,9.5vw,52px);line-height:1;text-align:right;color:{{ hero.a.scoreColor }}">{{ hero.a.score }}</div>
       <div class="crest" style="width:44px;height:44px;background:{{ hero.b.color }};color:var(--onAccent);display:flex;align-items:center;justify-content:center;font-family:'Big Shoulders Display';font-weight:800;font-size:18px;flex:none"><span class="ini" data-i="{{ hero.b.init }}">{{ hero.b.init }}</span></div>
       <div style="min-width:0"><div style="font-weight:700;font-size:17px">{{ hero.b.m }}</div><div style="font-family:'JetBrains Mono';font-size:11px;color:var(--muted);margin-top:2px">{{ hero.b.info }}</div></div>
-      <div style="text-align:right;font-family:'JetBrains Mono'"><div style="font-size:15px;color:{{ hero.b.nowColor }}">{{ hero.b.now }}</div><div style="font-size:10px;color:var(--muted);margin-top:2px;white-space:nowrap">{{ hero.b.left }}</div></div>
+      <div style="text-align:right;font-family:'JetBrains Mono'"><div style="font-size:15px;color:{{ hero.b.nowColor }}">{{ hero.b.now }}</div><div style="font-size:11px;color:var(--muted);margin-top:2px;white-space:nowrap">{{ hero.b.left }}</div></div>
       <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:clamp(34px,9.5vw,52px);line-height:1;text-align:right;color:{{ hero.b.scoreColor }}">{{ hero.b.score }}</div>
     </div>
     <sc-if value="{{ hero.hasAlerts }}" hint-placeholder-val="{{ false }}">
@@ -707,11 +714,11 @@ button{font-family:inherit;color:inherit}
             <span></span><span></span><span style="font-family:'JetBrains Mono';font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);text-align:right">{{ mu.colNow }}</span><span style="font-family:'JetBrains Mono';font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);text-align:right">{{ mu.colScore }}</span>
             <div class="crest" style="width:32px;height:32px;background:{{ mu.a.color }};color:var(--onAccent);display:flex;align-items:center;justify-content:center;font-family:'Big Shoulders Display';font-weight:800;font-size:13px;flex:none"><span class="ini" data-i="{{ mu.a.init }}">{{ mu.a.init }}</span></div>
             <div style="min-width:0"><div style="font-weight:600;font-size:15px">{{ mu.a.m }}</div><div style="font-family:'JetBrains Mono';font-size:11px;color:var(--muted);margin-top:2px">{{ mu.a.info }}</div></div>
-            <div style="text-align:right;font-family:'JetBrains Mono'"><div style="font-size:13px;color:{{ mu.a.nowColor }}">{{ mu.a.now }}</div><div style="font-size:10px;color:var(--muted);margin-top:2px;white-space:nowrap">{{ mu.a.left }}</div></div>
+            <div style="text-align:right;font-family:'JetBrains Mono'"><div style="font-size:13px;color:{{ mu.a.nowColor }}">{{ mu.a.now }}</div><div style="font-size:11px;color:var(--muted);margin-top:2px;white-space:nowrap">{{ mu.a.left }}</div></div>
             <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:30px;line-height:1;text-align:right;color:{{ mu.a.scoreColor }}">{{ mu.a.score }}</div>
             <div class="crest" style="width:32px;height:32px;background:{{ mu.b.color }};color:var(--onAccent);display:flex;align-items:center;justify-content:center;font-family:'Big Shoulders Display';font-weight:800;font-size:13px;flex:none"><span class="ini" data-i="{{ mu.b.init }}">{{ mu.b.init }}</span></div>
             <div style="min-width:0"><div style="font-weight:600;font-size:15px">{{ mu.b.m }}</div><div style="font-family:'JetBrains Mono';font-size:11px;color:var(--muted);margin-top:2px">{{ mu.b.info }}</div></div>
-            <div style="text-align:right;font-family:'JetBrains Mono'"><div style="font-size:13px;color:{{ mu.b.nowColor }}">{{ mu.b.now }}</div><div style="font-size:10px;color:var(--muted);margin-top:2px;white-space:nowrap">{{ mu.b.left }}</div></div>
+            <div style="text-align:right;font-family:'JetBrains Mono'"><div style="font-size:13px;color:{{ mu.b.nowColor }}">{{ mu.b.now }}</div><div style="font-size:11px;color:var(--muted);margin-top:2px;white-space:nowrap">{{ mu.b.left }}</div></div>
             <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:30px;line-height:1;text-align:right;color:{{ mu.b.scoreColor }}">{{ mu.b.score }}</div>
           </div>
           <sc-if value="{{ mu.hasAlerts }}" hint-placeholder-val="{{ false }}">
@@ -824,7 +831,7 @@ button{font-family:inherit;color:inherit}
                 <span style="flex:1;min-width:110px;font-size:13px;font-weight:600">{{ pk.name }}</span>
                 <span style="display:flex;gap:4px">
                   <sc-for list="{{ pk.opts }}" as="o" hint-placeholder-count="3">
-                    <button sc-camel-on-click="{{ o.pick }}" aria-pressed="{{ o.pressed }}" style="min-height:30px;padding:0 10px;border:1px solid var(--line);border-radius:999px;background:{{ o.bg }};color:{{ o.fg }};font-size:12px;font-weight:600;cursor:pointer">{{ o.label }}</button>
+                    <button sc-camel-on-click="{{ o.pick }}" aria-pressed="{{ o.pressed }}" style="min-height:36px;padding:0 12px;border:1px solid var(--line);border-radius:999px;background:{{ o.bg }};color:{{ o.fg }};font-size:12px;font-weight:600;cursor:pointer">{{ o.label }}</button>
                   </sc-for>
                 </span>
               </div>
@@ -832,7 +839,7 @@ button{font-family:inherit;color:inherit}
           </div>
           </sc-if>
 
-          <button sc-camel-on-click="{{ reqForm.toggleAdd }}" aria-expanded="{{ reqForm.addOpen }}" style="display:block;margin-top:14px;padding:4px 0;border:0;background:transparent;font-family:'JetBrains Mono';font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);cursor:pointer">{{ reqForm.addLabel }}</button>
+          <button sc-camel-on-click="{{ reqForm.toggleAdd }}" aria-expanded="{{ reqForm.addOpen }}" style="display:flex;align-items:center;min-height:40px;margin-top:6px;padding:0;border:0;background:transparent;font-family:'JetBrains Mono';font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);cursor:pointer">{{ reqForm.addLabel }}</button>
           <sc-if value="{{ reqForm.addOpen }}" hint-placeholder-val="{{ false }}">
             <input type="text" data-req-game="" maxlength="60" aria-label="Add a leg: a player or team" placeholder="Player or team, e.g. Puka Nacua" style="display:block;width:100%;margin-top:6px;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink);font:15px 'Instrument Sans',system-ui,sans-serif">
           </sc-if>
@@ -851,9 +858,9 @@ button{font-family:inherit;color:inherit}
             <sc-for list="{{ reqList }}" as="rq" hint-placeholder-count="2">
               <div style="display:grid;grid-template-columns:24px minmax(0,1fr) auto;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)">
                 <span class="crest" style="width:24px;height:24px;background:{{ rq.color }};color:var(--onAccent);display:flex;align-items:center;justify-content:center;font-family:'Big Shoulders Display';font-weight:800;font-size:10px"><span class="ini" data-i="{{ rq.init }}">{{ rq.init }}</span></span>
-                <div style="min-width:0"><div style="font-weight:600;font-size:14px">{{ rq.m }}</div><div style="font-family:'JetBrains Mono';font-size:10px;color:var(--muted);margin-top:2px">{{ rq.text }}</div></div>
-                <sc-if value="{{ rq.hasHref }}" hint-placeholder-val="{{ false }}"><a href="{{ rq.href }}" style="font-family:'JetBrains Mono';font-size:11px;font-weight:600;color:{{ rq.statusFg }};text-decoration:none">{{ rq.status }}</a></sc-if>
-                <sc-if value="{{ rq.waiting }}" hint-placeholder-val="{{ true }}"><span style="font-family:'JetBrains Mono';font-size:10px;color:{{ rq.statusFg }}">{{ rq.status }}</span></sc-if>
+                <div style="min-width:0"><div style="font-weight:600;font-size:14px">{{ rq.m }}</div><div style="font-family:'JetBrains Mono';font-size:11px;color:var(--muted);margin-top:2px">{{ rq.text }}</div></div>
+                <sc-if value="{{ rq.hasHref }}" hint-placeholder-val="{{ false }}"><a href="{{ rq.href }}" style="display:inline-flex;align-items:center;min-height:40px;padding:0 4px;font-family:'JetBrains Mono';font-size:12px;font-weight:600;color:{{ rq.statusFg }};text-decoration:none">{{ rq.status }}</a></sc-if>
+                <sc-if value="{{ rq.waiting }}" hint-placeholder-val="{{ true }}"><span style="font-family:'JetBrains Mono';font-size:11px;color:{{ rq.statusFg }}">{{ rq.status }}</span></sc-if>
               </div>
             </sc-for>
           </div>
@@ -923,6 +930,9 @@ button{font-family:inherit;color:inherit}
             </span>
           </div>
         </sc-if>
+        <sc-if value="{{ pr.hasLock }}" hint-placeholder-val="{{ false }}">
+          <div class="no-shot" style="padding:4px 16px 0;font-family:'JetBrains Mono';font-size:11px;color:var(--muted)">{{ pr.lockLabel }}</div>
+        </sc-if>
         <sc-if value="{{ pr.showPeek }}" hint-placeholder-val="{{ true }}">
           <div class="no-shot" style="display:flex;flex-wrap:wrap;gap:6px;padding:12px 16px 0">
             <sc-for list="{{ pr.peek }}" as="pk" hint-placeholder-count="3">
@@ -943,7 +953,7 @@ button{font-family:inherit;color:inherit}
               </div>
               <span style="display:flex;flex-direction:column;align-items:flex-end;gap:2px;font-family:'JetBrains Mono'">
                 <span style="font-size:13px;font-weight:600">{{ lg.odds }}</span>
-                <span style="font-size:9px;color:var(--muted);white-space:nowrap">{{ lg.oddsSub }}</span>
+                <span style="font-size:11px;color:var(--muted);white-space:nowrap">{{ lg.oddsSub }}</span>
               </span>
               <span style="font-family:'JetBrains Mono';font-size:10px;font-weight:700;letter-spacing:.08em;min-width:46px;text-align:center;padding:4px 0;border-radius:6px;background:{{ lg.bg }};color:{{ lg.fg }}">{{ lg.tag }}</span>
             </div>
@@ -1042,7 +1052,7 @@ button{font-family:inherit;color:inherit}
   <div class="sec-head">
     <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:26px;text-transform:uppercase">Standings</div>
     <span class="sec-btns no-shot"><button class="share-btn" sc-camel-on-click="{{ menuStandings }}" aria-label="Share the standings">Share</button></span>
-    <div class="sec-cap">Luck = W − xW</div>
+    <div class="sec-cap">Luck = W − xW · <button class="no-shot" sc-camel-on-click="{{ howTo }}" style="min-height:32px;padding:0;border:0;background:transparent;font:inherit;color:var(--accentInk);text-decoration:underline;cursor:pointer">What’s this?</button></div>
   </div>
   <div style="display:grid;grid-template-columns:22px minmax(0,1fr) 40px 52px 52px 48px;gap:8px;padding:14px 0 8px;font-family:'JetBrains Mono';font-size:10px;letter-spacing:.08em;color:var(--muted);border-bottom:1px solid var(--line)">
     <span>#</span><span>MANAGER</span><span style="text-align:right">W–L</span><span style="text-align:right">PF</span><span style="text-align:right">MAX PF</span><span style="text-align:right">LUCK</span>
@@ -1052,7 +1062,7 @@ button{font-family:inherit;color:inherit}
       <span style="font-family:'Big Shoulders Display';font-weight:800;font-size:18px;color:var(--muted)">{{ s.rank }}</span>
       <div style="display:flex;align-items:center;gap:10px;min-width:0">
         <div class="crest" style="width:28px;height:28px;background:{{ s.color }};color:var(--onAccent);display:flex;align-items:center;justify-content:center;font-family:'Big Shoulders Display';font-weight:800;font-size:12px;flex:none"><span class="ini" data-i="{{ s.init }}">{{ s.init }}</span></div>
-        <div style="min-width:0"><div style="font-weight:600;font-size:15px">{{ s.m }}</div><div class="no-shot" style="font-family:'JetBrains Mono';font-size:10px;color:var(--muted);margin-top:1px;white-space:nowrap">PA {{ s.pa }}</div></div>
+        <div style="min-width:0"><div style="font-weight:600;font-size:15px">{{ s.m }}</div><div class="no-shot" style="font-family:'JetBrains Mono';font-size:11px;color:var(--muted);margin-top:1px;white-space:nowrap">PA {{ s.pa }}</div></div>
       </div>
       <span style="text-align:right;font-family:'JetBrains Mono';font-size:13px;font-weight:600">{{ s.wl }}</span>
       <span style="text-align:right;font-family:'JetBrains Mono';font-size:13px">{{ s.pf }}</span>
@@ -1099,7 +1109,7 @@ button{font-family:inherit;color:inherit}
     <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:26px;text-transform:uppercase">Power rankings</div>
     <span class="sec-btns no-shot"><button class="share-btn" sc-camel-on-click="{{ menuPower }}" aria-label="Share the power rankings">Share</button></span>
   </div>
-  <div class="no-shot" style="font-family:'JetBrains Mono';font-size:10px;color:var(--muted);margin-top:8px;line-height:1.5;text-wrap:pretty">{{ powerSub }} · Score: 50% all-play, 25% record, 25% recent all-play</div>
+  <div class="no-shot" style="font-family:'JetBrains Mono';font-size:11px;color:var(--muted);margin-top:8px;line-height:1.5;text-wrap:pretty">{{ powerSub }} · Score: half how you’d do against every team each week (all-play), a quarter record, a quarter the last two weeks</div>
   <div style="display:grid;grid-template-columns:22px 30px minmax(0,1fr) 48px;gap:8px;padding:14px 0 8px;font-family:'JetBrains Mono';font-size:10px;letter-spacing:.08em;color:var(--muted);border-bottom:1px solid var(--line)">
     <span>#</span><span></span><span>MANAGER</span><span style="text-align:right">SCORE</span>
   </div>
@@ -1152,7 +1162,7 @@ button{font-family:inherit;color:inherit}
   <div class="sec-head">
     <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:26px;text-transform:uppercase;display:flex;align-items:center;gap:8px"><svg class="hi play" width="26" height="26" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><g class="a-dice vb"><rect x="8" y="8" width="32" height="32" rx="7"></rect><circle cx="16" cy="16" r="2.6" stroke="none" style="fill:var(--hi-a)"></circle><circle cx="32" cy="16" r="2.6" stroke="none" style="fill:var(--hi-a)"></circle><circle cx="24" cy="24" r="2.6" stroke="none" style="fill:var(--hi-a)"></circle><circle cx="16" cy="32" r="2.6" stroke="none" style="fill:var(--hi-a)"></circle><circle cx="32" cy="32" r="2.6" stroke="none" style="fill:var(--hi-a)"></circle></g></svg>Luck</div>
     <span class="sec-btns no-shot"><button class="share-btn" sc-camel-on-click="{{ menuLuck }}" aria-label="Share the luck chart">Share</button></span>
-    <div class="sec-cap">W − xW</div>
+    <div class="sec-cap">W − xW · <button class="no-shot" sc-camel-on-click="{{ howTo }}" style="min-height:32px;padding:0;border:0;background:transparent;font:inherit;color:var(--accentInk);text-decoration:underline;cursor:pointer">What’s this?</button></div>
   </div>
   <div style="display:flex;flex-direction:column;gap:6px;margin-top:12px">
     <sc-for list="{{ luckBars }}" as="lb" hint-placeholder-count="10">
@@ -1167,7 +1177,7 @@ button{font-family:inherit;color:inherit}
   <div class="shot-footer"><b>9FEAMG</b><span>{{ shotNoteLuck }}</span></div>
 </div>
 
-<div class="sg-hr" style="margin:30px 20px 0;padding:18px;background:var(--surface);border:1px solid var(--line);border-radius:16px">
+<div id="howto" class="sg-hr" style="scroll-margin-top:120px;"margin:30px 20px 0;padding:18px;background:var(--surface);border:1px solid var(--line);border-radius:16px">
   <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:22px;text-transform:uppercase">How to read this</div>
   <div style="display:flex;flex-direction:column;gap:14px;margin-top:14px">
     <div><div style="font-family:'JetBrains Mono';font-size:11px;font-weight:600;color:var(--accentInk);letter-spacing:.06em">xW · EXPECTED WINS</div><div style="font-size:14px;line-height:1.45;margin-top:4px;color:var(--muted);text-wrap:pretty">Each week every score is ranked against the whole league. Beating 7 of 9 teams earns 0.78 xW, no matter who you actually played.</div></div>
@@ -1419,6 +1429,7 @@ button{font-family:inherit;color:inherit}
       <div style="font-family:'JetBrains Mono';font-size:11px;color:var(--muted)">{{ activityLabel }}</div>
     </div>
     <div style="display:flex;flex-direction:column;gap:8px;margin-top:12px">
+      <div style="display:grid;grid-template-columns:60px minmax(0,1fr) 30px 36px;gap:10px;font-family:'JetBrains Mono';font-size:10px;letter-spacing:.08em;color:var(--muted)"><span></span><span></span><span style="text-align:right">ADDS</span><span style="text-align:right">W–L</span></div>
       <sc-for list="{{ activity }}" as="a" hint-placeholder-count="10">
         <div style="display:grid;grid-template-columns:60px minmax(0,1fr) 30px 36px;gap:10px;align-items:center">
           <span style="font-size:13px;font-weight:600">{{ a.m }}</span>

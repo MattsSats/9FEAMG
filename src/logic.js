@@ -760,6 +760,8 @@ class Component extends DCLogic {
         withList: onIt.map(m => { const tag = owners.includes(m) ? 'PLACED' : m == vs ? 'HEDGE' : ''; return { m, init: INIT[m] ?? m.slice(0, 2).toUpperCase(), color: ownerCol(m), tag, hasTag: !!tag }; }),
         hasWith: onIt.length > 0, unbet: status == 'OPEN' && !onIt.length && !(me && owners.includes(me)), withLabel: status == 'CASHED' ? 'Cashed with' : status == 'BUSTED' ? 'Busted with' : 'On it',
         canTail: !lockedNow && !(me && fixed.includes(me)) && !iPassed,
+        // "Taps lock Sun 12 PM": the ticket's first kickoff, while it can still be joined.
+        ...(k => ({ hasLock: !lockedNow && status == 'OPEN' && k < Infinity, lockLabel: k < Infinity ? 'Taps lock ' + new Date(k).toLocaleString('en-US', { weekday: 'short', hour: 'numeric', minute: '2-digit', timeZone: 'America/Chicago' }).replace(',', '').replace(':00 ', ' ') : '' }))(Math.min(Infinity, ...p.legs.map(l => kickoff(wk, l.game)?.getTime()).filter(Boolean))),
         // Nobody on it: "Nobody's on it yet" beside the button, or "Locked" once it can't be joined.
         nobodyYet: !onIt.length && !passes.length && !lockedNow && !(me && makers.includes(me)), lockedPaper: status == 'OPEN' && !onIt.length && lockedNow, lockedLabel: passes.length ? 'Locked' : 'Locked · nobody bet this one', locked: lockedNow,
         showTails: onIt.length > 0 || !lockedNow || passes.length > 0 || (!!me && makers.includes(me)) || (status == 'OPEN' && lockedNow),
@@ -845,7 +847,7 @@ class Component extends DCLogic {
       { label: 'RECORD', value: `${ledger.w}–${ledger.l}`, color: 'var(--ink)' },
       { label: 'NET', value: money(ledger.net), color: moneyCol(ledger.net) },
       { label: 'OPEN', value: String(ledger.open), color: 'var(--ink)' }];
-    const ledgerSub = `${bets} ${bets == 1 ? 'bet' : 'bets'} · $10 each` + (ledger.unpriced ? ` · ${ledger.unpriced} cashed without a line` : '');
+    const ledgerSub = `${bets} ${bets == 1 ? 'bet' : 'bets'} · $10 each · counts tickets someone placed or tapped I’m on it; Paper is the rest` + (ledger.unpriced ? ` · ${ledger.unpriced} cashed without a line` : '');
     // Best net first; each row: crest, record, open count, net.
     const ledgerOwners = Object.values(byOwner).sort((a, b) => b.net - a.net || b.w - a.w || a.l - b.l).map(o => ({
       m: o.m, init: INIT[o.m] ?? o.m.slice(0, 2).toUpperCase(), color: ownerCol(o.m), rec: `${o.w}–${o.l}`,
@@ -1059,7 +1061,7 @@ class Component extends DCLogic {
       heat, heatHead, heatColsM, heatColsD, heatMinM, heatMinD,
       team, teamPicker,
       draftInfo: D.draftInfo, draftToolUrl: D.draftToolUrl || '', hasDraftTool: !!D.draftToolUrl, draftOk: !draftMsg, draftMsg, draftFirsts, draftModes, draftChips, draftPicks, draftTitle, draftSub,
-      wireSub: 'Adds, drops, trades and FAAB · through ' + shortDate(now), wireModes, activityLabel: seasonMode ? 'Adds · season' : 'Adds · Week ' + wireWk, wireSeason: txOk, wireDays: days, noMoves, activity, wireRoast, wireBanner: boothOn || !txOk, faab, faabBudget: '$' + budget + ' budget', txOk,
+      wireSub: 'Adds, drops, trades and FAAB · through ' + shortDate(now), wireModes, activityLabel: seasonMode ? 'Adds · season' : 'Adds · Week ' + wireWk, wireSeason: txOk, wireDays: days, noMoves, activity, wireRoast, wireBanner: boothOn || !txOk, faab, faabBudget: 'Waiver bid money left · $' + budget + ' to start', txOk,
       sheetOpen: !!S.sheet, sheet, closeSheet: () => this.setState({ sheet: null }),
       // Share buttons
       // The matchup link goes through /s/w5-andy-vs-pablo so chats show a picture of it (api/section.js).
@@ -1076,6 +1078,7 @@ class Component extends DCLogic {
       shareHero: e => this.share('hero', e), shareStandings: e => this.share('standings', e), shareTeam: e => this.share('team', e),
       shareLabel: { hero: S.sharing == 'hero' ? '…' : 'Image', standings: S.sharing == 'standings' ? '…' : 'Image', team: S.sharing == 'team' ? '…' : 'Image' },
       hasRecap, recap, recapTitle: `Week ${wk} · ${isFinal ? 'Final' : LIVE_STARTED ? 'Live' : 'Preview'}`, recapBar: isFinal ? 'Week recap · scores + Booth' : LIVE_STARTED ? 'Live week · scores + Booth' : 'Week preview · projections + Booth', shareRecap: e => this.share('recap', e), recapLabel: S.sharing == 'recap' ? '…' : 'Image',
+      howTo: () => document.getElementById('howto')?.scrollIntoView({ behavior: 'smooth', block: 'start' }),
       powerRows, hasPower: powerRows.length > 0, powerSub: `Through week ${NF}`, sharePower: e => this.share('power', e), powerLabel: S.sharing == 'power' ? '…' : 'Image',
       linkPower: e => this.shareLink(location.origin + '/#power', '9FEAMG · Power rankings', e), shotPower: `Power rankings · through week ${NF}`,
       // Season charts: a link to the chart and an image of it.
