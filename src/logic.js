@@ -333,7 +333,7 @@ class Component extends DCLogic {
     if (window.ResizeObserver) {
       let glued = null;
       const ro = new ResizeObserver(es => { const h = es[0]?.borderBoxSize?.[0]?.blockSize ?? es[0]?.target.offsetHeight; if (h) document.documentElement.style.setProperty('--hdrLive', Math.round(h) + 'px'); });
-      glue = () => { const el = document.querySelector('.hdr'); if (el && el !== glued) { ro.disconnect(); ro.observe(el); glued = el; } };
+      glue = () => { const el = document.querySelector('.hdr'); if (el && el !== glued) { ro.disconnect(); ro.observe(el, { box: 'border-box' }); glued = el; } };
       setTimeout(glue, 0);
     }
     // Preload the screenshot library so the first share is quick.
