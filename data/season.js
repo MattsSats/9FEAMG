@@ -242,54 +242,6 @@ window.SEASON = {
         ],
         tailers: ['Tony'],
         booth: 'The Booth’s noon special: the highest total on the early slate, a Cowboys upset that runs straight through Pablo’s QB and defense, and Matt’s Jordan Love against an 0–3 Bucs team. For fun, not a lock.'
-      },
-      {
-        owner: 'Andy', title: 'London Lottery', placedBy: ['Andy'], odds: '+2350', // book price for the whole ticket (same-game parlay)
-        legs: [
-          { text: 'Jonathan Taylor anytime TD', player: 'Jonathan Taylor', type: 'td', game: 'Sun 8:30 AM · IND @ WAS (London)', result: '2 rush TD', odds: null, status: 'hit' },
-          { text: 'Jacory Croskey-Merritt anytime TD', player: 'Jacory Croskey-Merritt', type: 'td', game: 'Sun 8:30 AM · IND @ WAS (London)', result: '15 rush yds, 2-35 rec, no TD', odds: null, status: 'miss' },
-          { text: 'Tyler Warren anytime TD', player: 'Tyler Warren', type: 'td', game: 'Sun 8:30 AM · IND @ WAS (London)', result: '5-41, no TD', odds: null, status: 'miss' },
-          { text: 'Stefon Diggs anytime TD', player: 'Stefon Diggs', type: 'td', game: 'Sun 8:30 AM · IND @ WAS (London)', result: '5-35, no TD', odds: null, status: 'miss' }
-        ],
-        tailers: ['DLin'],
-        booth: 'Andy needed Tony’s tight end to score against Tony. Tyler Warren caught five balls and found no end zone, so Tony wins that subplot. Jonathan Taylor scored twice and DLin keeps the 22.20 in the matchup, so the tail only cost ten bucks.'
-      },
-      {
-        owner: 'Andy', title: 'Breakfast in London', placedBy: ['Andy'], odds: '+1000', // book price for the whole ticket (same-game parlay)
-        legs: [
-          { text: 'Commanders moneyline vs Colts', type: 'ml', team: 'Was', teams: ['Ind', 'Was'], game: 'Sun 8:30 AM · IND @ WAS (London)', result: 'Lost 13–30', odds: null, status: 'miss' },
-          { text: 'Jonathan Taylor anytime TD', player: 'Jonathan Taylor', type: 'td', game: 'Sun 8:30 AM · IND @ WAS (London)', result: '2 rush TD', odds: null, status: 'hit' },
-          { text: 'Stefon Diggs anytime TD', player: 'Stefon Diggs', type: 'td', game: 'Sun 8:30 AM · IND @ WAS (London)', result: '5-35, no TD', odds: null, status: 'miss' }
-        ],
-        booth: 'A Commanders win with two Jonathan Taylor touchdowns. Taylor delivered both. The Commanders lost by 17 before most of the league had coffee.'
-      },
-      {
-        owner: 'Andy', title: 'Two-Score Moonshot', placedBy: ['Andy'],
-        // Three same-game parlays; each SGP's book price, from Andy's ticket.
-        sgps: ['+345', '+650', '+440'],
-        legs: [
-          { text: 'Derrick Henry 2+ TDs', player: 'Derrick Henry', type: 'td', count: 2, sgp: 1, game: 'Sun 12:00 PM · TEN @ BAL', result: '1 rush TD', odds: null, status: 'miss' },
-          { text: 'Ravens −11.5 vs Titans', type: 'spread', team: 'Bal', line: -11.5, teams: ['Ten', 'Bal'], sgp: 1, game: 'Sun 12:00 PM · TEN @ BAL', result: 'Final 24–18 · won by 6', odds: null, status: 'miss' },
-          { text: 'Josh Allen 2+ TDs', player: 'Josh Allen', type: 'td', count: 2, sgp: 2, game: 'Sun 12:00 PM · NE @ BUF', result: '1 rush TD', odds: null, status: 'miss' },
-          { text: 'Bills −7 vs Patriots', type: 'spread', team: 'Buf', line: -7, teams: ['NE', 'Buf'], sgp: 2, game: 'Sun 12:00 PM · NE @ BUF', result: 'Final 26–29 · lost by 3', odds: null, status: 'miss' },
-          { text: 'Chiefs −4.5 at Raiders', type: 'spread', team: 'KC', line: -4.5, teams: ['KC', 'LV'], sgp: 3, game: 'Sun 3:25 PM · KC @ LV', result: 'Final 30–27 · won by 3', odds: null, status: 'miss' },
-          { text: 'Kenneth Walker III 2+ TDs', player: 'Kenneth Walker III', type: 'td', count: 2, sgp: 3, game: 'Sun 3:25 PM · KC @ LV', result: '2 rush TD', odds: null, status: 'hit' }
-        ],
-        booth: 'Six legs across three games, with Derrick Henry, Josh Allen and Kenneth Walker III each asked to score twice. Allen is Tony’s quarterback, in the week Andy plays Tony. A $10 bet that pays about $1,800 if all of it lands.'
-      },
-      {
-        owner: 'Andy', title: 'The Sensible Six', placedBy: ['Andy'],
-        // Three same-game parlays; each SGP's book price, from Andy's ticket.
-        sgps: ['+210', '+106', '+112'],
-        legs: [
-          { text: 'D’Andre Swift anytime TD', player: 'D\'Andre Swift', type: 'td', sgp: 1, game: 'Sun 12:00 PM · NYJ @ CHI', result: '0 TD', odds: null, status: 'miss' },
-          { text: 'Bears −6.5 vs Jets', type: 'spread', team: 'Chi', line: -6.5, teams: ['NYJ', 'Chi'], sgp: 1, game: 'Sun 12:00 PM · NYJ @ CHI', result: 'Final 23–12 · won by 11', odds: null, status: 'hit' },
-          { text: 'Derrick Henry anytime TD', player: 'Derrick Henry', type: 'td', sgp: 2, game: 'Sun 12:00 PM · TEN @ BAL', result: '5-yd rush TD, Q1', odds: null, status: 'hit' },
-          { text: 'Ravens −9.5 vs Titans', type: 'spread', team: 'Bal', line: -9.5, teams: ['Ten', 'Bal'], sgp: 2, game: 'Sun 12:00 PM · TEN @ BAL', result: 'Final 24–18 · won by 6', odds: null, status: 'miss' },
-          { text: 'Josh Allen anytime TD', player: 'Josh Allen', type: 'td', sgp: 3, game: 'Sun 12:00 PM · NE @ BUF', result: '1 rush TD', odds: null, status: 'hit' },
-          { text: 'Bills −2.5 vs Patriots', type: 'spread', team: 'Buf', line: -2.5, teams: ['NE', 'Buf'], sgp: 3, game: 'Sun 12:00 PM · NE @ BUF', result: 'Final 26–29 · lost by 3', odds: null, status: 'miss' }
-        ],
-        booth: 'The same three-game idea with friendlier numbers. Derrick Henry already scored, and D’Andre Swift is Andy’s own FLEX, so that leg pays twice if it hits.'
       }
     ],
     5: [
