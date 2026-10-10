@@ -26,6 +26,9 @@
     },
     "api/section.js": {
       "includeFiles": "api/_fonts/**"
+    },
+    "api/league.js": {
+      "maxDuration": 60
     }
   }
 }

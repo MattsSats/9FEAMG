@@ -2,26 +2,8 @@
 // All season numbers come from data/season.js (window.SEASON).
 // Yahoo sync (window.YAHOO from /api/league) fills in the numbers: final scores, schedule,
 // and the live week's scores and player points. Booth lines, captions and parlays stay in season.js.
-function mergeYahoo(S, Y) {
-  if (!S || !Y?.weeks) return S;
-  const ws = Object.keys(Y.weeks).map(Number).sort((a, b) => a - b);
-  const full = w => S.managers.every(x => Y.weeks[w].teams?.[x.m]);
-  S = { ...S, schedule: { ...S.schedule }, scores: Object.fromEntries(S.managers.map(x => [x.m, [...(S.scores[x.m] || [])]])) };
-  for (const w of ws) {
-    const Wk = Y.weeks[w];
-    if (!full(w)) continue;
-    if (!S.schedule[w] && Wk.matchups?.length == S.managers.length / 2) S.schedule[w] = Wk.matchups;
-    if (Wk.status == 'postevent' && w <= S.regularSeasonWeeks) for (const x of S.managers) { const a = S.scores[x.m]; if (a.length >= w - 1) a[w - 1] = Wk.teams[x.m].pts; }
-  }
-  const live = ws.find(w => Y.weeks[w].status == 'midevent' && full(w));
-  if (live) {
-    const Wk = Y.weeks[live], same = S.live?.week == live, pp = { ...(same ? S.live.playerPoints : {}) };
-    for (const t of Object.values(Wk.box || {})) for (const r of [...t.starters, ...t.bench]) if (r[4]) pp[r[1]] = r[4];
-    S.live = { status: 'Live', sheetNote: 'Live from Yahoo. Orange = points so far; the rest are projections.', ...(same ? S.live : {}), week: live, playerPoints: pp, asOf: Y.syncedAt,
-      scores: Object.fromEntries(S.managers.map(x => [x.m, [Wk.teams[x.m].pts, Wk.teams[x.m].proj]])) };
-  } else if (S.live && Y.weeks[S.live.week]?.status == 'postevent' && full(S.live.week)) S.live = null;
-  return S;
-}
+// The league math the server also runs (api/_shared.js) is pasted in here by build.cjs:
+/*SHARED*/
 const D = mergeYahoo(window.SEASON, window.YAHOO);
 const MGR = D ? D.managers.map(x => x.m) : [];
 // Team link slugs: 'Mr. G' → 'mr-g' (#team-mr-g).
@@ -74,27 +56,12 @@ const NFL = { Ari: 'Cardinals', Atl: 'Falcons', Bal: 'Ravens', Buf: 'Bills', Car
 // The leg a picked player can be: anytime TD, a yardage over, or their team's moneyline.
 const PICK_LEGS = [{ k: 'td', label: () => 'TD' }, { k: 'yards', label: () => 'Yards' }, { k: 'ml', label: p => (NFL[p.nfl] || 'Team') + ' ML' }];
 const pickText = { td: 'TD', yards: 'yards', ml: 'ML' };
-// Leg kickoffs as real times (same rule as api/_parlays.js): the day and Central time in
-// legs[].game, counted from that week's Thursday. Tails lock at a ticket's first kickoff.
-const KICK_DAYS = { Thu: 0, Fri: 1, Sat: 2, Sun: 3, Mon: 4, Tue: 5, Wed: 6 };
-function kickoff(week, game) {
-  const m = String(game || '').match(/^(Thu|Fri|Sat|Sun|Mon|Tue|Wed)\s+(\d{1,2}):(\d{2})\s*(AM|PM)/);
-  if (!m || !D?.week1Thursday) return null;
-  const d = new Date(D.week1Thursday + 'T12:00:00Z');
-  d.setUTCDate(d.getUTCDate() + 7 * (week - 1) + KICK_DAYS[m[1]]);
-  const h = (+m[2] % 12) + (m[4] == 'PM' ? 12 : 0), ymd = d.toISOString().slice(0, 10);
-  const cdt = d.getUTCMonth() < 10 || (d.getUTCMonth() == 10 && d.getUTCDate() < 1 + ((7 - new Date(Date.UTC(d.getUTCFullYear(), 10, 1)).getUTCDay()) % 7));
-  return new Date(`${ymd}T${String(h).padStart(2, '0')}:${m[3]}:00${cdt ? '-05:00' : '-06:00'}`);
-}
-// NFL week lookups: a team's game ('Sun 12:00 PM · CHI @ GB') and whether it's on bye.
-// Roster files spell a few teams differently (Was/WSH, Jac/JAX), so compare normalized.
-const NFL_ALIAS = { WSH: 'WAS', JAC: 'JAX', LA: 'LAR' };
-const nflKey = t => { const u = String(t || '').toUpperCase(); return NFL_ALIAS[u] || u; };
-const nflGame = (team, wk) => (D?.nfl?.[wk]?.games || []).find(g => { const m = g.match(/·\s*(\S+)\s*@\s*(\S+)/); return m && [nflKey(m[1]), nflKey(m[2])].includes(nflKey(team)); }) || null;
-const onBye = (team, wk) => (D?.nfl?.[wk]?.byes || []).map(nflKey).includes(nflKey(team));
+// Kickoffs as real times ('Sun 12:00 PM · CHI @ GB', Central, counted from that week's Thursday),
+// a team's game this week and whether it's on bye. Tails lock at a ticket's first kickoff.
+const kickoff = (week, game) => kickoffAt(D, week, game);
+const nflGame = (team, wk) => nflGameOf(D, team, wk);
+const onBye = (team, wk) => onByeOf(D, team, wk);
 const INJ = { Q: 'Q', D: 'D', O: 'Out', IR: 'IR', PUP: 'PUP', NA: 'NA', SUSP: 'Susp' };
-// Starters a lineup needs (Yahoo: QB, 2 RB, 2 WR, TE, W/R/T, K, DEF).
-const SLOTS = { QB: 1, RB: 2, WR: 2, TE: 1, WRT: 1, K: 1, DEF: 1 };
 const SLOT_NAME = { QB: 'QB', RB: 'RB', WR: 'WR', TE: 'TE', WRT: 'FLEX', K: 'K', DEF: 'DEF' };
 const tailsLocked = (week, p) => p.legs.some(l => (l.status || 'open') != 'open')
   || (ks => ks.length > 0 && Date.now() >= Math.min(...ks))(p.legs.map(l => kickoff(week, l.game)).filter(Boolean));
@@ -121,117 +88,31 @@ const SHOT_LIB = {
   integrity: 'sha384-Tha/42qsYmpYmQ07pX+nJzkKumO0BzKJxK/uzVc7xyBQxVCUgQBhQIG8L7vXK+9C'
 };
 const ORD = { QB: 0, RB: 1, WR: 2, TE: 3, WRT: 4, K: 5, DEF: 6 };
-const MON = { Jan: 0, Feb: 1, Mar: 2, Apr: 3, May: 4, Jun: 5, Jul: 6, Aug: 7, Sep: 8, Oct: 9, Nov: 10, Dec: 11 };
 const MONS = Object.keys(MON);
 const f1 = n => n.toFixed(1), f2 = n => n.toFixed(2);
 const sgn = n => n > 0 ? '+' + n.toFixed(2) : n < 0 ? '−' + Math.abs(n).toFixed(2) : '0.00';
 const ord = n => n + (n % 10 == 1 && n != 11 ? 'st' : n % 10 == 2 && n != 12 ? 'nd' : n % 10 == 3 && n != 13 ? 'rd' : 'th');
 const shortDate = d => MONS[d.getMonth()] + ' ' + d.getDate();
-// "Oct 9, 1:39 pm" is Central time (daylight until the first Sunday of November), read the same
-// way wherever the viewer is.
-function parseWhen(s) {
-  const m = String(s || '').match(/(\w+) (\d+), (\d+):(\d+) (am|pm)/);
-  if (!m) return new Date(Date.UTC(D.year, 8, 1));
-  let h = +m[3] % 12; if (m[5] == 'pm') h += 12;
-  const mo = MON[m[1]], d = +m[2], firstSun = 1 + ((7 - new Date(Date.UTC(D.year, 10, 1)).getUTCDay()) % 7);
-  return new Date(Date.UTC(D.year, mo, d, h + (mo < 10 || (mo == 10 && d < firstSun) ? 5 : 6), +m[4]));
-}
+// Transaction times ("Oct 9, 1:39 pm") are Central, read the same wherever the viewer is.
+const parseWhen = s => parseCT(s, D.year);
 function opp(m, w) { const p = (PAIRS[w] || []).find(p => p.includes(m)); return p ? (p[0] == m ? p[1] : p[0]) : null; }
 function won(m, w) { const o = opp(m, w); return o != null && SC[m][w - 1] > SC[o][w - 1]; }
 function rec(m, upto) { let w = 0, l = 0; for (let i = 1; i <= upto; i++) { if (!opp(m, i)) continue; won(m, i) ? w++ : l++; } return w + '–' + l; }
+// Standings (wins, then points for) and power rankings, from the shared math. max is filled in by
+// setMaxPF once the box scores load.
+const ST = D ? seasonStats(D, null).rows.sort(byStandings) : [];
+const power = n => powerRanks(D, n);
 function allPlay(m, wk) { const s = SC[m][wk - 1]; const w = MGR.filter(o => o != m && SC[o][wk - 1] < s).length; return { w, l: MGR.length - 1 - w, rank: MGR.length - w }; }
 
-// Standings, derived from final weekly scores. Sorted by wins, then points for.
-const ST = MGR.map(m => {
-  let w = 0, l = 0, pf = 0, pa = 0, xw = 0;
-  for (let i = 1; i <= NF; i++) {
-    const o = opp(m, i); if (!o) continue;
-    pf += SC[m][i - 1]; pa += SC[o][i - 1];
-    won(m, i) ? w++ : l++;
-    xw += allPlay(m, i).w / (MGR.length - 1);
-  }
-  // max is filled in by setMaxPF once the Yahoo box scores load.
-  return { m, w, l, pf, pa, max: null, xw, luck: Math.round((w - xw) * 100) / 100 };
-}).sort((a, b) => b.w - a.w || b.pf - a.pf);
 
-// Power rankings through week n, scored 0–100: half season all-play win %, a quarter
-// actual win %, a quarter all-play win % over the last two weeks (form). Ties go to PF.
-function power(n) {
-  const k = MGR.length - 1;
-  return MGR.map(m => {
-    let ap = 0, apW = 0, w = 0, g = 0, form = 0, fg = 0, pf = 0;
-    for (let i = 1; i <= n; i++) {
-      if (!opp(m, i)) continue;
-      const a = allPlay(m, i).w;
-      ap += a / k; apW += a; g++; pf += SC[m][i - 1];
-      if (won(m, i)) w++;
-      if (i > n - 2) { form += a / k; fg++; }
-    }
-    const score = g ? 100 * (0.5 * ap / g + 0.25 * w / g + 0.25 * (fg ? form / fg : 0)) : 0;
-    return { m, score, pf, wl: w + '–' + (g - w), ap: apW + '–' + (g * k - apW) };
-  }).sort((a, b) => b.score - a.score || b.pf - a.pf);
-}
 
-// Max PF: the best legal lineup each final week from that week's starters + bench
-// (IR can't start). Filling the fixed slots with the top scorers at each position,
-// then the FLEX with the best remaining RB/WR/TE, is optimal for this lineup shape.
-const LINEUP = ['QB', 'RB', 'RB', 'WR', 'WR', 'TE', 'K', 'DEF'], FLEX = ['RB', 'WR', 'TE'];
-function optimalLineup(players) {
-  const pool = players.filter(p => p[0] != 'IR').map(p => ({ pos: p[3], pts: p[4] })).sort((a, b) => b.pts - a.pts);
-  const take = ok => { const i = pool.findIndex(p => ok(p.pos)); return i < 0 ? 0 : pool.splice(i, 1)[0].pts; };
-  return LINEUP.reduce((t, slot) => t + take(pos => pos == slot), 0) + take(pos => FLEX.includes(pos));
-}
 // Sets each manager's season Max PF, or leaves it null when any final week's box score is missing.
-// American odds <-> decimal, for combining parlay legs.
-const toDecimal = o => { const n = parseFloat(o); return isNaN(n) || n == 0 ? null : n > 0 ? 1 + n / 100 : 1 + 100 / -n; };
-const toAmerican = d => d >= 2 ? '+' + Math.round((d - 1) * 100) : '−' + Math.round(100 / (d - 1));
-// The book's implied chance of a leg hitting (includes the book's cut).
-const impliedProb = o => { const n = parseFloat(o); return isNaN(n) || n == 0 ? null : n > 0 ? 100 / (n + 100) : -n / (-n + 100); };
 const LEG_TAG = {
   open: { tag: 'OPEN', bg: 'var(--surface2)', fg: 'var(--muted)' },
   hit: { tag: 'HIT', bg: 'var(--pos)', fg: 'var(--onStatus)' },
   miss: { tag: 'MISS', bg: 'var(--neg)', fg: 'var(--onStatus)' }
 };
-// Odds-implied chance a ticket still cashes: legs that hit count as done, any miss is 0.
-// A same-game group (or a ticket-level price) with some legs in is split evenly across its
-// legs, so it's a rough number. Book prices include the vig, so it runs a little high.
-function hitChance(p) {
-  const st = l => l.status || 'open';
-  if (p.legs.some(l => st(l) == 'miss')) return 0;
-  const groups = [];
-  if (toDecimal(p.odds)) groups.push({ odds: p.odds, legs: p.legs });
-  else {
-    const by = new Map();
-    for (const l of p.legs) {
-      if (!l.sgp) { groups.push({ odds: l.odds, legs: [l] }); continue; }
-      if (!by.has(l.sgp)) by.set(l.sgp, { odds: p.sgps?.[l.sgp - 1], legs: [] });
-      by.get(l.sgp).legs.push(l);
-    }
-    groups.push(...by.values());
-  }
-  let prob = 1;
-  for (const g of groups) {
-    const open = g.legs.filter(l => st(l) == 'open').length;
-    if (!open) continue;
-    const ip = impliedProb(g.odds);
-    if (ip == null) return null;
-    prob *= Math.pow(ip, open / g.legs.length);
-  }
-  return prob;
-}
-const pct = x => x < 0.1 ? (Math.max(x, 0.001) * 100).toFixed(1) + '%' : Math.round(x * 100) + '%';
-// The priced pieces of a ticket, multiplied together for the parlay odds: one per
-// same-game group (legs with sgp: n, priced by p.sgps[n - 1]) plus one per other leg.
-function parlayParts(p) {
-  const parts = [], seen = new Set();
-  for (const l of p.legs) {
-    if (l.sgp) { if (!seen.has(l.sgp)) { seen.add(l.sgp); parts.push(p.sgps?.[l.sgp - 1] ?? null); } }
-    else parts.push(l.odds ?? null);
-  }
-  return parts;
-}
 // A leg in a few words for a collapsed card: "Allen TD", "London 80+ rec", "Dolphins ML", "JAX–CIN o51.5".
-const lastName = n => { const w = String(n || '').split(' ').filter(x => !/^(Jr\.?|Sr\.?|II|III|IV)$/.test(x)); return w.length > 1 ? w.slice(1).join(' ') : w[0] || ''; };
 const STAT_SHORT = [[/pass/i, 'pass'], [/rush/i, 'rush'], [/recep|catches/i, 'catches'], [/rec/i, 'rec']];
 function legShort(l) {
   const t = String(l.text || '');
@@ -244,17 +125,6 @@ function legShort(l) {
   if (l.type == 'spread') return t.split(' spread')[0] + (l.line != null ? ' ' + (l.line > 0 ? '+' : '') + l.line : ' spread');
   if (l.type == 'total' && l.line != null && l.teams?.length == 2) return l.teams.map(x => x.toUpperCase()).join('–') + ` ${l.side == 'under' ? 'u' : 'o'}${l.line}`;
   return t;
-}
-// A ticket's link and tails key: 'w5-ground-and-pound' (id, else title, else owner).
-const ticketSlug = (wk, p) => `w${wk}-` + String(p.id ?? p.title ?? p.owner).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
-// A parlay's state from its legs: any miss = BUSTED, all hit = CASHED, else OPEN.
-// A ticket-level odds (same-game parlays, priced by the book as one bet) overrides the leg math.
-function parlayState(p) {
-  const st = p.legs.map(l => l.status || 'open');
-  const status = st.includes('miss') ? 'BUSTED' : st.length && st.every(s => s == 'hit') ? 'CASHED' : 'OPEN';
-  if (toDecimal(p.odds)) return { status, priced: true, dec: toDecimal(p.odds) };
-  const decs = parlayParts(p).map(toDecimal), priced = decs.length > 0 && decs.every(d => d != null);
-  return { status, priced, dec: priced ? decs.reduce((a, b) => a * b, 1) : null };
 }
 function setMaxPF(box) {
   ST.forEach(s => {
@@ -285,7 +155,7 @@ class Component extends DCLogic {
       .map(u => fetch(u, { cache: 'no-cache' }).then(r => r.ok ? r.json() : null).catch(() => null)))
       .then(([rosters, draft, tx, box]) => {
         // Yahoo fills box-score weeks the uploads file doesn't have.
-        for (const [w, Wk] of Object.entries(window.YAHOO?.weeks || {})) if (Wk.status == 'postevent' && Wk.box && !box?.weeks?.[w]) { box ||= { weeks: {} }; box.weeks ||= {}; box.weeks[w] = Wk.box; }
+        box = mergeBox(box, window.YAHOO);
         setMaxPF(box); this.setState({ rosters, draft, tx, box, loaded: true }); });
     // Parlay requests for the live week (api/requests.js). The slider and the game box are read
     // with plain listeners; everything else on the form is a tap.
@@ -677,28 +547,16 @@ class Component extends DCLogic {
     const g = nflGame(p.nfl, wk), inj = INJ[String(p.inj || '').toUpperCase()];
     return (g ? ' · ' + g.split(' · ')[0].replace(':00 ', ' ') : '') + (inj ? ' · ' + inj : '');
   }
-  // Lineup alerts for the live week: starters who can't score (bye, listed Out) and empty slots.
-  // A player's alert clears once his game kicks off; bye and empty-slot alerts clear once the
-  // week's last game has started (nothing can be swapped in after that).
+  // Lineup alerts for the live week (api/_shared.js lineupIssues): starters on bye and empty slots
+  // until the week's last kickoff, a starter listed Out until his game.
   lineupAlerts(m, wk) {
     if (wk != LW) return [];
-    const now = Date.now(), games = D?.nfl?.[wk]?.games || [];
-    const lastKick = games.length ? Math.max(0, ...games.map(g => kickoff(wk, g)?.getTime() || 0)) : kickoff(wk, 'Mon 7:15 PM')?.getTime() || 0;
-    const weekOpen = now < lastKick;
-    const st = this.players(m).filter(p => p.slot == 'starter'), out = [];
-    for (const p of st) {
-      if (LIVEPTS[p.name] != null) continue;
-      if (onBye(p.nfl, wk)) { if (weekOpen) out.push(`${p.name} is on a bye`); continue; }
-      const g = nflGame(p.nfl, wk), k = kickoff(wk, g || 'Sun 12:00 PM');
-      if (k && now >= k.getTime()) continue;
-      if (String(p.inj || '').toUpperCase() == 'O' || String(p.inj || '').toUpperCase() == 'IR') out.push(`${p.name} is listed Out`);
-    }
-    if (weekOpen && this.state.rosters) {
-      const have = {}; st.forEach(p => { have[p.pos] = (have[p.pos] || 0) + 1; });
-      const empty = Object.entries(SLOTS).flatMap(([k, n]) => Array(Math.max(0, n - (have[k] || 0))).fill(SLOT_NAME[k]));
-      if (empty.length) out.push(empty.length == 1 ? `Empty ${empty[0]} slot` : `${empty.length} empty slots (${[...new Set(empty)].join(', ')})`);
-    }
-    return out;
+    const { bye, out, empty } = lineupIssues(D, this.players(m).filter(p => p.slot == 'starter'), wk, LIVEPTS);
+    const lines = [...bye.map(p => `${p.name} is on a bye`), ...out.map(p => `${p.name} is listed Out`)];
+    // Empty slots only once the rosters have loaded (before then every lineup looks empty).
+    const names = this.state.rosters ? empty.map(k => SLOT_NAME[k]) : [];
+    if (names.length) lines.push(names.length == 1 ? `Empty ${names[0]} slot` : `${names.length} empty slots (${[...new Set(names)].join(', ')})`);
+    return lines;
   }
   startersLeft(m) {
     const st = this.players(m).filter(p => p.slot == 'starter');
@@ -1084,15 +942,12 @@ class Component extends DCLogic {
 
     // Wire
     const seasonMode = S.wire == 'Season';
-    // "This week" is the fantasy week: from the end of the previous week's last game (Monday night,
-    // kickoff + 3.5 hours; Mon 7:15 PM when the week's schedule isn't on file) to now. The header
-    // date is the newest move on file (today when there are none).
+    // "This week" is the fantasy week (from the end of last Monday night's game), and the line at the
+    // top is the shared rule (api/_shared.js wireOf). The header date is the newest move on file.
     const txTimes = tx.map(t => parseWhen(t.when).getTime());
     const now = new Date(txTimes.length ? Math.max(...txTimes) : Date.now());
-    const weekEnd = w => { const ks = (D.nfl?.[w]?.games || []).map(g => kickoff(w, g)?.getTime()).filter(Boolean);
-      return new Date((ks.length ? Math.max(...ks) : kickoff(w, 'Mon 7:15 PM').getTime()) + 3.5 * 36e5); };
-    let wireWk = 1; while (wireWk < D.regularSeasonWeeks && Date.now() >= weekEnd(wireWk).getTime()) wireWk++;
-    const cut = wireWk > 1 ? weekEnd(wireWk - 1) : new Date(D.year, 7, 1);
+    const W = D ? wireOf(D, tx, (name, w) => this.fantasyPts(name, w), seasonMode ? 'season' : 'week') : null;
+    const wireWk = W?.wk, cut = W?.cut;
     const groups = []; tx.forEach(t => { const d = parseWhen(t.when); const last = groups[groups.length - 1]; if (last && last.m == t.manager && last.when == t.when) last.items.push(t); else groups.push({ m: t.manager, when: t.when, d, items: [t] }); });
     const ym = n => dr?.managerMap?.[n] ?? n;
     const shown = groups.filter(g => seasonMode || g.d >= cut);
@@ -1104,53 +959,9 @@ class Component extends DCLogic {
       day.moves.push({ m: g.m, init: INIT[g.m], color: col(g.m), time, lines: g.items.sort((a, b) => (a.action == 'drop') - (b.action == 'drop')).map(t => ({ sign: t.action == 'add' ? '+' : t.action == 'drop' ? '−' : '⇄', color: t.action == 'add' ? 'var(--pos)' : t.action == 'drop' ? 'var(--neg)' : 'var(--accentInk)', player: t.player, weight: t.action == 'drop' ? 400 : 600, fg: t.action == 'drop' ? 'var(--muted)' : 'var(--ink)', meta: [t.pos, (t.nfl || '').toUpperCase(), t.action == 'trade' ? 'Trade with ' + ym(t.via.replace('trade from ', '')) : t.action == 'add' ? (t.via == 'Waivers' ? 'Waivers ' + (typeof t.faab == 'number' ? '$' + t.faab : t.faab ?? '') : 'Free agent') : null].filter(Boolean).join(' · ') })) });
     });
     const wireModes = ['This week', 'Season'].map(l => ({ label: l, bg: S.wire == l ? 'var(--surface2)' : 'transparent', fg: S.wire == l ? 'var(--ink)' : 'var(--muted)', pick: () => this.setState({ wire: l }) }));
-    const byAdds = [...MGR].sort((a, b) => adds[b] - adds[a]); const maxA = Math.max(1, adds[byAdds[0]]);
-    const recOf = m => { const st = ST.find(x => x.m == m); return st.w + '–' + st.l; };
-    // The busiest manager against the best record among the light adders (fewer season adds than
-    // the league median; standings order breaks ties), so the line tests whether adds help.
-    const top = byAdds[0], stPlace = m => ST.findIndex(x => x.m == m);
-    const sortedAdds = byAdds.map(m => adds[m]).sort((a, b) => a - b), mid = sortedAdds.length / 2;
-    const median = sortedAdds.length % 2 ? sortedAdds[Math.floor(mid)] : (sortedAdds[mid - 1] + sortedAdds[mid]) / 2;
-    const lightPool = MGR.filter(m => adds[m] < median);
-    const pickLow = not => (lightPool.length ? lightPool : MGR).filter(m => m != not).sort((a, b) => stPlace(a) - stPlace(b))[0];
-    const wk7 = {}; groups.filter(g => g.d >= cut).forEach(g => g.items.forEach(t => { if (t.action == 'add') wk7[t.manager] = (wk7[t.manager] || 0) + 1; }));
     // Activity vs record: season adds on Season, this fantasy week's adds on This week.
-    const actN = m => seasonMode ? adds[m] : wk7[m] || 0;
-    const actOrder = [...MGR].sort((a, b) => actN(b) - actN(a)), actMax = Math.max(1, actN(actOrder[0]));
-    const activity = actOrder.map(m => ({ m, n: actN(m), w: (actN(m) / actMax * 100) + '%', color: col(m), rec: recOf(m) }));
-    const top7 = Object.keys(wk7).sort((a, b) => wk7[b] - wk7[a])[0];
-    // The Wire line: the first of these that's true, so the joke always matches the numbers.
-    //   1. Drop regret (this week): a player dropped in the window who has scored the most since
-    //      another manager picked him up.
-    //   2. Best pickup (this week): the add in the window with the most points since.
-    //   3. Adds vs record (Season, or this week when 1-2 don't apply): the busiest adder against the
-    //      best record among the light adders.
-    //   4. No adds in the window.
-    // "Since" counts a player's points in games that kicked off after the move (Sunday noon for
-    // weeks without a schedule on file). Points use 2 decimals; never FAAB amounts.
-    const gameAt = (nfl, w) => (g => g ? kickoff(w, g) : kickoff(w, 'Sun 12:00 PM'))(nflGame(nfl, w));
-    const ptsSince = (t, at) => { let s = 0; for (let w = 1; w <= (LW || NF); w++) { const k = gameAt(t.nfl, w); if (k && k > at) s += this.fantasyPts(t.player, w) || 0; } return s; };
-    const who = t => t.pos == 'DEF' ? `the ${t.player} defense` : lastName(t.player);
-    const inWin = tx.filter(t => parseWhen(t.when) >= cut), dayOf = d => d.toLocaleDateString('en-US', { weekday: 'long', timeZone: 'America/Chicago' });
-    const regret = inWin.filter(t => t.action == 'drop').map(d => {
-      const at = parseWhen(d.when), pick = tx.filter(t => t.action == 'add' && t.player == d.player && t.manager != d.manager && parseWhen(t.when) >= at)
-        .sort((a, b) => parseWhen(a.when) - parseWhen(b.when))[0];
-      return pick ? { d, pick, pts: ptsSince(d, parseWhen(pick.when)) } : null;
-    }).filter(x => x && x.pts > 0).sort((a, b) => b.pts - a.pts)[0];
-    const pickup = inWin.filter(t => t.action == 'add').map(a => ({ a, pts: ptsSince(a, parseWhen(a.when)) })).filter(x => x.pts > 0).sort((a, b) => b.pts - a.pts)[0];
-    const addsVsRecord = (who, lead) => {
-      const low = pickLow(who), x = ST.find(s => s.m == who), y = ST.find(s => s.m == low);
-      const end = x.w - x.l > y.w - y.l ? 'Turns out the waiver wire works.' : x.w - x.l < y.w - y.l ? 'Busy is not the same as good.'
-        : adds[who] > adds[low] ? `Same record, ${adds[who] - adds[low]} more trip${adds[who] - adds[low] == 1 ? '' : 's'} to the waiver wire.` : 'Same record either way.';
-      return `${lead} ${low} has made ${adds[low]}${seasonMode ? '' : ' all season'} and is ${recOf(low)}. ${end}`;
-    };
-    const wireRoast = !S.loaded ? 'Loading the wire…'
-      : !txOk ? 'Couldn’t load transactions. Try refreshing in a minute.'
-      : seasonMode ? addsVsRecord(top, `${top} leads the league with ${adds[top]} adds and is ${recOf(top)}.`)
-      : regret ? `${regret.d.manager} dropped ${who(regret.d)}. ${regret.pick.manager} picked ${regret.d.pos == 'DEF' ? 'it' : 'him'} up, and ${regret.d.pos == 'DEF' ? 'that defense' : lastName(regret.d.player)} has ${f2(regret.pts)} since.`
-      : pickup ? `${pickup.a.manager} picked up ${who(pickup.a)} on ${dayOf(parseWhen(pickup.a.when))}. ${f2(pickup.pts)} since.`
-      : top7 ? addsVsRecord(top7, `${top7} made ${wk7[top7]} add${wk7[top7] == 1 ? '' : 's'} this week and is ${recOf(top7)}.`)
-      : 'Nobody has added anyone this week. Suspiciously quiet.';
+    const activity = W ? W.rows.map(r => ({ m: r.m, n: r.n, w: (r.n / Math.max(1, W.rows[0].n) * 100) + '%', color: col(r.m), rec: r.rec })) : [];
+    const wireRoast = !S.loaded ? 'Loading the wire…' : !txOk ? 'Couldn’t load transactions. Try refreshing in a minute.' : W.line;
     const faab = [...MGR].sort((a, b) => spent[a] - spent[b]).map(m => ({ m, left: '$' + (budget - spent[m]), w: ((budget - spent[m]) / budget * 100) + '%', color: col(m) }));
     const noMoves = txOk && !days.length;
 

@@ -5,10 +5,11 @@
 // (this same function with &img=1); people are sent to the chart on the site (/#<chart>).
 // Numbers come from the live data/season.js and box scores, so the image is always current.
 import { ImageResponse } from '@vercel/og';
-import { loadSeason, escapeHtml, hash, anchorFor, describe, kickoff } from './_parlays.js';
+import { loadSeason, escapeHtml, hash, anchorFor, describe } from './_parlays.js';
 import { readJson } from './_yahoo.js';
 import { seasonStats, loadBox, powerRanks } from './_stats.js';
 import { loadTx, wireOf } from './_wire.js';
+import { lineupIssues } from './_shared.js';
 import { C, F, h, fonts, mgrColor } from './_ogkit.js';
 
 const BOTS = /bot|crawl|spider|facebookexternalhit|facebot|twitterbot|slackbot|discordbot|whatsapp|telegram|linkedin|embedly|skype|iframely|preview/i;
@@ -160,26 +161,14 @@ const crest = (mg, size) => h('div', { position: 'relative', width: size, height
 
 // Everything one matchup card shows, from data/season.js: live projections for the live week,
 // final scores for a finished one.
-// One short lineup alert per team for the live week, the way the site works them out: empty
-// slots and starters on bye until the week's last kickoff, a starter listed Out until his game.
-const SLOTS = { QB: 1, RB: 2, WR: 2, TE: 1, WRT: 1, K: 1, DEF: 1 };
-const NFL_ALIAS = { WSH: 'WAS', JAC: 'JAX', LA: 'LAR' };
-const nflKey = t => { const u = String(t || '').toUpperCase(); return NFL_ALIAS[u] || u; };
+// One short lineup alert per team for the live week, from api/_shared.js (the site's own rules):
+// empty slots and starters on bye until the week's last kickoff, a starter listed Out until his game.
 function lineupAlert(season, rosters, m, wk) {
-  const team = rosters?.teams?.find(t => t.name == m), nfl = season.nfl?.[wk];
+  const team = rosters?.teams?.find(t => t.name == m);
   if (!team || season.live?.week != wk) return '';
-  const now = Date.now(), pts = season.live.playerPoints || {};
-  const games = nfl?.games || [], lastKick = games.length ? Math.max(0, ...games.map(g => kickoff(season, wk, g)?.getTime() || 0)) : kickoff(season, wk, 'Mon 7:15 PM')?.getTime() || 0;
-  const open = now < lastKick, byes = (nfl?.byes || []).map(nflKey);
-  const gameOf = t => games.find(g => { const x = g.match(/·\s*(\S+)\s*@\s*(\S+)/); return x && [nflKey(x[1]), nflKey(x[2])].includes(nflKey(t)); });
-  const st = team.players.filter(p => p.slot == 'starter'), bits = [];
-  const bye = open ? st.filter(p => pts[p.name] == null && byes.includes(nflKey(p.nfl))) : [];
-  const out = st.filter(p => { if (byes.includes(nflKey(p.nfl))) return false; const k = kickoff(season, wk, gameOf(p.nfl) || 'Sun 12:00 PM'); return pts[p.name] == null && ['O', 'IR'].includes(String(p.inj || '').toUpperCase()) && (!k || now < k.getTime()); });
-  if (open) {
-    const have = {}; st.forEach(p => { have[p.pos] = (have[p.pos] || 0) + 1; });
-    const empty = Object.entries(SLOTS).reduce((n, [k, c]) => n + Math.max(0, c - (have[k] || 0)), 0);
-    if (empty) bits.push(`${empty} empty lineup slot${empty == 1 ? '' : 's'}`);
-  }
+  const { bye, out, empty } = lineupIssues(season, team.players.filter(p => p.slot == 'starter'), wk, season.live.playerPoints || {});
+  const bits = [];
+  if (empty.length) bits.push(`${empty.length} empty lineup slot${empty.length == 1 ? '' : 's'}`);
   if (bye.length) bits.push(bye.length == 1 ? `${bye[0].name} on bye` : `${bye.length} starters on bye`);
   if (out.length) bits.push(out.length == 1 ? `${out[0].name} listed Out` : `${out.length} starters listed Out`);
   return bits.length ? `${m}: ${bits.join(' · ')}` : '';
