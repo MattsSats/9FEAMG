@@ -301,12 +301,41 @@ class Component extends DCLogic {
     this.restoreAfterRefresh();
     this.pollScores();
     // Phones: tuck the header and week row down to a slim bar while scrolling down; back on the way up.
-    let lastY = window.scrollY;
-    window.addEventListener('scroll', () => {
-      const y = window.scrollY, c = y > 120 && y > lastY ? true : y < lastY - 4 || y < 60 ? false : this.state.compact;
-      lastY = y;
-      if (c != this.state.compact) this.setState({ compact: c });
-    }, { passive: true });
+    // The bars resize in one step and the scroll moves by the same amount in that frame, so the page
+    // under them stays put (Safari has no scroll anchoring to do it, and Chrome's would fight the
+    // animation). Decide on distance travelled in one direction (16px down to tuck, 32px up to
+    // expand), ignore the scroll our own correction causes, and ignore overscroll bounce.
+    let lastY = window.scrollY, run = 0, lockUntil = 0, ticking = false, glue = () => {};
+    const setCompact = c => {
+      const app = document.querySelector('.app'), bars = () => [...document.querySelectorAll('.hdr, .wk')].reduce((s, e) => s + e.offsetHeight, 0);
+      if (app && window.innerWidth < 900) {
+        const y0 = window.scrollY, h0 = bars();
+        app.classList.toggle('compact', c);
+        const d = bars() - h0;
+        if (d) window.scrollTo(0, Math.max(0, y0 + d));
+        lastY = window.scrollY;
+      }
+      this.setState({ compact: c });
+    };
+    const onScroll = () => {
+      ticking = false; glue();
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      const y = Math.min(Math.max(window.scrollY, 0), Math.max(max, 0)), now = performance.now();
+      if (now < lockUntil) { lastY = y; run = 0; return; }
+      const d = y - lastY; lastY = y;
+      if (!d) return;
+      run = Math.sign(d) == Math.sign(run) ? run + d : d;
+      const c = y < 60 ? false : y > 120 && run >= 16 ? true : run <= -32 ? false : this.state.compact;
+      if (c != this.state.compact) { lockUntil = now + 120; run = 0; setCompact(c); }
+    };
+    window.addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(onScroll); } }, { passive: true });
+    // The sticky week row sits exactly under the header's real height, every frame of the resize.
+    if (window.ResizeObserver) {
+      let glued = null;
+      const ro = new ResizeObserver(es => { const h = es[0]?.borderBoxSize?.[0]?.blockSize ?? es[0]?.target.offsetHeight; if (h) document.documentElement.style.setProperty('--hdrLive', Math.round(h) + 'px'); });
+      glue = () => { const el = document.querySelector('.hdr'); if (el && el !== glued) { ro.disconnect(); ro.observe(el); glued = el; } };
+      setTimeout(glue, 0);
+    }
     // Preload the screenshot library so the first share is quick.
     setTimeout(() => this.loadShotLib().catch(() => {}), 1500);
     // Parlay deep links: #w4-the-truce opens that week and scrolls to the card.

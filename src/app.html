@@ -399,14 +399,17 @@ button{font-family:inherit;color:inherit}
 }
 /* Header height, which the sticky week row sits under; phones slim both while scrolling down. */
 .app{--hdrH:61px}
-.hdr,.hdr .logo,.wk,.wchip{transition:padding .2s ease,min-height .2s ease,font-size .2s ease,top .2s ease}
+/* The bars resize in one step (the scroll is corrected in the same frame, so the page under them
+   doesn't move); only the logo animates, with a transform. The week row's top follows the header's
+   real height (--hdrLive). */
+.hdr .logo{transition:transform .2s ease;transform-origin:left center}
 .desk-tabs{display:none}
 .jump-to{scroll-margin-top:150px}
 .wchip[data-on="1"]{box-shadow:none}
 @media (max-width:899px){
   .compact{--hdrH:47px}
   .compact .hdr{padding-top:6px!important;padding-bottom:6px!important}
-  .compact .hdr .logo{font-size:20px!important}
+  .compact .hdr .logo{transform:scale(.77)}
   .compact .hdr-btns button{min-height:30px!important}
   .compact .wk{padding-top:6px!important;padding-bottom:6px!important}
   .compact .wchip{min-height:30px!important}
@@ -618,7 +621,7 @@ button{font-family:inherit;color:inherit}
   </sc-if>
 </div>
 <!-- Week buttons stay pinned under the header while Gameday scrolls. -->
-<div data-weekchips="" class="scroll-x wk" style="position:sticky;top:var(--hdrH);z-index:19;background:var(--bg);display:flex;gap:6px;margin-top:8px;padding:10px 20px">
+<div data-weekchips="" class="scroll-x wk" style="position:sticky;top:var(--hdrLive,var(--hdrH));z-index:19;background:var(--bg);display:flex;gap:6px;margin-top:8px;padding:10px 20px">
   <sc-for list="{{ weekChips }}" as="w" hint-placeholder-count="5">
     <button sc-camel-on-click="{{ w.pick }}" data-on="{{ w.on }}" class="wchip" style="flex:1 0 48px;min-height:48px;border-radius:10px;border:1px solid {{ w.border }};background:{{ w.bg }};color:{{ w.fg }};cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:4px 0">
       <span style="font-family:'Big Shoulders Display';font-weight:800;font-size:20px;line-height:1">{{ w.label }}</span>
