@@ -228,6 +228,21 @@ function parlayParts(p) {
   }
   return parts;
 }
+// A leg in a few words for a collapsed card: "Allen TD", "London 80+ rec", "Dolphins ML", "JAX–CIN o51.5".
+const lastName = n => { const w = String(n || '').split(' ').filter(x => !/^(Jr\.?|Sr\.?|II|III|IV)$/.test(x)); return w.length > 1 ? w.slice(1).join(' ') : w[0] || ''; };
+const STAT_SHORT = [[/pass/i, 'pass'], [/rush/i, 'rush'], [/recep|catches/i, 'catches'], [/rec/i, 'rec']];
+function legShort(l) {
+  const t = String(l.text || '');
+  if (l.type == 'td' && l.player) return lastName(l.player) + (l.count > 1 ? ` ${l.count}+ TDs` : ' TD');
+  if (l.type == 'over' && l.player && l.line != null) {
+    const st = (STAT_SHORT.find(([re]) => re.test(l.stat || t)) || [])[1];
+    return `${lastName(l.player)} ${Math.ceil(l.line)}+` + (st ? ' ' + st : '');
+  }
+  if (l.type == 'ml' && / moneyline/.test(t)) return t.split(' moneyline')[0] + ' ML';
+  if (l.type == 'spread') return t.split(' spread')[0] + (l.line != null ? ' ' + (l.line > 0 ? '+' : '') + l.line : ' spread');
+  if (l.type == 'total' && l.line != null && l.teams?.length == 2) return l.teams.map(x => x.toUpperCase()).join('–') + ` ${l.side == 'under' ? 'u' : 'o'}${l.line}`;
+  return t;
+}
 // A ticket's link and tails key: 'w5-ground-and-pound' (id, else title, else owner).
 const ticketSlug = (wk, p) => `w${wk}-` + String(p.id ?? p.title ?? p.owner).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 // A parlay's state from its legs: any miss = BUSTED, all hit = CASHED, else OPEN.
@@ -820,6 +835,9 @@ class Component extends DCLogic {
         shot, title: p.title ?? p.owner + '’s parlay', init: INIT[p.owner] ?? p.init ?? p.owner.replace(/^The /, '').slice(0, 2).toUpperCase(), color: ownerCol(p.owner),
         sub: [p.owners ? p.owners.join(' + ') : vs ? 'vs ' + vs : null, 'Week ' + wk, legs.length + (legs.length == 1 ? ' leg' : ' legs')].filter(Boolean).join(' · '),
         legs, status, settled: status != 'OPEN',
+        // Collapsed cards show the legs in a few words, each with a hit/miss dot.
+        peek: p.legs.map(l => ({ t: legShort(l), dot: l.status == 'hit' ? 'var(--pos)' : l.status == 'miss' ? 'var(--neg)' : 'var(--muted)', fg: l.status == 'miss' ? 'var(--muted)' : 'var(--ink)' })),
+        showPeek: !S.prOpen?.[anchor],
         stampColor: status == 'CASHED' ? 'var(--pos)' : 'var(--neg)',
         statusBg: status == 'CASHED' ? 'var(--pos)' : status == 'BUSTED' ? 'var(--neg)' : 'var(--surface2)',
         statusFg: status == 'OPEN' ? 'var(--muted)' : 'var(--onStatus)',

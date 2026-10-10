@@ -886,6 +886,13 @@ button{font-family:inherit;color:inherit}
             </span>
           </div>
         </sc-if>
+        <sc-if value="{{ pr.showPeek }}" hint-placeholder-val="{{ true }}">
+          <div class="no-shot" style="display:flex;flex-wrap:wrap;gap:6px;padding:12px 16px 0">
+            <sc-for list="{{ pr.peek }}" as="pk" hint-placeholder-count="3">
+              <span style="display:inline-flex;align-items:center;gap:6px;padding:4px 9px;border-radius:999px;background:var(--surface2);font-family:'JetBrains Mono';font-size:11px;color:{{ pk.fg }};white-space:nowrap"><span style="width:7px;height:7px;border-radius:50%;background:{{ pk.dot }};flex:none"></span>{{ pk.t }}</span>
+            </sc-for>
+          </div>
+        </sc-if>
         <div class="pr-body" style="display:{{ pr.bodyDisplay }}">
         <div style="padding:6px 16px 0">
           <sc-for list="{{ pr.legs }}" as="lg" hint-placeholder-count="3">
