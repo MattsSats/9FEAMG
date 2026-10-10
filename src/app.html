@@ -966,6 +966,12 @@ button{font-family:inherit;color:inherit}
         <sc-if value="{{ pr.hasBooth }}" hint-placeholder-val="{{ true }}">
           <div style="margin-top:14px;padding:14px 16px;border-top:1px solid var(--line);font-size:15px;line-height:1.4;text-wrap:pretty">{{ pr.booth }}</div>
         </sc-if>
+        <sc-if value="{{ pr.hasHistory }}" hint-placeholder-val="{{ false }}">
+          <div class="no-shot" style="margin-top:12px;padding:10px 16px 0;border-top:1px dashed var(--line);font-family:'JetBrains Mono';font-size:10px;line-height:1.7;color:var(--muted)">
+            <div style="letter-spacing:.1em;text-transform:uppercase;font-weight:600">Taps</div>
+            <sc-for list="{{ pr.history }}" as="hx" hint-placeholder-count="2"><div>{{ hx.t }}</div></sc-for>
+          </div>
+        </sc-if>
         </div>
         <button class="hov no-shot" sc-camel-on-click="{{ pr.toggle }}" aria-expanded="{{ pr.expanded }}" style="width:100%;display:flex;justify-content:space-between;align-items:center;min-height:44px;margin-top:14px;padding:0 16px;border:0;border-top:1px solid var(--line);background:transparent;cursor:pointer;font-family:'JetBrains Mono';font-size:11px;color:var(--ink)">
           <span style="color:var(--muted)">{{ pr.legCount }}</span><span style="color:var(--accentInk);font-weight:600">{{ pr.toggleLabel }}</span>

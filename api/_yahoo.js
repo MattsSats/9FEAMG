@@ -2,7 +2,7 @@
 // Tokens and synced data live in a private Vercel Blob store (BLOB_READ_WRITE_TOKEN).
 // Env: YAHOO_CLIENT_ID, YAHOO_CLIENT_SECRET, ADMIN_KEY, CRON_SECRET,
 // optional YAHOO_REDIRECT_URI (must match the Yahoo app) and YAHOO_LEAGUE_ID.
-import { get, put } from '@vercel/blob';
+import { get, put, BlobPreconditionFailedError } from '@vercel/blob';
 
 const AUTH_URL = 'https://api.login.yahoo.com/oauth2/request_auth';
 const TOKEN_URL = 'https://api.login.yahoo.com/oauth2/get_token';
@@ -20,6 +20,26 @@ export async function readJson(path) {
 }
 export const writeJson = (path, data) =>
   put(path, JSON.stringify(data), { access: 'private', contentType: 'application/json', allowOverwrite: true, addRandomSuffix: false, cacheControlMaxAge: 60 });
+// Read, change and write one JSON file without losing a change someone else saved in between
+// (two people tapping at once): the write only lands if the file is still the version that was
+// read, otherwise it reads again and re-applies the change. change(data) returns the new data,
+// or throws to stop without writing.
+export async function updateJson(path, change, tries = 6) {
+  for (let i = 0; i < tries; i++) {
+    const r = await get(path, { access: 'private', useCache: false });
+    const data = r ? JSON.parse(await new Response(r.stream).text()) : null;
+    const next = await change(data);
+    try {
+      await put(path, JSON.stringify(next), { access: 'private', contentType: 'application/json', addRandomSuffix: false, cacheControlMaxAge: 60, ...(r ? { ifMatch: r.blob.etag } : { allowOverwrite: false }) });
+      return next;
+    } catch (e) {
+      // Someone else wrote first (or created the file first): try again on top of their change.
+      if (e instanceof BlobPreconditionFailedError || /precondition|already exists/i.test(String(e?.message))) { await new Promise(res => setTimeout(res, 40 + Math.random() * 120)); continue; }
+      throw e;
+    }
+  }
+  throw new Error('Too many taps at once. Try again.');
+}
 export const readAuth = () => readJson(AUTH_PATH);
 export const writeAuth = a => writeJson(AUTH_PATH, a);
 export const readData = () => readJson(DATA_PATH);

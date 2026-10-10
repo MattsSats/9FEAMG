@@ -93,6 +93,12 @@ const f1 = n => n.toFixed(1), f2 = n => n.toFixed(2);
 const sgn = n => n > 0 ? '+' + n.toFixed(2) : n < 0 ? '−' + Math.abs(n).toFixed(2) : '0.00';
 const ord = n => n + (n % 10 == 1 && n != 11 ? 'st' : n % 10 == 2 && n != 12 ? 'nd' : n % 10 == 3 && n != 13 ? 'rd' : 'th');
 const shortDate = d => MONS[d.getMonth()] + ' ' + d.getDate();
+// One tap in a ticket's history: "Tony is on it · Fri 8:14 PM" (owners "placed it").
+const tapLine = (e, owners) => {
+  const what = { on: owners.includes(e.m) ? 'placed it' : 'is on it', off: owners.includes(e.m) ? 'unmarked placed' : 'took back I’m on it', pass: 'didn’t bet it', unpass: 'undid didn’t bet' }[e.a] || e.a;
+  const when = new Date(e.at).toLocaleString('en-US', { weekday: 'short', hour: 'numeric', minute: '2-digit', timeZone: 'America/Chicago' }).replace(',', '');
+  return `${e.m} ${what}${e.by ? ' (' + e.by + ' tapped)' : ''} · ${when}`;
+};
 // Transaction times ("Oct 9, 1:39 pm") are Central, read the same wherever the viewer is.
 const parseWhen = s => parseCT(s, D.year);
 function opp(m, w) { const p = (PAIRS[w] || []).find(p => p.includes(m)); return p ? (p[0] == m ? p[1] : p[0]) : null; }
@@ -142,7 +148,7 @@ class Component extends DCLogic {
   state = { tab: this.props.startTab ?? 'Gameday', week: HOME_WK, theme: null, sheet: null, team: MY_TEAM || MGR[0], wire: 'This week', draftMode: 'By round', draftRound: 1, draftTeam: MGR[0], rosters: null, draft: null, tx: null, loaded: false,
     // Parlay request form: who's asking is remembered on this device.
     reqMgr: MY_TEAM, teamSheet: null, reqOpen: false, shareSheet: null, newScores: false, compact: false,
-    req: { risk: 1, legs: 'any', players: [], playerLegs: {}, game: '', sending: false }, tails: {}, passes: {}, tailBusy: null, reqs: null };
+    req: { risk: 1, legs: 'any', players: [], playerLegs: {}, game: '', sending: false }, tails: {}, passes: {}, tlog: {}, tailBusy: null, reqs: null };
   componentDidMount() {
     // Keyboard: Enter or Space activates clickable rows (role="button"); Escape closes the lineup sheet.
     document.addEventListener('keydown', e => {
@@ -275,21 +281,24 @@ class Component extends DCLogic {
   loadTails() {
     for (const w of Object.keys(D?.parlays || {}))
       fetch('/api/tails?week=' + w, { cache: 'no-store' }).then(r => r.ok ? r.json() : null)
-        .then(d => d && this.setState({ tails: { ...this.state.tails, [w]: d.tails || {} }, passes: { ...this.state.passes, [w]: d.passes || {} } })).catch(() => {});
+        .then(d => d && this.setState({ tails: { ...this.state.tails, [w]: d.tails || {} }, passes: { ...this.state.passes, [w]: d.passes || {} }, tlog: { ...this.state.tlog, [w]: d.log || {} } })).catch(() => {});
   }
   // "I'm on it": the first tap asks who you are (remembered with the request form's pick).
   // "Didn't bet it" (pass) goes through the same endpoint; only the ticket's owner or requester can.
   // onBehalf: Undo on someone's "didn't bet" acts for them without making them this phone's team.
+  // Each tap says what it should end up as (on or off), so a double tap or a retry can't undo it.
   async toggleTail(week, slug, as, pass = false, onBehalf = false) {
-    const m = as || this.state.reqMgr;
+    const S = this.state, m = as || S.reqMgr;
     if (!m) return this.setState({ teamSheet: { then: me => this.toggleTail(week, slug, me, pass) } });
+    if (S.tailBusy == slug) return;
     if (as && !onBehalf) { try { localStorage.setItem('9feamg-req-mgr', as); } catch {} }
+    const on = !((pass ? S.passes : S.tails)?.[week]?.[slug] || []).includes(m);
     this.setState({ ...(onBehalf ? {} : { reqMgr: m }), tailBusy: slug });
     try {
-      const r = await fetch('/api/tails', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ week, slug, manager: m, ...(pass ? { pass: true } : {}) }) });
+      const r = await fetch('/api/tails', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ week, slug, manager: m, on, ...(pass ? { pass: true } : {}), ...(onBehalf && S.reqMgr && S.reqMgr != m ? { by: S.reqMgr } : {}) }) });
       const d = await r.json().catch(() => ({}));
       if (!r.ok) throw new Error(d.error || 'Couldn’t save that. Try again.');
-      this.setState({ tailBusy: null, tails: { ...this.state.tails, [week]: d.tails || {} }, passes: { ...this.state.passes, [week]: d.passes || {} } });
+      this.setState({ tailBusy: null, tails: { ...this.state.tails, [week]: d.tails || {} }, passes: { ...this.state.passes, [week]: d.passes || {} }, tlog: { ...this.state.tlog, [week]: d.log || {} } });
     } catch (err) {
       this.setState({ tailBusy: null });
       this.toast(err.message || 'Couldn’t save that. Try again.');
@@ -755,12 +764,15 @@ class Component extends DCLogic {
         nobodyYet: !onIt.length && !passes.length && !lockedNow && !(me && makers.includes(me)), lockedPaper: status == 'OPEN' && !onIt.length && lockedNow, lockedLabel: passes.length ? 'Locked' : 'Locked · nobody bet this one', locked: lockedNow,
         showTails: onIt.length > 0 || !lockedNow || passes.length > 0 || (!!me && makers.includes(me)) || (status == 'OPEN' && lockedNow),
         // "Didn't bet": shown to the ticket's owner or requester once the phone knows who you are.
-        canPass: !!me && makers.includes(me) && !iPassed,
+        canPass: !!me && makers.includes(me) && !iPassed && status == 'OPEN',
         passLabel: S.tailBusy == anchor ? '…' : 'Didn’t bet',
         tapPass: () => this.toggleTail(wk, anchor, null, true),
         // "<name> didn't bet this one · Undo", one per person who passed. Undo shows only to that
         // person and the ticket's owner or requester.
-        hasPassed: passes.length > 0, passedList: passes.map(m => ({ line: m + ' didn’t bet this one.', canUndo: !!me && (me == m || makers.includes(me)), undo: () => this.toggleTail(wk, anchor, m, true, true) })),
+        hasPassed: passes.length > 0, passedList: passes.map(m => ({ line: m + ' didn’t bet this one.', canUndo: !!me && (me == m || makers.includes(me)) && status == 'OPEN', undo: () => this.toggleTail(wk, anchor, m, true, true) })),
+        // Who tapped what and when, newest first (the last five): "Tony is on it · Fri 8:14 PM".
+        history: (S.tlog?.[wk]?.[anchor] || []).slice(-5).reverse().map(e => ({ t: tapLine(e, owners) })),
+        hasHistory: (S.tlog?.[wk]?.[anchor] || []).length > 0,
         tailLabel: S.tailBusy == anchor ? '…' : iTapped ? (owners.includes(me) ? 'Placed ✓' : 'You’re on it ✓') : me && owners.includes(me) ? 'I placed it' : 'I’m on it',
         tailPressed: String(iTapped), tailBg: iTapped ? 'var(--accent)' : 'transparent', tailFg: iTapped ? 'var(--onAccent)' : 'var(--ink)', tailBorder: iTapped ? 'var(--accent)' : 'var(--line)',
         tapTail: () => this.toggleTail(wk, anchor, null, false),
