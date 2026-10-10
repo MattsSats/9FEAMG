@@ -819,10 +819,10 @@ button{font-family:inherit;color:inherit}
     </div>
   </sc-if>
   <sc-for list="{{ parlays }}" as="pr" hint-placeholder-count="1">
-    <sc-if value="{{ pr.firstBusted }}" hint-placeholder-val="{{ false }}">
+    <sc-if value="{{ pr.firstGroup }}" hint-placeholder-val="{{ false }}">
       <div class="busted-bar" style="padding:12px 20px 0">
-        <button class="hov" sc-camel-on-click="{{ pr.toggleBusted }}" aria-expanded="{{ pr.bustedExpanded }}" style="width:100%;display:flex;justify-content:space-between;align-items:center;min-height:44px;padding:0 14px;border:1px dashed var(--line);border-radius:14px;background:transparent;cursor:pointer;font-family:'JetBrains Mono';font-size:11px;letter-spacing:.06em;color:var(--muted)">
-          <span style="text-transform:uppercase">{{ pr.bustedLabel }}</span><span style="color:var(--accentInk);font-weight:600">{{ pr.bustedToggleLabel }}</span>
+        <button class="hov" sc-camel-on-click="{{ pr.toggleGroup }}" aria-expanded="{{ pr.groupExpanded }}" style="width:100%;display:flex;justify-content:space-between;align-items:center;min-height:44px;padding:0 14px;border:1px dashed var(--line);border-radius:14px;background:transparent;cursor:pointer;font-family:'JetBrains Mono';font-size:11px;letter-spacing:.06em;color:var(--muted)">
+          <span style="text-transform:uppercase">{{ pr.groupLabel }}</span><span style="color:var(--accentInk);font-weight:600">{{ pr.groupToggleLabel }}</span>
         </button>
       </div>
     </sc-if>

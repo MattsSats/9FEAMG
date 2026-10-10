@@ -405,7 +405,7 @@ class Component extends DCLogic {
     if (tm) { const t = MGR.find(x => teamSlug(x) == tm[1]); if (t) { this.setState({ tab: 'Teams', team: t, sheet: null }); window.scrollTo(0, 0); } return; }
     const m = h.match(/^#w(\d+)-([\w-]+)$/);
     if (!m) return;
-    this.setState({ tab: 'Gameday', week: +m[1], bustedOpen: true, prOpen: { ...this.state.prOpen, [m[0].slice(1)]: true } });
+    this.setState({ tab: 'Gameday', week: +m[1], bustedOpen: true, unbetOpen: true, prOpen: { ...this.state.prOpen, [m[0].slice(1)]: true } });
     setTimeout(() => {
       const el = document.getElementById(m[0].slice(1));
       if (!el) return;
@@ -792,7 +792,7 @@ class Component extends DCLogic {
         // "On it" row: crests of everyone on the ticket. The owner on it means they placed it;
         // tailing your own opponent's parlay is a hedge (win the matchup or cash the ticket).
         withList: onIt.map(m => { const tag = owners.includes(m) ? 'PLACED' : m == vs ? 'HEDGE' : ''; return { m, init: INIT[m] ?? m.slice(0, 2).toUpperCase(), color: ownerCol(m), tag, hasTag: !!tag }; }),
-        hasWith: onIt.length > 0, withLabel: status == 'CASHED' ? 'Cashed with' : status == 'BUSTED' ? 'Busted with' : 'On it',
+        hasWith: onIt.length > 0, unbet: status == 'OPEN' && !onIt.length && !(me && owners.includes(me)), withLabel: status == 'CASHED' ? 'Cashed with' : status == 'BUSTED' ? 'Busted with' : 'On it',
         canTail: !lockedNow && !(me && fixed.includes(me)) && !iPassed, showTails: onIt.length > 0 || !lockedNow || passes.length > 0 || (!!me && makers.includes(me)),
         // "Didn't bet": shown to the ticket's owner or requester once the phone knows who you are.
         canPass: !!me && makers.includes(me) && !iPassed,
@@ -816,18 +816,26 @@ class Component extends DCLogic {
         rank: status == 'CASHED' ? 2 : status == 'OPEN' ? 1 : 0, chance: chance ?? -1
       };
     });
-    // Cashed first, then live tickets by chance to hit, then busted ones in a collapsible
-    // section (the toggle sits above the first busted card).
-    parlays.sort((a, b) => b.rank - a.rank || b.chance - a.chance);
-    const busted = parlays.filter(x => x.status == 'BUSTED'), bustOpen = !!S.bustedOpen;
-    parlays.forEach(x => {
-      x.firstBusted = x == busted[0];
-      x.wrapDisplay = x.status == 'BUSTED' && !bustOpen ? 'none' : 'block';
-      x.bustedLabel = `Busted · ${busted.length}`;
-      x.bustedToggleLabel = bustOpen ? 'Hide ▴' : 'Show ▾';
-      x.bustedExpanded = String(bustOpen);
-      x.toggleBusted = () => this.setState({ bustedOpen: !bustOpen });
-    });
+    // Cashed and open tickets someone's on (by chance to hit) first, then two collapsible
+    // sections: open tickets nobody's on (your own team's stay up top), then busted ones.
+    // Each section's toggle sits above its first card.
+    const group = x => x.status == 'BUSTED' ? 2 : x.unbet ? 1 : 0;
+    parlays.sort((a, b) => group(a) - group(b) || b.rank - a.rank || b.chance - a.chance);
+    const sections = [
+      { g: 1, open: !!S.unbetOpen, key: 'unbetOpen', label: n => `Nobody’s on these · ${n}` },
+      { g: 2, open: !!S.bustedOpen, key: 'bustedOpen', label: n => `Busted · ${n}` }];
+    parlays.forEach(x => { x.firstGroup = false; x.wrapDisplay = 'block'; });
+    for (const sec of sections) {
+      const list = parlays.filter(x => group(x) == sec.g);
+      list.forEach(x => {
+        x.firstGroup = x == list[0];
+        x.wrapDisplay = sec.open ? 'block' : 'none';
+        x.groupLabel = sec.label(list.length);
+        x.groupToggleLabel = sec.open ? 'Hide ▴' : 'Show ▾';
+        x.groupExpanded = String(sec.open);
+        x.toggleGroup = () => this.setState({ [sec.key]: !sec.open });
+      });
+    }
     // Season ledger: real bets only, a flat $10 each. Everyone who placed or tailed a ticket
     // (placedBy, tailers, "I'm on it" taps) is one bet; tickets nobody is on count as paper.
     const allParlays = Object.entries(D.parlays || {}).flatMap(([w, ps]) => ps.map(p => [w, p]));
