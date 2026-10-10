@@ -61,17 +61,16 @@ window.SEASON = {
     week: 5,
     status: 'Live · Thursday final (TB 24, DAL 16) · Sunday next',
     // When these numbers were pulled from Yahoo (Central); shows as "Scores as of Thu 10:19 PM".
-    asOf: '2026-10-08T22:19:00-05:00',
+    asOf: '2026-10-09T19:27:00-05:00',
     // [current points, projected final]
-    // Yahoo live as of Thu Oct 8, 10:19 PM CT, after TB @ DAL went final. Yahoo showed all of
-    // Tristan's players on the bench and projected him 0.00; nobody of his has played, so this
-    // keeps his 9:03 PM projection until a later pull shows whether the lineup was reset.
+    // Yahoo as of Fri Oct 9, 7:27 PM CT: Thursday final, Sunday projections. Tristan has only
+    // two starters set (Odunze, Tuten), so Yahoo projects him 20.12.
     scores: {
-      Matt: [0, 116.22], DLin: [24.50, 117.54],
-      Tristan: [0, 115.72], Colin: [0, 106.79],
-      Jerger: [1.90, 94.08], Kurt: [28.84, 99.54],
-      Tony: [30.50, 128.77], Andy: [20.20, 116.62],
-      'Mr. G': [0, 116.83], Pablo: [5.00, 87.48]
+      Matt: [0, 116.23], DLin: [24.50, 117.94],
+      Tristan: [0, 20.12], Colin: [0, 114.26],
+      Jerger: [1.90, 93.68], Kurt: [28.84, 102.46],
+      Tony: [30.50, 128.20], Andy: [20.20, 120.70],
+      'Mr. G': [0, 117.00], Pablo: [5.00, 79.07]
     },
     // Points so far for every player whose game has started (starters and bench).
     // Players listed in inProgress are still playing; the rest are final.
@@ -82,7 +81,7 @@ window.SEASON = {
       'CeeDee Lamb': 1.90, 'Brandon Aubrey': 5.00, 'Chris Godwin Jr.': 5.50
     },
     inProgress: [],
-    sheetNote: 'Thursday final as of 10:19 PM CT. Each player is tagged Final, Live or proj.'
+    sheetNote: 'Thursday final; Sunday projections as of Fri 7:27 PM CT. Each player is tagged Final, Live or proj.'
   },
 
   // Thursday of Week 1. Each leg's kickoff ('Thu 7:15 PM · TB @ DAL') counts from that week's
@@ -157,7 +156,7 @@ window.SEASON = {
       ['Matt', 'The 1–3 bowl, between the two unluckiest teams in the league: Kurt at −1.00 and Matt at −0.89. Projected 115.63–100.37, Matt. There is no 2nd best is 9th.'],
       ['Tony', 'First vs. second, both 3–1, projected 114.57–109.42 for Tristan. Tony has the league’s best luck at +1.11 and the 7th-best power ranking. Fraud watch is on.'],
       ['Mr. G', 'Mr. G is projected to beat Jerger 116.16–106.04. Mr. G has also allowed 524.00 points in four weeks, so Jerger knows the assignment.'],
-      ['Colin', 'Both 2–2, Colin 5th and DLin 7th, with the playoff line between them. Colin has 27 adds this season and the worst lineup efficiency in the league, 79.1%.'],
+      ['Colin', 'Both 2–2, Colin 5th and DLin 7th, with the playoff line between them. Colin has 28 adds this season and the worst lineup efficiency in the league, 79.1%.'],
       ['Pablo', 'Andy is 3–1. Pablo is 2–2 and 6th, right on the playoff line, a week after putting up the top score at 133.78. The team name is He was #1, and it was, for one week.']
     ]
   },
@@ -375,7 +374,7 @@ window.SEASON = {
     Kurt: 'Unluckiest manager in the league at −1.00. Lost Week 4 by 1.44 with the fix sitting on the bench.',
     Jerger: 'Two straight wins after an 0–2 start. Still has 91.52 points left on the bench.',
     'Mr. G': 'Most points allowed in the league: 524.00, 76.16 more than anyone. Opponents save their best for Mr. G.',
-    Colin: '27 adds, more than double anyone else, and the most points left on the bench (110.74). Somehow 2–2.',
+    Colin: '28 adds, more than double anyone else, and the most points left on the bench (110.74). Somehow 2–2.',
     DLin: 'Toilet Bowl King. Not a prediction, a title defense.',
     Pablo: 'Projected last in Week 4, finished first with 133.78. Still has 99.56 bench points, second only to Colin.'
   }

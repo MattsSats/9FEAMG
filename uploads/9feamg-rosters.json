@@ -1,5 +1,5 @@
 {
-  "asOf": "2026-10-08T21:03:00-05:00",
+  "asOf": "2026-10-09T19:27:00-05:00",
   "source": "Signed-in Yahoo Fantasy league 935526 team roster pages (full reconcile)",
   "week": 5,
   "baseline": "yahoo-live",
@@ -121,19 +121,19 @@
         {
           "name": "Lamar Jackson",
           "pos": "QB",
-          "slot": "bench",
+          "slot": "IR",
           "nfl": "Bal"
         },
         {
           "name": "Bijan Robinson",
           "pos": "RB",
-          "slot": "starter",
+          "slot": "bench",
           "nfl": "Atl"
         },
         {
           "name": "Ashton Jeanty",
           "pos": "RB",
-          "slot": "starter",
+          "slot": "bench",
           "nfl": "LV"
         },
         {
@@ -145,19 +145,19 @@
         {
           "name": "Mike Evans",
           "pos": "WR",
-          "slot": "starter",
+          "slot": "bench",
           "nfl": "SF"
         },
         {
           "name": "Sam LaPorta",
           "pos": "TE",
-          "slot": "starter",
+          "slot": "bench",
           "nfl": "Det"
         },
         {
           "name": "Aaron Jones Sr.",
-          "pos": "WRT",
-          "slot": "starter",
+          "pos": "RB",
+          "slot": "bench",
           "nfl": "Min"
         },
         {
@@ -168,14 +168,14 @@
         },
         {
           "name": "Bhayshul Tuten",
-          "pos": "RB",
-          "slot": "bench",
+          "pos": "WRT",
+          "slot": "starter",
           "nfl": "Jax"
         },
         {
           "name": "Rome Odunze",
           "pos": "WR",
-          "slot": "bench",
+          "slot": "starter",
           "nfl": "Chi"
         },
         {
@@ -193,25 +193,25 @@
         {
           "name": "Evan McPherson",
           "pos": "K",
-          "slot": "starter",
+          "slot": "bench",
           "nfl": "Cin"
         },
         {
           "name": "Jacoby Brissett",
           "pos": "QB",
-          "slot": "starter",
+          "slot": "bench",
           "nfl": "Ari"
         },
         {
           "name": "Jets",
           "pos": "DEF",
-          "slot": "starter",
+          "slot": "bench",
           "nfl": "NYJ"
         },
         {
           "name": "Romeo Doubs",
           "pos": "WR",
-          "slot": "starter",
+          "slot": "bench",
           "nfl": "NE"
         }
       ]
@@ -244,7 +244,7 @@
         {
           "name": "Ja'Marr Chase",
           "pos": "WR",
-          "slot": "bench",
+          "slot": "starter",
           "nfl": "Cin"
         },
         {
@@ -267,8 +267,8 @@
         },
         {
           "name": "Kyle Monangai",
-          "pos": "WRT",
-          "slot": "starter",
+          "pos": "RB",
+          "slot": "bench",
           "nfl": "Chi"
         },
         {
@@ -280,7 +280,7 @@
         {
           "name": "Denzel Boston",
           "pos": "WR",
-          "slot": "starter",
+          "slot": "bench",
           "nfl": "Cle"
         },
         {
@@ -309,21 +309,21 @@
         },
         {
           "name": "Deebo Samuel Sr.",
-          "pos": "WR",
-          "slot": "bench",
+          "pos": "WRT",
+          "slot": "starter",
           "nfl": "SF"
-        },
-        {
-          "name": "Tank Dell",
-          "pos": "WR",
-          "slot": "bench",
-          "nfl": "Hou"
         },
         {
           "name": "Marvin Harrison Jr.",
           "pos": "WR",
           "slot": "bench",
           "nfl": "Ari"
+        },
+        {
+          "name": "Alvin Kamara",
+          "pos": "RB",
+          "slot": "bench",
+          "nfl": "NO"
         }
       ]
     },
@@ -1620,6 +1620,21 @@
         "JAX"
       ],
       "note": "Yahoo facts Thu Oct 8, 9:03 PM CT"
+    },
+    {
+      "date": "2026-10-09",
+      "manager": "Colin",
+      "add": [
+        "Alvin Kamara",
+        "RB",
+        "NO"
+      ],
+      "drop": [
+        "Tank Dell",
+        "WR",
+        "HOU"
+      ],
+      "note": "Yahoo facts Fri Oct 9, 7:27 PM CT"
     }
   ],
   "gaps": [],
