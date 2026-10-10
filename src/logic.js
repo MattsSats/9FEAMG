@@ -1056,10 +1056,10 @@ class Component extends DCLogic {
     const pfs = ST.map(x => x.pf), pas = ST.map(x => x.pa), x0 = Math.floor(Math.min(...pfs) / 10) * 10 - 5, x1 = Math.ceil(Math.max(...pfs) / 10) * 10 + 5, y0 = Math.floor(Math.min(...pas) / 10) * 10 - 25, y1 = Math.ceil(Math.max(...pas) / 10) * 10 + 25;
     const avg = a => a.reduce((s, v) => s + v, 0) / a.length, sx = v => ((v - x0) / (x1 - x0) * 100).toFixed(1) + '%', sy = v => ((y1 - v) / (y1 - y0) * 100).toFixed(1) + '%';
     // Nudge overlapping dots apart so every crest stays readable and tappable. DX/DY are a
-    // 30px dot plus a gap, as a share of the plot: 340px tall, and on a phone the screen
-    // width less the card's padding (desktop columns are wider, so this is the tight case).
+    // 30px dot plus a gap (and, up and down, the luck number under it), as a share of the plot:
+    // 340px tall, and on a phone the screen width less the card's padding (the tight case).
     const plotW = Math.max(200, Math.min(window.innerWidth || 440, 440) - 94);
-    const pts = ST.map(x => ({ x: (x.pf - x0) / (x1 - x0), y: (y1 - x.pa) / (y1 - y0) })), DX = 36 / plotW, DY = 36 / 340;
+    const pts = ST.map(x => ({ x: (x.pf - x0) / (x1 - x0), y: (y1 - x.pa) / (y1 - y0) })), DX = 36 / plotW, DY = 46 / 340;
     for (let it = 0; it < 80; it++) for (let i = 0; i < pts.length; i++) for (let j = i + 1; j < pts.length; j++) {
       const a = pts[i], b = pts[j], dx = (b.x - a.x) / DX, dy = (b.y - a.y) / DY, d = Math.hypot(dx, dy);
       if (d >= 1) continue;
@@ -1067,7 +1067,10 @@ class Component extends DCLogic {
       a.x -= ux * push * DX; b.x += ux * push * DX; a.y -= uy * push * DY; b.y += uy * push * DY;
     }
     const plotPos = v => (Math.min(0.97, Math.max(0.03, v)) * 100).toFixed(1) + '%';
-    const scatter = ST.map((x, i) => ({ init: INIT[x.m], color: col(x.m), x: plotPos(pts[i].x), y: plotPos(pts[i].y), op: dim(x.m), ring: hl == x.m ? 'var(--ink)' : 'var(--bg)', z: hl == x.m ? 5 : 1, pick: pickHl(x.m) }));
+    // Each dot's ring and small number are its luck (W − xW), the same as the Luck chart.
+    const luckCol = l => l > 0 ? 'var(--pos)' : l < 0 ? 'var(--neg)' : 'var(--muted)';
+    const scatter = ST.map((x, i) => ({ init: INIT[x.m], color: col(x.m), x: plotPos(pts[i].x), y: plotPos(pts[i].y), op: dim(x.m), ring: hl == x.m ? 'var(--ink)' : 'transparent', z: hl == x.m ? 5 : 1, pick: pickHl(x.m),
+      luck: sgn(x.luck), luckColor: luckCol(x.luck), label: `${x.m}: PF ${f1(x.pf)}, PA ${f1(x.pa)}, luck ${sgn(x.luck)}` }));
     const maxL = Math.max(0.01, ...ST.map(x => Math.abs(x.luck)));
     const luckBars = [...ST].sort((a, b) => b.luck - a.luck).map(x => ({ m: x.m, v: sgn(x.luck), pos: x.luck > 0 ? (x.luck / maxL * 100) + '%' : '0%', neg: x.luck < 0 ? (-x.luck / maxL * 100) + '%' : '0%', color: x.luck > 0 ? 'var(--pos)' : x.luck < 0 ? 'var(--neg)' : 'var(--muted)', op: dim(x.m), pick: pickHl(x.m) }));
     const topMax = Math.max(...ST.map(x => x.max ?? x.pf));

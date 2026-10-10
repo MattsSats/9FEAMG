@@ -1036,6 +1036,7 @@ button{font-family:inherit;color:inherit}
   <div class="sec-head">
     <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:26px;text-transform:uppercase">Points for vs against</div>
     <span class="sec-btns no-shot"><button class="share-btn" sc-camel-on-click="{{ menuPfpa }}" aria-label="Share the points for vs against chart">Share</button></span>
+    <div class="sec-cap">Ring = luck (W − xW), same as the chart below.</div>
     <div class="sec-cap no-shot">{{ hlHint }}</div>
   </div>
   <div style="margin-top:12px;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:14px 14px 10px">
@@ -1044,12 +1045,13 @@ button{font-family:inherit;color:inherit}
       <span style="position:absolute;left:-22px;bottom:0;font-family:'JetBrains Mono';font-size:9px;color:var(--muted)">{{ paMin }}</span>
       <div style="position:absolute;left:{{ scatterMidX }};top:0;bottom:0;border-left:1px dashed var(--line)"></div>
       <div style="position:absolute;top:{{ scatterMidY }};left:0;right:0;border-top:1px dashed var(--line)"></div>
-      <span style="position:absolute;right:6px;top:6px;font-family:'JetBrains Mono';font-size:9px;letter-spacing:.08em;color:var(--muted);text-align:right">GOOD, CURSED</span>
-      <span style="position:absolute;right:6px;bottom:6px;font-family:'JetBrains Mono';font-size:9px;letter-spacing:.08em;color:var(--pos)">GOOD AND LUCKY</span>
-      <span style="position:absolute;left:6px;top:6px;font-family:'JetBrains Mono';font-size:9px;letter-spacing:.08em;color:var(--neg)">BAD AND CURSED</span>
-      <span style="position:absolute;left:6px;bottom:6px;font-family:'JetBrains Mono';font-size:9px;letter-spacing:.08em;color:var(--muted)">BAD, LUCKY</span>
+      <!-- Corners: points for (good/bad) against points against (schedule). Luck is the ring. -->
+      <span style="position:absolute;right:6px;top:6px;font-family:'JetBrains Mono';font-size:9px;letter-spacing:.08em;color:var(--muted);text-align:right">GOOD, TOUGH SCHEDULE</span>
+      <span style="position:absolute;right:6px;bottom:6px;font-family:'JetBrains Mono';font-size:9px;letter-spacing:.08em;color:var(--muted);text-align:right">GOOD, EASY SCHEDULE</span>
+      <span style="position:absolute;left:6px;top:6px;font-family:'JetBrains Mono';font-size:9px;letter-spacing:.08em;color:var(--muted)">BAD, TOUGH SCHEDULE</span>
+      <span style="position:absolute;left:6px;bottom:6px;font-family:'JetBrains Mono';font-size:9px;letter-spacing:.08em;color:var(--muted)">BAD, EASY SCHEDULE</span>
       <sc-for list="{{ scatter }}" as="d" hint-placeholder-count="10">
-        <button sc-camel-on-click="{{ d.pick }}" style="position:absolute;left:{{ d.x }};top:{{ d.y }};transform:translate(-50%,-50%);width:30px;height:30px;border-radius:50%;border:2px solid {{ d.ring }};background:{{ d.color }};color:var(--onAccent);font-family:'Big Shoulders Display';font-weight:800;font-size:12px;cursor:pointer;opacity:{{ d.op }};padding:0;display:flex;align-items:center;justify-content:center;z-index:{{ d.z }}">{{ d.init }}</button>
+        <button sc-camel-on-click="{{ d.pick }}" aria-label="{{ d.label }}" style="position:absolute;left:{{ d.x }};top:{{ d.y }};transform:translate(-50%,-50%);width:30px;height:30px;border-radius:50%;border:3px solid {{ d.luckColor }};box-shadow:0 0 0 2px {{ d.ring }};background:{{ d.color }};color:var(--onAccent);font-family:'Big Shoulders Display';font-weight:800;font-size:11px;cursor:pointer;opacity:{{ d.op }};padding:0;display:flex;align-items:center;justify-content:center;z-index:{{ d.z }}">{{ d.init }}<span style="position:absolute;top:100%;left:50%;transform:translateX(-50%);margin-top:1px;font-family:'JetBrains Mono';font-size:8px;font-weight:700;line-height:1;white-space:nowrap;color:{{ d.luckColor }};background:var(--surface);padding:0 1px;border-radius:2px">{{ d.luck }}</span></button>
       </sc-for>
       <span style="position:absolute;left:-22px;top:50%;transform:translateY(-50%) rotate(-90deg);font-family:'JetBrains Mono';font-size:9px;color:var(--muted);letter-spacing:.08em;white-space:nowrap">PA ↑</span>
     </div>

@@ -109,7 +109,7 @@ function pfpaChart(st) {
   const y0 = Math.floor(Math.min(...pas) / 10) * 10 - 45, y1 = Math.ceil(Math.max(...pas) / 10) * 10 + 45;
   const W = 1010, H = 360, D = 50, avg = a => a.reduce((s, v) => s + v, 0) / a.length;
   // Nudge overlapping dots apart, as the site does.
-  const pts = r.map(x => ({ x: (x.pf - x0) / (x1 - x0), y: (y1 - x.pa) / (y1 - y0) })), DX = (D + 6) / W, DY = (D + 6) / H;
+  const pts = r.map(x => ({ x: (x.pf - x0) / (x1 - x0), y: (y1 - x.pa) / (y1 - y0) })), DX = (D + 6) / W, DY = (D + 26) / H; // up and down, room for the luck number under each dot
   for (let it = 0; it < 80; it++) for (let i = 0; i < pts.length; i++) for (let j = i + 1; j < pts.length; j++) {
     const a = pts[i], b = pts[j], dx = (b.x - a.x) / DX, dy = (b.y - a.y) / DY, d = Math.hypot(dx, dy);
     if (d >= 1) continue;
@@ -122,11 +122,15 @@ function pfpaChart(st) {
   return h('div', { position: 'relative', width: W, height: H, marginTop: 26, marginLeft: 60, borderLeft: `2px solid ${C.line}`, borderBottom: `2px solid ${C.line}` },
     h('div', { position: 'absolute', left: `${(avg(pfs) - x0) / (x1 - x0) * 100}%`, top: 0, bottom: 0, borderLeft: `2px dashed ${C.line}` }),
     h('div', { position: 'absolute', top: `${(y1 - avg(pas)) / (y1 - y0) * 100}%`, left: 0, right: 0, borderTop: `2px dashed ${C.line}` }),
-    corner('BAD AND CURSED', C.neg, { left: 12, top: 10 }), corner('GOOD, CURSED', C.muted, { right: 12, top: 10 }),
-    corner('BAD, LUCKY', C.muted, { left: 12, bottom: 10 }), corner('GOOD AND LUCKY', C.pos, { right: 12, bottom: 10 }),
+    corner('BAD, TOUGH SCHEDULE', C.muted, { left: 12, top: 10 }), corner('GOOD, TOUGH SCHEDULE', C.muted, { right: 12, top: 10 }),
+    corner('BAD, EASY SCHEDULE', C.muted, { left: 12, bottom: 10 }), corner('GOOD, EASY SCHEDULE', C.muted, { right: 12, bottom: 10 }),
     axis(String(y1), { left: -56, top: -4 }), axis(String(y0), { left: -56, bottom: -4 }), axis('PA ↑', { left: -56, top: H / 2 - 10 }),
     axis(String(x0), { left: -4, bottom: -28 }), axis(String(x1), { right: -4, bottom: -28 }), axis('PF →', { left: W / 2 - 20, bottom: -28 }),
-    r.map((x, i) => h('div', { position: 'absolute', left: clamp(pts[i].x) * W - D / 2, top: clamp(pts[i].y) * H - D / 2, width: D, height: D, borderRadius: 999, border: `3px solid ${C.bg}`, background: mgrColor(x.hue), alignItems: 'center', justifyContent: 'center', fontFamily: F.display, fontSize: x.init.length > 2 ? 17 : 21, fontWeight: 900, color: C.onAccent }, x.init)));
+    // Ring and small number = luck (W − xW), the same as the Luck chart.
+    // Numbers go in after every dot so no dot covers one.
+    r.map((x, i) => h('div', { position: 'absolute', left: clamp(pts[i].x) * W - D / 2, top: clamp(pts[i].y) * H - D / 2, width: D, height: D, borderRadius: 999, border: `4px solid ${x.luck > 0 ? C.pos : x.luck < 0 ? C.neg : C.muted}`, background: mgrColor(x.hue), alignItems: 'center', justifyContent: 'center', fontFamily: F.display, fontSize: x.init.length > 2 ? 17 : 21, fontWeight: 900, color: C.onAccent }, x.init)),
+    r.map((x, i) => h('div', { position: 'absolute', left: clamp(pts[i].x) * W - D / 2 - 16, top: clamp(pts[i].y) * H + D / 2, width: D + 32, justifyContent: 'center' },
+      h('div', { padding: '0 3px', borderRadius: 4, background: C.bg, fontFamily: F.mono, fontSize: 15, fontWeight: 600, color: x.luck > 0 ? C.pos : x.luck < 0 ? C.neg : C.muted }, sgn(x.luck)))));
 }
 
 async function image(name, st, L, LW) {
@@ -135,7 +139,7 @@ async function image(name, st, L, LW) {
     : name == 'bench' ? h('div', { gap: 22, fontFamily: F.mono, fontSize: 20, fontWeight: 600, color: C.muted, marginBottom: 8 },
       h('div', { alignItems: 'center', gap: 8 }, h('div', { width: 18, height: 18, borderRadius: 4, background: C.muted }), 'Scored'),
       h('div', { alignItems: 'center', gap: 8 }, h('div', { width: 18, height: 18, borderRadius: 4, background: C.accent }), 'Left on bench'))
-    : h('div', { fontFamily: F.mono, fontSize: 22, fontWeight: 600, color: C.muted, marginBottom: 8 }, 'Dashed lines: league average');
+    : h('div', { flexDirection: 'column', alignItems: 'flex-end', fontFamily: F.mono, fontSize: 20, fontWeight: 600, color: C.muted, marginBottom: 6 }, h('div', {}, 'Ring = luck (W − xW)'), h('div', {}, 'Dashed lines: league average'));
   const body = name == 'ledger' ? ledgerCard(L, st) : name == 'luck' ? luckChart(st) : name == 'bench' ? benchChart(st) : pfpaChart(st);
   const card = h('div', { width: '100%', height: '100%', flexDirection: 'column', background: C.bg, padding: '40px 64px 0', position: 'relative' },
     name == 'ledger' ? header(CHARTS[name], note, LW, 'PARLAYS') : header(CHARTS[name], note, st.NF), body,
