@@ -1111,7 +1111,8 @@ class Component extends DCLogic {
       wireSub: 'Adds, drops, trades and FAAB · through ' + shortDate(now), wireModes, activityLabel: seasonMode ? 'Adds · season' : 'Adds · 7 days', wireSeason: txOk, wireDays: days, noMoves, activity, wireRoast, wireBanner: boothOn || !txOk, faab, faabBudget: '$' + budget + ' budget', txOk,
       sheetOpen: !!S.sheet, sheet, closeSheet: () => this.setState({ sheet: null }),
       // Share buttons
-      menuHero: this.shareMenu('This matchup', e => this.shareLink(location.origin + '/#w' + S.week, '9FEAMG · Week ' + S.week, e), e => this.share('hero', e)),
+      // The matchup link goes through /s/w5-andy-vs-pablo so chats show a picture of it (api/section.js).
+      menuHero: this.shareMenu('This matchup', e => this.shareLink(location.origin + (hero ? `/s/w${S.week}-${teamSlug(hero.a.m)}-vs-${teamSlug(hero.b.m)}` : '/#w' + S.week), hero ? `9FEAMG · ${hero.a.m} vs ${hero.b.m}` : '9FEAMG · Week ' + S.week, e), e => this.share('hero', e)),
       menuStandings: this.shareMenu('Standings', e => this.shareLink(location.origin + '/#season', '9FEAMG · Standings', e), e => this.share('standings', e)),
       menuPower: this.shareMenu('Power rankings', e => this.shareLink(location.origin + '/#power', '9FEAMG · Power rankings', e), e => this.share('power', e)),
       menuTeam: this.shareMenu(S.team, e => this.shareLink(location.origin + '/#team-' + teamSlug(S.team), '9FEAMG · ' + S.team, e), e => this.share('team', e)),

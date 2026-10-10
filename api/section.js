@@ -1,5 +1,5 @@
-// /s/<chart> (rewritten here by vercel.json) for the Season charts (luck, bench, pfpa) and the
-// Gameday parlay ledger (ledger).
+// /s/<chart> (rewritten here by vercel.json) for the Season charts (luck, bench, pfpa), the
+// Gameday parlay ledger (ledger) and matchups (w5-andy-vs-pablo).
 // Link-preview bots get a page whose Open Graph tags point at a 1200x630 image of the chart
 // (this same function with &img=1); people are sent to the chart on the site (/#<chart>).
 // Numbers come from the live data/season.js and box scores, so the image is always current.
@@ -145,10 +145,98 @@ async function image(name, st, L, LW) {
   return new ImageResponse(card, { width: 1200, height: 630, fonts: await fonts(), headers: { 'cache-control': 'public, max-age=300, s-maxage=300' } });
 }
 
+// ---- Matchup previews: /s/w5-andy-vs-pablo (the Gameday "Your matchup" card's Share link) ----
+const slugOf = m => m.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+const SHIELD = 'M24 2.5 L42.5 8 V22.5 C42.5 34 34.5 41.5 24 46 C13.5 41.5 5.5 34 5.5 22.5 V8 Z';
+const crest = (mg, size) => h('div', { position: 'relative', width: size, height: size, alignItems: 'center', justifyContent: 'center' },
+  { type: 'svg', props: { width: size, height: size, viewBox: '0 0 48 48', style: { position: 'absolute', left: 0, top: 0 }, children: { type: 'path', props: { d: SHIELD, fill: mgrColor(mg.hue) } } } },
+  h('div', { fontFamily: F.display, fontSize: Math.round(size * (mg.init.length > 2 ? 0.3 : 0.38)), fontWeight: 900, color: C.onAccent, marginTop: -Math.round(size * 0.04) }, mg.init));
+
+// Everything one matchup card shows, from data/season.js: live projections for the live week,
+// final scores for a finished one.
+function matchupOf(season, st, wk, aSlug, bSlug) {
+  const mgs = season.managers, find = s => mgs.find(x => slugOf(x.m) == s);
+  const A = find(aSlug), B = find(bSlug);
+  if (!A || !B || !(season.schedule?.[wk] || []).some(p => p.includes(A.m) && p.includes(B.m))) return null;
+  const live = season.live?.week == wk, NF = st.NF;
+  if (!live && wk > NF) return null;
+  const order = [...st.rows].sort((x, y) => y.w - x.w || y.pf - x.pf), place = m => order.findIndex(r => r.m == m) + 1;
+  const ord = n => n + (n % 10 == 1 && n % 100 != 11 ? 'st' : n % 10 == 2 && n % 100 != 12 ? 'nd' : n % 10 == 3 && n % 100 != 13 ? 'rd' : 'th');
+  const side = mg => {
+    const r = st.rows.find(x => x.m == mg.m);
+    const [now, proj] = live ? (season.live.scores?.[mg.m] || [0, 0]) : [null, season.scores[mg.m][wk - 1]];
+    return { ...mg, rec: `${r.w}–${r.l} · ${ord(place(mg.m))}`, now, score: proj };
+  };
+  const a = side(A), b = side(B), lead = a.score == b.score ? null : a.score > b.score ? a : b, gap = Math.abs(a.score - b.score);
+  const chip = lead ? (live ? `${lead.m} +${gap.toFixed(2)} proj` : `${lead.m} won by ${gap.toFixed(2)}`) : live ? 'Even on projection' : 'Tied';
+  const lines = (live ? season.boothPreview?.[wk] : season.booth?.[wk]) || season.boothPreview?.[wk] || [];
+  const booth = (lines.find(([m]) => m == A.m || m == B.m) || [])[1] || '';
+  const asOf = live && season.live.asOf ? new Date(season.live.asOf).toLocaleString('en-US', { weekday: 'short', hour: 'numeric', minute: '2-digit', timeZone: 'America/Chicago' }).replace(',', '') : '';
+  return { wk, live, a, b, chip, booth, asOf };
+}
+
+function matchupCard(M) {
+  const row = s => h('div', { alignItems: 'center', height: 132, borderTop: `2px solid ${C.line}` },
+    crest(s, 92),
+    h('div', { flexDirection: 'column', flex: 1, marginLeft: 26 },
+      h('div', { fontFamily: F.sans, fontSize: 46, fontWeight: 600, color: C.ink, lineHeight: 1.05 }, s.m),
+      h('div', { fontFamily: F.mono, fontSize: 22, fontWeight: 600, color: C.muted, marginTop: 6 }, s.rec)),
+    M.live ? h('div', { width: 170, justifyContent: 'flex-end', fontFamily: F.mono, fontSize: 30, fontWeight: 600, color: C.muted }, s.now.toFixed(2)) : null,
+    h('div', { width: 300, justifyContent: 'flex-end', fontFamily: F.display, fontSize: 104, fontWeight: 900, lineHeight: 1, color: s == (M.a.score >= M.b.score ? M.a : M.b) ? C.ink : C.muted }, s.score.toFixed(2)));
+  return h('div', { width: '100%', height: '100%', flexDirection: 'column', background: C.bg, padding: '40px 64px 0', position: 'relative' },
+    h('div', { justifyContent: 'space-between', alignItems: 'flex-start' },
+      h('div', { fontFamily: F.mono, fontSize: 22, fontWeight: 600, letterSpacing: 4, color: C.accentInk }, `WEEK ${M.wk} · ${M.live ? 'LIVE' + (M.asOf ? ' · AS OF ' + M.asOf.toUpperCase() : '') : 'FINAL'}`),
+      h('div', { alignItems: 'flex-end', gap: 4 },
+        h('div', { fontFamily: F.display, fontSize: 40, fontWeight: 900, lineHeight: 1, color: C.ink }, '9FEAMG'),
+        h('div', { width: 10, height: 10, background: C.accent, marginBottom: 5 }))),
+    h('div', { justifyContent: 'flex-end', gap: 0, marginTop: 18, fontFamily: F.mono, fontSize: 20, fontWeight: 600, letterSpacing: 3, color: C.muted },
+      M.live ? h('div', { width: 170, justifyContent: 'flex-end' }, 'NOW') : null,
+      h('div', { width: 300, justifyContent: 'flex-end' }, M.live ? 'PROJ' : 'FINAL')),
+    h('div', { flexDirection: 'column', marginTop: 8 }, row(M.a), row(M.b)),
+    h('div', { marginTop: 18, borderTop: `2px solid ${C.line}`, paddingTop: 18 },
+      h('div', { fontFamily: F.mono, fontSize: 26, fontWeight: 600, color: C.ink, padding: '8px 16px', borderRadius: 10, background: C.surface2, border: `2px solid ${C.line}` }, M.chip)),
+    // The Booth's line on this matchup, up to three lines.
+    M.booth ? h('div', { marginTop: 14, maxHeight: 96, overflow: 'hidden', fontFamily: F.sans, fontSize: 24, fontWeight: 600, lineHeight: 1.3, color: C.muted }, M.booth) : null,
+    h('div', { position: 'absolute', left: 0, right: 0, bottom: 0, height: 10, background: C.accent }));
+}
+
+async function matchupRoute(url, request, m) {
+  const wk = +m[1], dest = new URL('/#w' + wk, url.origin).href, fallback = () => Response.redirect(new URL('/og.png', url.origin).href, 302);
+  const isImg = url.searchParams.has('img');
+  if (!isImg && !BOTS.test(request.headers.get('user-agent') || '')) {
+    return new Response(null, { status: 302, headers: { location: dest, 'cache-control': 'private, no-store', vary: 'User-Agent' } });
+  }
+  let M;
+  try { const season = await loadSeason(url.origin); M = matchupOf(season, seasonStats(season, null), wk, m[2], m[3]); } catch { return fallback(); }
+  if (!M) return isImg ? fallback() : Response.redirect(dest, 302);
+  if (isImg) return new ImageResponse(matchupCard(M), { width: 1200, height: 630, fonts: await fonts(), headers: { 'cache-control': 'public, max-age=300, s-maxage=300' } });
+  const name = m[0], e = escapeHtml;
+  const title = `${M.a.m} vs ${M.b.m} · Week ${wk}${M.live ? ' · live' : ' · final'} · 9FEAMG`;
+  const score = s => M.live ? `${s.m} ${s.now.toFixed(2)} now, ${s.score.toFixed(2)} projected` : `${s.m} ${s.score.toFixed(2)}`;
+  const desc = `${score(M.a)}; ${score(M.b)}. ${M.chip}.` + (M.booth ? ' ' + M.booth : '');
+  const img = new URL(`/api/section?name=${name}&img=1&v=${hash(JSON.stringify([M.a.now, M.a.score, M.b.now, M.b.score, M.asOf]))}`, url.origin).href;
+  return new Response(`<!doctype html><html><head><meta charset="utf-8">
+<title>${e(title)}</title>
+<meta name="description" content="${e(desc)}">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="9FEAMG">
+<meta property="og:title" content="${e(title)}">
+<meta property="og:description" content="${e(desc)}">
+<meta property="og:url" content="${e(new URL('/s/' + name, url.origin).href)}">
+<meta property="og:image" content="${e(img)}">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+</head><body><a href="/#w${wk}">${e(title)}</a></body></html>`, {
+    headers: { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'private, no-store', vary: 'User-Agent' } });
+}
+
 export default {
   async fetch(request) {
     const url = new URL(request.url);
     const name = url.searchParams.get('name') || '';
+    const mm = name.match(/^w(\d+)-([a-z0-9-]+?)-vs-([a-z0-9-]+)$/);
+    if (mm) return matchupRoute(url, request, mm);
     if (!CHARTS[name]) return Response.redirect(new URL('/', url.origin).href, 302);
     const isImg = url.searchParams.has('img');
     if (!isImg && !BOTS.test(request.headers.get('user-agent') || '')) {
