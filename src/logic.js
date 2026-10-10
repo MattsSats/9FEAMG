@@ -837,7 +837,7 @@ class Component extends DCLogic {
         hasWith: onIt.length > 0, unbet: status == 'OPEN' && !onIt.length && !(me && owners.includes(me)), withLabel: status == 'CASHED' ? 'Cashed with' : status == 'BUSTED' ? 'Busted with' : 'On it',
         canTail: !lockedNow && !(me && fixed.includes(me)) && !iPassed,
         // Nobody on it: "Nobody's on it yet" beside the button, or "Locked" once it can't be joined.
-        nobodyYet: !onIt.length && !passes.length && !lockedNow, lockedPaper: status == 'OPEN' && !onIt.length && lockedNow, lockedLabel: passes.length ? 'Locked' : 'Locked · nobody bet this one', locked: lockedNow,
+        nobodyYet: !onIt.length && !passes.length && !lockedNow && !(me && makers.includes(me)), lockedPaper: status == 'OPEN' && !onIt.length && lockedNow, lockedLabel: passes.length ? 'Locked' : 'Locked · nobody bet this one', locked: lockedNow,
         showTails: onIt.length > 0 || !lockedNow || passes.length > 0 || (!!me && makers.includes(me)) || (status == 'OPEN' && lockedNow),
         // "Didn't bet": shown to the ticket's owner or requester once the phone knows who you are.
         canPass: !!me && makers.includes(me) && !iPassed,
