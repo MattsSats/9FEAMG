@@ -945,7 +945,10 @@ class Component extends DCLogic {
 
     // Wire
     const seasonMode = S.wire == 'Season';
-    const now = new Date(D.wire.asOf), cut = new Date(now.getTime() - D.wire.windowDays * 864e5);
+    // The window ends at the newest move on file (today when there are none), so the header date
+    // and the 7-day counts move on by themselves as transactions come in.
+    const txTimes = tx.map(t => parseWhen(t.when).getTime());
+    const now = new Date(txTimes.length ? Math.max(...txTimes) : Date.now()), cut = new Date(now.getTime() - (D.wire?.windowDays ?? 7) * 864e5);
     const groups = []; tx.forEach(t => { const d = parseWhen(t.when); const last = groups[groups.length - 1]; if (last && last.m == t.manager && last.when == t.when) last.items.push(t); else groups.push({ m: t.manager, when: t.when, d, items: [t] }); });
     const ym = n => dr?.managerMap?.[n] ?? n;
     const shown = groups.filter(g => seasonMode || g.d >= cut);

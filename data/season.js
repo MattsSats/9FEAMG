@@ -100,8 +100,8 @@ window.SEASON = {
   // Projected values show in gray with "proj" so they never read as live points.
   projections: {},
 
-  // Wire tab: transactions newer than asOf minus windowDays show under "7 days".
-  wire: { asOf: '2026-10-06T10:10:00', windowDays: 7 },
+  // Wire tab: "7 days" shows the windowDays before the newest transaction on file.
+  wire: { windowDays: 7 },
 
   // ---- Trash talk (hidden when the trashTalk setting is off) ----
 
