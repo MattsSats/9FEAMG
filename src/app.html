@@ -421,6 +421,10 @@ button{font-family:inherit;color:inherit}
   .share-sheet{align-items:center!important}
   .share-panel{border-radius:20px!important}
 }
+/* Manager pickers: all ten in two rows of five, nothing to scroll. */
+.mgr-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px}
+.mgr-grid>button{min-width:0!important;width:100%}
+.mgr-grid>button>span:last-child{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 /* Section headers: title left, share buttons right, caption underneath. */
 .sec-head{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:2px 10px}
 .sec-head>:first-child{line-height:1.05}
@@ -576,7 +580,7 @@ button{font-family:inherit;color:inherit}
     <div style="margin-top:14px;padding:12px 14px;border:1px solid var(--line);border-radius:16px;background:var(--surface)">
       <div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><span style="font-size:14px;font-weight:600">{{ askTeamTitle }}</span><span style="display:flex;gap:4px"><sc-if value="{{ canClearTeam }}" hint-placeholder-val="{{ false }}"><button sc-camel-on-click="{{ clearTeam }}" style="border:0;background:transparent;color:var(--accentInk);font-size:12px;font-weight:600;cursor:pointer;padding:4px">No team</button></sc-if><button sc-camel-on-click="{{ skipAsk }}" style="border:0;background:transparent;color:var(--muted);font-size:12px;cursor:pointer;padding:4px">{{ skipLabel }}</button></span></div>
       <div style="font-size:12px;color:var(--muted);margin-top:2px">Your matchup goes first, and Standings and Teams open on you. Remembered on this phone.</div>
-      <div class="scroll-x" style="display:flex;gap:4px;margin-top:8px;padding-bottom:2px">
+      <div class="mgr-grid" style="margin-top:8px">
         <sc-for list="{{ askTeamMgrs }}" as="am" hint-placeholder-count="10">
           <button sc-camel-on-click="{{ am.pick }}" aria-label="{{ am.m }}" style="flex:none;min-width:52px;display:flex;flex-direction:column;align-items:center;gap:3px;padding:4px;border:0;border-radius:10px;background:transparent;cursor:pointer"><span class="crest" style="width:28px;height:28px;background:{{ am.color }};color:var(--onAccent);display:flex;align-items:center;justify-content:center;font-family:'Big Shoulders Display';font-weight:800;font-size:11px"><span class="ini" data-i="{{ am.init }}">{{ am.init }}</span></span><span style="font-size:11px;font-weight:600;color:var(--muted);border-bottom:2px solid {{ am.ring }}">{{ am.m }}</span></button>
         </sc-for>
@@ -735,7 +739,7 @@ button{font-family:inherit;color:inherit}
         </sc-if>
         <sc-if value="{{ reqForm.showMgrs }}" hint-placeholder-val="{{ true }}">
         <div style="font-family:'JetBrains Mono';font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-top:14px">Who’s asking</div>
-        <div class="scroll-x" style="display:flex;gap:4px;margin-top:8px;padding-bottom:2px">
+        <div class="mgr-grid" style="margin-top:8px">
           <sc-for list="{{ reqForm.mgrs }}" as="mg" hint-placeholder-count="10">
             <button sc-camel-on-click="{{ mg.pick }}" aria-pressed="{{ mg.pressed }}" aria-label="{{ mg.m }}" style="flex:none;min-width:56px;display:flex;flex-direction:column;align-items:center;gap:3px;padding:4px;border:2px solid {{ mg.ring }};border-radius:10px;background:transparent;cursor:pointer">
               <span class="crest" style="width:30px;height:30px;background:{{ mg.color }};color:var(--onAccent);display:flex;align-items:center;justify-content:center;font-family:'Big Shoulders Display';font-weight:800;font-size:12px"><span class="ini" data-i="{{ mg.init }}">{{ mg.init }}</span></span>
@@ -877,7 +881,7 @@ button{font-family:inherit;color:inherit}
           <sc-if value="{{ pr.asking }}" hint-placeholder-val="{{ false }}">
             <div class="no-shot" style="padding:10px 16px 0">
               <div style="display:flex;justify-content:space-between;align-items:center"><span style="font-family:'JetBrains Mono';font-size:11px;color:var(--muted)">{{ pr.askLabel }}</span><button sc-camel-on-click="{{ pr.cancelAsk }}" style="border:0;background:transparent;color:var(--muted);font-size:12px;cursor:pointer;padding:4px">Cancel</button></div>
-              <div class="scroll-x" style="display:flex;gap:4px;margin-top:6px;padding-bottom:2px">
+              <div class="mgr-grid" style="margin-top:6px">
                 <sc-for list="{{ pr.askMgrs }}" as="am" hint-placeholder-count="10">
                   <button sc-camel-on-click="{{ am.pick }}" aria-label="{{ am.m }}" style="flex:none;min-width:52px;display:flex;flex-direction:column;align-items:center;gap:3px;padding:4px;border:0;border-radius:10px;background:transparent;cursor:pointer"><span class="crest" style="width:28px;height:28px;background:{{ am.color }};color:var(--onAccent);display:flex;align-items:center;justify-content:center;font-family:'Big Shoulders Display';font-weight:800;font-size:11px"><span class="ini" data-i="{{ am.init }}">{{ am.init }}</span></span><span style="font-size:11px;font-weight:600;color:var(--muted)">{{ am.m }}</span></button>
                 </sc-for>
