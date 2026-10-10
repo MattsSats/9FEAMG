@@ -835,8 +835,12 @@ class Component extends DCLogic {
         shot, title: p.title ?? p.owner + '’s parlay', init: INIT[p.owner] ?? p.init ?? p.owner.replace(/^The /, '').slice(0, 2).toUpperCase(), color: ownerCol(p.owner),
         sub: [p.owners ? p.owners.join(' + ') : vs ? 'vs ' + vs : null, 'Week ' + wk, legs.length + (legs.length == 1 ? ' leg' : ' legs')].filter(Boolean).join(' · '),
         legs, status, settled: status != 'OPEN',
-        // Collapsed cards show the legs in a few words, each with a hit/miss dot.
-        peek: p.legs.map(l => ({ t: legShort(l), dot: l.status == 'hit' ? 'var(--pos)' : l.status == 'miss' ? 'var(--neg)' : 'var(--muted)', fg: l.status == 'miss' ? 'var(--muted)' : 'var(--ink)' })),
+        // Collapsed cards show the legs in a few words: solid green ✓ hit, solid red ✗ miss,
+        // outlined for legs still to play.
+        peek: p.legs.map(l => { const s = l.status || 'open';
+          return { t: (s == 'hit' ? '✓ ' : s == 'miss' ? '✗ ' : '') + legShort(l),
+            bg: s == 'hit' ? 'var(--pos)' : s == 'miss' ? 'var(--neg)' : 'transparent', fg: s == 'open' ? 'var(--ink)' : 'var(--onStatus)',
+            border: s == 'hit' ? 'var(--pos)' : s == 'miss' ? 'var(--neg)' : 'var(--line)', weight: s == 'open' ? 500 : 700 }; }),
         showPeek: !S.prOpen?.[anchor],
         stampColor: status == 'CASHED' ? 'var(--pos)' : 'var(--neg)',
         statusBg: status == 'CASHED' ? 'var(--pos)' : status == 'BUSTED' ? 'var(--neg)' : 'var(--surface2)',
