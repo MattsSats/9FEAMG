@@ -308,6 +308,19 @@ window.SEASON = {
         ]
       },
       {
+        owner: 'Colin', title: 'In-House Lottery', request: 'Colin', requestAt: '2026-10-10T05:16:10.650Z',
+        // Built by Claude for Colin's request (Sat Oct 10, 12:16 AM CT: Lottery +5000 and up, any legs,
+        // no picks). All four legs are Colin's own starters, one per game. Four anytime TDs came to
+        // about +2255, so Kyren Williams goes for 2+ TDs. Chase is listed Q on Yahoo.
+        // Odds: DraftKings via The Odds API, Sat Oct 10, 12:21 AM CT. Ticket ≈ +6276.
+        legs: [
+          { text: 'Kyren Williams 2+ TDs', player: 'Kyren Williams', type: 'td', count: 2, game: 'Mon 7:15 PM · BUF @ LAR', odds: '+340', status: 'open' },
+          { text: 'Ja’Marr Chase anytime TD', player: "Ja'Marr Chase", type: 'td', count: 1, game: 'Sun 12:00 PM · CIN @ MIA', odds: '-125', status: 'open' },
+          { text: 'Brock Bowers anytime TD', player: 'Brock Bowers', type: 'td', count: 1, game: 'Sun 12:00 PM · LV @ NE', odds: '+130', status: 'open' },
+          { text: 'Deebo Samuel anytime TD', player: 'Deebo Samuel Sr.', type: 'td', count: 1, game: 'Sun 3:25 PM · SF @ SEA', odds: '+250', status: 'open' }
+        ]
+      },
+      {
         owner: 'Andy', title: 'Ground and Pound', request: 'Andy', requestAt: '2026-10-07T13:51:36.692Z',
         // Built by Claude for Andy's Balanced request (+250 to +600, any legs, Javonte Williams TD
         // and Jahmyr Gibbs TD). Both TDs come to +75, so a third leg: the Giants moneyline (Andy
