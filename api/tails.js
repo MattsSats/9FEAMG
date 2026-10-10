@@ -79,8 +79,8 @@ export default {
         return d;
       });
       return json(view(week, doc));
-    } catch {
-      return json({ error: 'Couldn’t save that. Try again.' }, 503);
+    } catch (e) {
+      return json({ error: 'Couldn’t save that. Try again.', code: e?.name || 'Error' }, 503);
     }
   }
 };
