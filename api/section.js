@@ -4,7 +4,7 @@
 // (this same function with &img=1); people are sent to the chart on the site (/#<chart>).
 // Numbers come from the live data/season.js and box scores, so the image is always current.
 import { ImageResponse } from '@vercel/og';
-import { loadSeason, escapeHtml, hash, anchorFor, describe } from './_parlays.js';
+import { loadSeason, escapeHtml, hash, anchorFor, describe, kickoff } from './_parlays.js';
 import { readJson } from './_yahoo.js';
 import { seasonStats, loadBox } from './_stats.js';
 import { C, F, h, fonts, mgrColor } from './_ogkit.js';
@@ -154,7 +154,32 @@ const crest = (mg, size) => h('div', { position: 'relative', width: size, height
 
 // Everything one matchup card shows, from data/season.js: live projections for the live week,
 // final scores for a finished one.
-function matchupOf(season, st, wk, aSlug, bSlug) {
+// One short lineup alert per team for the live week, the way the site works them out: empty
+// slots and starters on bye until the week's last kickoff, a starter listed Out until his game.
+const SLOTS = { QB: 1, RB: 2, WR: 2, TE: 1, WRT: 1, K: 1, DEF: 1 };
+const NFL_ALIAS = { WSH: 'WAS', JAC: 'JAX', LA: 'LAR' };
+const nflKey = t => { const u = String(t || '').toUpperCase(); return NFL_ALIAS[u] || u; };
+function lineupAlert(season, rosters, m, wk) {
+  const team = rosters?.teams?.find(t => t.name == m), nfl = season.nfl?.[wk];
+  if (!team || season.live?.week != wk) return '';
+  const now = Date.now(), pts = season.live.playerPoints || {};
+  const games = nfl?.games || [], lastKick = Math.max(0, ...games.map(g => kickoff(season, wk, g)?.getTime() || 0));
+  const open = !games.length || now < lastKick, byes = (nfl?.byes || []).map(nflKey);
+  const gameOf = t => games.find(g => { const x = g.match(/·\s*(\S+)\s*@\s*(\S+)/); return x && [nflKey(x[1]), nflKey(x[2])].includes(nflKey(t)); });
+  const st = team.players.filter(p => p.slot == 'starter'), bits = [];
+  const bye = open ? st.filter(p => pts[p.name] == null && byes.includes(nflKey(p.nfl))) : [];
+  const out = st.filter(p => { const g = gameOf(p.nfl), k = g ? kickoff(season, wk, g) : null; return pts[p.name] == null && ['O', 'IR'].includes(String(p.inj || '').toUpperCase()) && (!k || now < k.getTime()); });
+  if (open) {
+    const have = {}; st.forEach(p => { have[p.pos] = (have[p.pos] || 0) + 1; });
+    const empty = Object.entries(SLOTS).reduce((n, [k, c]) => n + Math.max(0, c - (have[k] || 0)), 0);
+    if (empty) bits.push(`${empty} empty lineup slot${empty == 1 ? '' : 's'}`);
+  }
+  if (bye.length) bits.push(bye.length == 1 ? `${bye[0].name} on bye` : `${bye.length} starters on bye`);
+  if (out.length) bits.push(out.length == 1 ? `${out[0].name} listed Out` : `${out.length} starters listed Out`);
+  return bits.length ? `${m}: ${bits.join(' · ')}` : '';
+}
+
+function matchupOf(season, st, wk, aSlug, bSlug, rosters) {
   const mgs = season.managers, find = s => mgs.find(x => slugOf(x.m) == s);
   const A = find(aSlug), B = find(bSlug);
   if (!A || !B || !(season.schedule?.[wk] || []).some(p => p.includes(A.m) && p.includes(B.m))) return null;
@@ -165,14 +190,19 @@ function matchupOf(season, st, wk, aSlug, bSlug) {
   const side = mg => {
     const r = st.rows.find(x => x.m == mg.m);
     const [now, proj] = live ? (season.live.scores?.[mg.m] || [0, 0]) : [null, season.scores[mg.m][wk - 1]];
-    return { ...mg, rec: `${r.w}–${r.l} · ${ord(place(mg.m))}`, now, score: proj };
+    return { ...mg, rec: `${r.w}–${r.l} · ${ord(place(mg.m))}`, now, score: proj, alert: lineupAlert(season, rosters, mg.m, wk) };
   };
   const a = side(A), b = side(B), lead = a.score == b.score ? null : a.score > b.score ? a : b, gap = Math.abs(a.score - b.score);
   const chip = lead ? (live ? `${lead.m} +${gap.toFixed(2)} proj` : `${lead.m} won by ${gap.toFixed(2)}`) : live ? 'Even on projection' : 'Tied';
-  const lines = (live ? season.boothPreview?.[wk] : season.booth?.[wk]) || season.boothPreview?.[wk] || [];
-  const booth = (lines.find(([m]) => m == A.m || m == B.m) || [])[1] || '';
+  // A finished week shows its recap line; otherwise the preview, labelled with the day it was
+  // written so its projections don't read as a mistake next to the live numbers.
+  const recap = !live && (season.booth?.[wk] || []).find(([m]) => m == A.m || m == B.m);
+  const pre = (season.boothPreview?.[wk] || []).find(([m]) => m == A.m || m == B.m);
+  const booth = recap ? recap[1] : pre ? pre[1] : '';
+  const preDay = season.boothPreviewAt?.[wk] ? new Date(season.boothPreviewAt[wk] + 'T12:00:00Z').toLocaleDateString('en-US', { weekday: 'short', timeZone: 'UTC' }) : '';
+  const boothLabel = !booth ? '' : recap ? 'The Booth' : 'Booth preview' + (preDay ? ' · ' + preDay : '');
   const asOf = live && season.live.asOf ? new Date(season.live.asOf).toLocaleString('en-US', { weekday: 'short', hour: 'numeric', minute: '2-digit', timeZone: 'America/Chicago' }).replace(',', '') : '';
-  return { wk, live, a, b, chip, booth, asOf };
+  return { wk, live, a, b, chip, booth, boothLabel, asOf };
 }
 
 function matchupCard(M) {
@@ -180,7 +210,8 @@ function matchupCard(M) {
     crest(s, 92),
     h('div', { flexDirection: 'column', flex: 1, marginLeft: 26 },
       h('div', { fontFamily: F.sans, fontSize: 46, fontWeight: 600, color: C.ink, lineHeight: 1.05 }, s.m),
-      h('div', { fontFamily: F.mono, fontSize: 22, fontWeight: 600, color: C.muted, marginTop: 6 }, s.rec)),
+      h('div', { fontFamily: F.mono, fontSize: 22, fontWeight: 600, color: C.muted, marginTop: 6 }, s.rec),
+      s.alert ? h('div', { fontFamily: F.sans, fontSize: 21, fontWeight: 600, color: C.neg, marginTop: 6 }, '⚠ ' + s.alert) : null),
     M.live ? h('div', { width: 170, justifyContent: 'flex-end', fontFamily: F.mono, fontSize: 30, fontWeight: 600, color: C.muted }, s.now.toFixed(2)) : null,
     h('div', { width: 300, justifyContent: 'flex-end', fontFamily: F.display, fontSize: 104, fontWeight: 900, lineHeight: 1, color: s == (M.a.score >= M.b.score ? M.a : M.b) ? C.ink : C.muted }, s.score.toFixed(2)));
   return h('div', { width: '100%', height: '100%', flexDirection: 'column', background: C.bg, padding: '40px 64px 0', position: 'relative' },
@@ -195,8 +226,10 @@ function matchupCard(M) {
     h('div', { flexDirection: 'column', marginTop: 8 }, row(M.a), row(M.b)),
     h('div', { marginTop: 18, borderTop: `2px solid ${C.line}`, paddingTop: 18 },
       h('div', { fontFamily: F.mono, fontSize: 26, fontWeight: 600, color: C.ink, padding: '8px 16px', borderRadius: 10, background: C.surface2, border: `2px solid ${C.line}` }, M.chip)),
-    // The Booth's line on this matchup, up to three lines.
-    M.booth ? h('div', { marginTop: 14, maxHeight: 96, overflow: 'hidden', fontFamily: F.sans, fontSize: 24, fontWeight: 600, lineHeight: 1.3, color: C.muted }, M.booth) : null,
+    // The Booth's line on this matchup, labelled ("Booth preview · Wed"), up to two lines.
+    M.booth ? h('div', { flexDirection: 'column', marginTop: 12 },
+      h('div', { fontFamily: F.mono, fontSize: 17, fontWeight: 600, letterSpacing: 3, color: C.accentInk }, M.boothLabel.toUpperCase()),
+      h('div', { marginTop: 4, maxHeight: 62, overflow: 'hidden', fontFamily: F.sans, fontSize: 23, fontWeight: 600, lineHeight: 1.3, color: C.muted }, M.booth)) : null,
     h('div', { position: 'absolute', left: 0, right: 0, bottom: 0, height: 10, background: C.accent }));
 }
 
@@ -207,14 +240,19 @@ async function matchupRoute(url, request, m) {
     return new Response(null, { status: 302, headers: { location: dest, 'cache-control': 'private, no-store', vary: 'User-Agent' } });
   }
   let M;
-  try { const season = await loadSeason(url.origin); M = matchupOf(season, seasonStats(season, null), wk, m[2], m[3]); } catch { return fallback(); }
+  try {
+    const season = await loadSeason(url.origin);
+    let rosters = null;
+    try { const r = await fetch(new URL('/uploads/9feamg-rosters.json', url.origin), { cache: 'no-store' }); rosters = r.ok ? await r.json() : null; } catch { /* no alerts then */ }
+    M = matchupOf(season, seasonStats(season, null), wk, m[2], m[3], rosters);
+  } catch { return fallback(); }
   if (!M) return isImg ? fallback() : Response.redirect(dest, 302);
   if (isImg) return new ImageResponse(matchupCard(M), { width: 1200, height: 630, fonts: await fonts(), headers: { 'cache-control': 'public, max-age=300, s-maxage=300' } });
   const name = m[0], e = escapeHtml;
   const title = `${M.a.m} vs ${M.b.m} · Week ${wk}${M.live ? ' · live' : ' · final'} · 9FEAMG`;
   const score = s => M.live ? `${s.m} ${s.now.toFixed(2)} now, ${s.score.toFixed(2)} projected` : `${s.m} ${s.score.toFixed(2)}`;
-  const desc = `${score(M.a)}; ${score(M.b)}. ${M.chip}.` + (M.booth ? ' ' + M.booth : '');
-  const img = new URL(`/api/section?name=${name}&img=1&v=${hash(JSON.stringify([M.a.now, M.a.score, M.b.now, M.b.score, M.asOf]))}`, url.origin).href;
+  const desc = `${score(M.a)}; ${score(M.b)}. ${M.chip}.` + [M.a.alert, M.b.alert].filter(Boolean).map(t => ' ⚠ ' + t + '.').join('') + (M.booth ? ` ${M.boothLabel}: ${M.booth}` : '');
+  const img = new URL(`/api/section?name=${name}&img=1&v=${hash(JSON.stringify([M.a.now, M.a.score, M.b.now, M.b.score, M.asOf, M.a.alert, M.b.alert, M.boothLabel, M.booth]))}`, url.origin).href;
   return new Response(`<!doctype html><html><head><meta charset="utf-8">
 <title>${e(title)}</title>
 <meta name="description" content="${e(desc)}">

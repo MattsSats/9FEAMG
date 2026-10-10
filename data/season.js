@@ -164,6 +164,9 @@ window.SEASON = {
       ['Mr. G', 'Pablo was projected to lose to Mr. G by 30.35 and won by 39.94. Opponents keep saving their best for Mr. G.']
     ]
   },
+  // The day each week's previews were written (their projections are from then), for labels
+  // like "Booth preview · Wed" next to live numbers.
+  boothPreviewAt: { 5: '2026-10-07' },
   boothPreview: {
     5: [
       ['Matt', 'The 1–3 bowl, between the two unluckiest teams in the league: Kurt at −1.00 and Matt at −0.89. Projected 115.63–100.37, Matt. There is no 2nd best is 9th.'],
