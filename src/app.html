@@ -409,6 +409,8 @@ button{font-family:inherit;color:inherit}
   .compact .wchip{min-height:30px!important}
   .compact .wsub{display:none!important}
   .compact .jump-to{scroll-margin-top:100px}
+  /* Parlays column: a flex column so CSS order can put the ledger between the groups. */
+  #parlays{display:flex;flex-direction:column}
 }
 /* Desktop: tabs up top, no bottom bar, and a compact week row. */
 @media (min-width:900px){
@@ -820,13 +822,13 @@ button{font-family:inherit;color:inherit}
   </sc-if>
   <sc-for list="{{ parlays }}" as="pr" hint-placeholder-count="1">
     <sc-if value="{{ pr.firstGroup }}" hint-placeholder-val="{{ false }}">
-      <div class="busted-bar" style="padding:12px 20px 0">
+      <div class="busted-bar" style="padding:12px 20px 0;order:{{ pr.order }}">
         <button class="hov" sc-camel-on-click="{{ pr.toggleGroup }}" aria-expanded="{{ pr.groupExpanded }}" style="width:100%;display:flex;justify-content:space-between;align-items:center;min-height:44px;padding:0 14px;border:1px dashed var(--line);border-radius:14px;background:transparent;cursor:pointer;font-family:'JetBrains Mono';font-size:11px;letter-spacing:.06em;color:var(--muted)">
           <span style="text-transform:uppercase">{{ pr.groupLabel }}</span><span style="color:var(--accentInk);font-weight:600">{{ pr.groupToggleLabel }}</span>
         </button>
       </div>
     </sc-if>
-    <div id="{{ pr.anchor }}" style="display:{{ pr.wrapDisplay }};padding:12px 20px 0;scroll-margin-top:64px">
+    <div id="{{ pr.anchor }}" style="display:{{ pr.wrapDisplay }};order:{{ pr.order }};padding:12px 20px 0;scroll-margin-top:64px">
       <div data-shot="{{ pr.shot }}" style="position:relative;background:var(--surface);border:1px solid var(--line);border-radius:20px;overflow:hidden">
         <sc-if value="{{ pr.settled }}" hint-placeholder-val="{{ false }}">
           <div style="position:absolute;top:56px;right:18px;z-index:2;transform:rotate(-10deg);border:3px solid {{ pr.stampColor }};color:{{ pr.stampColor }};font-family:'Big Shoulders Display';font-weight:900;font-size:30px;line-height:1;letter-spacing:.06em;padding:4px 12px;border-radius:8px;background:color-mix(in oklch, var(--surface) 70%, transparent);pointer-events:none">{{ pr.status }}</div>
@@ -911,7 +913,7 @@ button{font-family:inherit;color:inherit}
     </div>
   </sc-for>
   <sc-if value="{{ hasLedger }}" hint-placeholder-val="{{ true }}">
-    <div id="ledger" class="ledger" style="padding:16px 20px 0;scroll-margin-top:64px">
+    <div id="ledger" class="ledger" style="order:2;padding:16px 20px 0;scroll-margin-top:64px">
       <div data-shot="ledger" style="background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:16px 16px 0">
         <div class="sec-head">
           <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:26px;text-transform:uppercase">Parlay ledger</div>
