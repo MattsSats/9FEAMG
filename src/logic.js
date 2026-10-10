@@ -961,9 +961,12 @@ class Component extends DCLogic {
     const wireModes = ['7 days', 'Season'].map(l => ({ label: l, bg: S.wire == l ? 'var(--surface2)' : 'transparent', fg: S.wire == l ? 'var(--ink)' : 'var(--muted)', pick: () => this.setState({ wire: l }) }));
     const byAdds = [...MGR].sort((a, b) => adds[b] - adds[a]); const maxA = Math.max(1, adds[byAdds[0]]);
     const recOf = m => { const st = ST.find(x => x.m == m); return st.w + '–' + st.l; };
-    const activity = byAdds.map(m => ({ m, n: adds[m], w: (adds[m] / maxA * 100) + '%', color: col(m), rec: recOf(m) }));
     const top = byAdds[0], low = byAdds[byAdds.length - 1];
     const wk7 = {}; groups.filter(g => g.d >= cut).forEach(g => g.items.forEach(t => { if (t.action == 'add') wk7[t.manager] = (wk7[t.manager] || 0) + 1; }));
+    // Activity vs record: season adds on Season, the last 7 days' adds on 7 days.
+    const actN = m => seasonMode ? adds[m] : wk7[m] || 0;
+    const actOrder = [...MGR].sort((a, b) => actN(b) - actN(a)), actMax = Math.max(1, actN(actOrder[0]));
+    const activity = actOrder.map(m => ({ m, n: actN(m), w: (actN(m) / actMax * 100) + '%', color: col(m), rec: recOf(m) }));
     const top7 = Object.keys(wk7).sort((a, b) => wk7[b] - wk7[a])[0];
     const wireRoast = !S.loaded ? 'Loading the wire…'
       : !txOk ? 'Couldn’t load transactions. Try refreshing in a minute.'
@@ -1050,7 +1053,7 @@ class Component extends DCLogic {
       heat, heatHead, heatCols, heatMinW, restLabel, hasRest: !!restLabel, liveCol: !!LW,
       team, teamPicker,
       draftInfo: D.draftInfo, draftToolUrl: D.draftToolUrl || '', hasDraftTool: !!D.draftToolUrl, draftOk: !draftMsg, draftMsg, draftFirsts, draftModes, draftChips, draftPicks, draftTitle, draftSub,
-      wireSub: 'Adds, drops, trades and FAAB · through ' + shortDate(now), wireModes, wireSeason: seasonMode && txOk, wireDays: days, noMoves, activity, wireRoast, wireBanner: boothOn || !txOk, faab, faabBudget: '$' + budget + ' budget', txOk,
+      wireSub: 'Adds, drops, trades and FAAB · through ' + shortDate(now), wireModes, activityLabel: seasonMode ? 'Adds · season' : 'Adds · 7 days', wireSeason: txOk, wireDays: days, noMoves, activity, wireRoast, wireBanner: boothOn || !txOk, faab, faabBudget: '$' + budget + ' budget', txOk,
       sheetOpen: !!S.sheet, sheet, closeSheet: () => this.setState({ sheet: null }),
       // Share buttons
       menuHero: this.shareMenu('This matchup', e => this.shareLink(location.origin + '/#w' + S.week, '9FEAMG · Week ' + S.week, e), e => this.share('hero', e)),
