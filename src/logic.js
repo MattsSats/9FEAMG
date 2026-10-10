@@ -924,7 +924,9 @@ class Component extends DCLogic {
         move: mv > 0 ? '▲' + mv : mv < 0 ? '▼' + -mv : '–', moveColor: mv > 0 ? 'var(--pos)' : mv < 0 ? 'var(--neg)' : 'var(--muted)',
         open: () => { this.setState({ tab: 'Teams', team: r.m }); window.scrollTo(0, 0); } };
     }) : [];
-    const standings = ST.map((s, i) => ({ rank: i + 1, m: s.m, rowBg: s.m == S.reqMgr ? 'var(--surface2)' : 'transparent', rowEdge: s.m == S.reqMgr ? col(s.m) : 'transparent', you: s.m == S.reqMgr, init: INIT[s.m], color: col(s.m), pa: f1(s.pa), max: s.max == null ? '—' : f1(s.max), wl: s.w + '–' + s.l, pf: f1(s.pf), luck: sgn(s.luck), luckColor: s.luck > 0 ? 'var(--pos)' : s.luck < 0 ? 'var(--neg)' : 'var(--muted)', cut: i == P - 1, open: () => { this.setState({ tab: 'Teams', team: s.m }); window.scrollTo(0, 0); } }));
+    const standings = ST.map((s, i) => ({ rank: i + 1, m: s.m, rowBg: s.m == S.reqMgr ? 'var(--surface2)' : 'transparent', rowEdge: s.m == S.reqMgr ? col(s.m) : 'transparent', you: s.m == S.reqMgr,
+      // The row just above the playoff line has no rule of its own; the line is the divider.
+      rowLine: i == P - 1 ? 'transparent' : 'var(--line)', init: INIT[s.m], color: col(s.m), pa: f1(s.pa), max: s.max == null ? '—' : f1(s.max), wl: s.w + '–' + s.l, pf: f1(s.pf), luck: sgn(s.luck), luckColor: s.luck > 0 ? 'var(--pos)' : s.luck < 0 ? 'var(--neg)' : 'var(--muted)', cut: i == P - 1, open: () => { this.setState({ tab: 'Teams', team: s.m }); window.scrollTo(0, 0); } }));
     const allS = Object.values(SC).flat(), lo = Math.min(...allS), hi = Math.max(...allS);
     const heatHead = chipWeeks.filter(w => w <= NF).map(w => 'W' + w).concat(LW ? ['W' + LW] : []);
     const restFrom = (LW ?? NF) + 1, total = D.regularSeasonWeeks;
