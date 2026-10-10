@@ -80,7 +80,7 @@ export default {
       });
       return json(view(week, doc));
     } catch (e) {
-      return json({ error: 'Couldn’t save that. Try again.', code: e?.name || 'Error' }, 503);
+      return json({ error: 'Couldn’t save that. Try again.', code: String(e?.message || e).slice(0, 120) }, 503);
     }
   }
 };
