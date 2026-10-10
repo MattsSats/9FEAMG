@@ -8,6 +8,7 @@ import { ImageResponse } from '@vercel/og';
 import { loadSeason, escapeHtml, hash, anchorFor, describe, kickoff } from './_parlays.js';
 import { readJson } from './_yahoo.js';
 import { seasonStats, loadBox, powerRanks } from './_stats.js';
+import { loadTx, wireOf } from './_wire.js';
 import { C, F, h, fonts, mgrColor } from './_ogkit.js';
 
 const BOTS = /bot|crawl|spider|facebookexternalhit|facebot|twitterbot|slackbot|discordbot|whatsapp|telegram|linkedin|embedly|skype|iframely|preview/i;
@@ -377,11 +378,27 @@ function weekCard(W) {
     h('div', { flexDirection: 'column', marginTop: 22 }, ...W.games.map(row)));
 }
 
+// The Wire: the line at the top of the tab, then adds per manager (this fantasy week or the season)
+// with each record, two columns of five.
+function wireCard(Wd) {
+  const max = Math.max(1, ...Wd.rows.map(r => r.n));
+  const row = r => h('div', { alignItems: 'center', height: 50, borderTop: `1px solid ${C.line}` },
+    crest(r, 30), h('div', { width: 110, marginLeft: 12, fontFamily: F.sans, fontSize: 23, fontWeight: 600, color: C.ink }, r.m),
+    h('div', { flex: 1, height: 16, borderRadius: 4, background: C.surface2 },
+      h('div', { width: `${Math.max(r.n ? 3 : 0, r.n / max * 100)}%`, height: 16, borderRadius: 4, background: mgrColor(r.hue) })),
+    mono(44, String(r.n), C.ink, 22), mono(66, r.rec, C.muted, 18));
+  const col = rs => h('div', { flexDirection: 'column', flex: 1 }, ...rs.map(row));
+  return frame(Wd.mode == 'season' ? 'WIRE · SEASON' : `WIRE · WEEK ${Wd.wk}`, 'Wire', null, h('div', { flexDirection: 'column' },
+    h('div', { marginTop: 18, padding: '16px 22px', borderRadius: 16, background: C.accent, maxHeight: 108, overflow: 'hidden', fontFamily: F.sans, fontSize: 26, fontWeight: 600, lineHeight: 1.3, color: C.onAccent }, Wd.line),
+    h('div', { marginTop: 16, fontFamily: F.mono, fontSize: 16, fontWeight: 600, letterSpacing: 2, color: C.muted }, Wd.mode == 'season' ? 'ADDS THIS SEASON · RECORD' : `ADDS IN WEEK ${Wd.wk} · RECORD`),
+    h('div', { gap: 40, marginTop: 6 }, col(Wd.rows.slice(0, 5)), col(Wd.rows.slice(5)))));
+}
+
 async function sectionRoute(url, request, name) {
   const team = name.match(/^team-([a-z0-9-]+)$/), wkm = name.match(/^w(\d+)$/);
-  const kind = name == 'standings' || name == 'power' ? name : team ? 'team' : wkm ? 'week' : null;
+  const kind = name == 'standings' || name == 'power' ? name : name == 'wire-week' || name == 'wire-season' ? 'wire' : team ? 'team' : wkm ? 'week' : null;
   if (!kind) return null;
-  const dest = new URL(kind == 'standings' ? '/#season' : kind == 'power' ? '/#power' : kind == 'team' ? '/#team-' + team[1] : '/#w' + wkm[1], url.origin).href;
+  const dest = new URL(kind == 'standings' ? '/#season' : kind == 'power' ? '/#power' : kind == 'wire' ? (name == 'wire-season' ? '/#wire-season' : '/#wire') : kind == 'team' ? '/#team-' + team[1] : '/#w' + wkm[1], url.origin).href;
   const fallback = () => Response.redirect(new URL('/og.png', url.origin).href, 302), isImg = url.searchParams.has('img');
   if (!isImg && !BOTS.test(request.headers.get('user-agent') || '')) {
     return new Response(null, { status: 302, headers: { location: dest, 'cache-control': 'private, no-store', vary: 'User-Agent' } });
@@ -390,10 +407,11 @@ async function sectionRoute(url, request, name) {
   try { season = await loadSeason(url.origin); st = seasonStats(season, null); } catch { return fallback(); }
   if (kind == 'team') data = teamOf(season, st, team[1]);
   if (kind == 'week') data = weekOf(season, st, +wkm[1]);
+  if (kind == 'wire') { const tx = await loadTx(url.origin); if (!tx) return isImg ? fallback() : Response.redirect(dest, 302); data = wireOf(season, tx, await loadBox(url.origin), name == 'wire-season' ? 'season' : 'week'); }
   if ((kind == 'team' || kind == 'week') && !data) return isImg ? fallback() : Response.redirect(dest, 302);
   if (!st.NF && kind != 'week') return isImg ? fallback() : Response.redirect(dest, 302);
   if (isImg) {
-    const card = kind == 'standings' ? standingsCard(season, st) : kind == 'power' ? powerCard(season, st) : kind == 'team' ? teamCard(data) : weekCard(data);
+    const card = kind == 'standings' ? standingsCard(season, st) : kind == 'power' ? powerCard(season, st) : kind == 'wire' ? wireCard(data) : kind == 'team' ? teamCard(data) : weekCard(data);
     return new ImageResponse(card, { width: 1200, height: 630, fonts: await fonts(), headers: { 'cache-control': 'public, max-age=300, s-maxage=300' } });
   }
   let title, desc, ver;
@@ -407,6 +425,10 @@ async function sectionRoute(url, request, name) {
     title = `Power rankings · through week ${st.NF} · 9FEAMG`;
     desc = pr.slice(0, 3).map((r, i) => `${i + 1}. ${r.m} ${r.score.toFixed(1)}`).join(' · ') + '.' + (note ? ` ${pr[0].m}: ${note}` : '');
     ver = pr.map(r => [r.m, r.score.toFixed(1)]);
+  } else if (kind == 'wire') {
+    title = (data.mode == 'season' ? 'Wire · season' : `Wire · Week ${data.wk}`) + ' · 9FEAMG';
+    desc = data.line + ' ' + data.rows.filter(r => r.n).slice(0, 3).map(r => `${r.m} ${r.n} add${r.n == 1 ? '' : 's'} (${r.rec})`).join(' · ') + (data.total ? '.' : '');
+    ver = [data.line, data.rows.map(r => [r.m, r.n, r.rec])];
   } else if (kind == 'team') {
     title = `${data.m} · ${data.rec}, ${ordinal(data.place)} · 9FEAMG`;
     desc = [`PF ${data.pf.toFixed(1)} (${ordinal(data.pfRank)}), PA ${data.pa.toFixed(1)}, luck ${signed(data.luck)}.`, data.week ? data.week + '.' : '', data.roast].filter(Boolean).join(' ');

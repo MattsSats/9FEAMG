@@ -368,6 +368,9 @@ button{font-family:inherit;color:inherit}
 .share-btn:hover{color:var(--ink);border-color:var(--muted)}
 .shot-footer{display:none;justify-content:space-between;align-items:baseline;gap:12px;padding:14px 0 16px;font-family:'JetBrains Mono';font-size:10px;letter-spacing:.08em;color:var(--muted)}
 .capturing .shot-footer{display:flex}
+/* Only in shared images (the Wire line on the Wire card). */
+.shot-only{display:none}
+.capturing .shot-only{display:block}
 /* Share images stay small in a group chat: tighter rows and a wider team grid, in the image only. */
 .capturing .shot-tight{padding-top:6px!important;padding-bottom:6px!important}
 .capturing .shot-tight .crest{width:22px!important;height:22px!important;font-size:10px!important}
@@ -1352,7 +1355,10 @@ button{font-family:inherit;color:inherit}
 
 <sc-if value="{{ tabWire }}" hint-placeholder-val="{{ false }}">
 <div style="padding:22px 20px 0">
-  <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:48px;line-height:.9;text-transform:uppercase">Wire</div>
+  <div style="display:flex;justify-content:space-between;align-items:center;gap:12px">
+    <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:48px;line-height:.9;text-transform:uppercase">Wire</div>
+    <sc-if value="{{ txOk }}" hint-placeholder-val="{{ true }}"><button class="share-btn" sc-camel-on-click="{{ menuWire }}" aria-label="Share the Wire">Share</button></sc-if>
+  </div>
   <div style="font-family:'JetBrains Mono';font-size:11px;color:var(--muted);margin-top:10px">{{ wireSub }}</div>
 </div>
 <div style="padding:16px 20px 0">
@@ -1397,7 +1403,8 @@ button{font-family:inherit;color:inherit}
 
 <div class="wire-side">
 <sc-if value="{{ wireSeason }}" hint-placeholder-val="{{ false }}">
-  <div style="padding:24px 20px 0">
+  <div data-shot="wire" style="padding:24px 20px 0">
+    <div class="shot-only" style="margin-bottom:14px;padding:14px;border-radius:14px;background:var(--accent);color:var(--onAccent);font-size:15px;line-height:1.4;font-weight:600">{{ wireRoast }}</div>
     <div style="display:flex;justify-content:space-between;align-items:baseline">
       <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:24px;text-transform:uppercase">Activity vs record</div>
       <div style="font-family:'JetBrains Mono';font-size:11px;color:var(--muted)">{{ activityLabel }}</div>
@@ -1412,6 +1419,7 @@ button{font-family:inherit;color:inherit}
         </div>
       </sc-for>
     </div>
+    <div class="shot-footer"><b>9FEAMG</b><span>{{ shotWire }}</span></div>
   </div>
 </sc-if>
 

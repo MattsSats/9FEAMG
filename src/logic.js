@@ -422,7 +422,7 @@ class Component extends DCLogic {
     // #w5 opens that week, #season the standings, #team-mr-g a team page, #wire and #draft those tabs.
     const h = location.hash, wk = h.match(/^#w(\d+)$/), tm = h.match(/^#team-([\w-]+)$/);
     if (!h && nav) { this.setState({ tab: 'Gameday', week: HOME_WK, sheet: null }); window.scrollTo(0, 0); return; }
-    if (h == '#wire' || h == '#draft') { this.setState({ tab: h == '#wire' ? 'Wire' : 'Draft', sheet: null }); window.scrollTo(0, 0); return; }
+    if (h == '#wire' || h == '#wire-season' || h == '#draft') { this.setState({ tab: h == '#draft' ? 'Draft' : 'Wire', ...(h == '#draft' ? {} : { wire: h == '#wire-season' ? 'Season' : 'This week' }), sheet: null }); window.scrollTo(0, 0); return; }
     if (wk) { this.setState({ tab: 'Gameday', week: +wk[1], sheet: null }); window.scrollTo(0, 0); return; }
     if (h == '#season') { this.setState({ tab: 'Season', sheet: null }); window.scrollTo(0, 0); return; }
     // Season sections: #power, #pfpa, #luck, #bench open the Season tab scrolled to that section.
@@ -538,7 +538,7 @@ class Component extends DCLogic {
     const S = this.state, h = location.hash;
     const want = S.tab == 'Gameday' ? (S.week == HOME_WK ? '' : '#w' + S.week)
       : S.tab == 'Season' ? '#season' : S.tab == 'Teams' ? '#team-' + teamSlug(S.team)
-      : S.tab == 'Wire' ? '#wire' : S.tab == 'Draft' ? '#draft' : null;
+      : S.tab == 'Wire' ? (S.wire == 'Season' ? '#wire-season' : '#wire') : S.tab == 'Draft' ? '#draft' : null;
     if (want == null || h == want) return;
     if (S.tab == 'Gameday' && (h == '#w' + S.week || h.startsWith('#w' + S.week + '-') || h == '#ledger')) return;
     if (S.tab == 'Season' && ['#power', '#pfpa', '#luck', '#bench'].includes(h)) return;
@@ -1212,6 +1212,9 @@ class Component extends DCLogic {
       menuStandings: this.shareMenu('Standings', e => this.shareLink(location.origin + '/s/standings', '9FEAMG · Standings', e), e => this.share('standings', e)),
       menuPower: this.shareMenu('Power rankings', e => this.shareLink(location.origin + '/s/power', '9FEAMG · Power rankings', e), e => this.share('power', e)),
       menuTeam: this.shareMenu(S.team, e => this.shareLink(location.origin + '/s/team-' + teamSlug(S.team), '9FEAMG · ' + S.team, e), e => this.share('team', e)),
+      // Wire: the view on screen (this fantasy week or the season), as a link preview or an image.
+      menuWire: this.shareMenu(seasonMode ? 'Wire · season' : 'Wire · Week ' + wireWk, e => this.shareLink(location.origin + (seasonMode ? '/s/wire-season' : '/s/wire-week'), seasonMode ? '9FEAMG · Wire · season' : '9FEAMG · Wire · Week ' + wireWk, e), e => this.share('wire', e)),
+      shotWire: seasonMode ? 'Wire · season' : 'Wire · Week ' + wireWk,
       menuLedger: this.shareMenu('Parlay ledger', e => this.shareLink(location.origin + '/s/ledger', '9FEAMG · Parlay ledger', e), e => this.share('ledger', e)),
       ...Object.fromEntries([['Pfpa', 'pfpa', 'Points for vs against'], ['Luck', 'luck', 'Luck'], ['Bench', 'bench', 'Points left on bench']].map(([k, id, title]) =>
         ['menu' + k, this.shareMenu(title, e => this.shareLink(location.origin + '/s/' + id, '9FEAMG · ' + title, e), e => this.share(id, e))])),
