@@ -885,15 +885,25 @@ class Component extends DCLogic {
         legCount: legs.length + (legs.length == 1 ? ' leg' : ' legs'), toggleLabel: S.prOpen?.[anchor] ? 'Hide legs ▴' : 'Show legs ▾',
         toggle: () => this.setState({ prOpen: { ...S.prOpen, [anchor]: !S.prOpen?.[anchor] } }),
         shotLabel: `${p.owner}’s parlay · Week ${wk}`,
-        rank: status == 'CASHED' ? 2 : status == 'OPEN' ? 1 : 0, chance: chance ?? -1
+        rank: status == 'CASHED' ? 2 : status == 'OPEN' ? 1 : 0, chance: chance ?? -1,
+        // Sort keys: yours (you own it or you're on it), first kickoff, legs hit and missed.
+        mineSort: !!me && (owners.includes(me) || onIt.includes(me)) ? 0 : 1,
+        firstKick: Math.min(Infinity, ...p.legs.map(l => kickoff(wk, l.game)?.getTime()).filter(Boolean)),
+        hitN: p.legs.filter(l => l.status == 'hit').length, missN: p.legs.filter(l => l.status == 'miss').length
       };
     });
     // Cashed and open tickets someone's on (by chance to hit) first, then two collapsible
     // sections: open tickets nobody's on (your own team's stay up top), then busted ones.
-    // Each section's toggle sits above its first card; in Nobody's on these, tickets you can
-    // still join come before locked ones.
+    // Each section's toggle sits above its first card. Inside each group:
+    //   on it: yours first, then cashed, then open by chance to hit;
+    //   Nobody's on these: joinable by soonest first kickoff (about to lock), then locked ones;
+    //   Busted: closest calls first (most legs hit, then fewest missed).
     const group = x => x.status == 'BUSTED' ? 2 : x.unbet ? 1 : 0;
-    parlays.sort((a, b) => group(a) - group(b) || (group(a) == 1 ? a.locked - b.locked : 0) || b.rank - a.rank || b.chance - a.chance);
+    const within = [
+      (a, b) => a.mineSort - b.mineSort || b.rank - a.rank || b.chance - a.chance,
+      (a, b) => a.locked - b.locked || (a.locked ? b.chance - a.chance : a.firstKick - b.firstKick || b.chance - a.chance),
+      (a, b) => b.hitN - a.hitN || a.missN - b.missN];
+    parlays.sort((a, b) => group(a) - group(b) || within[group(a)](a, b));
     const sections = [
       { g: 1, open: S.unbetOpen !== false, key: 'unbetOpen', label: n => `Nobody’s on these · ${n}` },
       { g: 2, open: !!S.bustedOpen, key: 'bustedOpen', label: n => `Busted · ${n}` }];
