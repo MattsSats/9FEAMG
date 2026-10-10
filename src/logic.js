@@ -1069,10 +1069,15 @@ class Component extends DCLogic {
     const wireModes = ['7 days', 'Season'].map(l => ({ label: l, bg: S.wire == l ? 'var(--surface2)' : 'transparent', fg: S.wire == l ? 'var(--ink)' : 'var(--muted)', pick: () => this.setState({ wire: l }) }));
     const byAdds = [...MGR].sort((a, b) => adds[b] - adds[a]); const maxA = Math.max(1, adds[byAdds[0]]);
     const recOf = m => { const st = ST.find(x => x.m == m); return st.w + '–' + st.l; };
-    // Fewest adds: on a tie, the one with the worst record (lowest in the standings), so the
-    // comparison with the busiest manager means something.
-    const top = byAdds[0], minAdds = adds[byAdds[byAdds.length - 1]];
-    const low = MGR.filter(m => adds[m] == minAdds).sort((a, b) => ST.findIndex(x => x.m == b) - ST.findIndex(x => x.m == a))[0];
+    // The busiest manager against the best record among the light adders (fewer season adds than
+    // the league median; standings order breaks ties), so the line tests whether adds help.
+    const top = byAdds[0], stPlace = m => ST.findIndex(x => x.m == m);
+    const sortedAdds = byAdds.map(m => adds[m]).sort((a, b) => a - b), mid = sortedAdds.length / 2;
+    const median = sortedAdds.length % 2 ? sortedAdds[Math.floor(mid)] : (sortedAdds[mid - 1] + sortedAdds[mid]) / 2;
+    const lightPool = MGR.filter(m => adds[m] < median);
+    const pickLow = not => (lightPool.length ? lightPool : MGR).filter(m => m != not).sort((a, b) => stPlace(a) - stPlace(b))[0];
+    // "Better record": more wins, then fewer losses.
+    const beats = (a, b) => { const x = ST.find(s => s.m == a), y = ST.find(s => s.m == b); return x.w - x.l > y.w - y.l; };
     const wk7 = {}; groups.filter(g => g.d >= cut).forEach(g => g.items.forEach(t => { if (t.action == 'add') wk7[t.manager] = (wk7[t.manager] || 0) + 1; }));
     // Activity vs record: season adds on Season, the last 7 days' adds on 7 days.
     const actN = m => seasonMode ? adds[m] : wk7[m] || 0;
@@ -1081,8 +1086,8 @@ class Component extends DCLogic {
     const top7 = Object.keys(wk7).sort((a, b) => wk7[b] - wk7[a])[0];
     const wireRoast = !S.loaded ? 'Loading the wire…'
       : !txOk ? 'Couldn’t load transactions. Try refreshing in a minute.'
-      : seasonMode ? `${top} leads the league with ${adds[top]} adds and is ${recOf(top)}. ${low} has made ${adds[low]} and is ${recOf(low)}. Draw your own conclusions.`
-      : top7 ? `${top7} made ${wk7[top7]} adds this week. ${low} has made ${adds[low]} all season and is ${recOf(low)}. Busy is not the same as good.`
+      : seasonMode ? (low => `${top} leads the league with ${adds[top]} adds and is ${recOf(top)}. ${low} has made ${adds[low]} and is ${recOf(low)}. ` + (beats(top, low) ? 'Turns out the waiver wire works.' : 'Draw your own conclusions.'))(pickLow(top))
+      : top7 ? (low => `${top7} made ${wk7[top7]} adds this week and is ${recOf(top7)}. ${low} has made ${adds[low]} all season and is ${recOf(low)}. ` + (beats(top7, low) ? 'Turns out the waiver wire works.' : 'Busy is not the same as good.'))(pickLow(top7))
       : 'Nobody has added anyone this week. Suspiciously quiet.';
     const faab = [...MGR].sort((a, b) => spent[a] - spent[b]).map(m => ({ m, left: '$' + (budget - spent[m]), w: ((budget - spent[m]) / budget * 100) + '%', color: col(m) }));
     const noMoves = txOk && !days.length;
