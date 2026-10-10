@@ -53,7 +53,6 @@ const HOME_WK = LW && (LIVE_STARTED || !NF) ? LW : NF;
 const PPROJ = D?.projections || {};
 // "Your team": the manager this phone picked (request form, "I'm on it" or the Gameday prompt).
 const MY_TEAM = (() => { try { const m = localStorage.getItem('9feamg-req-mgr'); return MGR.includes(m) ? m : null; } catch { return null; } })();
-const TEAM_ASKED = (() => { try { return !!localStorage.getItem('9feamg-team-asked'); } catch { return true; } })();
 // "Scores as of Thu 10:19 PM" (Central).
 const asOfLabel = iso => { const d = new Date(iso); return isNaN(d) ? '' : 'Scores as of ' + d.toLocaleString('en-US', { weekday: 'short', hour: 'numeric', minute: '2-digit', timeZone: 'America/Chicago' }).replace(',', ''); };
 const PAIRS = D ? D.schedule : {};
@@ -245,8 +244,8 @@ function setMaxPF(box) {
 class Component extends DCLogic {
   state = { tab: this.props.startTab ?? 'Gameday', week: HOME_WK, theme: null, sheet: null, team: MY_TEAM || MGR[0], wire: '7 days', draftMode: 'By round', draftRound: 1, draftTeam: MGR[0], rosters: null, draft: null, tx: null, loaded: false,
     // Parlay request form: who's asking is remembered on this device.
-    reqMgr: MY_TEAM, askTeam: !MY_TEAM && !TEAM_ASKED, reqOpen: false, shareSheet: null, newScores: false, compact: false,
-    req: { risk: 1, legs: 'any', players: [], playerLegs: {}, game: '', sending: false }, tails: {}, passes: {}, tailAsk: null, tailAskPass: false, tailBusy: null, reqs: null };
+    reqMgr: MY_TEAM, teamSheet: null, reqOpen: false, shareSheet: null, newScores: false, compact: false,
+    req: { risk: 1, legs: 'any', players: [], playerLegs: {}, game: '', sending: false }, tails: {}, passes: {}, tailBusy: null, reqs: null };
   componentDidMount() {
     // Keyboard: Enter or Space activates clickable rows (role="button"); Escape closes the lineup sheet.
     document.addEventListener('keydown', e => {
@@ -312,7 +311,7 @@ class Component extends DCLogic {
   }
   isIdle() {
     const S = this.state, a = document.activeElement;
-    return !S.sheet && !S.shareSheet && !S.tailAsk && !S.sharing && !S.reqOpen && !(a && /^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName));
+    return !S.sheet && !S.shareSheet && !S.teamSheet && !S.sharing && !S.reqOpen && !(a && /^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName));
   }
   refreshInPlace() {
     const S = this.state;
@@ -326,15 +325,18 @@ class Component extends DCLogic {
     this.setState({ tab: r.tab, week: r.week, team: r.team });
     setTimeout(() => window.scrollTo(0, r.y), 50);
   }
-  // Your team, picked once on this phone.
+  // Your team: one picker (the header's crest button), remembered on this phone. Requests,
+  // "I'm on it" and "Didn't bet" all use it; when they need it first, the picker opens and
+  // carries on with what was tapped (teamSheet.then).
   setMine(m) {
-    try { localStorage.setItem('9feamg-req-mgr', m); localStorage.setItem('9feamg-team-asked', '1'); } catch {}
-    this.setState({ reqMgr: m, askTeam: false, changingTeam: false, team: this.state.tab == 'Teams' ? this.state.team : m });
+    const S = this.state, then = S.teamSheet?.then;
+    try { localStorage.setItem('9feamg-req-mgr', m); } catch {}
+    this.setState({ reqMgr: m, teamSheet: null, team: S.tab == 'Teams' ? S.team : m, ...(m != S.reqMgr ? { req: { ...S.req, players: [], playerLegs: {} } } : {}) });
+    if (typeof then == 'function') then(m);
   }
-  // "No team": forget the pick on this phone (and don't ask again).
   clearMine() {
-    try { localStorage.removeItem('9feamg-req-mgr'); localStorage.setItem('9feamg-team-asked', '1'); } catch {}
-    this.setState({ reqMgr: null, askTeam: false, changingTeam: false });
+    try { localStorage.removeItem('9feamg-req-mgr'); } catch {}
+    this.setState({ reqMgr: null, teamSheet: null, req: { ...this.state.req, players: [], playerLegs: {} } });
   }
   // One Share button per card: a sheet offers the link or the image.
   shareMenu(title, link, img) { return e => { e?.stopPropagation?.(); this.setState({ shareSheet: { title, link, img } }); }; }
@@ -351,11 +353,11 @@ class Component extends DCLogic {
   }
   // "I'm on it": the first tap asks who you are (remembered with the request form's pick).
   // "Didn't bet it" (pass) goes through the same endpoint; only the ticket's owner or requester can.
-  async toggleTail(week, slug, as, pass = this.state.tailAskPass) {
+  async toggleTail(week, slug, as, pass = false) {
     const m = as || this.state.reqMgr;
-    if (!m) return this.setState({ tailAsk: slug, tailAskPass: pass });
+    if (!m) return this.setState({ teamSheet: { then: me => this.toggleTail(week, slug, me, pass) } });
     if (as) { try { localStorage.setItem('9feamg-req-mgr', as); } catch {} }
-    this.setState({ reqMgr: m, tailAsk: null, tailAskPass: false, tailBusy: slug });
+    this.setState({ reqMgr: m, tailBusy: slug });
     try {
       const r = await fetch('/api/tails', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ week, slug, manager: m, ...(pass ? { pass: true } : {}) }) });
       const d = await r.json().catch(() => ({}));
@@ -701,7 +703,7 @@ class Component extends DCLogic {
       // One sliding row, most parlays made first (ties keep league order).
       mgrs: [...MGR].sort((a, b) => parlaysBy(b) - parlaysBy(a)).map(m => ({ m, init: INIT[m], color: col(m), ring: m == rm ? 'var(--ink)' : 'transparent', fg: m == rm ? 'var(--ink)' : 'var(--muted)', pick: pickMgr(m), pressed: String(m == rm) })),
       // Once someone's picked, the ten crests fold into "Requesting as Matt · Change".
-      showMgrs: !rm || !!S.reqPicking, mgrCollapsed: !!rm && !S.reqPicking, me: rm ? { m: rm, init: INIT[rm], color: col(rm) } : {}, changeMgr: () => this.setState({ reqPicking: true }),
+      mgrCollapsed: !!rm, needMgr: !rm, me: rm ? { m: rm, init: INIT[rm], color: col(rm) } : {}, changeMgr: () => this.setState({ teamSheet: {} }),
       hasMgr: !!rm, risk: R.risk, riskLabel: rk.label, riskRange: riskText(rk), riskPay: riskPay(rk),
       reach: reqReach(rk, 'mix', R.legs), hasReach: !!reqReach(rk, 'mix', R.legs),
       legs: ['any', '2', '3', '4', '5', '6+'].map(l => ({ label: l == 'any' ? 'Any' : l, bg: R.legs == l ? 'var(--ink)' : 'transparent', fg: R.legs == l ? 'var(--bg)' : 'var(--ink)', pressed: String(R.legs == l), pick: () => this.setState({ req: { ...R, legs: l } }) })),
@@ -798,8 +800,6 @@ class Component extends DCLogic {
         tailLabel: S.tailBusy == anchor ? '…' : iTapped ? (owners.includes(me) ? 'Placed ✓' : 'You’re on it ✓') : me && owners.includes(me) ? 'I placed it' : 'I’m on it',
         tailPressed: String(iTapped), tailBg: iTapped ? 'var(--accent)' : 'transparent', tailFg: iTapped ? 'var(--onAccent)' : 'var(--ink)', tailBorder: iTapped ? 'var(--accent)' : 'var(--line)',
         tapTail: () => this.toggleTail(wk, anchor, null, false),
-        asking: S.tailAsk == anchor, askLabel: S.tailAskPass ? 'Who didn’t bet it? Remembered on this phone.' : 'Who’s on it? Remembered on this phone.',
-        askMgrs: (S.tailAskPass ? makers : MGR).map(m => ({ m, init: INIT[m], color: col(m), pick: () => this.toggleTail(wk, anchor, m) })), cancelAsk: () => this.setState({ tailAsk: null, tailAskPass: false }),
         booth: p.booth || '', hasBooth: boothOn && !!p.booth,
         share: e => this.share(shot, e), shareLabel: S.sharing == shot ? '…' : 'Image',
         // /p/<anchor> serves a preview of this parlay to chat apps, then forwards to /#<anchor>.
@@ -1021,10 +1021,13 @@ class Component extends DCLogic {
       gamedaySub: hasRecap ? (isFinal ? 'Week recap · scores + Booth' : LIVE_STARTED ? 'Live week · scores + Booth' : 'Week preview · projections + Booth') : '9 Fantasy Experts & Mr. Glenn',
       gamedayShare: hasRecap ? this.shareMenu(`Week ${wk}`, e => this.shareLink(location.origin + '/#w' + wk, '9FEAMG · Week ' + wk, e), e => this.share('recap', e)) : null, hasGamedayShare: !!hasRecap,
       jumps: hasWeek ? [['Matchups', 'matchups'], ...(boothOn && boothLines.length ? [['Booth', 'booth']] : []), ...(parlays.length || hasReq ? [['Parlays', 'parlays']] : [])].map(([label, id]) => ({ label, go: () => this.jump(id) })) : [], hasJumps: hasWeek,
-      askTeam: S.askTeam && (!S.reqMgr || S.changingTeam) && S.tab == 'Gameday', askTeamTitle: S.changingTeam ? 'Change your team' : 'Which team is yours?',
-      askTeamMgrs: MGR.map(m => ({ m, init: INIT[m], color: col(m), pick: () => this.setMine(m), ring: m == S.reqMgr ? 'var(--ink)' : 'transparent' })), skipAsk: () => { try { localStorage.setItem('9feamg-team-asked', '1'); } catch {} this.setState({ askTeam: false, changingTeam: false }); },
-      canClearTeam: !!S.reqMgr, clearTeam: () => this.clearMine(), skipLabel: S.changingTeam ? 'Cancel' : 'Not now',
-      heroMine, changeTeam: e => { e?.stopPropagation?.(); this.setState({ askTeam: true, changingTeam: true }); window.scrollTo({ top: 0, behavior: 'smooth' }); },
+      // Header crest button and the one "Your team" picker.
+      hasMe: !!S.reqMgr, noMe: !S.reqMgr, meInit: INIT[S.reqMgr] || '', meColor: S.reqMgr ? col(S.reqMgr) : 'transparent',
+      meLabel: S.reqMgr ? 'Your team: ' + S.reqMgr + '. Change' : 'Pick your team', openTeamSheet: () => this.setState({ teamSheet: {} }),
+      hasTeamSheet: !!S.teamSheet, teamSheetNote: S.teamSheet?.then ? 'Pick your team to carry on.' : 'Your matchup goes first on Gameday, your Standings row is highlighted and Teams opens on you. Requests and “I’m on it” use it too.',
+      teamSheetMgrs: [...MGR].sort((a, b) => parlaysBy(b) - parlaysBy(a)).map(m => ({ m, init: INIT[m], color: col(m), ring: m == S.reqMgr ? 'var(--ink)' : 'transparent', fg: m == S.reqMgr ? 'var(--ink)' : 'var(--muted)', pressed: String(m == S.reqMgr), pick: () => this.setMine(m) })),
+      canClearTeam: !!S.reqMgr, clearTeam: () => this.clearMine(), closeTeamSheet: () => this.setState({ teamSheet: null }),
+      heroMine,
       scoresAsOf: wk == LW && LIVE?.asOf ? asOfLabel(LIVE.asOf) : '', hasAsOf: wk == LW && !!LIVE?.asOf,
       newScores: !!S.newScores, refreshNow: () => this.refreshInPlace(),
       reqOpen: !!S.reqOpen, reqClosed: !S.reqOpen, openReq: () => this.setState({ reqOpen: true }), closeReq: () => this.setState({ reqOpen: false }),

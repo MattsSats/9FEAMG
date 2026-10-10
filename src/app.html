@@ -550,6 +550,10 @@ button{font-family:inherit;color:inherit}
     </sc-for>
   </nav>
   <div class="hdr-btns" style="display:flex;gap:8px">
+    <button sc-camel-on-click="{{ openTeamSheet }}" aria-label="{{ meLabel }}" title="{{ meLabel }}" style="min-height:34px;min-width:34px;padding:0 4px;border:1px solid var(--line);border-radius:999px;background:var(--surface);cursor:pointer;display:flex;align-items:center;justify-content:center">
+      <sc-if value="{{ hasMe }}" hint-placeholder-val="{{ false }}"><span class="crest" style="width:24px;height:24px;background:{{ meColor }};color:var(--onAccent);display:flex;align-items:center;justify-content:center;font-family:'Big Shoulders Display';font-weight:800;font-size:10px"><span class="ini" data-i="{{ meInit }}">{{ meInit }}</span></span></sc-if>
+      <sc-if value="{{ noMe }}" hint-placeholder-val="{{ true }}"><span style="padding:0 8px;font-family:'JetBrains Mono';font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink)">You?</span></sc-if>
+    </button>
     <button sc-camel-on-click="{{ openDraft }}" aria-label="Draft results" style="background:{{ draftBtnBg }};color:{{ draftBtnFg }};border:1px solid {{ draftBtnBorder }};border-radius:999px;padding:0 14px;font-family:'JetBrains Mono';font-size:11px;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;min-height:34px;display:flex;align-items:center;gap:6px"><svg class="{{ draftIconCls }}" width="16" height="16" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 5 H29 M24 5 V9"></path><circle class="trk" cx="24" cy="25" r="16" style="stroke:var(--line)"></circle><circle class="a-ring" cx="24" cy="25" r="16" transform="rotate(-90 24 25)" style="stroke:var(--hi-a)"></circle><path class="a-hand" d="M24 25 V15"></path><circle cx="24" cy="25" r="2" stroke="none" style="fill:var(--hi-a)"></circle></svg>Draft</button>
     <button sc-camel-on-click="{{ toggleTheme }}" style="background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:0 14px;font-family:'JetBrains Mono';font-size:11px;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;min-height:34px">{{ themeLabel }}</button>
   </div>
@@ -575,17 +579,6 @@ button{font-family:inherit;color:inherit}
         <button sc-camel-on-click="{{ j.go }}" class="hov" style="min-height:32px;padding:0 12px;border:1px solid var(--line);border-radius:999px;background:transparent;color:var(--ink);font-size:13px;font-weight:600;cursor:pointer">{{ j.label }}</button>
       </sc-for>
     </nav>
-  </sc-if>
-  <sc-if value="{{ askTeam }}" hint-placeholder-val="{{ false }}">
-    <div style="margin-top:14px;padding:12px 14px;border:1px solid var(--line);border-radius:16px;background:var(--surface)">
-      <div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><span style="font-size:14px;font-weight:600">{{ askTeamTitle }}</span><span style="display:flex;gap:4px"><sc-if value="{{ canClearTeam }}" hint-placeholder-val="{{ false }}"><button sc-camel-on-click="{{ clearTeam }}" style="border:0;background:transparent;color:var(--accentInk);font-size:12px;font-weight:600;cursor:pointer;padding:4px">No team</button></sc-if><button sc-camel-on-click="{{ skipAsk }}" style="border:0;background:transparent;color:var(--muted);font-size:12px;cursor:pointer;padding:4px">{{ skipLabel }}</button></span></div>
-      <div style="font-size:12px;color:var(--muted);margin-top:2px">Your matchup goes first, and Standings and Teams open on you. Remembered on this phone.</div>
-      <div class="mgr-grid" style="margin-top:8px">
-        <sc-for list="{{ askTeamMgrs }}" as="am" hint-placeholder-count="10">
-          <button sc-camel-on-click="{{ am.pick }}" aria-label="{{ am.m }}" style="flex:none;min-width:52px;display:flex;flex-direction:column;align-items:center;gap:3px;padding:4px;border:0;border-radius:10px;background:transparent;cursor:pointer"><span class="crest" style="width:28px;height:28px;background:{{ am.color }};color:var(--onAccent);display:flex;align-items:center;justify-content:center;font-family:'Big Shoulders Display';font-weight:800;font-size:11px"><span class="ini" data-i="{{ am.init }}">{{ am.init }}</span></span><span style="font-size:11px;font-weight:600;color:var(--muted);border-bottom:2px solid {{ am.ring }}">{{ am.m }}</span></button>
-        </sc-for>
-      </div>
-    </div>
   </sc-if>
 </div>
 <!-- Week buttons stay pinned under the header while Gameday scrolls. -->
@@ -642,7 +635,7 @@ button{font-family:inherit;color:inherit}
 <div id="matchups" class="jump-to">
   <div data-shot="hero" sc-camel-on-click="{{ hero.open }}" tabindex="0" role="button" style="margin:16px 20px 0;background:var(--surface);border:1px solid var(--line);border-radius:20px;overflow:hidden;cursor:pointer">
     <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;padding:14px 16px 0;min-height:46px">
-      <span style="display:flex;align-items:baseline;gap:8px;min-width:0"><span style="font-family:'JetBrains Mono';font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--accentInk);font-weight:600">{{ heroLabel }}</span><sc-if value="{{ heroMine }}" hint-placeholder-val="{{ false }}"><button class="no-shot" sc-camel-on-click="{{ changeTeam }}" style="border:0;background:transparent;padding:4px 0;color:var(--muted);font-size:12px;text-decoration:underline;cursor:pointer;white-space:nowrap">Not you?</button></sc-if></span>
+      <span style="display:flex;align-items:baseline;gap:8px;min-width:0"><span style="font-family:'JetBrains Mono';font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--accentInk);font-weight:600">{{ heroLabel }}</span></span>
       <span class="no-shot" style="display:flex;align-items:center;gap:12px">
 <button class="share-btn" sc-camel-on-click="{{ menuHero }}" aria-label="Share this matchup">Share</button>
         <span style="font-family:'JetBrains Mono';font-size:11px;color:var(--muted)">Lineups ›</span>
@@ -729,24 +722,19 @@ button{font-family:inherit;color:inherit}
           <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:24px;text-transform:uppercase">Request a parlay</div>
           <button sc-camel-on-click="{{ closeReq }}" style="border:0;background:transparent;color:var(--muted);font-size:13px;cursor:pointer;padding:6px">Close</button>
         </div>
+        <sc-if value="{{ reqForm.needMgr }}" hint-placeholder-val="{{ true }}">
+          <div style="display:flex;align-items:center;gap:8px;margin-top:14px">
+            <span style="font-family:'JetBrains Mono';font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)">Who’s asking?</span>
+            <button sc-camel-on-click="{{ reqForm.changeMgr }}" style="margin-left:auto;min-height:36px;padding:0 14px;border:0;border-radius:999px;background:var(--accent);color:var(--onAccent);font-weight:700;font-size:14px;cursor:pointer">Pick your team</button>
+          </div>
+        </sc-if>
         <sc-if value="{{ reqForm.mgrCollapsed }}" hint-placeholder-val="{{ false }}">
           <div style="display:flex;align-items:center;gap:8px;margin-top:14px">
-            <span style="font-family:'JetBrains Mono';font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)">Requesting as</span>
+            <span style="font-family:'JetBrains Mono';font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)">Asking as</span>
             <span class="crest" style="width:22px;height:22px;background:{{ reqForm.me.color }};color:var(--onAccent);display:flex;align-items:center;justify-content:center;font-family:'Big Shoulders Display';font-weight:800;font-size:9px"><span class="ini" data-i="{{ reqForm.me.init }}">{{ reqForm.me.init }}</span></span>
             <b style="font-size:14px">{{ reqForm.me.m }}</b>
             <button sc-camel-on-click="{{ reqForm.changeMgr }}" style="margin-left:auto;min-height:32px;padding:0 12px;border:1px solid var(--line);border-radius:999px;background:transparent;color:var(--muted);font-size:13px;cursor:pointer">Change</button>
           </div>
-        </sc-if>
-        <sc-if value="{{ reqForm.showMgrs }}" hint-placeholder-val="{{ true }}">
-        <div style="font-family:'JetBrains Mono';font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-top:14px">Who’s asking</div>
-        <div class="mgr-grid" style="margin-top:8px">
-          <sc-for list="{{ reqForm.mgrs }}" as="mg" hint-placeholder-count="10">
-            <button sc-camel-on-click="{{ mg.pick }}" aria-pressed="{{ mg.pressed }}" aria-label="{{ mg.m }}" style="flex:none;min-width:56px;display:flex;flex-direction:column;align-items:center;gap:3px;padding:4px;border:2px solid {{ mg.ring }};border-radius:10px;background:transparent;cursor:pointer">
-              <span class="crest" style="width:30px;height:30px;background:{{ mg.color }};color:var(--onAccent);display:flex;align-items:center;justify-content:center;font-family:'Big Shoulders Display';font-weight:800;font-size:12px"><span class="ini" data-i="{{ mg.init }}">{{ mg.init }}</span></span>
-              <span style="font-size:11px;font-weight:600;color:{{ mg.fg }}">{{ mg.m }}</span>
-            </button>
-          </sc-for>
-        </div>
         </sc-if>
         <sc-if value="{{ reqForm.hasMgr }}" hint-placeholder-val="{{ true }}">
           <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-top:16px">
@@ -878,16 +866,6 @@ button{font-family:inherit;color:inherit}
               <button class="no-shot" sc-camel-on-click="{{ pr.tapTail }}" aria-pressed="{{ pr.tailPressed }}" style="margin-left:auto;min-height:32px;padding:0 12px;border:1px solid {{ pr.tailBorder }};border-radius:999px;background:{{ pr.tailBg }};color:{{ pr.tailFg }};font-size:13px;font-weight:600;cursor:pointer">{{ pr.tailLabel }}</button>
             </sc-if>
           </div>
-          <sc-if value="{{ pr.asking }}" hint-placeholder-val="{{ false }}">
-            <div class="no-shot" style="padding:10px 16px 0">
-              <div style="display:flex;justify-content:space-between;align-items:center"><span style="font-family:'JetBrains Mono';font-size:11px;color:var(--muted)">{{ pr.askLabel }}</span><button sc-camel-on-click="{{ pr.cancelAsk }}" style="border:0;background:transparent;color:var(--muted);font-size:12px;cursor:pointer;padding:4px">Cancel</button></div>
-              <div class="mgr-grid" style="margin-top:6px">
-                <sc-for list="{{ pr.askMgrs }}" as="am" hint-placeholder-count="10">
-                  <button sc-camel-on-click="{{ am.pick }}" aria-label="{{ am.m }}" style="flex:none;min-width:52px;display:flex;flex-direction:column;align-items:center;gap:3px;padding:4px;border:0;border-radius:10px;background:transparent;cursor:pointer"><span class="crest" style="width:28px;height:28px;background:{{ am.color }};color:var(--onAccent);display:flex;align-items:center;justify-content:center;font-family:'Big Shoulders Display';font-weight:800;font-size:11px"><span class="ini" data-i="{{ am.init }}">{{ am.init }}</span></span><span style="font-size:11px;font-weight:600;color:var(--muted)">{{ am.m }}</span></button>
-                </sc-for>
-              </div>
-            </div>
-          </sc-if>
         </sc-if>
         <div class="pr-body" style="display:{{ pr.bodyDisplay }}">
         <div style="padding:6px 16px 0">
@@ -1436,6 +1414,26 @@ button{font-family:inherit;color:inherit}
   </div>
 </sc-if>
 
+<sc-if value="{{ hasTeamSheet }}" hint-placeholder-val="{{ false }}">
+  <div class="share-sheet" sc-camel-on-click="{{ closeTeamSheet }}" style="position:fixed;inset:0;z-index:60;background:rgba(0,0,0,.35);display:flex;align-items:flex-end;justify-content:center">
+    <div role="dialog" aria-label="Your team" sc-camel-on-click="{{ stopTap }}" class="share-panel" style="width:100%;max-width:440px;background:var(--bg);border-radius:20px 20px 0 0;padding:16px 16px 28px">
+      <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:24px;text-transform:uppercase">Your team</div>
+      <div style="font-size:13px;color:var(--muted);margin-top:4px;line-height:1.4;text-wrap:pretty">{{ teamSheetNote }} Remembered on this phone.</div>
+      <div class="mgr-grid" style="margin-top:12px">
+        <sc-for list="{{ teamSheetMgrs }}" as="tm" hint-placeholder-count="10">
+          <button sc-camel-on-click="{{ tm.pick }}" aria-pressed="{{ tm.pressed }}" aria-label="{{ tm.m }}" style="display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 2px;border:2px solid {{ tm.ring }};border-radius:12px;background:transparent;cursor:pointer">
+            <span class="crest" style="width:34px;height:34px;background:{{ tm.color }};color:var(--onAccent);display:flex;align-items:center;justify-content:center;font-family:'Big Shoulders Display';font-weight:800;font-size:13px"><span class="ini" data-i="{{ tm.init }}">{{ tm.init }}</span></span>
+            <span style="font-size:12px;font-weight:600;color:{{ tm.fg }}">{{ tm.m }}</span>
+          </button>
+        </sc-for>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:12px">
+        <sc-if value="{{ canClearTeam }}" hint-placeholder-val="{{ false }}"><button sc-camel-on-click="{{ clearTeam }}" style="flex:1;min-height:44px;border:1px solid var(--line);border-radius:999px;background:transparent;color:var(--ink);font-size:14px;font-weight:600;cursor:pointer">No team</button></sc-if>
+        <button sc-camel-on-click="{{ closeTeamSheet }}" style="flex:1;min-height:44px;border:0;background:transparent;color:var(--muted);font-size:14px;cursor:pointer">Cancel</button>
+      </div>
+    </div>
+  </div>
+</sc-if>
 <sc-if value="{{ hasShareSheet }}" hint-placeholder-val="{{ false }}">
   <div class="share-sheet" sc-camel-on-click="{{ closeShareSheet }}" style="position:fixed;inset:0;z-index:60;background:rgba(0,0,0,.35);display:flex;align-items:flex-end;justify-content:center">
     <div role="dialog" aria-label="Share" sc-camel-on-click="{{ stopTap }}" class="share-panel" style="width:100%;max-width:440px;background:var(--bg);border-radius:20px 20px 0 0;padding:16px 16px 28px">
