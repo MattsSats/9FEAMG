@@ -294,18 +294,20 @@ window.SEASON = {
     ],
     5: [
       {
-        owner: 'Matt', title: 'The Whole Lineup', request: 'Matt', requestAt: '2026-10-07T04:04:28.169Z',
+        owner: 'Matt', title: 'The Whole Lineup', request: 'Matt', requestAt: '2026-10-07T04:04:28.169Z', placedBy: ['Matt'], odds: '+11291',
         // Built by Claude for Matt's Lottery request (+5000 and up, any legs): every leg is a team
         // Matt starts someone from winning outright. Steelers over Colts because Matt starts the
         // Steelers D/ST (and Josh Downs, so that leg cuts both ways); Hubbard's Panthers are on bye.
-        // Odds: DraftKings moneylines via ESPN, Tue Oct 6, 11:10 PM CT.
+        // Odds: Matt placed it at DraftKings, Fri Oct 9, 7:54 PM CT (DK639271904910145642), $10 to pay
+        // $1,139.12; legs and the +11291 ticket price are from his slip. Built from DraftKings
+        // moneylines via ESPN, Tue Oct 6, 11:10 PM CT.
         legs: [
-          { text: 'Packers moneyline vs Bears', type: 'ml', team: 'GB', teams: ['Chi', 'GB'], game: 'Sun 12:00 PM · CHI @ GB', odds: '+124', status: 'open' },
-          { text: '49ers moneyline at Seahawks', type: 'ml', team: 'SF', teams: ['SF', 'Sea'], game: 'Sun 3:25 PM · SF @ SEA', odds: '+130', status: 'open' },
+          { text: 'Packers moneyline vs Bears', type: 'ml', team: 'GB', teams: ['Chi', 'GB'], game: 'Sun 12:00 PM · CHI @ GB', odds: '+102', status: 'open' },
+          { text: '49ers moneyline at Seahawks', type: 'ml', team: 'SF', teams: ['SF', 'Sea'], game: 'Sun 3:25 PM · SF @ SEA', odds: '+136', status: 'open' },
           { text: 'Jets moneyline vs Browns', type: 'ml', team: 'NYJ', teams: ['Cle', 'NYJ'], game: 'Sun 12:00 PM · CLE @ NYJ', odds: '-130', status: 'open' },
-          { text: 'Cardinals moneyline vs Lions', type: 'ml', team: 'Ari', teams: ['Det', 'Ari'], game: 'Sun 3:25 PM · DET @ ARI', odds: '+195', status: 'open' },
-          { text: 'Chargers moneyline vs Broncos', type: 'ml', team: 'LAC', teams: ['Den', 'LAC'], game: 'Sun 3:05 PM · DEN @ LAC', odds: '+154', status: 'open' },
-          { text: 'Steelers moneyline vs Colts', type: 'ml', team: 'Pit', teams: ['Ind', 'Pit'], game: 'Sun 12:00 PM · IND @ PIT', odds: '-142', status: 'open' }
+          { text: 'Cardinals moneyline vs Lions', type: 'ml', team: 'Ari', teams: ['Det', 'Ari'], game: 'Sun 3:25 PM · DET @ ARI', odds: '+210', status: 'open' },
+          { text: 'Chargers moneyline vs Broncos', type: 'ml', team: 'LAC', teams: ['Den', 'LAC'], game: 'Sun 3:05 PM · DEN @ LAC', odds: '+160', status: 'open' },
+          { text: 'Steelers moneyline vs Colts', type: 'ml', team: 'Pit', teams: ['Ind', 'Pit'], game: 'Sun 12:00 PM · IND @ PIT', odds: '-148', status: 'open' }
         ]
       },
       {
