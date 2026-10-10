@@ -61,7 +61,7 @@ window.SEASON = {
     week: 5,
     status: 'Live · Thursday final (TB 24, DAL 16) · Sunday next',
     // When these numbers were pulled from Yahoo (Central); shows as "Scores as of Thu 10:19 PM".
-    asOf: '2026-10-09T19:27:00-05:00',
+    asOf: '2026-10-09T20:39:00-05:00',
     // [current points, projected final]
     // Yahoo as of Fri Oct 9, 7:27 PM CT: Thursday final, Sunday projections. Tristan has only
     // two starters set (Odunze, Tuten), so Yahoo projects him 20.12.
@@ -81,7 +81,7 @@ window.SEASON = {
       'CeeDee Lamb': 1.90, 'Brandon Aubrey': 5.00, 'Chris Godwin Jr.': 5.50
     },
     inProgress: [],
-    sheetNote: 'Thursday final; Sunday projections as of Fri 7:27 PM CT. Each player is tagged Final, Live or proj.'
+    sheetNote: 'Thursday final; Sunday projections as of Fri 8:39 PM CT. Each player is tagged Final, Live or proj.'
   },
 
   // The NFL week: every game ('Sun 12:00 PM · CHI @ GB', kickoff Central, same form as parlay legs)
