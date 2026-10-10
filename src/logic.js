@@ -835,13 +835,17 @@ class Component extends DCLogic {
         // tailing your own opponent's parlay is a hedge (win the matchup or cash the ticket).
         withList: onIt.map(m => { const tag = owners.includes(m) ? 'PLACED' : m == vs ? 'HEDGE' : ''; return { m, init: INIT[m] ?? m.slice(0, 2).toUpperCase(), color: ownerCol(m), tag, hasTag: !!tag }; }),
         hasWith: onIt.length > 0, unbet: status == 'OPEN' && !onIt.length && !(me && owners.includes(me)), withLabel: status == 'CASHED' ? 'Cashed with' : status == 'BUSTED' ? 'Busted with' : 'On it',
-        canTail: !lockedNow && !(me && fixed.includes(me)) && !iPassed, showTails: onIt.length > 0 || !lockedNow || passes.length > 0 || (!!me && makers.includes(me)),
+        canTail: !lockedNow && !(me && fixed.includes(me)) && !iPassed,
+        // Nobody on it: "Nobody's on it yet" beside the button, or "Locked" once it can't be joined.
+        nobodyYet: !onIt.length && !passes.length && !lockedNow, lockedPaper: status == 'OPEN' && !onIt.length && lockedNow, lockedLabel: passes.length ? 'Locked' : 'Locked · nobody bet this one', locked: lockedNow,
+        showTails: onIt.length > 0 || !lockedNow || passes.length > 0 || (!!me && makers.includes(me)) || (status == 'OPEN' && lockedNow),
         // "Didn't bet": shown to the ticket's owner or requester once the phone knows who you are.
         canPass: !!me && makers.includes(me) && !iPassed,
         passLabel: S.tailBusy == anchor ? '…' : 'Didn’t bet',
         tapPass: () => this.toggleTail(wk, anchor, null, true),
-        // "<name> didn't bet this one · Undo", one per person who passed.
-        hasPassed: passes.length > 0, passedList: passes.map(m => ({ line: m + ' didn’t bet this one.', undo: () => this.toggleTail(wk, anchor, m, true, true) })),
+        // "<name> didn't bet this one · Undo", one per person who passed. Undo shows only to that
+        // person and the ticket's owner or requester.
+        hasPassed: passes.length > 0, passedList: passes.map(m => ({ line: m + ' didn’t bet this one.', canUndo: !!me && (me == m || makers.includes(me)), undo: () => this.toggleTail(wk, anchor, m, true, true) })),
         tailLabel: S.tailBusy == anchor ? '…' : iTapped ? (owners.includes(me) ? 'Placed ✓' : 'You’re on it ✓') : me && owners.includes(me) ? 'I placed it' : 'I’m on it',
         tailPressed: String(iTapped), tailBg: iTapped ? 'var(--accent)' : 'transparent', tailFg: iTapped ? 'var(--onAccent)' : 'var(--ink)', tailBorder: iTapped ? 'var(--accent)' : 'var(--line)',
         tapTail: () => this.toggleTail(wk, anchor, null, false),
@@ -860,9 +864,10 @@ class Component extends DCLogic {
     });
     // Cashed and open tickets someone's on (by chance to hit) first, then two collapsible
     // sections: open tickets nobody's on (your own team's stay up top), then busted ones.
-    // Each section's toggle sits above its first card.
+    // Each section's toggle sits above its first card; in Nobody's on these, tickets you can
+    // still join come before locked ones.
     const group = x => x.status == 'BUSTED' ? 2 : x.unbet ? 1 : 0;
-    parlays.sort((a, b) => group(a) - group(b) || b.rank - a.rank || b.chance - a.chance);
+    parlays.sort((a, b) => group(a) - group(b) || (group(a) == 1 ? a.locked - b.locked : 0) || b.rank - a.rank || b.chance - a.chance);
     const sections = [
       { g: 1, open: S.unbetOpen !== false, key: 'unbetOpen', label: n => `Nobody’s on these · ${n}` },
       { g: 2, open: !!S.bustedOpen, key: 'bustedOpen', label: n => `Busted · ${n}` }];

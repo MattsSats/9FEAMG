@@ -867,15 +867,23 @@ button{font-family:inherit;color:inherit}
             </sc-if>
             <sc-if value="{{ pr.hasPassed }}" hint-placeholder-val="{{ false }}">
               <sc-for list="{{ pr.passedList }}" as="ps" hint-placeholder-count="1">
-                <span style="display:inline-flex;align-items:center;gap:2px;font-family:'JetBrains Mono';font-size:11px;color:var(--muted)">{{ ps.line }}<button class="no-shot" sc-camel-on-click="{{ ps.undo }}" style="min-height:32px;padding:0 6px;border:0;background:transparent;color:var(--muted);font-size:12px;text-decoration:underline;cursor:pointer">Undo</button></span>
+                <span style="display:inline-flex;align-items:center;gap:2px;min-height:40px;font-family:'JetBrains Mono';font-size:11px;color:var(--muted)">{{ ps.line }}<sc-if value="{{ ps.canUndo }}" hint-placeholder-val="{{ false }}"><button class="no-shot" sc-camel-on-click="{{ ps.undo }}" style="min-height:40px;padding:0 6px;border:0;background:transparent;color:var(--muted);font-size:12px;text-decoration:underline;cursor:pointer">Undo</button></sc-if></span>
               </sc-for>
             </sc-if>
-            <sc-if value="{{ pr.canPass }}" hint-placeholder-val="{{ false }}">
-              <button class="no-shot" sc-camel-on-click="{{ pr.tapPass }}" style="margin-left:auto;min-height:32px;padding:0 12px;border:1px dashed var(--line);border-radius:999px;background:transparent;color:var(--muted);font-size:13px;font-weight:600;cursor:pointer">{{ pr.passLabel }}</button>
+            <sc-if value="{{ pr.nobodyYet }}" hint-placeholder-val="{{ false }}">
+              <span class="no-shot" style="font-family:'JetBrains Mono';font-size:11px;color:var(--muted)">Nobody’s on it yet</span>
             </sc-if>
-            <sc-if value="{{ pr.canTail }}" hint-placeholder-val="{{ false }}">
-              <button class="no-shot" sc-camel-on-click="{{ pr.tapTail }}" aria-pressed="{{ pr.tailPressed }}" style="margin-left:auto;min-height:32px;padding:0 12px;border:1px solid {{ pr.tailBorder }};border-radius:999px;background:{{ pr.tailBg }};color:{{ pr.tailFg }};font-size:13px;font-weight:600;cursor:pointer">{{ pr.tailLabel }}</button>
+            <sc-if value="{{ pr.lockedPaper }}" hint-placeholder-val="{{ false }}">
+              <span style="display:inline-flex;align-items:center;min-height:40px;font-family:'JetBrains Mono';font-size:11px;color:var(--muted)">{{ pr.lockedLabel }}</span>
             </sc-if>
+            <span style="display:flex;align-items:center;gap:8px;margin-left:auto">
+              <sc-if value="{{ pr.canPass }}" hint-placeholder-val="{{ false }}">
+                <button class="no-shot" sc-camel-on-click="{{ pr.tapPass }}" style="min-height:40px;padding:0 14px;border:1px dashed var(--line);border-radius:999px;background:transparent;color:var(--muted);font-size:13px;font-weight:600;cursor:pointer">{{ pr.passLabel }}</button>
+              </sc-if>
+              <sc-if value="{{ pr.canTail }}" hint-placeholder-val="{{ false }}">
+                <button class="no-shot" sc-camel-on-click="{{ pr.tapTail }}" aria-pressed="{{ pr.tailPressed }}" style="min-height:40px;padding:0 14px;border:1px solid {{ pr.tailBorder }};border-radius:999px;background:{{ pr.tailBg }};color:{{ pr.tailFg }};font-size:13px;font-weight:600;cursor:pointer">{{ pr.tailLabel }}</button>
+              </sc-if>
+            </span>
           </div>
         </sc-if>
         <div class="pr-body" style="display:{{ pr.bodyDisplay }}">
