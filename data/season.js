@@ -342,8 +342,8 @@ window.SEASON = {
       Colin: 'Up three after the second-best score of Week 4. Twenty-three adds, and the 2:23 AM one scored 25.50.',
       Jerger: 'Up three on two straight wins, the second one by 1.44. Yahoo’s #1 fan is getting the hang of the app.',
       Kurt: '5th by the numbers, 8th in the standings, and the unluckiest team in the league. Average Sports Enthusiast, below-average luck.',
-      Pablo: 'Up four, the biggest jump of the week, after beating all nine teams in Week 4. He was #1, and for one week he was again.',
-      Tony: 'Down five, the biggest drop of the week, after the league’s lowest score (90.82). 2nd in the standings, 7th here. Fraud watch is open.',
+      Pablo: 'Up four, the biggest jump of the week, after beating all nine teams in Week 4 with 133.78. Pablo was projected 9th.',
+      Tony: 'Down five, tied with Matt for the biggest drop, after the league’s lowest score (90.82). 2nd in the standings, 7th here. Fraud watch is open.',
       DLin: 'Holding at 8th after beating Matt by 22.60. The Toilet Bowl King’s title defense is a respectable 2–2.',
       Matt: 'Down five after scoring 92.08. There is no 2nd best, but there is a 9th.',
       'Mr. G': 'Last, but opponents have averaged 131.00 against Mr. G. The schedule owes Mr. G an apology.'
@@ -358,7 +358,7 @@ window.SEASON = {
     Matt: 'Second-unluckiest manager in the league at −0.89. Would still like you to know that.',
     Kurt: 'Unluckiest manager in the league at −1.00. Lost Week 4 by 1.44 with JCM’s 6.00 on the bench and Saquon starting for 1.50.',
     Jerger: 'Two straight wins after an 0–2 start. Still has 91.52 points left on the bench.',
-    'Mr. G': 'Most points allowed in the league: 524.00, 76.16 more than anyone. Opponents save their best for Mr. G.',
+    'Mr. G': 'Fewest points scored in the league (388.54) and the most allowed (524.00). Mr. G is losing from both ends.',
     Colin: '28 adds, more than double anyone else, and the most points left on the bench (110.74). Somehow 2–2.',
     DLin: '2–2 on a 14–22 all-play record, second-worst in the league. The Toilet Bowl King’s title defense is merely delayed.',
     Pablo: 'Projected 9th in Week 4, finished first with 133.78. Still has 99.56 bench points, second only to Colin.'
