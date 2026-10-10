@@ -969,12 +969,22 @@ class Component extends DCLogic {
       // The row just above the playoff line has no rule of its own; the line is the divider.
       rowLine: i == P - 1 ? 'transparent' : 'var(--line)', init: INIT[s.m], color: col(s.m), pa: f1(s.pa), max: s.max == null ? '—' : f1(s.max), wl: s.w + '–' + s.l, pf: f1(s.pf), luck: sgn(s.luck), luckColor: s.luck > 0 ? 'var(--pos)' : s.luck < 0 ? 'var(--neg)' : 'var(--muted)', cut: i == P - 1, open: () => { this.setState({ tab: 'Teams', team: s.m }); window.scrollTo(0, 0); } }));
     const allS = Object.values(SC).flat(), lo = Math.min(...allS), hi = Math.max(...allS);
-    const heatHead = chipWeeks.filter(w => w <= NF).map(w => 'W' + w).concat(LW ? ['W' + LW] : []);
-    const restFrom = (LW ?? NF) + 1, total = D.regularSeasonWeeks;
+    // Weekly scores: one column per regular-season week. Played weeks are shaded (darker = higher),
+    // the live week shows current points, and future weeks are faint empty cells on desktop.
+    // Phones show the weeks so far and fold the future into one "6–14" cell.
+    const total = D.regularSeasonWeeks, lastShown = LW ?? NF, restFrom = lastShown + 1;
     const restLabel = restFrom < total ? restFrom + '–' + total : restFrom == total ? 'W' + total : '';
-    const heatCols = `64px repeat(${heatHead.length},minmax(36px,72px))` + (restLabel ? ' 36px' : '');
-    const heatMinW = (64 + heatHead.length * 40 + (restLabel ? 40 : 0)) + 'px';
-    const heat = MGR.map(m => ({ m, cells: [...Array(NF).keys()].map(i => { const w = i + 1, v = SC[m][i], t = (hi - v) / (hi - lo || 1), k = Math.min(5, Math.floor(t * 5) + 1); return { v: f1(v), r: won(m, w) ? 'W' : 'L', bg: `var(--heat${k})`, fg: 'var(--ink)' }; }) }));
+    const weeksAll = [...Array(total).keys()].map(i => i + 1), fut = w => w > lastShown;
+    const heatHead = weeksAll.map(w => ({ t: 'W' + w, cls: fut(w) ? 'heat-fut' : '', fg: w == LW ? 'var(--accentInk)' : 'inherit' }))
+      .concat(restLabel ? [{ t: restLabel, cls: 'heat-rest', fg: 'inherit' }] : []);
+    const heatColsM = `64px repeat(${lastShown},minmax(40px,1fr))` + (restLabel ? ' 40px' : ''), heatColsD = `64px repeat(${total},minmax(44px,1fr))`;
+    const heatMinM = (64 + lastShown * 44 + (restLabel ? 44 : 0)) + 'px', heatMinD = (64 + total * 48) + 'px';
+    const heat = MGR.map(m => ({ m, cells: weeksAll.map(w => {
+      if (w <= NF) { const v = SC[m][w - 1], t = (v - lo) / (hi - lo || 1), k = Math.min(5, Math.floor(t * 5) + 1);
+        return { v: f1(v), r: won(m, w) ? 'W' : 'L', bg: `var(--heat${k})`, fg: 'var(--ink)', bs: 'solid', bc: 'transparent', op: 1, cls: '', live: false }; }
+      if (w == LW) return { v: LIVE_STARTED ? f1(LIVE.scores?.[m]?.[0] ?? 0) : '—', r: '', bg: 'transparent', fg: 'var(--ink)', bs: 'dashed', bc: 'var(--accent)', op: 1, cls: 'heat-live', live: true };
+      return { v: '', r: '', bg: 'var(--surface2)', fg: 'var(--muted)', bs: 'solid', bc: 'transparent', op: .5, cls: 'heat-fut', live: false };
+    }).concat(restLabel ? [{ v: '', r: '', bg: 'var(--surface2)', fg: 'var(--muted)', bs: 'solid', bc: 'transparent', op: 1, cls: 'heat-rest', live: false }] : []) }));
     let topW = { v: -1 };
     MGR.forEach(m => SC[m].forEach((v, i) => { if (v > topW.v) topW = { v, m, w: i + 1 }; }));
     const lucky = [...ST].sort((a, b) => b.luck - a.luck)[0], unlucky = [...ST].sort((a, b) => a.luck - b.luck)[0];
@@ -1156,7 +1166,7 @@ class Component extends DCLogic {
       hasReq, reqForm, reqList, hasReqList: reqList.length > 0,
       showBooth: boothOn, booth: boothLines, hasBooth: boothOn && boothLines.length > 0,
       seasonSub, seasonTiles, standings, playoffLine: `Playoff line · top ${P} of ${MGR.length}`,
-      heat, heatHead, heatCols, heatMinW, restLabel, hasRest: !!restLabel, liveCol: !!LW,
+      heat, heatHead, heatColsM, heatColsD, heatMinM, heatMinD,
       team, teamPicker,
       draftInfo: D.draftInfo, draftToolUrl: D.draftToolUrl || '', hasDraftTool: !!D.draftToolUrl, draftOk: !draftMsg, draftMsg, draftFirsts, draftModes, draftChips, draftPicks, draftTitle, draftSub,
       wireSub: 'Adds, drops, trades and FAAB · through ' + shortDate(now), wireModes, activityLabel: seasonMode ? 'Adds · season' : 'Adds · 7 days', wireSeason: txOk, wireDays: days, noMoves, activity, wireRoast, wireBanner: boothOn || !txOk, faab, faabBudget: '$' + budget + ' budget', txOk,

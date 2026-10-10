@@ -442,21 +442,34 @@ button{font-family:inherit;color:inherit}
 @media (max-width:899px){
   .season-grid{display:flex;flex-direction:column}
   .season-grid>.sg-c1,.season-grid>.sg-c2,.season-grid>.sg-c3{display:contents}
-  .sg-st{order:1}.sg-pw{order:2}.sg-ch{order:3}.sg-lk{order:4}.sg-bn{order:5}
+  .sg-st{order:1}.sg-pw{order:2}.sg-ch{order:3}.sg-lk{order:4}.sg-bn{order:5}.sg-hs{order:6}.sg-hr{order:7}
 }
+/* Weekly scores grid: phones (weeks so far + one "rest" cell) and desktop (all 14 weeks). */
+.heat-grid{display:grid;grid-template-columns:var(--heat-m);gap:4px}
+.heat-wrap{min-width:var(--hmin-m)}
+.heat-cell{height:38px;border-radius:8px;display:flex;align-items:center;justify-content:center;gap:4px;font-family:'JetBrains Mono';font-size:12px;font-weight:600;padding:0 4px;white-space:nowrap}
+.heat-grid>.heat-fut{display:none}
+/* Phones: the live week's LIVE tag sits under the points so the column stays narrow. */
+@media (max-width:899px){.heat-live{flex-direction:column;gap:1px!important;line-height:1}.heat-cell{font-size:11px;gap:2px;padding:0 2px}.heat-cell>span{font-size:8px!important}}
 @media (min-width:900px){
-  .cols.season-grid{grid-template-areas:"c1 c2" "c3 c3"}
-  .season-grid>.sg-c1{grid-area:c1}.season-grid>.sg-c2{grid-area:c2}.season-grid>.sg-c3{grid-area:c3}
+  .cols.season-grid{grid-template-areas:"c1 c2" "c3 c3" "hs hs"}
+  .season-grid>.sg-c1{grid-area:c1}.season-grid>.sg-c2{grid-area:c2}.season-grid>.sg-c3{grid-area:c3}.season-grid>.sg-hs{grid-area:hs}
+  .heat-grid{grid-template-columns:var(--heat-d)}
+  .heat-wrap{min-width:var(--hmin-d)}
+  .heat-grid>.heat-fut{display:flex}
+  .heat-grid>span.heat-fut{display:block}
+  .heat-grid>.heat-rest{display:none}
+  /* How to read this, tightened to fit beside Power rankings. */
+  .sg-hr{margin-top:20px!important;padding:14px 16px!important}
+  .sg-hr>div:last-child{gap:10px!important;margin-top:10px!important}
+  .sg-hr>div:last-child>div>div:last-child{font-size:13px!important;line-height:1.4!important;margin-top:2px!important}
   .season-grid>.sg-c3{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:0 12px;align-items:start}
   .season-grid>*>*{min-width:0}
-  /* Weekly scores: cells stop growing past 72px instead of stretching across the page. */
-  .heat-sec{max-width:max-content;box-sizing:content-box}
-  .heat-sec>div:first-child{gap:24px}
   .wire-toggle{display:inline-grid!important;grid-template-columns:auto auto!important;border-radius:999px!important}
   .wire-toggle>button{min-height:34px!important;padding:0 16px;border-radius:999px!important;font-size:13px!important}
 }
 @media (min-width:1320px){
-  .cols.season-grid{grid-template-areas:"c1 c2 c3"}
+  .cols.season-grid{grid-template-areas:"c1 c2 c3" "hs hs hs"}
   .season-grid>.sg-c3{display:block}
 }
 /* Wide desktop: three columns on Gameday (featured + Booth | matchups | parlays). */
@@ -1141,42 +1154,8 @@ button{font-family:inherit;color:inherit}
   </div>
   <div class="shot-footer"><b>9FEAMG</b><span>{{ shotNoteLuck }}</span></div>
 </div>
-</div>
-</div>
 
-<div class="heat-sec" style="padding:30px 20px 0">
-  <div style="display:flex;align-items:baseline;justify-content:space-between">
-    <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:26px;text-transform:uppercase">Weekly scores</div>
-    <div style="font-family:'JetBrains Mono';font-size:11px;color:var(--muted)">Darker = lower score</div>
-  </div>
-  <div class="scroll-x">
-  <div class="heat-wrap" style="min-width:{{ heatMinW }}">
-  <div style="display:grid;grid-template-columns:{{ heatCols }};gap:4px;padding:12px 0 6px;font-family:'JetBrains Mono';font-size:10px;color:var(--muted);letter-spacing:.06em">
-    <span></span>
-    <sc-for list="{{ heatHead }}" as="hh" hint-placeholder-count="4"><span style="text-align:center">{{ hh }}</span></sc-for>
-    <sc-if value="{{ hasRest }}" hint-placeholder-val="{{ true }}"><span style="text-align:center">{{ restLabel }}</span></sc-if>
-  </div>
-  <div style="display:flex;flex-direction:column;gap:4px">
-    <sc-for list="{{ heat }}" as="h" hint-placeholder-count="10">
-      <div style="display:grid;grid-template-columns:{{ heatCols }};gap:4px;align-items:center">
-        <span style="font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ h.m }}</span>
-        <sc-for list="{{ h.cells }}" as="c" hint-placeholder-count="3">
-          <div style="height:38px;border-radius:8px;background:{{ c.bg }};color:{{ c.fg }};display:flex;align-items:center;justify-content:center;gap:4px;font-family:'JetBrains Mono';font-size:12px;font-weight:600">{{ c.v }}<span style="font-size:9px;opacity:.75">{{ c.r }}</span></div>
-        </sc-for>
-        <sc-if value="{{ liveCol }}" hint-placeholder-val="{{ true }}">
-          <div style="height:38px;border-radius:8px;border:1px dashed var(--accent);display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono';font-size:10px;font-weight:600;color:var(--accentInk);letter-spacing:.06em">LIVE</div>
-        </sc-if>
-        <sc-if value="{{ hasRest }}" hint-placeholder-val="{{ true }}">
-          <div style="height:38px;border-radius:8px;background:var(--surface2)"></div>
-        </sc-if>
-      </div>
-    </sc-for>
-  </div>
-  </div>
-  </div>
-</div>
-
-<div style="margin:30px 20px 0;padding:18px;background:var(--surface);border:1px solid var(--line);border-radius:16px">
+<div class="sg-hr" style="margin:30px 20px 0;padding:18px;background:var(--surface);border:1px solid var(--line);border-radius:16px">
   <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:22px;text-transform:uppercase">How to read this</div>
   <div style="display:flex;flex-direction:column;gap:14px;margin-top:14px">
     <div><div style="font-family:'JetBrains Mono';font-size:11px;font-weight:600;color:var(--accentInk);letter-spacing:.06em">xW · EXPECTED WINS</div><div style="font-size:14px;line-height:1.45;margin-top:4px;color:var(--muted);text-wrap:pretty">Each week every score is ranked against the whole league. Beating 7 of 9 teams earns 0.78 xW, no matter who you actually played.</div></div>
@@ -1185,6 +1164,36 @@ button{font-family:inherit;color:inherit}
     <div><div style="font-family:'JetBrains Mono';font-size:11px;font-weight:600;color:var(--accentInk);letter-spacing:.06em">BENCH POINTS</div><div style="font-size:14px;line-height:1.45;margin-top:4px;color:var(--muted)">Best possible lineup minus what you actually scored. Points you left sitting.</div></div>
   </div>
 </div>
+</div>
+
+<div class="heat-sec sg-hs" style="padding:30px 20px 0">
+  <div style="display:flex;align-items:baseline;justify-content:space-between;gap:24px">
+    <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:26px;text-transform:uppercase">Weekly scores</div>
+    <div style="font-family:'JetBrains Mono';font-size:11px;color:var(--muted)">Darker = higher score</div>
+  </div>
+  <!-- Every week of the regular season on desktop (future weeks faint); phones show the weeks so
+       far and one "6–14" cell. The live week shows current points with a LIVE tag. -->
+  <div class="scroll-x">
+  <div class="heat-wrap" style="--heat-m:{{ heatColsM }};--heat-d:{{ heatColsD }};--hmin-m:{{ heatMinM }};--hmin-d:{{ heatMinD }}">
+  <div class="heat-grid" style="padding:12px 0 6px;font-family:'JetBrains Mono';font-size:10px;color:var(--muted);letter-spacing:.06em">
+    <span></span>
+    <sc-for list="{{ heatHead }}" as="hh" hint-placeholder-count="4"><span class="{{ hh.cls }}" style="text-align:center;color:{{ hh.fg }}">{{ hh.t }}</span></sc-for>
+  </div>
+  <div style="display:flex;flex-direction:column;gap:4px">
+    <sc-for list="{{ heat }}" as="h" hint-placeholder-count="10">
+      <div class="heat-grid" style="align-items:center">
+        <span style="font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ h.m }}</span>
+        <sc-for list="{{ h.cells }}" as="c" hint-placeholder-count="3">
+          <div class="heat-cell {{ c.cls }}" style="background:{{ c.bg }};border:1px {{ c.bs }} {{ c.bc }};color:{{ c.fg }};opacity:{{ c.op }}">{{ c.v }}<span style="font-size:9px;opacity:.75">{{ c.r }}</span><sc-if value="{{ c.live }}" hint-placeholder-val="{{ false }}"><span style="font-size:8px;font-weight:700;letter-spacing:.08em;padding:2px 4px;border-radius:4px;background:var(--accent);color:var(--onAccent)">LIVE</span></sc-if></div>
+        </sc-for>
+      </div>
+    </sc-for>
+  </div>
+  </div>
+  </div>
+</div>
+</div>
+
 </sc-if>
 
 <sc-if value="{{ tabTeams }}" hint-placeholder-val="{{ false }}">
