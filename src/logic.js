@@ -807,7 +807,7 @@ class Component extends DCLogic {
     parlays.sort((a, b) => group(a) - group(b) || within[group(a)](a, b));
     const sections = [
       { g: 1, open: S.unbetOpen !== false, key: 'unbetOpen', label: n => `Nobody’s on these · ${n}` },
-      { g: 2, open: !!S.bustedOpen, key: 'bustedOpen', label: n => `Busted · ${n}` }];
+      { g: 2, open: S.bustedOpen !== false, key: 'bustedOpen', label: n => `Busted · ${n}` }];
     // Display order inside the parlays column (CSS order): tickets someone's on (1), the ledger (2),
     // Nobody's on these (3), Busted (4).
     parlays.forEach(x => { x.firstGroup = false; x.wrapDisplay = 'block'; x.order = [1, 3, 4][group(x)]; });
