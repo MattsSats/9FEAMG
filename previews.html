@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Link Previews</title>
+<link rel="icon" href="/favicon.svg">
+<style>
+  :root { --bg: #f6f1e7; --surface: #fffaf0; --ink: #1d1b16; --muted: #6f6858; --line: #e2d9c6; --accent: #c8102e; }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) { --bg: #16140f; --surface: #201d17; --ink: #f1ebdd; --muted: #a39b88; --line: #3a352b; --accent: #ff5a6e; }
+  }
+  :root[data-theme="dark"] { --bg: #16140f; --surface: #201d17; --ink: #f1ebdd; --muted: #a39b88; --line: #3a352b; --accent: #ff5a6e; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.4 system-ui, -apple-system, Segoe UI, sans-serif; }
+  main { max-width: 1280px; margin: 0 auto; padding: 20px 16px 60px; }
+  h1 { font-size: 22px; margin: 0 0 4px; }
+  .sub { color: var(--muted); margin: 0 0 18px; font-size: 13px; }
+  nav { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
+  nav a { color: var(--ink); text-decoration: none; font-size: 13px; padding: 4px 10px; border: 1px solid var(--line); border-radius: 99px; background: var(--surface); }
+  h2 { font-size: 15px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin: 28px 0 10px; border-bottom: 1px solid var(--line); padding-bottom: 6px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 380px), 1fr)); gap: 14px; }
+  figure { margin: 0; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+  figure img { display: block; width: 100%; aspect-ratio: 1200 / 630; object-fit: cover; background: var(--line); }
+  figcaption { display: flex; justify-content: space-between; gap: 8px; padding: 8px 10px; font-size: 13px; }
+  figcaption a { color: var(--accent); text-decoration: none; white-space: nowrap; }
+  code { font-size: 12px; color: var(--muted); overflow-wrap: anywhere; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Link previews</h1>
+  <p class="sub">Every image a shared 9FEAMG link shows, drawn live from the current data. Tap one to open it full size.</p>
+  <nav id="nav"></nav>
+  <div id="out"></div>
+</main>
+<script src="/data/season.js"></script>
+<script>
+(() => {
+  const S = window.SEASON || {};
+  const slug = s => String(s).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+  const sec = name => ({ label: name, img: `/api/section?name=${name}&img=1`, link: `/s/${name}` });
+  const NF = Math.max(0, ...Object.values(S.scores || {}).map(a => a.length));
+  const lastWk = Math.max(NF, S.live?.week || 0);
+  const weeks = Array.from({ length: lastWk }, (_, i) => lastWk - i);
+
+  const groups = [
+    ['Site', [{ label: 'Home', img: '/og.png', link: '/' }]],
+    ['Charts', ['standings', 'power', 'luck', 'pfpa', 'bench', 'ledger'].map(sec)],
+    ['Teams', (S.managers || []).map(x => ({ ...sec('team-' + slug(x.m)), label: x.m }))],
+    ['Weeks', weeks.map(w => ({ ...sec('w' + w), label: 'Week ' + w }))],
+    ...weeks.map(w => [`Week ${w} matchups`, (S.schedule?.[w] || []).map(([a, b]) => ({ ...sec(`w${w}-${slug(a)}-vs-${slug(b)}`), label: `${a} vs ${b}` }))]),
+    ...weeks.map(w => [`Week ${w} tickets`, (S.parlays?.[w] || []).map(p => {
+      const s = `w${w}-` + slug(p.id ?? p.title ?? p.owner);
+      return { label: p.title || s, img: `/api/og?slug=${s}`, link: `/p/${s}` };
+    })]),
+  ].filter(([, items]) => items.length);
+
+  const esc = t => String(t).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  document.getElementById('nav').innerHTML = groups.map(([g]) => `<a href="#${slug(g)}">${esc(g)}</a>`).join('');
+  document.getElementById('out').innerHTML = groups.map(([g, items]) => `
+    <h2 id="${slug(g)}">${esc(g)} · ${items.length}</h2>
+    <div class="grid">${items.map(it => `
+      <figure>
+        <a href="${esc(it.img)}" target="_blank" rel="noopener"><img src="${esc(it.img)}" alt="${esc(it.label)}" loading="lazy"></a>
+        <figcaption><span><b>${esc(it.label)}</b><br><code>${esc(it.link)}</code></span><a href="${esc(it.link)}" target="_blank" rel="noopener">Open link</a></figcaption>
+      </figure>`).join('')}
+    </div>`).join('');
+})();
+</script>
+</body>
+</html>
