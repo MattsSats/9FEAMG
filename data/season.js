@@ -61,16 +61,16 @@ window.SEASON = {
     week: 5,
     status: 'Live · Thursday final (TB 24, DAL 16) · Sunday next',
     // When these numbers were pulled from Yahoo (Central); shows as "Scores as of Thu 10:19 PM".
-    asOf: '2026-10-09T20:39:00-05:00',
+    asOf: '2026-10-10T10:21:00-05:00',
     // [current points, projected final]
-    // Yahoo as of Fri Oct 9, 7:27 PM CT: Thursday final, Sunday projections. Tristan has only
-    // two starters set (Odunze, Tuten), so Yahoo projects him 20.12.
+    // Yahoo as of Sat Oct 10, 10:21 AM CT: Thursday final, Sunday projections. Tristan has five of
+    // nine starters set (QB, RB, TE and DEF empty), so Yahoo projects him 60.37.
     scores: {
-      Matt: [0, 116.23], DLin: [24.50, 117.94],
-      Tristan: [0, 20.12], Colin: [0, 114.26],
-      Jerger: [1.90, 93.68], Kurt: [28.84, 102.46],
-      Tony: [30.50, 128.20], Andy: [20.20, 120.70],
-      'Mr. G': [0, 117.00], Pablo: [5.00, 79.07]
+      Matt: [0.00, 116.36], DLin: [24.50, 118.36],
+      Tristan: [0.00, 60.37], Colin: [0.00, 114.11],
+      Jerger: [1.90, 94.62], Kurt: [28.84, 102.46],
+      Tony: [30.50, 128.21], Andy: [20.20, 120.60],
+      'Mr. G': [0.00, 116.77], Pablo: [5.00, 79.32]
     },
     // Points so far for every player whose game has started (starters and bench).
     // Players listed in inProgress are still playing; the rest are final.
@@ -81,7 +81,7 @@ window.SEASON = {
       'CeeDee Lamb': 1.90, 'Brandon Aubrey': 5.00, 'Chris Godwin Jr.': 5.50
     },
     inProgress: [],
-    sheetNote: 'Thursday final; Sunday projections as of Fri 8:39 PM CT. Each player is tagged Final, Live or proj.'
+    sheetNote: 'Thursday final; Sunday projections as of Sat 10:21 AM CT. Each player is tagged Final, Live or proj.'
   },
 
   // The NFL week: every game ('Sun 12:00 PM · CHI @ GB', kickoff Central, same form as parlay legs)
