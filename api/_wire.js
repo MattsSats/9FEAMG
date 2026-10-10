@@ -60,13 +60,13 @@ export function wireOf(season, tx, box, mode, now = Date.now()) {
   const addsVsRecord = (m, lead) => {
     const low = pickLow(m), x = ST.find(s => s.m == m), y = ST.find(s => s.m == low);
     const end = x.w - x.l > y.w - y.l ? 'Turns out the waiver wire works.' : x.w - x.l < y.w - y.l ? 'Busy is not the same as good.'
-      : `Same record, ${adds[m] - adds[low]} more trip${adds[m] - adds[low] == 1 ? '' : 's'} to the waiver wire.`;
+      : adds[m] > adds[low] ? `Same record, ${adds[m] - adds[low]} more trip${adds[m] - adds[low] == 1 ? '' : 's'} to the waiver wire.` : 'Same record either way.';
     return `${lead} ${low} has made ${adds[low]}${seasonMode ? '' : ' all season'} and is ${recOf(low)}. ${end}`;
   };
   const line = seasonMode ? addsVsRecord(top, `${top} leads the league with ${adds[top]} adds and is ${recOf(top)}.`)
     : regret ? `${regret.d.manager} dropped ${who(regret.d)}. ${regret.pick.manager} picked ${regret.d.pos == 'DEF' ? 'it' : 'him'} up, and ${regret.d.pos == 'DEF' ? 'that defense' : lastName(regret.d.player)} has ${f2(regret.pts)} since.`
     : pickup ? `${pickup.a.manager} picked up ${who(pickup.a)} on ${dayOf(when(pickup.a))}. ${f2(pickup.pts)} since.`
-    : topWk ? addsVsRecord(topWk, `${topWk} made ${wkAdds[topWk]} adds this week and is ${recOf(topWk)}.`)
+    : topWk ? addsVsRecord(topWk, `${topWk} made ${wkAdds[topWk]} add${wkAdds[topWk] == 1 ? '' : 's'} this week and is ${recOf(topWk)}.`)
     : 'Nobody has added anyone this week. Suspiciously quiet.';
   return { mode: seasonMode ? 'season' : 'week', wk, rows, line, total: rows.reduce((s, r) => s + r.n, 0) };
 }

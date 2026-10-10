@@ -49,7 +49,7 @@ export default {
     if (b.cancel) {
       delete doc.requests[manager];
     } else {
-      if (!(b.risk in RISK)) return json({ error: 'Pick a risk level.' }, 400);
+      if (!Object.hasOwn(RISK, b.risk)) return json({ error: 'Pick a risk level.' }, 400);
       const legs = LEGS.includes(String(b.legs)) ? String(b.legs) : 'any';
       const betType = BET_TYPES.includes(b.betType) ? b.betType : 'mix';
       const players = (Array.isArray(b.players) ? b.players : []).map(p => clean(p, 40)).filter(Boolean).slice(0, 3);

@@ -169,12 +169,12 @@ function lineupAlert(season, rosters, m, wk) {
   const team = rosters?.teams?.find(t => t.name == m), nfl = season.nfl?.[wk];
   if (!team || season.live?.week != wk) return '';
   const now = Date.now(), pts = season.live.playerPoints || {};
-  const games = nfl?.games || [], lastKick = Math.max(0, ...games.map(g => kickoff(season, wk, g)?.getTime() || 0));
-  const open = !games.length || now < lastKick, byes = (nfl?.byes || []).map(nflKey);
+  const games = nfl?.games || [], lastKick = games.length ? Math.max(0, ...games.map(g => kickoff(season, wk, g)?.getTime() || 0)) : kickoff(season, wk, 'Mon 7:15 PM')?.getTime() || 0;
+  const open = now < lastKick, byes = (nfl?.byes || []).map(nflKey);
   const gameOf = t => games.find(g => { const x = g.match(/·\s*(\S+)\s*@\s*(\S+)/); return x && [nflKey(x[1]), nflKey(x[2])].includes(nflKey(t)); });
   const st = team.players.filter(p => p.slot == 'starter'), bits = [];
   const bye = open ? st.filter(p => pts[p.name] == null && byes.includes(nflKey(p.nfl))) : [];
-  const out = st.filter(p => { const g = gameOf(p.nfl), k = g ? kickoff(season, wk, g) : null; return pts[p.name] == null && ['O', 'IR'].includes(String(p.inj || '').toUpperCase()) && (!k || now < k.getTime()); });
+  const out = st.filter(p => { if (byes.includes(nflKey(p.nfl))) return false; const k = kickoff(season, wk, gameOf(p.nfl) || 'Sun 12:00 PM'); return pts[p.name] == null && ['O', 'IR'].includes(String(p.inj || '').toUpperCase()) && (!k || now < k.getTime()); });
   if (open) {
     const have = {}; st.forEach(p => { have[p.pos] = (have[p.pos] || 0) + 1; });
     const empty = Object.entries(SLOTS).reduce((n, [k, c]) => n + Math.max(0, c - (have[k] || 0)), 0);

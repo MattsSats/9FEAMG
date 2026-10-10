@@ -123,16 +123,18 @@ const SHOT_LIB = {
 const ORD = { QB: 0, RB: 1, WR: 2, TE: 3, WRT: 4, K: 5, DEF: 6 };
 const MON = { Jan: 0, Feb: 1, Mar: 2, Apr: 3, May: 4, Jun: 5, Jul: 6, Aug: 7, Sep: 8, Oct: 9, Nov: 10, Dec: 11 };
 const MONS = Object.keys(MON);
-const DOW = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
 const f1 = n => n.toFixed(1), f2 = n => n.toFixed(2);
 const sgn = n => n > 0 ? '+' + n.toFixed(2) : n < 0 ? '−' + Math.abs(n).toFixed(2) : '0.00';
 const ord = n => n + (n % 10 == 1 && n != 11 ? 'st' : n % 10 == 2 && n != 12 ? 'nd' : n % 10 == 3 && n != 13 ? 'rd' : 'th');
 const shortDate = d => MONS[d.getMonth()] + ' ' + d.getDate();
+// "Oct 9, 1:39 pm" is Central time (daylight until the first Sunday of November), read the same
+// way wherever the viewer is.
 function parseWhen(s) {
-  const m = s.match(/(\w+) (\d+), (\d+):(\d+) (am|pm)/);
-  if (!m) return new Date(D.year, 8, 1);
+  const m = String(s || '').match(/(\w+) (\d+), (\d+):(\d+) (am|pm)/);
+  if (!m) return new Date(Date.UTC(D.year, 8, 1));
   let h = +m[3] % 12; if (m[5] == 'pm') h += 12;
-  return new Date(D.year, MON[m[1]], +m[2], h, +m[4]);
+  const mo = MON[m[1]], d = +m[2], firstSun = 1 + ((7 - new Date(Date.UTC(D.year, 10, 1)).getUTCDay()) % 7);
+  return new Date(Date.UTC(D.year, mo, d, h + (mo < 10 || (mo == 10 && d < firstSun) ? 5 : 6), +m[4]));
 }
 function opp(m, w) { const p = (PAIRS[w] || []).find(p => p.includes(m)); return p ? (p[0] == m ? p[1] : p[0]) : null; }
 function won(m, w) { const o = opp(m, w); return o != null && SC[m][w - 1] > SC[o][w - 1]; }
@@ -681,13 +683,13 @@ class Component extends DCLogic {
   lineupAlerts(m, wk) {
     if (wk != LW) return [];
     const now = Date.now(), games = D?.nfl?.[wk]?.games || [];
-    const lastKick = Math.max(0, ...games.map(g => kickoff(wk, g)?.getTime() || 0));
-    const weekOpen = !games.length || now < lastKick;
+    const lastKick = games.length ? Math.max(0, ...games.map(g => kickoff(wk, g)?.getTime() || 0)) : kickoff(wk, 'Mon 7:15 PM')?.getTime() || 0;
+    const weekOpen = now < lastKick;
     const st = this.players(m).filter(p => p.slot == 'starter'), out = [];
     for (const p of st) {
       if (LIVEPTS[p.name] != null) continue;
       if (onBye(p.nfl, wk)) { if (weekOpen) out.push(`${p.name} is on a bye`); continue; }
-      const g = nflGame(p.nfl, wk), k = g ? kickoff(wk, g) : null;
+      const g = nflGame(p.nfl, wk), k = kickoff(wk, g || 'Sun 12:00 PM');
       if (k && now >= k.getTime()) continue;
       if (String(p.inj || '').toUpperCase() == 'O' || String(p.inj || '').toUpperCase() == 'IR') out.push(`${p.name} is listed Out`);
     }
@@ -842,7 +844,7 @@ class Component extends DCLogic {
           : stakes ? (stakes.length ? 'Starters in this game: ' + stakes.join(', ') : 'No league starters in this game') : '';
         const meta = [l.result || (pts != null ? f2(pts) + ' fantasy pts' : l.game), l.line != null && !l.text.includes(String(l.line)) ? 'line ' + l.line : null].filter(Boolean).join(' · ');
         const d = toDecimal(l.odds), ip = impliedProb(l.odds), g = l.sgp ? p.sgps?.[l.sgp - 1] : null;
-        return { text: l.text, odds: l.sgp ? 'SGP ' + l.sgp : l.odds ? l.odds.replace('-', '−') : '—', oddsSub: l.sgp ? (g ? String(g).replace('-', '−') + ' together' : 'no line') : d ? `×${d.toFixed(2)} · ${Math.round(ip * 100)}%` : 'no line', owner, ownerColor: spot ? col(spot.m) : stakes ? 'var(--accent)' : 'transparent', hasOwner: !!owner,
+        return { text: l.text, odds: l.sgp ? 'SGP ' + l.sgp : l.odds ? String(l.odds).replace('-', '−') : '—', oddsSub: l.sgp ? (g ? String(g).replace('-', '−') + ' together' : 'no line') : d ? `×${d.toFixed(2)} · ${Math.round(ip * 100)}%` : 'no line', owner, ownerColor: spot ? col(spot.m) : stakes ? 'var(--accent)' : 'transparent', hasOwner: !!owner,
           // Game legs list every league starter in the game; images leave that list out to stay short.
           ownerCls: stakes ? 'no-shot' : '', meta, ...(LEG_TAG[l.status] || LEG_TAG.open), spot };
       });
@@ -881,7 +883,7 @@ class Component extends DCLogic {
         oddsLabel: (priced ? 'Parlay ' + toAmerican(dec) : 'Lines TBD') + (status == 'OPEN' && chance != null ? ` · ~${pct(chance)} to hit${p.legs.some(l => l.status == 'hit') ? ' now' : ''}` : ''),
         by: (p.owners ? p.owners.join(' & ') : p.owner) + '’s Parlay',
         // e.g. "2.20 × 1.87 × 1.67 = ×6.86 · hits about 1 in 7 (15%)"
-        oddsMath: toDecimal(p.odds) ? 'Same-game parlay · book price ' + String(p.odds).replace('-', '−') : priced ? (() => {
+        oddsMath: toDecimal(p.odds) ? (new Set(p.legs.map(l => l.game)).size == 1 ? 'Same-game parlay · book price ' : 'Book price for the whole ticket ') + String(p.odds).replace('-', '−') : priced ? (() => {
           const parts = parlayParts(p), decs = parts.map(toDecimal), prob = parts.reduce((a, o) => a * impliedProb(o), 1);
           return decs.map(x => x.toFixed(2)).join(' × ') + ` = ×${dec.toFixed(2)} · before kickoff about 1 in ${Math.max(1, Math.round(1 / prob))}`;
         })() : `${parlayParts(p).filter(o => toDecimal(o)).length} of ${parlayParts(p).length} ${p.sgps ? 'parts' : 'legs'} priced`,        payout: !priced ? 'Odds calculate once every leg has a line' : (status == 'CASHED' ? '$10 paid $' : status == 'BUSTED' ? '$10 would have paid $' : '$10 pays $') + (10 * dec).toFixed(2),
@@ -1095,8 +1097,9 @@ class Component extends DCLogic {
     const ym = n => dr?.managerMap?.[n] ?? n;
     const shown = groups.filter(g => seasonMode || g.d >= cut);
     const days = []; shown.forEach(g => {
-      const key = g.d.toDateString(); let day = days.find(x => x.key == key);
-      if (!day) { day = { key, label: DOW[g.d.getDay()] + ' · ' + g.when.split(',')[0].toUpperCase(), moves: [] }; days.push(day); }
+      // Grouped by the Central date the move was made ("Oct 9"), wherever the viewer is.
+      const key = g.when.split(',')[0]; let day = days.find(x => x.key == key);
+      if (!day) { day = { key, label: g.d.toLocaleDateString('en-US', { weekday: 'short', timeZone: 'America/Chicago' }).toUpperCase() + ' · ' + key.toUpperCase(), moves: [] }; days.push(day); }
       const time = g.when.split(', ')[1].toUpperCase();
       day.moves.push({ m: g.m, init: INIT[g.m], color: col(g.m), time, lines: g.items.sort((a, b) => (a.action == 'drop') - (b.action == 'drop')).map(t => ({ sign: t.action == 'add' ? '+' : t.action == 'drop' ? '−' : '⇄', color: t.action == 'add' ? 'var(--pos)' : t.action == 'drop' ? 'var(--neg)' : 'var(--accentInk)', player: t.player, weight: t.action == 'drop' ? 400 : 600, fg: t.action == 'drop' ? 'var(--muted)' : 'var(--ink)', meta: [t.pos, (t.nfl || '').toUpperCase(), t.action == 'trade' ? 'Trade with ' + ym(t.via.replace('trade from ', '')) : t.action == 'add' ? (t.via == 'Waivers' ? 'Waivers ' + (typeof t.faab == 'number' ? '$' + t.faab : t.faab ?? '') : 'Free agent') : null].filter(Boolean).join(' · ') })) });
     });
@@ -1128,7 +1131,7 @@ class Component extends DCLogic {
     const gameAt = (nfl, w) => (g => g ? kickoff(w, g) : kickoff(w, 'Sun 12:00 PM'))(nflGame(nfl, w));
     const ptsSince = (t, at) => { let s = 0; for (let w = 1; w <= (LW || NF); w++) { const k = gameAt(t.nfl, w); if (k && k > at) s += this.fantasyPts(t.player, w) || 0; } return s; };
     const who = t => t.pos == 'DEF' ? `the ${t.player} defense` : lastName(t.player);
-    const inWin = tx.filter(t => parseWhen(t.when) >= cut), dayOf = d => d.toLocaleDateString('en-US', { weekday: 'long' });
+    const inWin = tx.filter(t => parseWhen(t.when) >= cut), dayOf = d => d.toLocaleDateString('en-US', { weekday: 'long', timeZone: 'America/Chicago' });
     const regret = inWin.filter(t => t.action == 'drop').map(d => {
       const at = parseWhen(d.when), pick = tx.filter(t => t.action == 'add' && t.player == d.player && t.manager != d.manager && parseWhen(t.when) >= at)
         .sort((a, b) => parseWhen(a.when) - parseWhen(b.when))[0];
@@ -1138,7 +1141,7 @@ class Component extends DCLogic {
     const addsVsRecord = (who, lead) => {
       const low = pickLow(who), x = ST.find(s => s.m == who), y = ST.find(s => s.m == low);
       const end = x.w - x.l > y.w - y.l ? 'Turns out the waiver wire works.' : x.w - x.l < y.w - y.l ? 'Busy is not the same as good.'
-        : `Same record, ${adds[who] - adds[low]} more trip${adds[who] - adds[low] == 1 ? '' : 's'} to the waiver wire.`;
+        : adds[who] > adds[low] ? `Same record, ${adds[who] - adds[low]} more trip${adds[who] - adds[low] == 1 ? '' : 's'} to the waiver wire.` : 'Same record either way.';
       return `${lead} ${low} has made ${adds[low]}${seasonMode ? '' : ' all season'} and is ${recOf(low)}. ${end}`;
     };
     const wireRoast = !S.loaded ? 'Loading the wire…'
@@ -1146,7 +1149,7 @@ class Component extends DCLogic {
       : seasonMode ? addsVsRecord(top, `${top} leads the league with ${adds[top]} adds and is ${recOf(top)}.`)
       : regret ? `${regret.d.manager} dropped ${who(regret.d)}. ${regret.pick.manager} picked ${regret.d.pos == 'DEF' ? 'it' : 'him'} up, and ${regret.d.pos == 'DEF' ? 'that defense' : lastName(regret.d.player)} has ${f2(regret.pts)} since.`
       : pickup ? `${pickup.a.manager} picked up ${who(pickup.a)} on ${dayOf(parseWhen(pickup.a.when))}. ${f2(pickup.pts)} since.`
-      : top7 ? addsVsRecord(top7, `${top7} made ${wk7[top7]} adds this week and is ${recOf(top7)}.`)
+      : top7 ? addsVsRecord(top7, `${top7} made ${wk7[top7]} add${wk7[top7] == 1 ? '' : 's'} this week and is ${recOf(top7)}.`)
       : 'Nobody has added anyone this week. Suspiciously quiet.';
     const faab = [...MGR].sort((a, b) => spent[a] - spent[b]).map(m => ({ m, left: '$' + (budget - spent[m]), w: ((budget - spent[m]) / budget * 100) + '%', color: col(m) }));
     const noMoves = txOk && !days.length;
@@ -1226,7 +1229,7 @@ class Component extends DCLogic {
       weekChips, isW5: isNext, nextTitle, nextNote, hasWeek, hero: hero || blank, matchups, heroLabel: heroMine ? 'Your matchup' : wk == LW ? 'Matchup of the week' : 'Closest finish', heroCaption: this.heroCaption(wk, hero),
       weekStatus, parlays, hasParlays: parlays.length > 0, hasLedger: allParlays.length > 0, ledgerTiles, ledgerSub, ledgerOwners, hasLedgerRows: ledgerOwners.length > 0, hasPaper, paperLine,
       shareLedger: e => this.share('ledger', e), ledgerLabel: S.sharing == 'ledger' ? '…' : 'Image',
-      linkLedger: e => this.shareLink(location.origin + '/s/ledger', '9FEAMG · Parlay ledger', e), shotLedger: `Parlay ledger · through week ${LW}`,
+      linkLedger: e => this.shareLink(location.origin + '/s/ledger', '9FEAMG · Parlay ledger', e), shotLedger: `Parlay ledger · through week ${LW ?? NF}`,
       hasReq, reqForm, reqList, hasReqList: reqList.length > 0,
       showBooth: boothOn, booth: boothLines, hasBooth: boothOn && boothLines.length > 0,
       seasonSub, seasonTiles, standings, playoffLine: `Playoff line · top ${P} of ${MGR.length}`,
