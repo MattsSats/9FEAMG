@@ -267,7 +267,7 @@ function setMaxPF(box) {
 }
 
 class Component extends DCLogic {
-  state = { tab: this.props.startTab ?? 'Gameday', week: HOME_WK, theme: null, sheet: null, team: MY_TEAM || MGR[0], wire: '7 days', draftMode: 'By round', draftRound: 1, draftTeam: MGR[0], rosters: null, draft: null, tx: null, loaded: false,
+  state = { tab: this.props.startTab ?? 'Gameday', week: HOME_WK, theme: null, sheet: null, team: MY_TEAM || MGR[0], wire: 'This week', draftMode: 'By round', draftRound: 1, draftTeam: MGR[0], rosters: null, draft: null, tx: null, loaded: false,
     // Parlay request form: who's asking is remembered on this device.
     reqMgr: MY_TEAM, teamSheet: null, reqOpen: false, shareSheet: null, newScores: false, compact: false,
     req: { risk: 1, legs: 'any', players: [], playerLegs: {}, game: '', sending: false }, tails: {}, passes: {}, tailBusy: null, reqs: null };
@@ -1053,10 +1053,15 @@ class Component extends DCLogic {
 
     // Wire
     const seasonMode = S.wire == 'Season';
-    // The window ends at the newest move on file (today when there are none), so the header date
-    // and the 7-day counts move on by themselves as transactions come in.
+    // "This week" is the fantasy week: from the end of the previous week's last game (Monday night,
+    // kickoff + 3.5 hours; Mon 7:15 PM when the week's schedule isn't on file) to now. The header
+    // date is the newest move on file (today when there are none).
     const txTimes = tx.map(t => parseWhen(t.when).getTime());
-    const now = new Date(txTimes.length ? Math.max(...txTimes) : Date.now()), cut = new Date(now.getTime() - (D.wire?.windowDays ?? 7) * 864e5);
+    const now = new Date(txTimes.length ? Math.max(...txTimes) : Date.now());
+    const weekEnd = w => { const ks = (D.nfl?.[w]?.games || []).map(g => kickoff(w, g)?.getTime()).filter(Boolean);
+      return new Date((ks.length ? Math.max(...ks) : kickoff(w, 'Mon 7:15 PM').getTime()) + 3.5 * 36e5); };
+    let wireWk = 1; while (wireWk < D.regularSeasonWeeks && Date.now() >= weekEnd(wireWk).getTime()) wireWk++;
+    const cut = wireWk > 1 ? weekEnd(wireWk - 1) : new Date(D.year, 7, 1);
     const groups = []; tx.forEach(t => { const d = parseWhen(t.when); const last = groups[groups.length - 1]; if (last && last.m == t.manager && last.when == t.when) last.items.push(t); else groups.push({ m: t.manager, when: t.when, d, items: [t] }); });
     const ym = n => dr?.managerMap?.[n] ?? n;
     const shown = groups.filter(g => seasonMode || g.d >= cut);
@@ -1066,7 +1071,7 @@ class Component extends DCLogic {
       const time = g.when.split(', ')[1].toUpperCase();
       day.moves.push({ m: g.m, init: INIT[g.m], color: col(g.m), time, lines: g.items.sort((a, b) => (a.action == 'drop') - (b.action == 'drop')).map(t => ({ sign: t.action == 'add' ? '+' : t.action == 'drop' ? '−' : '⇄', color: t.action == 'add' ? 'var(--pos)' : t.action == 'drop' ? 'var(--neg)' : 'var(--accentInk)', player: t.player, weight: t.action == 'drop' ? 400 : 600, fg: t.action == 'drop' ? 'var(--muted)' : 'var(--ink)', meta: [t.pos, (t.nfl || '').toUpperCase(), t.action == 'trade' ? 'Trade with ' + ym(t.via.replace('trade from ', '')) : t.action == 'add' ? (t.via == 'Waivers' ? 'Waivers ' + (typeof t.faab == 'number' ? '$' + t.faab : t.faab ?? '') : 'Free agent') : null].filter(Boolean).join(' · ') })) });
     });
-    const wireModes = ['7 days', 'Season'].map(l => ({ label: l, bg: S.wire == l ? 'var(--surface2)' : 'transparent', fg: S.wire == l ? 'var(--ink)' : 'var(--muted)', pick: () => this.setState({ wire: l }) }));
+    const wireModes = ['This week', 'Season'].map(l => ({ label: l, bg: S.wire == l ? 'var(--surface2)' : 'transparent', fg: S.wire == l ? 'var(--ink)' : 'var(--muted)', pick: () => this.setState({ wire: l }) }));
     const byAdds = [...MGR].sort((a, b) => adds[b] - adds[a]); const maxA = Math.max(1, adds[byAdds[0]]);
     const recOf = m => { const st = ST.find(x => x.m == m); return st.w + '–' + st.l; };
     // The busiest manager against the best record among the light adders (fewer season adds than
@@ -1077,22 +1082,23 @@ class Component extends DCLogic {
     const lightPool = MGR.filter(m => adds[m] < median);
     const pickLow = not => (lightPool.length ? lightPool : MGR).filter(m => m != not).sort((a, b) => stPlace(a) - stPlace(b))[0];
     const wk7 = {}; groups.filter(g => g.d >= cut).forEach(g => g.items.forEach(t => { if (t.action == 'add') wk7[t.manager] = (wk7[t.manager] || 0) + 1; }));
-    // Activity vs record: season adds on Season, the last 7 days' adds on 7 days.
+    // Activity vs record: season adds on Season, this fantasy week's adds on This week.
     const actN = m => seasonMode ? adds[m] : wk7[m] || 0;
     const actOrder = [...MGR].sort((a, b) => actN(b) - actN(a)), actMax = Math.max(1, actN(actOrder[0]));
     const activity = actOrder.map(m => ({ m, n: actN(m), w: (actN(m) / actMax * 100) + '%', color: col(m), rec: recOf(m) }));
     const top7 = Object.keys(wk7).sort((a, b) => wk7[b] - wk7[a])[0];
     // The Wire line: the first of these that's true, so the joke always matches the numbers.
-    //   1. Drop regret (7 days): a player dropped in the window who has scored the most since
+    //   1. Drop regret (this week): a player dropped in the window who has scored the most since
     //      another manager picked him up.
-    //   2. Best pickup (7 days): the add in the window with the most points since.
-    //   3. Adds vs record (Season, or 7 days when 1-2 don't apply): the busiest adder against the
+    //   2. Best pickup (this week): the add in the window with the most points since.
+    //   3. Adds vs record (Season, or this week when 1-2 don't apply): the busiest adder against the
     //      best record among the light adders.
     //   4. No adds in the window.
     // "Since" counts a player's points in games that kicked off after the move (Sunday noon for
     // weeks without a schedule on file). Points use 2 decimals; never FAAB amounts.
     const gameAt = (nfl, w) => (g => g ? kickoff(w, g) : kickoff(w, 'Sun 12:00 PM'))(nflGame(nfl, w));
     const ptsSince = (t, at) => { let s = 0; for (let w = 1; w <= (LW || NF); w++) { const k = gameAt(t.nfl, w); if (k && k > at) s += this.fantasyPts(t.player, w) || 0; } return s; };
+    const who = t => t.pos == 'DEF' ? `the ${t.player} defense` : lastName(t.player);
     const inWin = tx.filter(t => parseWhen(t.when) >= cut), dayOf = d => d.toLocaleDateString('en-US', { weekday: 'long' });
     const regret = inWin.filter(t => t.action == 'drop').map(d => {
       const at = parseWhen(d.when), pick = tx.filter(t => t.action == 'add' && t.player == d.player && t.manager != d.manager && parseWhen(t.when) >= at)
@@ -1109,8 +1115,8 @@ class Component extends DCLogic {
     const wireRoast = !S.loaded ? 'Loading the wire…'
       : !txOk ? 'Couldn’t load transactions. Try refreshing in a minute.'
       : seasonMode ? addsVsRecord(top, `${top} leads the league with ${adds[top]} adds and is ${recOf(top)}.`)
-      : regret ? `${regret.d.manager} dropped ${lastName(regret.d.player)}. ${regret.pick.manager} picked ${regret.d.pos == 'DEF' ? 'them' : 'him'} up, and ${lastName(regret.d.player)} ${regret.d.pos == 'DEF' ? 'have' : 'has'} ${f2(regret.pts)} since.`
-      : pickup ? `${pickup.a.manager} picked up ${lastName(pickup.a.player)} on ${dayOf(parseWhen(pickup.a.when))}. ${f2(pickup.pts)} since.`
+      : regret ? `${regret.d.manager} dropped ${who(regret.d)}. ${regret.pick.manager} picked ${regret.d.pos == 'DEF' ? 'it' : 'him'} up, and ${regret.d.pos == 'DEF' ? 'that defense' : lastName(regret.d.player)} has ${f2(regret.pts)} since.`
+      : pickup ? `${pickup.a.manager} picked up ${who(pickup.a)} on ${dayOf(parseWhen(pickup.a.when))}. ${f2(pickup.pts)} since.`
       : top7 ? addsVsRecord(top7, `${top7} made ${wk7[top7]} adds this week and is ${recOf(top7)}.`)
       : 'Nobody has added anyone this week. Suspiciously quiet.';
     const faab = [...MGR].sort((a, b) => spent[a] - spent[b]).map(m => ({ m, left: '$' + (budget - spent[m]), w: ((budget - spent[m]) / budget * 100) + '%', color: col(m) }));
@@ -1198,7 +1204,7 @@ class Component extends DCLogic {
       heat, heatHead, heatColsM, heatColsD, heatMinM, heatMinD,
       team, teamPicker,
       draftInfo: D.draftInfo, draftToolUrl: D.draftToolUrl || '', hasDraftTool: !!D.draftToolUrl, draftOk: !draftMsg, draftMsg, draftFirsts, draftModes, draftChips, draftPicks, draftTitle, draftSub,
-      wireSub: 'Adds, drops, trades and FAAB · through ' + shortDate(now), wireModes, activityLabel: seasonMode ? 'Adds · season' : 'Adds · 7 days', wireSeason: txOk, wireDays: days, noMoves, activity, wireRoast, wireBanner: boothOn || !txOk, faab, faabBudget: '$' + budget + ' budget', txOk,
+      wireSub: 'Adds, drops, trades and FAAB · through ' + shortDate(now), wireModes, activityLabel: seasonMode ? 'Adds · season' : 'Adds · Week ' + wireWk, wireSeason: txOk, wireDays: days, noMoves, activity, wireRoast, wireBanner: boothOn || !txOk, faab, faabBudget: '$' + budget + ' budget', txOk,
       sheetOpen: !!S.sheet, sheet, closeSheet: () => this.setState({ sheet: null }),
       // Share buttons
       // The matchup link goes through /s/w5-andy-vs-pablo so chats show a picture of it (api/section.js).

@@ -113,8 +113,8 @@ window.SEASON = {
   // Projected values show in gray with "proj" so they never read as live points.
   projections: {},
 
-  // Wire tab: "7 days" shows the windowDays before the newest transaction on file.
-  wire: { windowDays: 7 },
+  // Wire tab: "This week" is the fantasy week (from the end of last week's Monday night game).
+  wire: {},
 
   // ---- Trash talk (hidden when the trashTalk setting is off) ----
 
