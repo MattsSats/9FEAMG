@@ -24,7 +24,7 @@ export const writeJson = (path, data) =>
 // (two people tapping at once): the write only lands if the file is still the version that was
 // read, otherwise it reads again and re-applies the change. change(data) returns the new data,
 // or throws to stop without writing.
-export async function updateJson(path, change, tries = 6) {
+export async function updateJson(path, change, tries = 8) {
   for (let i = 0; i < tries; i++) {
     const r = await get(path, { access: 'private', useCache: false });
     const data = r ? JSON.parse(await new Response(r.stream).text()) : null;
@@ -33,8 +33,9 @@ export async function updateJson(path, change, tries = 6) {
       await put(path, JSON.stringify(next), { access: 'private', contentType: 'application/json', addRandomSuffix: false, cacheControlMaxAge: 60, ...(r ? { ifMatch: r.blob.etag } : { allowOverwrite: false }) });
       return next;
     } catch (e) {
-      // Someone else wrote first (or created the file first): try again on top of their change.
-      if (e instanceof BlobPreconditionFailedError || /precondition|already exists/i.test(String(e?.message))) { await new Promise(res => setTimeout(res, 40 + Math.random() * 120)); continue; }
+      // Someone else wrote first, is writing right now, or created the file first: try again on top
+      // of their change, waiting a little longer each time.
+      if (e instanceof BlobPreconditionFailedError || /precondition|already exists|conflict/i.test(String(e?.message))) { await new Promise(res => setTimeout(res, (60 + Math.random() * 140) * (i + 1))); continue; }
       throw e;
     }
   }

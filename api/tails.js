@@ -79,8 +79,8 @@ export default {
         return d;
       });
       return json(view(week, doc));
-    } catch (e) {
-      return json({ error: 'Couldn’t save that. Try again.', code: String(e?.message || e).slice(0, 120) }, 503);
+    } catch {
+      return json({ error: 'Couldn’t save that. Try again.' }, 503);
     }
   }
 };
