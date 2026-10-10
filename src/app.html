@@ -854,10 +854,9 @@ button{font-family:inherit;color:inherit}
               </sc-for>
             </sc-if>
             <sc-if value="{{ pr.hasPassed }}" hint-placeholder-val="{{ false }}">
-              <span style="font-family:'JetBrains Mono';font-size:11px;color:var(--muted)">{{ pr.passedLine }}</span>
-              <sc-if value="{{ pr.canUndoPass }}" hint-placeholder-val="{{ false }}">
-                <button class="no-shot" sc-camel-on-click="{{ pr.undoPass }}" style="min-height:32px;padding:0 6px;border:0;background:transparent;color:var(--muted);font-size:12px;text-decoration:underline;cursor:pointer">Undo</button>
-              </sc-if>
+              <sc-for list="{{ pr.passedList }}" as="ps" hint-placeholder-count="1">
+                <span style="display:inline-flex;align-items:center;gap:2px;font-family:'JetBrains Mono';font-size:11px;color:var(--muted)">{{ ps.line }}<button class="no-shot" sc-camel-on-click="{{ ps.undo }}" style="min-height:32px;padding:0 6px;border:0;background:transparent;color:var(--muted);font-size:12px;text-decoration:underline;cursor:pointer">Undo</button></span>
+              </sc-for>
             </sc-if>
             <sc-if value="{{ pr.canPass }}" hint-placeholder-val="{{ false }}">
               <button class="no-shot" sc-camel-on-click="{{ pr.tapPass }}" style="margin-left:auto;min-height:32px;padding:0 12px;border:1px dashed var(--line);border-radius:999px;background:transparent;color:var(--muted);font-size:13px;font-weight:600;cursor:pointer">{{ pr.passLabel }}</button>

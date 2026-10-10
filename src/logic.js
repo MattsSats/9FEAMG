@@ -353,11 +353,12 @@ class Component extends DCLogic {
   }
   // "I'm on it": the first tap asks who you are (remembered with the request form's pick).
   // "Didn't bet it" (pass) goes through the same endpoint; only the ticket's owner or requester can.
-  async toggleTail(week, slug, as, pass = false) {
+  // onBehalf: Undo on someone's "didn't bet" acts for them without making them this phone's team.
+  async toggleTail(week, slug, as, pass = false, onBehalf = false) {
     const m = as || this.state.reqMgr;
     if (!m) return this.setState({ teamSheet: { then: me => this.toggleTail(week, slug, me, pass) } });
-    if (as) { try { localStorage.setItem('9feamg-req-mgr', as); } catch {} }
-    this.setState({ reqMgr: m, tailBusy: slug });
+    if (as && !onBehalf) { try { localStorage.setItem('9feamg-req-mgr', as); } catch {} }
+    this.setState({ ...(onBehalf ? {} : { reqMgr: m }), tailBusy: slug });
     try {
       const r = await fetch('/api/tails', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ week, slug, manager: m, ...(pass ? { pass: true } : {}) }) });
       const d = await r.json().catch(() => ({}));
@@ -758,7 +759,7 @@ class Component extends DCLogic {
       });
       // How the ticket lines up with the fantasy matchup.
       const mine = legs.filter(l => l.spot && l.spot.m == p.owner && l.spot.starter).length, theirs = vs ? legs.filter(l => l.spot && l.spot.m == vs && l.spot.starter).length : 0;
-      const proj = wk == LW ? LIVE.scores?.[p.owner]?.[1] : null, angle = [];
+      const proj = wk == LW && p.legs.every(l => (l.status || 'open') != 'miss') && p.legs.some(l => (l.status || 'open') == 'open') ? LIVE.scores?.[p.owner]?.[1] : null, angle = [];
       if (mine) angle.push((mine == legs.length ? (mine == 1 ? 'The leg is' : `All ${mine} legs are`) : `${mine} of ${legs.length} legs ${mine == 1 ? 'is' : 'are'}`) + ` ${p.owner}’s starter${mine == 1 ? '' : 's'}.` + (proj ? ` If this cashes, that ${f2(proj)} projection is probably low.` : ''));
       if (theirs) angle.push(`${theirs == 1 ? 'One leg is' : theirs + ' legs are'} ${vs}’s starter${theirs == 1 ? '' : 's'}. ${p.owner} is betting on the opponent.`);
       // Everyone on the ticket: placedBy/tailers from season.js plus taps from the site.
@@ -798,8 +799,8 @@ class Component extends DCLogic {
         canPass: !!me && makers.includes(me) && !iPassed,
         passLabel: S.tailBusy == anchor ? '…' : 'Didn’t bet',
         tapPass: () => this.toggleTail(wk, anchor, null, true),
-        hasPassed: passes.length > 0, passedLine: passes.join(' & ') + ' didn’t bet this one.',
-        canUndoPass: iPassed, undoPass: () => this.toggleTail(wk, anchor, null, true),
+        // "<name> didn't bet this one · Undo", one per person who passed.
+        hasPassed: passes.length > 0, passedList: passes.map(m => ({ line: m + ' didn’t bet this one.', undo: () => this.toggleTail(wk, anchor, m, true, true) })),
         tailLabel: S.tailBusy == anchor ? '…' : iTapped ? (owners.includes(me) ? 'Placed ✓' : 'You’re on it ✓') : me && owners.includes(me) ? 'I placed it' : 'I’m on it',
         tailPressed: String(iTapped), tailBg: iTapped ? 'var(--accent)' : 'transparent', tailFg: iTapped ? 'var(--onAccent)' : 'var(--ink)', tailBorder: iTapped ? 'var(--accent)' : 'var(--line)',
         tapTail: () => this.toggleTail(wk, anchor, null, false),
@@ -822,7 +823,7 @@ class Component extends DCLogic {
     const group = x => x.status == 'BUSTED' ? 2 : x.unbet ? 1 : 0;
     parlays.sort((a, b) => group(a) - group(b) || b.rank - a.rank || b.chance - a.chance);
     const sections = [
-      { g: 1, open: !!S.unbetOpen, key: 'unbetOpen', label: n => `Nobody’s on these · ${n}` },
+      { g: 1, open: S.unbetOpen !== false, key: 'unbetOpen', label: n => `Nobody’s on these · ${n}` },
       { g: 2, open: !!S.bustedOpen, key: 'bustedOpen', label: n => `Busted · ${n}` }];
     parlays.forEach(x => { x.firstGroup = false; x.wrapDisplay = 'block'; });
     for (const sec of sections) {

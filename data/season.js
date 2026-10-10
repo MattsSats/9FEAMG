@@ -311,7 +311,7 @@ window.SEASON = {
         ]
       },
       {
-        owner: 'Tony', title: 'Starting Four', request: 'Tony',
+        owner: 'Tony', title: 'Starting Four', request: 'Tony', requestAt: '2026-10-06', // Tony's first request (Tue Oct 6), since replaced
         // Built by Claude for Tony's Long shot request (+1500 to +5000, 4 legs, with Josh Allen and
         // Jaxon Smith-Njigba): both players plus moneylines for two more Tony starters (Eagles D/ST,
         // Omarion Hampton). One leg per game, so the odds multiply as a regular parlay.
@@ -323,6 +323,20 @@ window.SEASON = {
           { text: 'Jaxon Smith-Njigba anytime TD', player: 'Jaxon Smith-Njigba', type: 'td', count: 1, game: 'Sun 3:25 PM · SF @ SEA', odds: '-120', status: 'open' },
           { text: 'Eagles moneyline at Jaguars', player: 'Eagles', type: 'ml', team: 'Phi', teams: ['Phi', 'Jax'], game: 'Sun 8:30 AM · PHI @ JAX', odds: '+280', status: 'open' },
           { text: 'Chargers moneyline vs Broncos', type: 'ml', team: 'LAC', teams: ['Den', 'LAC'], game: 'Sun 3:05 PM · DEN @ LAC', odds: '+154', status: 'open' }
+        ]
+      },
+      {
+        owner: 'Tony', title: 'Home Dogs', request: 'Tony', requestAt: '2026-10-09T19:16:09.063Z',
+        // Built by Claude for Tony's second request (Fri Oct 9, 2:16 PM CT: Lottery +5000 and up, 4 legs,
+        // Josh Allen TD and Jaxon Smith-Njigba TD). Both picks plus moneylines for two home underdogs
+        // Tony starts someone from (Ollie Gordon II's Dolphins, Carnell Tate's Titans). One leg per game.
+        // Odds: DraftKings. Allen and JSN anytime TD from Matt's DraftKings app screenshots, Fri Oct 9,
+        // ~8 PM CT; moneylines DraftKings via The Odds API, Fri Oct 9, 8:05 PM CT. Ticket ≈ +5154.
+        legs: [
+          { text: 'Josh Allen anytime TD', player: 'Josh Allen', type: 'td', count: 1, game: 'Mon 7:15 PM · BUF @ LAR', odds: '-120', status: 'open' },
+          { text: 'Jaxon Smith-Njigba anytime TD', player: 'Jaxon Smith-Njigba', type: 'td', count: 1, game: 'Sun 3:25 PM · SF @ SEA', odds: '-110', status: 'open' },
+          { text: 'Dolphins moneyline vs Bengals', player: 'Dolphins', type: 'ml', team: 'Mia', teams: ['Cin', 'Mia'], game: 'Sun 12:00 PM · CIN @ MIA', odds: '+280', status: 'open' },
+          { text: 'Titans moneyline vs Texans', player: 'Titans', type: 'ml', team: 'Ten', teams: ['Hou', 'Ten'], game: 'Sun 12:00 PM · HOU @ TEN', odds: '+295', status: 'open' }
         ]
       },
       {
