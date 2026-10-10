@@ -1,12 +1,13 @@
 // /s/<chart> (rewritten here by vercel.json) for the Season charts (luck, bench, pfpa), the
-// Gameday parlay ledger (ledger) and matchups (w5-andy-vs-pablo).
+// Gameday parlay ledger (ledger), matchups (w5-andy-vs-pablo), standings, power, team-<name>
+// and a week's Gameday (w5).
 // Link-preview bots get a page whose Open Graph tags point at a 1200x630 image of the chart
 // (this same function with &img=1); people are sent to the chart on the site (/#<chart>).
 // Numbers come from the live data/season.js and box scores, so the image is always current.
 import { ImageResponse } from '@vercel/og';
 import { loadSeason, escapeHtml, hash, anchorFor, describe, kickoff } from './_parlays.js';
 import { readJson } from './_yahoo.js';
-import { seasonStats, loadBox } from './_stats.js';
+import { seasonStats, loadBox, powerRanks } from './_stats.js';
 import { C, F, h, fonts, mgrColor } from './_ogkit.js';
 
 const BOTS = /bot|crawl|spider|facebookexternalhit|facebot|twitterbot|slackbot|discordbot|whatsapp|telegram|linkedin|embedly|skype|iframely|preview/i;
@@ -269,12 +270,173 @@ async function matchupRoute(url, request, m) {
     headers: { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'private, no-store', vary: 'User-Agent' } });
 }
 
+// ---- More link previews: /s/standings, /s/power, /s/team-<name>, /s/w<week> ----
+const ordinal = n => n + (n % 10 == 1 && n % 100 != 11 ? 'st' : n % 10 == 2 && n % 100 != 12 ? 'nd' : n % 10 == 3 && n % 100 != 13 ? 'rd' : 'th');
+const frame = (kicker, title, note, body) => h('div', { width: '100%', height: '100%', flexDirection: 'column', background: C.bg, padding: '40px 64px 0', position: 'relative' },
+  h('div', { justifyContent: 'space-between', alignItems: 'flex-end' },
+    h('div', { flexDirection: 'column' },
+      h('div', { fontFamily: F.mono, fontSize: 22, fontWeight: 600, letterSpacing: 4, color: C.accentInk }, kicker),
+      title ? h('div', { fontFamily: F.display, fontSize: 64, fontWeight: 900, lineHeight: 1, marginTop: 8, textTransform: 'uppercase', color: C.ink }, title) : null),
+    note ? h('div', { fontFamily: F.mono, fontSize: 20, fontWeight: 600, color: C.muted, marginBottom: 6 }, note) : null),
+  body,
+  h('div', { position: 'absolute', right: 64, top: 40, alignItems: 'flex-end', gap: 4 },
+    h('div', { fontFamily: F.display, fontSize: 40, fontWeight: 900, lineHeight: 1, color: C.ink }, '9FEAMG'),
+    h('div', { width: 10, height: 10, background: C.accent, marginBottom: 5 })),
+  h('div', { position: 'absolute', left: 0, right: 0, bottom: 0, height: 10, background: C.accent }));
+const signed = n => n > 0 ? '+' + n.toFixed(2) : n < 0 ? '−' + (-n).toFixed(2) : '0.00';
+const mono = (w, text, color = C.muted, size = 22) => h('div', { width: w, justifyContent: 'flex-end', fontFamily: F.mono, fontSize: size, fontWeight: 600, color }, text);
+
+function standingsCard(season, st) {
+  const rows = [...st.rows].sort((a, b) => b.w - a.w || b.pf - a.pf), P = season.playoffTeams || 6;
+  const head = h('div', { marginTop: 14, paddingBottom: 6, fontFamily: F.mono, fontSize: 16, fontWeight: 600, letterSpacing: 2, color: C.muted },
+    h('div', { width: 44 }, '#'), h('div', { flex: 1, marginLeft: 46 }, 'MANAGER'), mono(90, 'W–L', C.muted, 16), mono(130, 'PF', C.muted, 16), mono(130, 'PA', C.muted, 16), mono(120, 'LUCK', C.muted, 16));
+  const line = r => h('div', { alignItems: 'center', height: 36, borderTop: `1px solid ${C.line}` },
+    h('div', { width: 44, fontFamily: F.display, fontSize: 26, fontWeight: 900, color: C.muted }, String(rows.indexOf(r) + 1)),
+    crest(r, 30), h('div', { flex: 1, marginLeft: 16, fontFamily: F.sans, fontSize: 25, fontWeight: 600, color: C.ink }, r.m),
+    mono(90, `${r.w}–${r.l}`, C.ink), mono(130, r.pf.toFixed(1)), mono(130, r.pa.toFixed(1)), mono(120, signed(r.luck), r.luck > 0 ? C.pos : r.luck < 0 ? C.neg : C.muted));
+  const cut = h('div', { alignItems: 'center', gap: 12, height: 26, fontFamily: F.mono, fontSize: 15, fontWeight: 600, letterSpacing: 2, color: C.accentInk },
+    h('div', { flex: 1, height: 2, background: C.accent }), `PLAYOFF LINE · TOP ${P}`, h('div', { flex: 1, height: 2, background: C.accent }));
+  return frame(`SEASON · THROUGH WEEK ${st.NF}`, 'Standings', null, h('div', { flexDirection: 'column' }, head,
+    ...rows.slice(0, P).map(line), cut, ...rows.slice(P).map(line)));
+}
+
+function powerCard(season, st) {
+  const now = powerRanks(season, st.NF), prev = st.NF > 1 ? powerRanks(season, st.NF - 1).map(r => r.m) : [];
+  const look = Object.fromEntries(st.rows.map(r => [r.m, r]));
+  const line = (r, i) => {
+    const mv = prev.length ? prev.indexOf(r.m) - i : 0;
+    return h('div', { alignItems: 'center', height: 41, borderTop: `1px solid ${C.line}` },
+      h('div', { width: 44, fontFamily: F.display, fontSize: 28, fontWeight: 900, color: C.muted }, String(i + 1)),
+      h('div', { width: 54, fontFamily: F.mono, fontSize: 18, fontWeight: 600, color: mv > 0 ? C.pos : mv < 0 ? C.neg : C.muted }, mv > 0 ? '▲' + mv : mv < 0 ? '▼' + -mv : '–'),
+      crest(look[r.m], 32), h('div', { flex: 1, marginLeft: 16, fontFamily: F.sans, fontSize: 26, fontWeight: 600, color: C.ink }, r.m),
+      mono(110, r.wl), mono(150, 'AP ' + r.ap), mono(110, r.score.toFixed(1), C.ink, 24));
+  };
+  return frame(`SEASON · THROUGH WEEK ${st.NF}`, 'Power rankings', '50% all-play · 25% record · 25% recent', h('div', { flexDirection: 'column', marginTop: 14 }, ...now.map(line)));
+}
+
+function teamOf(season, st, slug) {
+  const mg = season.managers.find(x => slugOf(x.m) == slug); if (!mg) return null;
+  const m = mg.m, rows = [...st.rows].sort((a, b) => b.w - a.w || b.pf - a.pf), r = st.rows.find(x => x.m == m);
+  const rank = (key, desc = true) => [...st.rows].sort((a, b) => desc ? b[key] - a[key] : a[key] - b[key]).findIndex(x => x.m == m) + 1;
+  // Streak from the final weeks.
+  const res = [];
+  for (let w = 1; w <= st.NF; w++) { const p = (season.schedule[w] || []).find(p => p.includes(m)); if (!p) continue; const o = p[0] == m ? p[1] : p[0]; res.push(season.scores[m][w - 1] > season.scores[o][w - 1] ? 'W' : 'L'); }
+  let k = 0; while (k < res.length && res[res.length - 1 - k] == res[res.length - 1]) k++;
+  const LW = season.live?.week, pair = LW ? (season.schedule[LW] || []).find(p => p.includes(m)) : null, o = pair ? (pair[0] == m ? pair[1] : pair[0]) : null;
+  const sc = season.live?.scores || {};
+  const week = o ? `Week ${LW}: ${(sc[m]?.[1] ?? 0).toFixed(2)}–${(sc[o]?.[1] ?? 0).toFixed(2)} projected vs ${o}` : '';
+  return { ...mg, slug, rec: `${r.w}–${r.l}`, place: rows.findIndex(x => x.m == m) + 1, streak: res.length ? res[res.length - 1] + k : '',
+    pf: r.pf, pfRank: rank('pf'), pa: r.pa, paRank: rank('pa', false), luck: r.luck, roast: season.roasts?.[m] || '', week, NF: st.NF };
+}
+
+function teamCard(T) {
+  const tile = (label, value, sub, color = C.ink) => h('div', { flexDirection: 'column', flex: 1, padding: '14px 18px', borderRadius: 16, background: C.surface2 },
+    h('div', { fontFamily: F.mono, fontSize: 16, fontWeight: 600, letterSpacing: 2, color: C.muted }, label),
+    h('div', { fontFamily: F.display, fontSize: 50, fontWeight: 900, lineHeight: 1, marginTop: 6, color }, value),
+    h('div', { fontFamily: F.mono, fontSize: 16, fontWeight: 600, color: C.muted, marginTop: 6 }, sub));
+  return frame(`TEAM · THROUGH WEEK ${T.NF}`, null, null, h('div', { flexDirection: 'column', marginTop: 18 },
+    h('div', { alignItems: 'center', gap: 26 }, crest(T, 110),
+      h('div', { flexDirection: 'column' },
+        h('div', { fontFamily: F.display, fontSize: 76, fontWeight: 900, lineHeight: 1, textTransform: 'uppercase', color: C.ink }, T.m),
+        h('div', { fontFamily: F.mono, fontSize: 24, fontWeight: 600, color: C.muted, marginTop: 8 }, [T.rec, ordinal(T.place) + ' place', T.streak ? T.streak + ' streak' : ''].filter(Boolean).join(' · ')))),
+    h('div', { gap: 12, marginTop: 24 },
+      tile('PF', T.pf.toFixed(1), ordinal(T.pfRank) + ' in league'), tile('PA', T.pa.toFixed(1), ordinal(T.paRank) + ' fewest'),
+      tile('LUCK', signed(T.luck), 'W − xW', T.luck > 0 ? C.pos : T.luck < 0 ? C.neg : C.ink)),
+    T.roast ? h('div', { marginTop: 18, maxHeight: 62, overflow: 'hidden', fontFamily: F.sans, fontSize: 24, fontWeight: 600, lineHeight: 1.3, color: C.ink }, T.roast) : null,
+    T.week ? h('div', { marginTop: 10, fontFamily: F.mono, fontSize: 20, fontWeight: 600, color: C.accentInk }, T.week) : null));
+}
+
+function weekOf(season, st, wk) {
+  const pairs = season.schedule?.[wk]; if (!pairs) return null;
+  const live = season.live?.week == wk; if (!live && wk > st.NF) return null;
+  const look = Object.fromEntries(season.managers.map(x => [x.m, x]));
+  const games = pairs.map(([a, b]) => {
+    const s = m => live ? (season.live.scores?.[m]?.[1] ?? 0) : season.scores[m][wk - 1];
+    const n = m => live ? (season.live.scores?.[m]?.[0] ?? 0) : null;
+    return { a: { ...look[a], score: s(a), now: n(a) }, b: { ...look[b], score: s(b), now: n(b) } };
+  }).sort((x, y) => Math.abs(x.a.score - x.b.score) - Math.abs(y.a.score - y.b.score));
+  const asOf = live && season.live.asOf ? new Date(season.live.asOf).toLocaleString('en-US', { weekday: 'short', hour: 'numeric', minute: '2-digit', timeZone: 'America/Chicago' }).replace(',', '') : '';
+  return { wk, live, games, asOf };
+}
+
+function weekCard(W) {
+  const side = (s, o, right) => h('div', { flex: 1, alignItems: 'center', justifyContent: right ? 'flex-end' : 'flex-start', gap: 14 },
+    right ? null : crest(s, 40),
+    h('div', { fontFamily: F.sans, fontSize: 28, fontWeight: 600, color: s.score >= o.score ? C.ink : C.muted }, s.m),
+    right ? crest(s, 40) : null);
+  const score = (s, o) => h('div', { flexDirection: 'column', alignItems: 'center', width: 150 },
+    h('div', { fontFamily: F.display, fontSize: 44, fontWeight: 900, lineHeight: 1, color: s.score >= o.score ? C.ink : C.muted }, s.score.toFixed(2)),
+    W.live ? h('div', { fontFamily: F.mono, fontSize: 15, fontWeight: 600, color: C.muted, marginTop: 2 }, 'now ' + s.now.toFixed(2)) : null);
+  const row = g => h('div', { alignItems: 'center', height: 82, borderTop: `1px solid ${C.line}` },
+    side(g.a, g.b, false), score(g.a, g.b), h('div', { width: 24, justifyContent: 'center', fontFamily: F.mono, fontSize: 24, color: C.muted }, '–'), score(g.b, g.a), side(g.b, g.a, true));
+  return frame(`WEEK ${W.wk} · ${W.live ? 'LIVE · PROJECTED' + (W.asOf ? ' · AS OF ' + W.asOf.toUpperCase() : '') : 'FINAL'}`, null, null,
+    h('div', { flexDirection: 'column', marginTop: 22 }, ...W.games.map(row)));
+}
+
+async function sectionRoute(url, request, name) {
+  const team = name.match(/^team-([a-z0-9-]+)$/), wkm = name.match(/^w(\d+)$/);
+  const kind = name == 'standings' || name == 'power' ? name : team ? 'team' : wkm ? 'week' : null;
+  if (!kind) return null;
+  const dest = new URL(kind == 'standings' ? '/#season' : kind == 'power' ? '/#power' : kind == 'team' ? '/#team-' + team[1] : '/#w' + wkm[1], url.origin).href;
+  const fallback = () => Response.redirect(new URL('/og.png', url.origin).href, 302), isImg = url.searchParams.has('img');
+  if (!isImg && !BOTS.test(request.headers.get('user-agent') || '')) {
+    return new Response(null, { status: 302, headers: { location: dest, 'cache-control': 'private, no-store', vary: 'User-Agent' } });
+  }
+  let season, st, data = null;
+  try { season = await loadSeason(url.origin); st = seasonStats(season, null); } catch { return fallback(); }
+  if (kind == 'team') data = teamOf(season, st, team[1]);
+  if (kind == 'week') data = weekOf(season, st, +wkm[1]);
+  if ((kind == 'team' || kind == 'week') && !data) return isImg ? fallback() : Response.redirect(dest, 302);
+  if (!st.NF && kind != 'week') return isImg ? fallback() : Response.redirect(dest, 302);
+  if (isImg) {
+    const card = kind == 'standings' ? standingsCard(season, st) : kind == 'power' ? powerCard(season, st) : kind == 'team' ? teamCard(data) : weekCard(data);
+    return new ImageResponse(card, { width: 1200, height: 630, fonts: await fonts(), headers: { 'cache-control': 'public, max-age=300, s-maxage=300' } });
+  }
+  let title, desc, ver;
+  if (kind == 'standings') {
+    const rows = [...st.rows].sort((a, b) => b.w - a.w || b.pf - a.pf);
+    title = `Standings · through week ${st.NF} · 9FEAMG`;
+    desc = rows.slice(0, 3).map((r, i) => `${i + 1}. ${r.m} ${r.w}–${r.l}`).join(' · ') + `. Top ${season.playoffTeams || 6} make the playoffs.`;
+    ver = rows.map(r => [r.m, r.w, r.pf]);
+  } else if (kind == 'power') {
+    const pr = powerRanks(season, st.NF), note = season.powerNotes?.[st.NF]?.[pr[0].m];
+    title = `Power rankings · through week ${st.NF} · 9FEAMG`;
+    desc = pr.slice(0, 3).map((r, i) => `${i + 1}. ${r.m} ${r.score.toFixed(1)}`).join(' · ') + '.' + (note ? ` ${pr[0].m}: ${note}` : '');
+    ver = pr.map(r => [r.m, r.score.toFixed(1)]);
+  } else if (kind == 'team') {
+    title = `${data.m} · ${data.rec}, ${ordinal(data.place)} · 9FEAMG`;
+    desc = [`PF ${data.pf.toFixed(1)} (${ordinal(data.pfRank)}), PA ${data.pa.toFixed(1)}, luck ${signed(data.luck)}.`, data.week ? data.week + '.' : '', data.roast].filter(Boolean).join(' ');
+    ver = [data.rec, data.pf, data.pa, data.luck, data.week, data.roast];
+  } else {
+    title = `Week ${data.wk} · ${data.live ? 'live' : 'final'} · 9FEAMG`;
+    desc = data.games.map(g => `${g.a.m} ${g.a.score.toFixed(2)}–${g.b.score.toFixed(2)} ${g.b.m}`).join(' · ') + (data.live ? ' (projected)' : '');
+    ver = data.games.map(g => [g.a.score, g.a.now, g.b.score, g.b.now]).concat([data.asOf]);
+  }
+  const e = escapeHtml, img = new URL(`/api/section?name=${name}&img=1&v=${hash(JSON.stringify(ver))}`, url.origin).href;
+  return new Response(`<!doctype html><html><head><meta charset="utf-8">
+<title>${e(title)}</title>
+<meta name="description" content="${e(desc)}">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="9FEAMG">
+<meta property="og:title" content="${e(title)}">
+<meta property="og:description" content="${e(desc)}">
+<meta property="og:url" content="${e(new URL('/s/' + name, url.origin).href)}">
+<meta property="og:image" content="${e(img)}">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+</head><body><a href="${e(dest)}">${e(title)}</a></body></html>`, {
+    headers: { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'private, no-store', vary: 'User-Agent' } });
+}
+
 export default {
   async fetch(request) {
     const url = new URL(request.url);
     const name = url.searchParams.get('name') || '';
     const mm = name.match(/^w(\d+)-([a-z0-9-]+?)-vs-([a-z0-9-]+)$/);
     if (mm) return matchupRoute(url, request, mm);
+    const sec = await sectionRoute(url, request, name);
+    if (sec) return sec;
     if (!CHARTS[name]) return Response.redirect(new URL('/', url.origin).href, 302);
     const isImg = url.searchParams.has('img');
     if (!isImg && !BOTS.test(request.headers.get('user-agent') || '')) {

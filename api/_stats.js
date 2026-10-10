@@ -29,6 +29,25 @@ export function seasonStats(season, box) {
   return { NF, rows, maxOk: rows.every(r => r.max != null) };
 }
 
+// Power rankings through week n, the site's formula (src/logic.js power()): 0–100 from half
+// season all-play win %, a quarter actual win %, a quarter all-play win % over the last two weeks.
+export function powerRanks(season, n) {
+  const MGR = season.managers.map(x => x.m), SC = season.scores, PAIRS = season.schedule, k = MGR.length - 1;
+  const opp = (m, w) => { const p = (PAIRS[w] || []).find(p => p.includes(m)); return p ? (p[0] == m ? p[1] : p[0]) : null; };
+  return MGR.map(m => {
+    let ap = 0, apW = 0, w = 0, g = 0, form = 0, fg = 0, pf = 0;
+    for (let i = 1; i <= n; i++) {
+      const o = opp(m, i); if (!o) continue;
+      const a = MGR.filter(x => x != m && SC[x][i - 1] < SC[m][i - 1]).length;
+      ap += a / k; apW += a; g++; pf += SC[m][i - 1];
+      if (SC[m][i - 1] > SC[o][i - 1]) w++;
+      if (i > n - 2) { form += a / k; fg++; }
+    }
+    const score = g ? 100 * (0.5 * ap / g + 0.25 * w / g + 0.25 * (fg ? form / fg : 0)) : 0;
+    return { m, score, pf, wl: w + '–' + (g - w), ap: apW + '–' + (g * k - apW) };
+  }).sort((a, b) => b.score - a.score || b.pf - a.pf);
+}
+
 export async function loadBox(origin) {
   try { const r = await fetch(new URL('/uploads/9feamg-boxscores.json', origin), { cache: 'no-store' }); return r.ok ? await r.json() : null; } catch { return null; }
 }

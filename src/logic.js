@@ -1080,7 +1080,7 @@ class Component extends DCLogic {
       tabs, tabGameday: S.tab == 'Gameday', tabSeason: S.tab == 'Season', tabTeams: S.tab == 'Teams', tabDraft: S.tab == 'Draft', tabWire: S.tab == 'Wire',
       // Gameday header, jump links, your-team prompt, scores time, request toggle, share sheet.
       gamedaySub: hasRecap ? (isFinal ? 'Week recap · scores + Booth' : LIVE_STARTED ? 'Live week · scores + Booth' : 'Week preview · projections + Booth') : '9 Fantasy Experts & Mr. Glenn',
-      gamedayShare: hasRecap ? this.shareMenu(`Week ${wk}`, e => this.shareLink(location.origin + '/#w' + wk, '9FEAMG · Week ' + wk, e), e => this.share('recap', e)) : null, hasGamedayShare: !!hasRecap,
+      gamedayShare: hasRecap ? this.shareMenu(`Week ${wk}`, e => this.shareLink(location.origin + '/s/w' + wk, '9FEAMG · Week ' + wk, e), e => this.share('recap', e)) : null, hasGamedayShare: !!hasRecap,
       jumps: hasWeek ? [['Matchups', 'matchups'], ...(boothOn && boothLines.length ? [['Booth', 'booth']] : []), ...(parlays.length || hasReq ? [['Parlays', 'parlays']] : [])].map(([label, id]) => ({ label, go: () => this.jump(id) })) : [], hasJumps: hasWeek,
       // Header crest button and the one "Your team" picker.
       hasMe: !!S.reqMgr, noMe: !S.reqMgr, meInit: INIT[S.reqMgr] || '', meColor: S.reqMgr ? col(S.reqMgr) : 'transparent',
@@ -1113,9 +1113,9 @@ class Component extends DCLogic {
       // Share buttons
       // The matchup link goes through /s/w5-andy-vs-pablo so chats show a picture of it (api/section.js).
       menuHero: this.shareMenu('This matchup', e => this.shareLink(location.origin + (hero ? `/s/w${S.week}-${teamSlug(hero.a.m)}-vs-${teamSlug(hero.b.m)}` : '/#w' + S.week), hero ? `9FEAMG · ${hero.a.m} vs ${hero.b.m}` : '9FEAMG · Week ' + S.week, e), e => this.share('hero', e)),
-      menuStandings: this.shareMenu('Standings', e => this.shareLink(location.origin + '/#season', '9FEAMG · Standings', e), e => this.share('standings', e)),
-      menuPower: this.shareMenu('Power rankings', e => this.shareLink(location.origin + '/#power', '9FEAMG · Power rankings', e), e => this.share('power', e)),
-      menuTeam: this.shareMenu(S.team, e => this.shareLink(location.origin + '/#team-' + teamSlug(S.team), '9FEAMG · ' + S.team, e), e => this.share('team', e)),
+      menuStandings: this.shareMenu('Standings', e => this.shareLink(location.origin + '/s/standings', '9FEAMG · Standings', e), e => this.share('standings', e)),
+      menuPower: this.shareMenu('Power rankings', e => this.shareLink(location.origin + '/s/power', '9FEAMG · Power rankings', e), e => this.share('power', e)),
+      menuTeam: this.shareMenu(S.team, e => this.shareLink(location.origin + '/s/team-' + teamSlug(S.team), '9FEAMG · ' + S.team, e), e => this.share('team', e)),
       menuLedger: this.shareMenu('Parlay ledger', e => this.shareLink(location.origin + '/s/ledger', '9FEAMG · Parlay ledger', e), e => this.share('ledger', e)),
       ...Object.fromEntries([['Pfpa', 'pfpa', 'Points for vs against'], ['Luck', 'luck', 'Luck'], ['Bench', 'bench', 'Points left on bench']].map(([k, id, title]) =>
         ['menu' + k, this.shareMenu(title, e => this.shareLink(location.origin + '/s/' + id, '9FEAMG · ' + title, e), e => this.share(id, e))])),
