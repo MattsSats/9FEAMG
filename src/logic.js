@@ -740,6 +740,10 @@ class Component extends DCLogic {
       return main && { crests: pair.map(m => ({ m, init: INIT[m], color: col(m) })), matchup: pair.join(' vs '),
         text: main[1], isPreview: !r, preview: r && p ? p[1] : '', hasPreview: !!(r && p) };
     }).filter(Boolean);
+    // Same order as the matchup cards: the featured one, then the rest.
+    const cardOrder = hasWeek ? [hero, ...matchups].map(x => x.a.m) : [];
+    const slotOf = b => { const i = cardOrder.findIndex(m => b.crests.some(c => c.m == m)); return i < 0 ? 99 : i; };
+    boothLines.sort((x, y) => slotOf(x) - slotOf(y));
     // Parlay requests (live week only): who's asking, a risk slider, legs, and optional
     // players (their own starters) or a game. A published parlay with request: <manager> fills it.
     const hasReq = !!LW && wk == LW, R = S.req, rk = RISKS[R.risk], rm = S.reqMgr, mine = S.reqs?.[rm];
@@ -958,7 +962,7 @@ class Component extends DCLogic {
     const heatHead = chipWeeks.filter(w => w <= NF).map(w => 'W' + w).concat(LW ? ['W' + LW] : []);
     const restFrom = (LW ?? NF) + 1, total = D.regularSeasonWeeks;
     const restLabel = restFrom < total ? restFrom + '–' + total : restFrom == total ? 'W' + total : '';
-    const heatCols = `64px repeat(${heatHead.length},minmax(36px,1fr))` + (restLabel ? ' 36px' : '');
+    const heatCols = `64px repeat(${heatHead.length},minmax(36px,72px))` + (restLabel ? ' 36px' : '');
     const heatMinW = (64 + heatHead.length * 40 + (restLabel ? 40 : 0)) + 'px';
     const heat = MGR.map(m => ({ m, cells: [...Array(NF).keys()].map(i => { const w = i + 1, v = SC[m][i], t = (hi - v) / (hi - lo || 1), k = Math.min(5, Math.floor(t * 5) + 1); return { v: f1(v), r: won(m, w) ? 'W' : 'L', bg: `var(--heat${k})`, fg: 'var(--ink)' }; }) }));
     let topW = { v: -1 };
@@ -1087,9 +1091,11 @@ class Component extends DCLogic {
     const avg = a => a.reduce((s, v) => s + v, 0) / a.length, sx = v => ((v - x0) / (x1 - x0) * 100).toFixed(1) + '%', sy = v => ((y1 - v) / (y1 - y0) * 100).toFixed(1) + '%';
     // Nudge overlapping dots apart so every crest stays readable and tappable. DX/DY are a
     // 30px dot plus a gap (and, up and down, the luck number under it), as a share of the plot:
-    // 340px tall, and on a phone the screen width less the card's padding (the tight case).
-    const plotW = Math.max(200, Math.min(window.innerWidth || 440, 440) - 94);
-    const pts = ST.map(x => ({ x: (x.pf - x0) / (x1 - x0), y: (y1 - x.pa) / (y1 - y0) })), DX = 36 / plotW, DY = 46 / 340;
+    // 340px tall on phones (the screen width less the card's padding), 460px on desktop, where
+    // the chart's column is 1/3 of the page (wide) or half of it.
+    const vw = window.innerWidth || 440, plotH = vw >= 900 ? 460 : 340;
+    const plotW = vw >= 1320 ? Math.min(vw, 1440) / 3 - 106 : vw >= 900 ? Math.min(vw, 1080) / 2 - 106 : Math.max(200, Math.min(vw, 440) - 94);
+    const pts = ST.map(x => ({ x: (x.pf - x0) / (x1 - x0), y: (y1 - x.pa) / (y1 - y0) })), DX = 36 / plotW, DY = 46 / plotH;
     for (let it = 0; it < 80; it++) for (let i = 0; i < pts.length; i++) for (let j = i + 1; j < pts.length; j++) {
       const a = pts[i], b = pts[j], dx = (b.x - a.x) / DX, dy = (b.y - a.y) / DY, d = Math.hypot(dx, dy);
       if (d >= 1) continue;
@@ -1108,7 +1114,7 @@ class Component extends DCLogic {
 
     return {
       ok: true, dataError: false,
-      scatter, scatterMidX: sx(avg(pfs)), scatterMidY: sy(avg(pas)), pfMin: x0, pfMax: x1, paMin: y0, paMax: y1, luckBars, benchBars, hlHint: hl ? hl + ' · tap again to clear' : 'Tap a team',
+      scatter, plotH, scatterMidX: sx(avg(pfs)), scatterMidY: sy(avg(pas)), pfMin: x0, pfMax: x1, paMin: y0, paMax: y1, luckBars, benchBars, hlHint: hl ? hl + ' · tap again to clear' : 'Tap a team',
       themeLabel, toggleTheme,
       draftIconCls: S.tab == 'Draft' ? 'hi play inv' : 'hi', goHome: e => this.goHome(e), openDraft: () => { this.setState({ tab: 'Draft' }); window.scrollTo(0, 0); },
       draftBtnBg: S.tab == 'Draft' ? 'var(--accent)' : 'var(--surface)', draftBtnFg: S.tab == 'Draft' ? 'var(--onAccent)' : 'var(--ink)', draftBtnBorder: S.tab == 'Draft' ? 'var(--accent)' : 'var(--line)',

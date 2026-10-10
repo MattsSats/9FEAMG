@@ -436,21 +436,39 @@ button{font-family:inherit;color:inherit}
 /* Wire on phones: the FAAB and activity charts come before the long list of moves. */
 .wire-cols{display:flex;flex-direction:column}
 .wire-cols>.wire-side{order:-1}
-/* Season: named spots so each column stacks on its own (no row gaps); phones keep source order. */
+/* Season: three stacks, each column on its own so nothing leaves a row gap.
+   1: Standings, Bench · 2: Power rankings · 3: PF vs PA, Luck (the rings tie them together).
+   Phones drop the stacks and keep the reading order: Standings, Power, PF vs PA, Luck, Bench. */
+@media (max-width:899px){
+  .season-grid{display:flex;flex-direction:column}
+  .season-grid>.sg-c1,.season-grid>.sg-c2,.season-grid>.sg-c3{display:contents}
+  .sg-st{order:1}.sg-pw{order:2}.sg-ch{order:3}.sg-lk{order:4}.sg-bn{order:5}
+}
 @media (min-width:900px){
-  .cols.season-grid{grid-template-areas:"st pw" "ch pw" "lk bn";grid-template-rows:auto auto auto}
-  .season-grid>*{align-self:start}
-  .season-grid>.sg-st{grid-area:st}.season-grid>.sg-ch{grid-area:ch}.season-grid>.sg-lk{grid-area:lk}.season-grid>.sg-bn{grid-area:bn}.season-grid>.sg-pw{grid-area:pw}
+  .cols.season-grid{grid-template-areas:"c1 c2" "c3 c3"}
+  .season-grid>.sg-c1{grid-area:c1}.season-grid>.sg-c2{grid-area:c2}.season-grid>.sg-c3{grid-area:c3}
+  .season-grid>.sg-c3{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:0 12px;align-items:start}
+  .season-grid>*>*{min-width:0}
+  /* Weekly scores: cells stop growing past 72px instead of stretching across the page. */
+  .heat-sec{max-width:max-content;box-sizing:content-box}
+  .heat-sec>div:first-child{gap:24px}
+  .wire-toggle{display:inline-grid!important;grid-template-columns:auto auto!important;border-radius:999px!important}
+  .wire-toggle>button{min-height:34px!important;padding:0 16px;border-radius:999px!important;font-size:13px!important}
 }
 @media (min-width:1320px){
-  /* The last row takes Power rankings' extra height, so the first two rows stay snug. */
-  .cols.season-grid{grid-template-columns:repeat(3,minmax(0,1fr));grid-template-areas:"st pw ch" "lk pw bn";grid-template-rows:auto 1fr}
+  .cols.season-grid{grid-template-areas:"c1 c2 c3"}
+  .season-grid>.sg-c3{display:block}
 }
 /* Wide desktop: three columns on Gameday (featured + Booth | matchups | parlays). */
 @media (min-width:1320px){
   .app,.tabbar{max-width:1440px}
   .cols{grid-template-columns:repeat(3,minmax(0,1fr))}
-  .cols>.col-wide{grid-column:auto;display:block}
+  /* Gameday: matchups with the Booth under them; parlays take the other two columns as a
+     two-up grid (CSS order keeps the ledger between the groups). */
+  .gd-cols{grid-template-areas:"mu pa pa" "bo pa pa";grid-template-rows:auto 1fr}
+  .gd-cols>#matchups{grid-area:mu}.gd-cols>.gd-booth{grid-area:bo}.gd-cols>#parlays{grid-area:pa}
+  /* The ledger is one ticket wide here, so it can sit beside a ticket instead of stretching. */
+  .gd-cols>#parlays>.ledger{grid-column:auto}
   .cols.two{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
 /* Teams and Wire on desktop: two columns; Wire's charts stay in view beside the list. */
@@ -633,7 +651,7 @@ button{font-family:inherit;color:inherit}
 </sc-if>
 
 <sc-if value="{{ hasWeek }}" hint-placeholder-val="{{ true }}">
-<div class="cols">
+<div class="cols gd-cols">
 <div id="matchups" class="jump-to">
   <div data-shot="hero" sc-camel-on-click="{{ hero.open }}" tabindex="0" role="button" style="margin:16px 20px 0;background:var(--surface);border:1px solid var(--line);border-radius:20px;overflow:hidden;cursor:pointer">
     <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;padding:14px 16px 0;min-height:46px">
@@ -691,7 +709,7 @@ button{font-family:inherit;color:inherit}
   </div>
 </div>
 
-<div>
+<div class="gd-booth">
   <sc-if value="{{ hasBooth }}" hint-placeholder-val="{{ true }}">
     <div id="booth" class="jump-to" style="padding:28px 20px 0">
       <div style="display:flex;align-items:baseline;justify-content:space-between">
@@ -994,6 +1012,7 @@ button{font-family:inherit;color:inherit}
 </div>
 
 <div class="cols season-grid">
+<div class="sg-c1">
 <div data-shot="standings" class="sg-st" style="padding:30px 20px 0">
   <div class="sec-head">
     <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:26px;text-transform:uppercase">Standings</div>
@@ -1022,6 +1041,33 @@ button{font-family:inherit;color:inherit}
   <div class="shot-footer"><b>9FEAMG</b><span>{{ shotStandings }}</span></div>
 </div>
 
+<div id="bench" data-shot="bench" class="sg-bn" style="padding:30px 20px 0;scroll-margin-top:64px">
+  <div class="sec-head">
+    <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:26px;text-transform:uppercase">Points left on bench</div>
+    <span class="sec-btns no-shot"><button class="share-btn" sc-camel-on-click="{{ menuBench }}" aria-label="Share the bench chart">Share</button></span>
+    <div class="sec-cap">Scored vs. best possible lineup</div>
+  </div>
+  <div style="display:flex;flex-direction:column;gap:8px;margin-top:12px">
+    <sc-for list="{{ benchBars }}" as="bb" hint-placeholder-count="10">
+      <div sc-camel-on-click="{{ bb.pick }}" class="hov" tabindex="0" role="button" style="display:grid;grid-template-columns:60px minmax(0,1fr) 44px;gap:10px;align-items:center;cursor:pointer;opacity:{{ bb.op }}">
+        <span style="font-size:13px;font-weight:600">{{ bb.m }}</span>
+        <div style="height:18px;display:flex;border-radius:4px;overflow:hidden;background:var(--surface2)">
+          <div style="width:{{ bb.pf }};background:{{ bb.color }}"></div>
+          <div style="width:{{ bb.bench }};background:repeating-linear-gradient(135deg,var(--accent) 0 3px,transparent 3px 6px)"></div>
+        </div>
+        <span style="font-family:'JetBrains Mono';font-size:12px;font-weight:600;text-align:right;color:var(--accentInk)">{{ bb.v }}</span>
+      </div>
+    </sc-for>
+  </div>
+  <div style="display:flex;gap:16px;margin-top:10px;font-family:'JetBrains Mono';font-size:10px;color:var(--muted)">
+    <span style="display:flex;align-items:center;gap:6px"><span style="width:10px;height:10px;border-radius:2px;background:var(--muted)"></span>Scored</span>
+    <span style="display:flex;align-items:center;gap:6px"><span style="width:10px;height:10px;border-radius:2px;background:repeating-linear-gradient(135deg,var(--accent) 0 3px,transparent 3px 6px)"></span>Left on bench</span>
+  </div>
+  <div class="shot-footer"><b>9FEAMG</b><span>{{ shotNoteBench }}</span></div>
+</div>
+</div>
+
+<div class="sg-c2">
 <sc-if value="{{ hasPower }}" hint-placeholder-val="{{ true }}">
 <div id="power" data-shot="power" data-shot-w="560" class="sg-pw" style="padding:30px 20px 0;scroll-margin-top:64px">
   <div class="sec-head">
@@ -1046,7 +1092,9 @@ button{font-family:inherit;color:inherit}
   <div class="shot-footer"><b>9FEAMG</b><span>{{ shotPower }}</span></div>
 </div>
 </sc-if>
+</div>
 
+<div class="sg-c3">
 <div id="pfpa" data-shot="pfpa" class="sg-ch" style="padding:30px 20px 0;scroll-margin-top:64px">
   <div class="sec-head">
     <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:26px;text-transform:uppercase">Points for vs against</div>
@@ -1055,7 +1103,7 @@ button{font-family:inherit;color:inherit}
     <div class="sec-cap no-shot">{{ hlHint }}</div>
   </div>
   <div style="margin-top:12px;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:14px 14px 10px">
-    <div style="position:relative;height:340px;margin:0 4px 0 22px;border-left:1px solid var(--line);border-bottom:1px solid var(--line)">
+    <div style="position:relative;height:{{ plotH }}px;margin:0 4px 0 22px;border-left:1px solid var(--line);border-bottom:1px solid var(--line)">
       <span style="position:absolute;left:-22px;top:0;font-family:'JetBrains Mono';font-size:9px;color:var(--muted)">{{ paMax }}</span>
       <span style="position:absolute;left:-22px;bottom:0;font-family:'JetBrains Mono';font-size:9px;color:var(--muted)">{{ paMin }}</span>
       <div style="position:absolute;left:{{ scatterMidX }};top:0;bottom:0;border-left:1px dashed var(--line)"></div>
@@ -1093,41 +1141,16 @@ button{font-family:inherit;color:inherit}
   </div>
   <div class="shot-footer"><b>9FEAMG</b><span>{{ shotNoteLuck }}</span></div>
 </div>
-
-<div id="bench" data-shot="bench" class="sg-bn" style="padding:30px 20px 0;scroll-margin-top:64px">
-  <div class="sec-head">
-    <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:26px;text-transform:uppercase">Points left on bench</div>
-    <span class="sec-btns no-shot"><button class="share-btn" sc-camel-on-click="{{ menuBench }}" aria-label="Share the bench chart">Share</button></span>
-    <div class="sec-cap">Scored vs. best possible lineup</div>
-  </div>
-  <div style="display:flex;flex-direction:column;gap:8px;margin-top:12px">
-    <sc-for list="{{ benchBars }}" as="bb" hint-placeholder-count="10">
-      <div sc-camel-on-click="{{ bb.pick }}" class="hov" tabindex="0" role="button" style="display:grid;grid-template-columns:60px minmax(0,1fr) 44px;gap:10px;align-items:center;cursor:pointer;opacity:{{ bb.op }}">
-        <span style="font-size:13px;font-weight:600">{{ bb.m }}</span>
-        <div style="height:18px;display:flex;border-radius:4px;overflow:hidden;background:var(--surface2)">
-          <div style="width:{{ bb.pf }};background:{{ bb.color }}"></div>
-          <div style="width:{{ bb.bench }};background:repeating-linear-gradient(135deg,var(--accent) 0 3px,transparent 3px 6px)"></div>
-        </div>
-        <span style="font-family:'JetBrains Mono';font-size:12px;font-weight:600;text-align:right;color:var(--accentInk)">{{ bb.v }}</span>
-      </div>
-    </sc-for>
-  </div>
-  <div style="display:flex;gap:16px;margin-top:10px;font-family:'JetBrains Mono';font-size:10px;color:var(--muted)">
-    <span style="display:flex;align-items:center;gap:6px"><span style="width:10px;height:10px;border-radius:2px;background:var(--muted)"></span>Scored</span>
-    <span style="display:flex;align-items:center;gap:6px"><span style="width:10px;height:10px;border-radius:2px;background:repeating-linear-gradient(135deg,var(--accent) 0 3px,transparent 3px 6px)"></span>Left on bench</span>
-  </div>
-  <div class="shot-footer"><b>9FEAMG</b><span>{{ shotNoteBench }}</span></div>
+</div>
 </div>
 
-</div>
-
-<div style="padding:30px 20px 0">
+<div class="heat-sec" style="padding:30px 20px 0">
   <div style="display:flex;align-items:baseline;justify-content:space-between">
     <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:26px;text-transform:uppercase">Weekly scores</div>
     <div style="font-family:'JetBrains Mono';font-size:11px;color:var(--muted)">Darker = lower score</div>
   </div>
   <div class="scroll-x">
-  <div style="min-width:{{ heatMinW }}">
+  <div class="heat-wrap" style="min-width:{{ heatMinW }}">
   <div style="display:grid;grid-template-columns:{{ heatCols }};gap:4px;padding:12px 0 6px;font-family:'JetBrains Mono';font-size:10px;color:var(--muted);letter-spacing:.06em">
     <span></span>
     <sc-for list="{{ heatHead }}" as="hh" hint-placeholder-count="4"><span style="text-align:center">{{ hh }}</span></sc-for>
@@ -1324,7 +1347,7 @@ button{font-family:inherit;color:inherit}
   <div style="font-family:'JetBrains Mono';font-size:11px;color:var(--muted);margin-top:10px">{{ wireSub }}</div>
 </div>
 <div style="padding:16px 20px 0">
-  <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));padding:4px;background:var(--surface);border:1px solid var(--line);border-radius:12px;gap:4px">
+  <div class="wire-toggle" style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));padding:4px;background:var(--surface);border:1px solid var(--line);border-radius:12px;gap:4px">
     <sc-for list="{{ wireModes }}" as="wm" hint-placeholder-count="2">
       <button sc-camel-on-click="{{ wm.pick }}" style="min-height:40px;border:0;border-radius:9px;background:{{ wm.bg }};color:{{ wm.fg }};font-weight:600;font-size:14px;cursor:pointer">{{ wm.label }}</button>
     </sc-for>
