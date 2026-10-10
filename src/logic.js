@@ -86,6 +86,16 @@ function kickoff(week, game) {
   const cdt = d.getUTCMonth() < 10 || (d.getUTCMonth() == 10 && d.getUTCDate() < 1 + ((7 - new Date(Date.UTC(d.getUTCFullYear(), 10, 1)).getUTCDay()) % 7));
   return new Date(`${ymd}T${String(h).padStart(2, '0')}:${m[3]}:00${cdt ? '-05:00' : '-06:00'}`);
 }
+// NFL week lookups: a team's game ('Sun 12:00 PM · CHI @ GB') and whether it's on bye.
+// Roster files spell a few teams differently (Was/WSH, Jac/JAX), so compare normalized.
+const NFL_ALIAS = { WSH: 'WAS', JAC: 'JAX', LA: 'LAR' };
+const nflKey = t => { const u = String(t || '').toUpperCase(); return NFL_ALIAS[u] || u; };
+const nflGame = (team, wk) => (D?.nfl?.[wk]?.games || []).find(g => { const m = g.match(/·\s*(\S+)\s*@\s*(\S+)/); return m && [nflKey(m[1]), nflKey(m[2])].includes(nflKey(team)); }) || null;
+const onBye = (team, wk) => (D?.nfl?.[wk]?.byes || []).map(nflKey).includes(nflKey(team));
+const INJ = { Q: 'Q', D: 'D', O: 'Out', IR: 'IR', PUP: 'PUP', NA: 'NA', SUSP: 'Susp' };
+// Starters a lineup needs (Yahoo: QB, 2 RB, 2 WR, TE, W/R/T, K, DEF).
+const SLOTS = { QB: 1, RB: 2, WR: 2, TE: 1, WRT: 1, K: 1, DEF: 1 };
+const SLOT_NAME = { QB: 'QB', RB: 'RB', WR: 'WR', TE: 'TE', WRT: 'FLEX', K: 'K', DEF: 'DEF' };
 const tailsLocked = (week, p) => p.legs.some(l => (l.status || 'open') != 'open')
   || (ks => ks.length > 0 && Date.now() >= Math.min(...ks))(p.legs.map(l => kickoff(week, l.game)).filter(Boolean));
 const legCount = l => l == 'any' ? null : l == '6+' ? 6 : +l;
@@ -589,7 +599,7 @@ class Component extends DCLogic {
     return this.players(m).filter(p => p.slot == 'starter').sort((a, b) => (ORD[a.pos] ?? 9) - (ORD[b.pos] ?? 9)).map(p => {
       const lp = live ? LIVEPTS[p.name] : null;
       const v = lp ?? (live ? (p.proj ?? p.projected ?? p.projections?.[wk] ?? PPROJ[p.name]) : (p.points?.[wk] ?? p.weeks?.[wk] ?? p.pts?.[wk]));
-      return { slot: p.pos == 'WRT' ? 'FLEX' : p.pos, name: p.name, meta: (p.nfl ? p.nfl.toUpperCase() : '—') + (lp != null ? (PLAYING.has(p.name) ? ' · Live' : ' · Final') : live && v != null ? ' · proj' : ''), pts: v != null ? f2(+v) : '—', ptsColor: lp != null ? (PLAYING.has(p.name) ? 'var(--ink)' : 'var(--accentInk)') : v != null && !live ? 'var(--ink)' : 'var(--muted)' };
+      return { slot: p.pos == 'WRT' ? 'FLEX' : p.pos, name: p.name, meta: (p.nfl ? p.nfl.toUpperCase() : '—') + (lp != null ? (PLAYING.has(p.name) ? ' · Live' : ' · Final') : live ? this.preGame(p, wk) + (v != null ? ' · proj' : '') : ''), pts: v != null ? f2(+v) : '—', ptsColor: lp != null ? (PLAYING.has(p.name) ? 'var(--ink)' : 'var(--accentInk)') : v != null && !live ? 'var(--ink)' : 'var(--muted)' };
     });
   }
   side(m, o, wk) {
@@ -605,7 +615,9 @@ class Component extends DCLogic {
   match(pair, wk) {
     const [a, b] = pair, A = this.side(a, b, wk), B = this.side(b, a, wk), gap = Math.abs(A.raw - B.raw), live = wk == LW;
     const lead = A.raw > B.raw ? A.m : B.raw > A.raw ? B.m : null;
-    return { a: A, b: B, live,
+    // Lineup alerts, one line per manager: "Pablo: Tetairoa McMillan is on a bye".
+    const alerts = [a, b].flatMap(m => { const l = this.lineupAlerts(m, wk); return l.length ? [`${m}: ${l.join('; ')}`] : []; });
+    return { a: A, b: B, live, alerts: alerts.map(t => ({ t })), hasAlerts: alerts.length > 0,
       // Column headers: Now (live only) and Proj, or Final once the week is done.
       colNow: live ? 'Now' : '', colScore: live ? 'Proj' : 'Final',
       // The gap in words, leader first: "Pablo +3.55 proj" or "Tony won by 9.04".
@@ -613,6 +625,35 @@ class Component extends DCLogic {
       open: () => this.setState({ sheet: { a, b, wk } }) };
   }
   // Live week: how many of a manager's starters haven't finished (not started or still playing).
+  // Before kickoff: "Sun 12:00 PM · Q" (or "Bye"), from the NFL week and the roster's injury tag.
+  preGame(p, wk) {
+    if (onBye(p.nfl, wk)) return ' · Bye';
+    const g = nflGame(p.nfl, wk), inj = INJ[String(p.inj || '').toUpperCase()];
+    return (g ? ' · ' + g.split(' · ')[0] : '') + (inj ? ' · ' + inj : '');
+  }
+  // Lineup alerts for the live week: starters who can't score (bye, listed Out) and empty slots.
+  // A player's alert clears once his game kicks off; bye and empty-slot alerts clear once the
+  // week's last game has started (nothing can be swapped in after that).
+  lineupAlerts(m, wk) {
+    if (wk != LW) return [];
+    const now = Date.now(), games = D?.nfl?.[wk]?.games || [];
+    const lastKick = Math.max(0, ...games.map(g => kickoff(wk, g)?.getTime() || 0));
+    const weekOpen = !games.length || now < lastKick;
+    const st = this.players(m).filter(p => p.slot == 'starter'), out = [];
+    for (const p of st) {
+      if (LIVEPTS[p.name] != null) continue;
+      if (onBye(p.nfl, wk)) { if (weekOpen) out.push(`${p.name} is on a bye`); continue; }
+      const g = nflGame(p.nfl, wk), k = g ? kickoff(wk, g) : null;
+      if (k && now >= k.getTime()) continue;
+      if (String(p.inj || '').toUpperCase() == 'O' || String(p.inj || '').toUpperCase() == 'IR') out.push(`${p.name} is listed Out`);
+    }
+    if (weekOpen && this.state.rosters) {
+      const have = {}; st.forEach(p => { have[p.pos] = (have[p.pos] || 0) + 1; });
+      const empty = Object.entries(SLOTS).flatMap(([k, n]) => Array(Math.max(0, n - (have[k] || 0))).fill(SLOT_NAME[k]));
+      if (empty.length) out.push(empty.length == 1 ? `Empty ${empty[0]} slot` : `${empty.length} empty slots (${[...new Set(empty)].join(', ')})`);
+    }
+    return out;
+  }
   startersLeft(m) {
     const st = this.players(m).filter(p => p.slot == 'starter');
     if (!st.length) return null;
@@ -931,8 +972,8 @@ class Component extends DCLogic {
       line: `${s.w}–${s.l} · ${ord(place)} place` + (NF ? ` · ${res[res.length - 1]}${k} streak` : ''),
       lineupTitle: `Week ${lineupWeek} lineup`, proj: LW ? 'Proj ' + f2(PROJ[tm]) : '',
       stats: [{ label: 'PF', value: f1(s.pf), sub: ord(pfRank) + ' in league' }, { label: 'PA', value: f1(s.pa), sub: ord(paRank) + ' fewest' }, { label: 'Luck', value: sgn(s.luck), sub: 'W − xW', color: s.luck > 0 ? 'var(--pos)' : s.luck < 0 ? 'var(--neg)' : 'var(--ink)' }, { label: 'xW', value: s.xw.toFixed(2), sub: 'vs ' + s.w + ' real wins' }, { label: 'Max PF', value: maxOk ? f1(s.max) : '—', sub: maxOk ? ord(maxRank) + ' best possible' : 'Best possible lineup' }, { label: 'Bench', value: maxOk ? f1(bn) : '—', sub: 'Points left sitting' }, { label: 'FAAB left', value: txOk ? '$' + (budget - spent[tm]) : '—', sub: 'of $' + budget }, { label: 'Adds', value: txOk ? String(adds[tm]) : '—', sub: 'This season' }].map(x => ({ color: 'var(--ink)', isLuck: x.label == 'Luck', isBench: x.label == 'Bench', ...x })),
-      log, starters: this.starters(tm, lineupWeek),
-      bench: pl.filter(p => p.slot != 'starter').map(p => { const lp = LIVEPTS[p.name]; const v = lp ?? p.proj ?? p.projected ?? p.projections?.[lineupWeek] ?? PPROJ[p.name]; return { slot: p.slot == 'IR' ? 'IR' : p.pos, name: p.name, meta: (p.nfl || '').toUpperCase() + (lp == null && v != null && p.slot != 'IR' ? ' · proj' : lp != null && PLAYING.has(p.name) ? ' · live' : ''), pts: p.slot == 'IR' ? '' : (v != null ? f2(+v) : '—') }; }),
+      log, starters: this.starters(tm, lineupWeek), alerts: this.lineupAlerts(tm, lineupWeek).map(t => ({ t })), hasAlerts: this.lineupAlerts(tm, lineupWeek).length > 0,
+      bench: pl.filter(p => p.slot != 'starter').map(p => { const lp = LIVEPTS[p.name]; const v = lp ?? p.proj ?? p.projected ?? p.projections?.[lineupWeek] ?? PPROJ[p.name]; return { slot: p.slot == 'IR' ? 'IR' : p.pos, name: p.name, meta: (p.nfl || '').toUpperCase() + (lp == null && p.slot != 'IR' && lineupWeek == LW ? this.preGame(p, lineupWeek) : '') + (lp == null && v != null && p.slot != 'IR' ? ' · proj' : lp != null && PLAYING.has(p.name) ? ' · live' : ''), pts: p.slot == 'IR' ? '' : (v != null ? f2(+v) : '—') }; }),
       benchCount: pl.filter(p => p.slot != 'starter').length, lineupMsg, hasLineup: !lineupMsg
     };
     const teamPicker = MGR.map(m => ({ m, init: INIT[m], color: col(m), ring: m == tm ? '2px solid var(--accent)' : '2px solid transparent', ringFill: m == tm ? 'var(--accent)' : 'transparent', op: m == tm ? 1 : .75, fg: m == tm ? 'var(--ink)' : 'var(--muted)', pick: () => this.setState({ team: m }) }));

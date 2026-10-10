@@ -84,6 +84,19 @@ window.SEASON = {
     sheetNote: 'Thursday final; Sunday projections as of Fri 7:27 PM CT. Each player is tagged Final, Live or proj.'
   },
 
+  // The NFL week: every game ('Sun 12:00 PM · CHI @ GB', kickoff Central, same form as parlay legs)
+  // and the teams on bye. Lineups use it for kickoff times and bye/empty-slot alerts.
+  // Week 5 from ESPN's scoreboard, Fri Oct 9.
+  nfl: {
+    5: {
+      games: ['Thu 7:15 PM · TB @ DAL', 'Sun 8:30 AM · PHI @ JAX', 'Sun 12:00 PM · CHI @ GB', 'Sun 12:00 PM · HOU @ TEN',
+        'Sun 12:00 PM · CIN @ MIA', 'Sun 12:00 PM · LV @ NE', 'Sun 12:00 PM · MIN @ NO', 'Sun 12:00 PM · CLE @ NYJ',
+        'Sun 12:00 PM · IND @ PIT', 'Sun 12:00 PM · NYG @ WAS', 'Sun 3:05 PM · DEN @ LAC', 'Sun 3:25 PM · DET @ ARI',
+        'Sun 3:25 PM · SF @ SEA', 'Sun 7:20 PM · BAL @ ATL', 'Mon 7:15 PM · BUF @ LAR'],
+      byes: ['CAR', 'KC']
+    }
+  },
+
   // Thursday of Week 1. Each leg's kickoff ('Thu 7:15 PM · TB @ DAL') counts from that week's
   // Thursday, which is how tails lock when a ticket's first game starts.
   week1Thursday: '2026-09-10',
