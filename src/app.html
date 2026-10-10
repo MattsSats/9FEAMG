@@ -524,7 +524,7 @@ button{font-family:inherit;color:inherit}
 .tab.on .a-jersey{animation:ti-swing 1s ease-in-out 1}
 .tab.on .a-swap1{animation:ti-r .9s ease-in-out 1}
 .tab.on .a-swap2{animation:ti-l .9s ease-in-out 1}
-@media (prefers-reduced-motion:reduce){.ti *{animation:none!important}}
+@media (prefers-reduced-motion:reduce){.ti *{animation:none!important}*{transition-duration:0s!important;scroll-behavior:auto!important}}
 /* Section and stat icons: same drawing rules as the tab bar; they play once
    when they appear (Draft's stopwatch when Draft opens). Live loops. --hi-a/--hi-b
    are the accent colors, swapped on accent backgrounds (.on-accent). */
