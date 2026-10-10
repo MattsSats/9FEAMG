@@ -379,7 +379,7 @@ class Component extends DCLogic {
       const d = await r.json().catch(() => ({}));
       if (!r.ok) throw new Error(d.error || 'Couldn’t save that. Try again.');
       this.setState({ reqs: d.requests || {}, req: { ...this.state.req, sending: false } });
-      this.toast(cancel ? 'Request canceled.' : 'Requested. The Booth builds it with real lines on the next sync.');
+      this.toast(cancel ? 'Request canceled.' : 'Request sent. It’s built with real DraftKings lines on the next sync and shows here as Built.');
     } catch (err) {
       this.setState({ req: { ...this.state.req, sending: false } });
       this.toast(err.message || 'Couldn’t save that. Try again.');
@@ -686,7 +686,10 @@ class Component extends DCLogic {
     // Parlay requests (live week only): who's asking, a risk slider, legs, and optional
     // players (their own starters) or a game. A published parlay with request: <manager> fills it.
     const hasReq = !!LW && wk == LW, R = S.req, rk = RISKS[R.risk], rm = S.reqMgr, mine = S.reqs?.[rm];
-    const builtFor = m => (D.parlays?.[LW] || []).find(p => p.request == m);
+    // A request is built when a ticket carries its manager and its exact send time (requestAt), so
+    // asking again after a ticket is built shows as waiting instead of pointing at the old ticket.
+    const builtFor = r => r ? (D.parlays?.[LW] || []).find(p => p.request == r.manager && p.requestAt == r.at) : null;
+    const sentAt = iso => { const d = new Date(iso); return isNaN(d) ? '' : d.toLocaleString('en-US', { weekday: 'short', hour: 'numeric', minute: '2-digit', timeZone: 'America/Chicago' }).replace(',', ''); };
     const anchorOf = p => `w${LW}-` + String(p.id ?? p.title ?? p.owner).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
     const pickMgr = m => () => { try { localStorage.setItem('9feamg-req-mgr', m); } catch {} this.setState({ reqMgr: m, reqPicking: false, req: { ...R, players: [], playerLegs: {} } }); };
     // The requester's starters (no K or DEF), and the two with the best points per game in final weeks.
@@ -721,15 +724,15 @@ class Component extends DCLogic {
       // "Add a leg?": a typed player or team, folded away until asked for. Opening or closing it starts fresh.
       addOpen: !!S.reqAddOpen, addLabel: S.reqAddOpen ? '− Add a leg?' : '+ Add a leg?',
       toggleAdd: () => this.setState({ reqAddOpen: !this.state.reqAddOpen, req: { ...this.state.req, game: '' } }),
-      sendLabel: R.sending ? 'Sending…' : mine ? 'Update request' : 'Request parlay', send: () => this.sendRequest(false),
-      hasMine: !!mine && !builtFor(rm), cancel: () => this.sendRequest(true)
+      sendLabel: R.sending ? 'Sending…' : mine && !builtFor(mine) ? 'Update request' : mine ? 'Request another' : 'Request parlay', send: () => this.sendRequest(false),
+      hasMine: !!mine && !builtFor(mine), cancel: () => this.sendRequest(true)
     };
     const reqList = Object.values(S.reqs || {}).sort((a, b) => a.at < b.at ? -1 : 1).map(r => {
-      const band = RISKS.find(x => x.k == r.risk) || RISKS[1], built = builtFor(r.manager);
+      const band = RISKS.find(x => x.k == r.risk) || RISKS[1], built = builtFor(r);
       // Older requests may carry a bet type or a typed game bet; show them if so.
       const who = (r.players || []).map(n => r.playerLegs?.[n] ? `${n} ${pickText[r.playerLegs[n]]}` : n);
       const bits = [band.label + ' (' + riskText(band) + ')', r.betType && r.betType != 'mix' ? (BET_TYPES.find(x => x.k == r.betType) || {}).label : '', r.legs == 'any' ? 'any legs' : r.legs + ' legs', who.length ? 'with ' + who.join(', ') : '', r.game || ''].filter(Boolean);
-      return { m: r.manager, init: INIT[r.manager], color: col(r.manager), text: bits.join(' · '), status: built ? 'Built ›' : 'Waiting for sync',
+      return { m: r.manager, init: INIT[r.manager], color: col(r.manager), text: bits.join(' · '), status: built ? 'Built ›' : 'Waiting · sent ' + sentAt(r.at),
         statusFg: built ? 'var(--pos)' : 'var(--muted)', href: built ? '#' + anchorOf(built) : null, hasHref: !!built, waiting: !built };
     });
     const nextTitle = NEXT && wk == NEXT.week ? 'Not yet' : 'No matchups';

@@ -193,8 +193,9 @@ window.SEASON = {
   //                 (['+345', '+650']); legs[].sgp says which one a leg is in (1, 2…).
   //                 The ticket odds are the SGP prices multiplied together.
   //   booth         optional trash talk (hidden when trash talk is off).
-  //   request       the manager whose site parlay request (api/requests.js) this fills; the
-  //                 request on Gameday then shows Built and links here.
+  //   request       the manager whose site parlay request (api/requests.js) this fills, and
+  //   requestAt     that request's `at`; the request on Gameday then shows Built and links here.
+  //                 A newer request from the same manager shows as waiting until it's built too.
   parlays: {
     4: [
       {
@@ -293,7 +294,7 @@ window.SEASON = {
     ],
     5: [
       {
-        owner: 'Matt', title: 'The Whole Lineup', request: 'Matt',
+        owner: 'Matt', title: 'The Whole Lineup', request: 'Matt', requestAt: '2026-10-07T04:04:28.169Z',
         // Built by Claude for Matt's Lottery request (+5000 and up, any legs): every leg is a team
         // Matt starts someone from winning outright. Steelers over Colts because Matt starts the
         // Steelers D/ST (and Josh Downs, so that leg cuts both ways); Hubbard's Panthers are on bye.
@@ -323,7 +324,7 @@ window.SEASON = {
         ]
       },
       {
-        owner: 'Andy', title: 'Ground and Pound', request: 'Andy',
+        owner: 'Andy', title: 'Ground and Pound', request: 'Andy', requestAt: '2026-10-07T13:51:36.692Z',
         // Built by Claude for Andy's Balanced request (+250 to +600, any legs, Javonte Williams TD
         // and Jahmyr Gibbs TD). Both TDs come to +75, so a third leg: the Giants moneyline (Andy
         // starts Giants TE Isaiah Likely). One leg per game, so the odds multiply: +338.
