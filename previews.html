@@ -47,7 +47,7 @@
 
   const groups = [
     ['Site', [{ label: 'Home', img: '/og.png', link: '/' }]],
-    ['Charts', ['standings', 'power', 'luck', 'pfpa', 'bench', 'ledger'].map(sec)],
+    ['Charts', ['standings', 'power', 'luck', 'pfpa', 'bench', 'ledger', 'wire-week', 'wire-season'].map(sec)],
     ['Teams', (S.managers || []).map(x => ({ ...sec('team-' + slug(x.m)), label: x.m }))],
     ['Weeks', weeks.map(w => ({ ...sec('w' + w), label: 'Week ' + w }))],
     ...weeks.map(w => [`Week ${w} matchups`, (S.schedule?.[w] || []).map(([a, b]) => ({ ...sec(`w${w}-${slug(a)}-vs-${slug(b)}`), label: `${a} vs ${b}` }))]),
