@@ -59,7 +59,7 @@ window.SEASON = {
   // The week in progress. Set to null between weeks.
   live: {
     week: 5,
-    status: 'Live · noon games final · 3:05 and 3:25 games in the 2nd · Sunday night BAL @ ATL',
+    status: 'Live · DEN 23, LAC 17 final · 3:25 games in the 4th · Sunday night BAL @ ATL',
     // When these numbers were pulled from Yahoo (Central); shows as "Scores as of Thu 10:19 PM".
     asOf: '2026-10-11T16:05:00-05:00',
     // [current points, projected final]
@@ -347,7 +347,7 @@ window.SEASON = {
         // and by an independent agent; built until the two averaged 95 or better.
         // Odds: DraftKings via The Odds API, Sun Oct 11, 3:01 PM CT. Ticket ≈ +2540.
         legs: [
-          { text: 'Trey McBride anytime TD', player: 'Trey McBride', type: 'td', count: 1, game: 'Sun 3:25 PM · DET @ ARI', odds: '+100', status: 'open' },
+          { text: 'Trey McBride anytime TD', player: 'Trey McBride', type: 'td', count: 1, game: 'Sun 3:25 PM · DET @ ARI', odds: '+100', result: '9-yd rec TD (Q4, 2:11)', status: 'hit' },
           { text: 'Mike Evans anytime TD', player: 'Mike Evans', type: 'td', count: 1, game: 'Sun 3:25 PM · SF @ SEA', odds: '+200', result: '2-yd rec TD (Q1)', status: 'hit' },
           { text: 'Drake London anytime TD', player: 'Drake London', type: 'td', count: 1, game: 'Sun 7:20 PM · BAL @ ATL', odds: '+120', status: 'open' },
           { text: 'Davante Adams anytime TD', player: 'Davante Adams', type: 'td', count: 1, game: 'Mon 7:15 PM · BUF @ LAR', odds: '+100', status: 'open' }
