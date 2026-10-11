@@ -632,17 +632,26 @@ class Component extends DCLogic {
     const recap = hasRecap ? PAIRS[wk].map(([a, b], i) => {
       const sa = isFinal ? SC[a][wk - 1] : LIVE.scores[a]?.[liveIdx] ?? 0, sb = isFinal ? SC[b][wk - 1] : LIVE.scores[b]?.[liveIdx] ?? 0;
       const side = (m, s, win) => ({ m, init: INIT[m], color: col(m), score: f2(s), weight: win ? 800 : 500, fg: win ? 'var(--ink)' : 'var(--muted)' });
-      const line = boothOn ? (isFinal ? D.booth?.[wk]?.[i]?.[1] : D.boothPreview?.[wk]?.[i]?.[1]) || '' : '';
+      const line = boothOn ? (isFinal ? D.booth?.[wk]?.[i]?.[1] : (D.boothSnf?.[wk]?.[i] || D.boothPreview?.[wk]?.[i])?.[1]) || '' : '';
       return { a: side(a, sa, sa > sb), b: side(b, sb, sb > sa), booth: line, hasBooth: !!line, gap: Math.abs(sa - sb), winner: sa > sb ? a : b };
     }).sort((x, y) => x.gap - y.gap).map((r, i) => ({ ...r, wide: i == 0, wideLabel: `Closest finish · ${r.winner} by ${f2(r.gap)}` })) : [];
-    // The Booth, per matchup slot: the recap (after Monday night) leads, with the preview
-    // (before Thursday kickoff) tucked under it; a preview alone shows in the recap's spot.
-    const recaps = D.booth?.[wk] || [], previews = D.boothPreview?.[wk] || [];
-    const boothLines = [...Array(Math.max(recaps.length, previews.length)).keys()].map(i => {
-      const r = recaps[i], p = previews[i], main = r || p;
-      const pair = PAIRS[wk]?.[i] || [main[0]];
-      return main && { crests: pair.map(m => ({ m, init: INIT[m], color: col(m) })), matchup: pair.join(' vs '),
-        text: main[1], isPreview: !r, preview: r && p ? p[1] : '', hasPreview: !!(r && p) };
+    // The Booth, per matchup slot: up to three lines a week, the Preview (before Thursday), the
+    // Pre-SNF line (Sunday, before the night game) and the Recap (after Monday night). The newest
+    // leads; the earlier ones sit under it. Each says when it was written (the line's third field;
+    // previews without one fall back to boothPreviewAt).
+    const stages = [['Recap', D.booth?.[wk] || []], ['Pre-SNF', D.boothSnf?.[wk] || []], ['Preview', D.boothPreview?.[wk] || []]];
+    const written = (line, label) => {
+      const at = line[2] || (label == 'Preview' && D.boothPreviewAt?.[wk] ? D.boothPreviewAt[wk] + 'T12:00:00-05:00' : null);
+      if (!at) return '';
+      const d = new Date(at), o = { timeZone: 'America/Chicago' };
+      return 'Written ' + d.toLocaleDateString('en-US', { ...o, weekday: 'short', month: 'short', day: 'numeric' }).replace(',', '') + (line[2] ? ', ' + d.toLocaleTimeString('en-US', { ...o, hour: 'numeric', minute: '2-digit' }) : '');
+    };
+    const boothLines = [...Array(Math.max(...stages.map(([, l]) => l.length))).keys()].map(i => {
+      const here = stages.filter(([, l]) => l[i]).map(([label, l]) => ({ label, text: l[i][1], when: written(l[i], label), m: l[i][0] }));
+      if (!here.length) return null;
+      const [main, ...earlier] = here, pair = PAIRS[wk]?.[i] || [main.m];
+      return { crests: pair.map(m => ({ m, init: INIT[m], color: col(m) })), matchup: pair.join(' vs '),
+        text: main.text, label: main.label, when: main.when, hasWhen: !!main.when, earlier, hasEarlier: earlier.length > 0 };
     }).filter(Boolean);
     // Same order as the matchup cards: the featured one, then the rest.
     const cardOrder = hasWeek ? [hero, ...matchups].map(x => x.a.m) : [];

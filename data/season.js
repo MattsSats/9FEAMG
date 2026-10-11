@@ -137,44 +137,46 @@ window.SEASON = {
   // preview tucked under it; a preview alone shows in the recap's spot, labeled.
   booth: {
     1: [
-      ['Matt', 'Pablo beat Matt by 4.80 because Matt benched Watson’s 29.70 to start DeVonta’s 6.80. Unlucky is one word for it.'],
-      ['Colin', 'Colin opened the season with 65.66, lowest of the week, and lost to Tony by 57.40. Tony thanks Colin for the service.'],
-      ['Kurt', 'Tristan put up 144.36, the top score of the week, and beat Kurt by 43.76. Kurt started Loveland, who scored 0.00.'],
-      ['Jerger', 'Jerger scored 124.06, fourth-best of the week, and lost to Andy anyway. Starting Dart over Herbert still comes up 2.94 short.'],
-      ['Mr. G', 'Mr. G opened with 135.22, third-best of the week, and beat DLin by 35.40. Not bad for someone who’s definitely not a Boomer.']
+      ['Matt', 'Pablo beat Matt by 4.80 because Matt benched Watson’s 29.70 to start DeVonta’s 6.80. Unlucky is one word for it.', '2026-10-06T22:16-05:00'],
+      ['Colin', 'Colin opened the season with 65.66, lowest of the week, and lost to Tony by 57.40. Tony thanks Colin for the service.', '2026-10-06T19:47-05:00'],
+      ['Kurt', 'Tristan put up 144.36, the top score of the week, and beat Kurt by 43.76. Kurt started Loveland, who scored 0.00.', '2026-10-06T19:47-05:00'],
+      ['Jerger', 'Jerger scored 124.06, fourth-best of the week, and lost to Andy anyway. Starting Dart over Herbert still comes up 2.94 short.', '2026-10-06T22:16-05:00'],
+      ['Mr. G', 'Mr. G opened with 135.22, third-best of the week, and beat DLin by 35.40. Not bad for someone who’s definitely not a Boomer.', '2026-10-06T22:16-05:00']
     ],
     2: [
-      ['Kurt', 'DLin beat Kurt by 11.20 with Goff’s 29.78 on the bench. Kurt’s first-round pick Saquon scored 2.50, and Kurt is 0–2.'],
-      ['Mr. G', 'Tony dropped 154.52 on Mr. G, the top score of the season so far, and won by 70.10. Mr. G has asked that the tape not be shared.'],
-      ['Jerger', 'Tristan beat Jerger by 11.50, and Jerger had Kelce’s 20.60 on the bench behind Nabers’ 0.60. Yahoo’s #1 fan, everybody.'],
-      ['Andy', 'Andy scored 75.96 and lost to Matt by 29.68. DJ Moore started and finished at −0.10. The gibbing has paused.'],
-      ['Pablo', 'Colin benched Davante’s 35.50 and still beat Pablo by 29.16. Pablo’s 70.92 was the lowest score of the week.']
+      ['Kurt', 'DLin beat Kurt by 11.20 with Goff’s 29.78 on the bench. Kurt’s first-round pick Saquon scored 2.50, and Kurt is 0–2.', '2026-10-06T22:16-05:00'],
+      ['Mr. G', 'Tony dropped 154.52 on Mr. G, the top score of the season so far, and won by 70.10. Mr. G has asked that the tape not be shared.', '2026-10-06T19:47-05:00'],
+      ['Jerger', 'Tristan beat Jerger by 11.50, and Jerger had Kelce’s 20.60 on the bench behind Nabers’ 0.60. Yahoo’s #1 fan, everybody.', '2026-10-06T22:16-05:00'],
+      ['Andy', 'Andy scored 75.96 and lost to Matt by 29.68. DJ Moore started and finished at −0.10. The gibbing has paused.', '2026-10-06T19:47-05:00'],
+      ['Pablo', 'Colin benched Davante’s 35.50 and still beat Pablo by 29.16. Pablo’s 70.92 was the lowest score of the week.', '2026-10-06T22:16-05:00']
     ],
     3: [
-      ['Colin', 'Colin lost to Andy by 3.84 with Burrow’s 22.58 on the bench while Mahomes started for 16.94. That swap wins it.'],
-      ['Tony', 'Tony went to 3–0 with 95.42, seventh-best of the week, because Pablo started Schultz (4.50) over Juwan Johnson (19.30). Fraud watch begins.'],
-      ['Matt', 'Matt lost to Tristan by 7.16 with Watson’s 19.10 on the bench, again. Jefferson started and scored 4.20.'],
-      ['DLin', 'DLin managed 82.52 and lost to Jerger by 19.62 with Fannin’s 20.60 on the bench. Toilet Bowl King is starting to look like a mission statement.'],
-      ['Mr. G', 'Mr. G started Maye over Shough for the second straight week: Maye 5.76, Shough 24.80. Kurt won by 60.82 for a first win.']
+      ['Colin', 'Colin lost to Andy by 3.84 with Burrow’s 22.58 on the bench while Mahomes started for 16.94. That swap wins it.', '2026-10-06T22:16-05:00'],
+      ['Tony', 'Tony went to 3–0 with 95.42, seventh-best of the week, because Pablo started Schultz (4.50) over Juwan Johnson (19.30). Fraud watch begins.', '2026-10-06T22:16-05:00'],
+      ['Matt', 'Matt lost to Tristan by 7.16 with Watson’s 19.10 on the bench, again. Jefferson started and scored 4.20.', '2026-10-06T22:16-05:00'],
+      ['DLin', 'DLin managed 82.52 and lost to Jerger by 19.62 with Fannin’s 20.60 on the bench. Toilet Bowl King is starting to look like a mission statement.', '2026-10-06T19:47-05:00'],
+      ['Mr. G', 'Mr. G started Maye over Shough for the second straight week: Maye 5.76, Shough 24.80. Kurt won by 60.82 for a first win.', '2026-10-06T22:16-05:00']
     ],
     4: [
-      ['Tony', 'Andy won by 5.56 because Tony benched Ollie Gordon II’s 17.00 for Bucky’s 6.10. Tony’s first loss was self-inflicted.'],
-      ['Tristan', 'Tristan scored 125.88, third-best in the league, lost to Colin anyway, and declared the season over. Tristan is still in first.'],
-      ['Matt', 'Matt lost by 22.60 to the reigning Toilet Bowl King. DLin’s JT and Higgins outscored Matt’s three starting receivers by 29.90.'],
-      ['Kurt', 'Jerger left Nabers’ 20.20 on the bench and still won, because Kurt started Saquon (1.50) over JCM (6.00). Two bad lineups, one loser.'],
-      ['Mr. G', 'Pablo was projected to lose to Mr. G by 30.35 and won by 39.94. Opponents keep saving their best for Mr. G.']
+      ['Tony', 'Andy won by 5.56 because Tony benched Ollie Gordon II’s 17.00 for Bucky’s 6.10. Tony’s first loss was self-inflicted.', '2026-10-06T21:50-05:00'],
+      ['Tristan', 'Tristan scored 125.88, third-best in the league, lost to Colin anyway, and declared the season over. Tristan is still in first.', '2026-10-06T21:50-05:00'],
+      ['Matt', 'Matt lost by 22.60 to the reigning Toilet Bowl King. DLin’s JT and Higgins outscored Matt’s three starting receivers by 29.90.', '2026-10-06T22:16-05:00'],
+      ['Kurt', 'Jerger left Nabers’ 20.20 on the bench and still won, because Kurt started Saquon (1.50) over JCM (6.00). Two bad lineups, one loser.', '2026-10-06T21:50-05:00'],
+      ['Mr. G', 'Pablo was projected to lose to Mr. G by 30.35 and won by 39.94. Opponents keep saving their best for Mr. G.', '2026-10-06T21:50-05:00']
     ]
   },
-  // The day each week's previews were written (their projections are from then), for labels
-  // like "Booth preview · Wed" next to live numbers.
+  // The day each week's previews were written; each line's own time (third field) wins when it has one.
   boothPreviewAt: { 5: '2026-10-07' },
+  // Pre-SNF lines, one per matchup in the same order: written Sunday after the afternoon games,
+  // before Sunday Night Football. [manager, line, written at].
+  boothSnf: {},
   boothPreview: {
     5: [
-      ['Matt', 'The 1–3 bowl, between the two unluckiest teams in the league: Kurt at −1.00 and Matt at −0.89. Projected 115.63–100.37, Matt. “There is no 2nd best” is 9th.'],
-      ['Tony', 'First vs. second, both 3–1, projected 114.57–109.42 for Tristan. Tony has the league’s best luck at +1.11 and the 7th-best power ranking. Fraud watch is on.'],
-      ['Mr. G', 'Mr. G is projected to beat Jerger 116.16–106.04. Mr. G has also allowed 524.00 points in four weeks, so Jerger knows the assignment.'],
-      ['Colin', 'Both 2–2, Colin 5th and DLin 7th, with the playoff line between them. Colin has 28 adds this season and the worst lineup efficiency in the league, 79.1%.'],
-      ['Pablo', 'Andy is 3–1. Pablo is 2–2 and 6th, right on the playoff line, a week after putting up the top score at 133.78. The team name is “He was #1,” and for one week, Pablo was.']
+      ['Matt', 'The 1–3 bowl, between the two unluckiest teams in the league: Kurt at −1.00 and Matt at −0.89. Projected 115.63–100.37, Matt. “There is no 2nd best” is 9th.', '2026-10-07T08:54-05:00'],
+      ['Tony', 'First vs. second, both 3–1, projected 114.57–109.42 for Tristan. Tony has the league’s best luck at +1.11 and the 7th-best power ranking. Fraud watch is on.', '2026-10-07T08:54-05:00'],
+      ['Mr. G', 'Mr. G is projected to beat Jerger 116.16–106.04. Mr. G has also allowed 524.00 points in four weeks, so Jerger knows the assignment.', '2026-10-07T08:54-05:00'],
+      ['Colin', 'Both 2–2, Colin 5th and DLin 7th, with the playoff line between them. Colin has 28 adds this season and the worst lineup efficiency in the league, 79.1%.', '2026-10-07T08:54-05:00'],
+      ['Pablo', 'Andy is 3–1. Pablo is 2–2 and 6th, right on the playoff line, a week after putting up the top score at 133.78. The team name is “He was #1,” and for one week, Pablo was.', '2026-10-10T10:10-05:00']
     ]
   },
 

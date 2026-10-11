@@ -752,11 +752,14 @@ button{font-family:inherit;color:inherit}
                 <div class="crest" style="width:24px;height:24px;background:{{ c.color }};color:var(--onAccent);display:flex;align-items:center;justify-content:center;font-family:'Big Shoulders Display';font-weight:800;font-size:10px;flex:none"><span class="ini" data-i="{{ c.init }}">{{ c.init }}</span></div>
               </sc-for>
               <span style="font-family:'JetBrains Mono';font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-left:2px">{{ b.matchup }}</span>
-              <sc-if value="{{ b.isPreview }}" hint-placeholder-val="{{ false }}"><span style="margin-left:auto;font-family:'JetBrains Mono';font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--accentInk)">Preview</span></sc-if>
+              <span style="margin-left:auto;font-family:'JetBrains Mono';font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--accentInk)">{{ b.label }}</span>
             </div>
             <div style="min-width:0;margin-top:6px">
               <div style="font-size:15px;line-height:1.4;text-wrap:pretty">{{ b.text }}</div>
-              <sc-if value="{{ b.hasPreview }}" hint-placeholder-val="{{ false }}"><div style="margin-top:6px;font-size:13px;line-height:1.4;color:var(--muted);text-wrap:pretty"><span style="font-family:'JetBrains Mono';font-size:9.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;margin-right:6px">Preview</span>{{ b.preview }}</div></sc-if>
+              <sc-if value="{{ b.hasWhen }}" hint-placeholder-val="{{ true }}"><div style="margin-top:4px;font-family:'JetBrains Mono';font-size:11px;color:var(--muted)">{{ b.when }}</div></sc-if>
+              <sc-for list="{{ b.earlier }}" as="e" hint-placeholder-count="0">
+                <div style="margin-top:8px;font-size:13px;line-height:1.4;color:var(--muted);text-wrap:pretty"><span style="font-family:'JetBrains Mono';font-size:9.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;margin-right:6px">{{ e.label }}</span>{{ e.text }}<span style="display:block;font-family:'JetBrains Mono';font-size:10.5px;margin-top:2px">{{ e.when }}</span></div>
+              </sc-for>
             </div>
           </div>
         </sc-for>

@@ -25,7 +25,7 @@ if (LW && !S.schedule[LW]) bad.push(`live.week ${LW} has no schedule.`);
 if (LW && !S.nfl?.[LW]) warn.push(`No nfl[${LW}] (ESPN schedule): kickoff times and bye alerts fall back to Sunday noon / Monday night.`);
 if (st.maxOk === false) warn.push('Some final weeks have no box score, so Max PF and bench points are blank.');
 // Booth lines run in schedule order: line i is about matchup i.
-for (const key of ['booth', 'boothPreview']) for (const [w, lines] of Object.entries(S[key] || {})) lines.forEach(([m], i) => {
+for (const key of ['booth', 'boothSnf', 'boothPreview']) for (const [w, lines] of Object.entries(S[key] || {})) lines.forEach(([m], i) => {
   const pair = S.schedule[w]?.[i];
   if (!pair) bad.push(`${key}[${w}] line ${i + 1} (${m}) has no matchup ${i + 1}.`);
   else if (!pair.includes(m)) bad.push(`${key}[${w}] line ${i + 1} is tagged ${m} but matchup ${i + 1} is ${pair.join(' vs ')}.`);
