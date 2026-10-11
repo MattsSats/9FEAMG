@@ -32,7 +32,7 @@ export async function updateJson(path, change, tries = 8) {
     const data = r ? JSON.parse(await new Response(r.stream).text()) : null;
     const next = await change(data);
     try {
-      await put(path, JSON.stringify(next), { access: 'private', contentType: 'application/json', addRandomSuffix: false, cacheControlMaxAge: 60, ...(r ? { ifMatch: r.blob.etag.replace(/^W//, '') } : { allowOverwrite: false }) });
+      await put(path, JSON.stringify(next), { access: 'private', contentType: 'application/json', addRandomSuffix: false, cacheControlMaxAge: 60, ...(r ? { ifMatch: r.blob.etag.replace(/^W\//, '') } : { allowOverwrite: false }) });
       return next;
     } catch (e) {
       // Someone else wrote first, is writing right now, or created the file first: try again on top
