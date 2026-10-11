@@ -646,12 +646,14 @@ class Component extends DCLogic {
       const at = line[2] || (label == 'Preview' && D.boothPreviewAt?.[wk] ? D.boothPreviewAt[wk] + 'T12:00:00-05:00' : null);
       if (!at) return '';
       const d = new Date(at), o = { timeZone: 'America/Chicago' };
-      return 'Written ' + d.toLocaleDateString('en-US', { ...o, weekday: 'short', month: 'short', day: 'numeric' }).replace(',', '') + (line[2] ? ', ' + d.toLocaleTimeString('en-US', { ...o, hour: 'numeric', minute: '2-digit' }) : '');
+      // Short: "Sun 6:40 PM" within the last six days, otherwise just the date ("Oct 6").
+      if (Date.now() - d > 6 * 864e5) return d.toLocaleDateString('en-US', { ...o, month: 'short', day: 'numeric' });
+      return d.toLocaleDateString('en-US', { ...o, weekday: 'short' }) + (line[2] ? ' ' + d.toLocaleTimeString('en-US', { ...o, hour: 'numeric', minute: '2-digit' }) : '');
     };
     const boothLines = [...Array(Math.max(...stages.map(([, l]) => l.length))).keys()].map(i => {
       // A fourth field 'claude' marks a line Claude wrote before the Booth writer's pass: " *".
       const here = stages.filter(([, l]) => l[i]).map(([label, l]) => { const c = l[i][3] == 'claude';
-        return { label, text: l[i][1] + (c ? ' *' : ''), when: written(l[i], label) + (c ? ' · * Claude, before the Booth’s pass' : ''), m: l[i][0] }; });
+        return { label, text: l[i][1] + (c ? ' *' : ''), when: written(l[i], label) + (c ? ' · * Claude draft' : ''), m: l[i][0] }; });
       if (!here.length) return null;
       const [main, ...earlier] = here, pair = PAIRS[wk]?.[i] || [main.m];
       return { crests: pair.map(m => ({ m, init: INIT[m], color: col(m) })), matchup: pair.join(' vs '),
