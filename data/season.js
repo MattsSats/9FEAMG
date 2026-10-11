@@ -271,12 +271,12 @@ window.SEASON = {
         // $1,139.12; legs and the +11291 ticket price are from his slip. Built from DraftKings
         // moneylines via ESPN, Tue Oct 6, 11:10 PM CT.
         legs: [
-          { text: 'Packers moneyline vs Bears', type: 'ml', team: 'GB', teams: ['Chi', 'GB'], game: 'Sun 12:00 PM · CHI @ GB', odds: '+102', status: 'open' },
+          { text: 'Packers moneyline vs Bears', type: 'ml', team: 'GB', teams: ['Chi', 'GB'], game: 'Sun 12:00 PM · CHI @ GB', odds: '+102', result: 'Final W 31–7', status: 'hit' },
           { text: '49ers moneyline at Seahawks', type: 'ml', team: 'SF', teams: ['SF', 'Sea'], game: 'Sun 3:25 PM · SF @ SEA', odds: '+136', status: 'open' },
-          { text: 'Jets moneyline vs Browns', type: 'ml', team: 'NYJ', teams: ['Cle', 'NYJ'], game: 'Sun 12:00 PM · CLE @ NYJ', odds: '-130', status: 'open' },
+          { text: 'Jets moneyline vs Browns', type: 'ml', team: 'NYJ', teams: ['Cle', 'NYJ'], game: 'Sun 12:00 PM · CLE @ NYJ', odds: '-130', result: 'Final W 17–12', status: 'hit' },
           { text: 'Cardinals moneyline vs Lions', type: 'ml', team: 'Ari', teams: ['Det', 'Ari'], game: 'Sun 3:25 PM · DET @ ARI', odds: '+210', status: 'open' },
           { text: 'Chargers moneyline vs Broncos', type: 'ml', team: 'LAC', teams: ['Den', 'LAC'], game: 'Sun 3:05 PM · DEN @ LAC', odds: '+160', status: 'open' },
-          { text: 'Steelers moneyline vs Colts', type: 'ml', team: 'Pit', teams: ['Ind', 'Pit'], game: 'Sun 12:00 PM · IND @ PIT', odds: '-148', status: 'open' }
+          { text: 'Steelers moneyline vs Colts', type: 'ml', team: 'Pit', teams: ['Ind', 'Pit'], game: 'Sun 12:00 PM · IND @ PIT', odds: '-148', result: 'Final W 34–22', status: 'hit' }
         ]
       },
       {
@@ -290,7 +290,7 @@ window.SEASON = {
         legs: [
           { text: 'Josh Allen 250+ passing yards', player: 'Josh Allen', type: 'over', stat: 'Pass Yds', line: 249.5, game: 'Mon 7:15 PM · BUF @ LAR', odds: '+101', status: 'open' },
           { text: 'Jaxon Smith-Njigba anytime TD', player: 'Jaxon Smith-Njigba', type: 'td', count: 1, game: 'Sun 3:25 PM · SF @ SEA', odds: '-120', status: 'open' },
-          { text: 'Eagles moneyline at Jaguars', player: 'Eagles', type: 'ml', team: 'Phi', teams: ['Phi', 'Jax'], game: 'Sun 8:30 AM · PHI @ JAX', odds: '+280', status: 'open' },
+          { text: 'Eagles moneyline at Jaguars', player: 'Eagles', type: 'ml', team: 'Phi', teams: ['Phi', 'Jax'], game: 'Sun 8:30 AM · PHI @ JAX', odds: '+280', result: 'Final L 17–19', status: 'miss' },
           { text: 'Chargers moneyline vs Broncos', type: 'ml', team: 'LAC', teams: ['Den', 'LAC'], game: 'Sun 3:05 PM · DEN @ LAC', odds: '+154', status: 'open' }
         ]
       },
@@ -304,8 +304,8 @@ window.SEASON = {
         legs: [
           { text: 'Josh Allen anytime TD', player: 'Josh Allen', type: 'td', count: 1, game: 'Mon 7:15 PM · BUF @ LAR', odds: '-120', status: 'open' },
           { text: 'Jaxon Smith-Njigba anytime TD', player: 'Jaxon Smith-Njigba', type: 'td', count: 1, game: 'Sun 3:25 PM · SF @ SEA', odds: '-110', status: 'open' },
-          { text: 'Dolphins moneyline vs Bengals', player: 'Dolphins', type: 'ml', team: 'Mia', teams: ['Cin', 'Mia'], game: 'Sun 12:00 PM · CIN @ MIA', odds: '+280', status: 'open' },
-          { text: 'Titans moneyline vs Texans', player: 'Titans', type: 'ml', team: 'Ten', teams: ['Hou', 'Ten'], game: 'Sun 12:00 PM · HOU @ TEN', odds: '+295', status: 'open' }
+          { text: 'Dolphins moneyline vs Bengals', player: 'Dolphins', type: 'ml', team: 'Mia', teams: ['Cin', 'Mia'], game: 'Sun 12:00 PM · CIN @ MIA', odds: '+280', result: 'Final L 24–31', status: 'miss' },
+          { text: 'Titans moneyline vs Texans', player: 'Titans', type: 'ml', team: 'Ten', teams: ['Hou', 'Ten'], game: 'Sun 12:00 PM · HOU @ TEN', odds: '+295', result: 'Final L 3–26', status: 'miss' }
         ]
       },
       {
@@ -316,8 +316,8 @@ window.SEASON = {
         // Odds: DraftKings via The Odds API, Sat Oct 10, 12:21 AM CT. Ticket ≈ +6276.
         legs: [
           { text: 'Kyren Williams 2+ TDs', player: 'Kyren Williams', type: 'td', count: 2, game: 'Mon 7:15 PM · BUF @ LAR', odds: '+340', status: 'open' },
-          { text: 'Ja’Marr Chase anytime TD', player: "Ja'Marr Chase", type: 'td', count: 1, game: 'Sun 12:00 PM · CIN @ MIA', odds: '-125', status: 'open' },
-          { text: 'Brock Bowers anytime TD', player: 'Brock Bowers', type: 'td', count: 1, game: 'Sun 12:00 PM · LV @ NE', odds: '+130', status: 'open' },
+          { text: 'Ja’Marr Chase anytime TD', player: "Ja'Marr Chase", type: 'td', count: 1, game: 'Sun 12:00 PM · CIN @ MIA', odds: '-125', result: '1 rec TD (6-77)', status: 'hit' },
+          { text: 'Brock Bowers anytime TD', player: 'Brock Bowers', type: 'td', count: 1, game: 'Sun 12:00 PM · LV @ NE', odds: '+130', result: '1 rec TD (8-110)', status: 'hit' },
           { text: 'Deebo Samuel anytime TD', player: 'Deebo Samuel Sr.', type: 'td', count: 1, game: 'Sun 3:25 PM · SF @ SEA', odds: '+250', status: 'open' }
         ]
       },
@@ -331,7 +331,7 @@ window.SEASON = {
         // screenshot, Sun Oct 11, ~12:20 PM CT (1st quarter, 9:04 left, Jones 2-7). The rest
         // DraftKings via The Odds API, Sun Oct 11, 12:28 PM CT. Ticket ≈ +2136.
         legs: [
-          { text: 'Aaron Jones Sr. 70+ rushing yards', player: 'Aaron Jones Sr.', type: 'over', stat: 'Rush Yds', line: 69.5, game: 'Sun 12:00 PM · MIN @ NO', odds: '+100', status: 'open' },
+          { text: 'Aaron Jones Sr. 70+ rushing yards', player: 'Aaron Jones Sr.', type: 'over', stat: 'Rush Yds', line: 69.5, game: 'Sun 12:00 PM · MIN @ NO', odds: '+100', result: '25-113 rush yds, 1 TD', status: 'hit' },
           { text: 'Sam LaPorta anytime TD', player: 'Sam LaPorta', type: 'td', count: 1, game: 'Sun 3:25 PM · DET @ ARI', odds: '+165', status: 'open' },
           { text: 'Mike Evans anytime TD', player: 'Mike Evans', type: 'td', count: 1, game: 'Sun 3:25 PM · SF @ SEA', odds: '+190', status: 'open' },
           { text: 'Bijan Robinson anytime TD', player: 'Bijan Robinson', type: 'td', count: 1, game: 'Sun 7:20 PM · BAL @ ATL', odds: '-220', status: 'open' }
