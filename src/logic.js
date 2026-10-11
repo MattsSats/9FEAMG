@@ -761,9 +761,10 @@ class Component extends DCLogic {
           return decs.map(x => x.toFixed(2)).join(' × ') + ` = ×${dec.toFixed(2)} · before kickoff about 1 in ${Math.max(1, Math.round(1 / prob))}`;
         })() : `${parlayParts(p).filter(o => toDecimal(o)).length} of ${parlayParts(p).length} ${p.sgps ? 'parts' : 'legs'} priced`,        payout: !priced ? 'Odds calculate once every leg has a line' : (status == 'CASHED' ? '$10 paid $' : status == 'BUSTED' ? '$10 would have paid $' : '$10 pays $') + (10 * dec).toFixed(2),
         angle: angle.join(' '), hasAngle: angle.length > 0,
-        // "On it" row: crests of everyone on the ticket. The owner on it means they placed it;
-        // tailing your own opponent's parlay is a hedge (win the matchup or cash the ticket).
-        withList: onIt.map(m => { const tag = owners.includes(m) ? 'PLACED' : m == vs ? 'HEDGE' : ''; return { m, init: INIT[m] ?? m.slice(0, 2).toUpperCase(), color: ownerCol(m), tag, hasTag: !!tag }; }),
+        // "On it" row: crests of everyone on the ticket, each tagged. The owner on it means they
+        // placed it; anyone else is tailing, and tailing your own opponent's parlay is a hedge
+        // (win the matchup or cash the ticket).
+        withList: onIt.map(m => { const tag = owners.includes(m) ? 'PLACED' : m == vs ? 'HEDGE' : 'TAILING'; return { m, init: INIT[m] ?? m.slice(0, 2).toUpperCase(), color: ownerCol(m), tag, hasTag: !!tag }; }),
         hasWith: onIt.length > 0, unbet: status == 'OPEN' && !onIt.length && !(me && owners.includes(me)), withLabel: status == 'CASHED' ? 'Cashed with' : status == 'BUSTED' ? 'Busted with' : 'On it',
         // Open until the ticket cashes or busts: someone who bet it can still say so after kickoff
         // (that tap shows as late in Taps).
@@ -786,6 +787,8 @@ class Component extends DCLogic {
         tailLabel: S.tailBusy == anchor ? '…' : iTapped ? (owners.includes(me) ? 'Placed ✓' : 'You’re on it ✓') : me && owners.includes(me) ? 'I placed it' : lockedNow ? 'I bet it' : 'I’m on it',
         tailPressed: String(iTapped), tailBg: iTapped ? 'var(--accent)' : 'transparent', tailFg: iTapped ? 'var(--onAccent)' : 'var(--ink)', tailBorder: iTapped ? 'var(--accent)' : 'var(--line)',
         tapTail: () => this.toggleTail(wk, anchor, null, false),
+        // Once you're on it, the tag on your crest says so; a small "Take back" undoes a stray tap.
+        showTailBtn: !iTapped, iTapped, takeBackLabel: S.tailBusy == anchor ? '…' : 'Take back',
         booth: p.booth || '', hasBooth: boothOn && !!p.booth,
         share: e => this.share(shot, e), shareLabel: S.sharing == shot ? '…' : 'Image',
         // /p/<anchor> serves a preview of this parlay to chat apps, then forwards to /#<anchor>.

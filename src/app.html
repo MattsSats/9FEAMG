@@ -926,7 +926,12 @@ button{font-family:inherit;color:inherit}
                 <button class="no-shot" sc-camel-on-click="{{ pr.tapPass }}" style="min-height:40px;padding:0 14px;border:1px dashed var(--line);border-radius:999px;background:transparent;color:var(--muted);font-size:13px;font-weight:600;cursor:pointer">{{ pr.passLabel }}</button>
               </sc-if>
               <sc-if value="{{ pr.canTail }}" hint-placeholder-val="{{ false }}">
-                <button class="no-shot" sc-camel-on-click="{{ pr.tapTail }}" aria-pressed="{{ pr.tailPressed }}" style="min-height:40px;padding:0 14px;border:1px solid {{ pr.tailBorder }};border-radius:999px;background:{{ pr.tailBg }};color:{{ pr.tailFg }};font-size:13px;font-weight:600;cursor:pointer">{{ pr.tailLabel }}</button>
+                <sc-if value="{{ pr.showTailBtn }}" hint-placeholder-val="{{ true }}">
+                  <button class="no-shot" sc-camel-on-click="{{ pr.tapTail }}" style="min-height:40px;padding:0 14px;border:1px solid var(--line);border-radius:999px;background:transparent;color:var(--ink);font-size:13px;font-weight:600;cursor:pointer">{{ pr.tailLabel }}</button>
+                </sc-if>
+                <sc-if value="{{ pr.iTapped }}" hint-placeholder-val="{{ false }}">
+                  <button class="no-shot" sc-camel-on-click="{{ pr.tapTail }}" style="min-height:40px;padding:0 6px;border:0;background:transparent;color:var(--muted);font-size:12px;text-decoration:underline;cursor:pointer">{{ pr.takeBackLabel }}</button>
+                </sc-if>
               </sc-if>
             </span>
           </div>
