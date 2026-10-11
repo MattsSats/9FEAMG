@@ -25,6 +25,7 @@ export const writeJson = (path, data) =>
 // read, otherwise it reads again and re-applies the change. change(data) returns the new data,
 // or throws to stop without writing.
 export async function updateJson(path, change, tries = 8) {
+  let last = '';
   for (let i = 0; i < tries; i++) {
     const r = await get(path, { access: 'private', useCache: false });
     const data = r ? JSON.parse(await new Response(r.stream).text()) : null;
@@ -35,11 +36,12 @@ export async function updateJson(path, change, tries = 8) {
     } catch (e) {
       // Someone else wrote first, is writing right now, or created the file first: try again on top
       // of their change, waiting a little longer each time.
+      last = `${e?.name}: ${e?.message} (etag ${r?.blob?.etag})`;
       if (e instanceof BlobPreconditionFailedError || /precondition|already exists|conflict/i.test(String(e?.message))) { await new Promise(res => setTimeout(res, (60 + Math.random() * 140) * (i + 1))); continue; }
       throw e;
     }
   }
-  throw new Error('Too many taps at once. Try again.');
+  throw new Error('Too many taps at once. Try again. Last: ' + last);
 }
 export const readAuth = () => readJson(AUTH_PATH);
 export const writeAuth = a => writeJson(AUTH_PATH, a);
