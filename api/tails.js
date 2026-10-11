@@ -79,7 +79,8 @@ export default {
         return d;
       });
       return json(view(week, doc));
-    } catch {
+    } catch (e) {
+      console.error('tails save failed:', e?.name, e?.message);
       return json({ error: 'Couldn’t save that. Try again.' }, 503);
     }
   }

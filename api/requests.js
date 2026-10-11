@@ -62,7 +62,8 @@ export default {
         return d;
       });
       return json({ week, requests: doc.requests });
-    } catch {
+    } catch (e) {
+      console.error('requests save failed:', e?.name, e?.message);
       return json({ error: 'Couldn’t save that. Try again.' }, 503);
     }
   }
