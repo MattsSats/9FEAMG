@@ -59,18 +59,18 @@ window.SEASON = {
   // The week in progress. Set to null between weeks.
   live: {
     week: 5,
-    status: 'Live · noon games ending · 3:25 games next · Sunday night BAL @ ATL',
+    status: 'Live · noon games final · 3:05 and 3:25 games in the 2nd · Sunday night BAL @ ATL',
     // When these numbers were pulled from Yahoo (Central); shows as "Scores as of Thu 10:19 PM".
-    asOf: '2026-10-11T15:09:00-05:00',
+    asOf: '2026-10-11T16:05:00-05:00',
     // [current points, projected final]
-    // Yahoo as of Sun Oct 11, 3:09 PM CT: Thursday final, noon games final or in the last two
-    // minutes, late games starting.
+    // Yahoo as of Sun Oct 11, ~4:05 PM CT (Matt's screenshots of the matchup pages): noon games
+    // final, Giants–Commanders a 27–27 tie, 3:05 and 3:25 games in the 2nd quarter.
     scores: {
-      Matt: [97.78, 136.39], DLin: [41.90, 86.02],
-      Tristan: [53.40, 104.42], Colin: [83.50, 133.80],
-      Jerger: [85.12, 99.58], Kurt: [97.84, 117.65],
-      Tony: [83.70, 134.99], Andy: [93.44, 142.20],
-      'Mr. G': [81.66, 125.98], Pablo: [63.44, 95.96]
+      Matt: [105.08, 132.05], DLin: [46.74, 80.40],
+      Tristan: [64.42, 107.12], Colin: [94.50, 138.96],
+      Jerger: [90.02, 103.93], Kurt: [99.94, 120.18],
+      Tony: [90.00, 133.90], Andy: [99.24, 137.03],
+      'Mr. G': [91.66, 116.50], Pablo: [63.34, 95.78]
     },
     // Points so far for every player whose game has started (starters and bench).
     // Players listed in inProgress are still playing; the rest are final.
@@ -82,7 +82,7 @@ window.SEASON = {
       'Trevor Lawrence': 14.18, 'Parker Washington': 14.90, 'Bhayshul Tuten': 5.60, 'Jaguars': 1.00, 'Jalen Hurts': 10.40, 'Dallas Goedert': 3.70
     },
     inProgress: ['Trevor Lawrence', 'Parker Washington', 'Bhayshul Tuten', 'Jaguars', 'Jalen Hurts', 'Dallas Goedert'],
-    sheetNote: 'Team totals as of Sun 3:09 PM CT; player points through Thursday and the London game’s third quarter (this pull had no player points). Each player is tagged Final, Live or proj.'
+    sheetNote: 'Team totals as of Sun ~4:05 PM CT; player points through Thursday and the London game’s third quarter. Each player is tagged Final, Live or proj.'
   },
 
   // The NFL week: every game ('Sun 12:00 PM · CHI @ GB', kickoff Central, same form as parlay legs)
@@ -363,7 +363,7 @@ window.SEASON = {
         legs: [
           { text: 'Javonte Williams anytime TD', player: 'Javonte Williams', type: 'td', count: 1, game: 'Thu 7:15 PM · TB @ DAL', odds: '-230', result: '1 rush TD (12-45)', status: 'hit' },
           { text: 'Jahmyr Gibbs anytime TD', player: 'Jahmyr Gibbs', type: 'td', count: 1, game: 'Sun 3:25 PM · DET @ ARI', odds: '-450', status: 'open' },
-          { text: 'Giants moneyline at Commanders', player: 'Giants', type: 'ml', team: 'NYG', teams: ['NYG', 'Was'], game: 'Sun 12:00 PM · NYG @ WAS', odds: '+150', status: 'open' }
+          { text: 'Giants moneyline at Commanders', player: 'Giants', type: 'ml', team: 'NYG', teams: ['NYG', 'Was'], game: 'Sun 12:00 PM · NYG @ WAS', odds: '+150', result: 'Final T 27–27 · tie, voided', status: 'push' }
         ]
       },
       {
@@ -374,7 +374,7 @@ window.SEASON = {
         legs: [
           { text: 'Javonte Williams 2+ TDs', player: 'Javonte Williams', type: 'td', count: 2, game: 'Thu 7:15 PM · TB @ DAL', odds: '+245', result: '1 rush TD (12-45)', status: 'miss' },
           { text: 'Jahmyr Gibbs 2+ TDs', player: 'Jahmyr Gibbs', type: 'td', count: 2, game: 'Sun 3:25 PM · DET @ ARI', odds: '+115', status: 'open' },
-          { text: 'Giants moneyline at Commanders', player: 'Giants', type: 'ml', team: 'NYG', teams: ['NYG', 'Was'], game: 'Sun 12:00 PM · NYG @ WAS', odds: '+150', status: 'open' }
+          { text: 'Giants moneyline at Commanders', player: 'Giants', type: 'ml', team: 'NYG', teams: ['NYG', 'Was'], game: 'Sun 12:00 PM · NYG @ WAS', odds: '+150', result: 'Final T 27–27 · tie, voided', status: 'push' }
         ]
       }
     ]

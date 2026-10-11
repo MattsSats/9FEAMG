@@ -38,7 +38,7 @@ for (const [w, list] of Object.entries(S.parlays || {})) {
     for (const l of p.legs) {
       if (!kickoffAt(S, +w, l.game)) bad.push(`${ticketSlug(w, p)}: leg "${l.text}" has no readable kickoff ("${l.game}").`);
       else if (S.nfl?.[w] && !S.nfl[w].games.some(g => g.split(' · ')[1] == String(l.game).split(' · ')[1]) && / · /.test(l.game)) warn.push(`${ticketSlug(w, p)}: "${l.game}" isn't in nfl[${w}].`);
-      if (!['open', 'hit', 'miss', undefined].includes(l.status)) bad.push(`${ticketSlug(w, p)}: leg "${l.text}" has status "${l.status}".`);
+      if (!['open', 'hit', 'miss', 'push', undefined].includes(l.status)) bad.push(`${ticketSlug(w, p)}: leg "${l.text}" has status "${l.status}".`);
     }
     const ps = parlayState(p);
     if (!ps.priced) warn.push(`${ticketSlug(w, p)} isn't fully priced.`);

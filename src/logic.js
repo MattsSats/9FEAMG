@@ -116,7 +116,8 @@ function allPlay(m, wk) { const s = SC[m][wk - 1]; const w = MGR.filter(o => o !
 const LEG_TAG = {
   open: { tag: 'OPEN', bg: 'var(--surface2)', fg: 'var(--muted)' },
   hit: { tag: 'HIT', bg: 'var(--pos)', fg: 'var(--onStatus)' },
-  miss: { tag: 'MISS', bg: 'var(--neg)', fg: 'var(--onStatus)' }
+  miss: { tag: 'MISS', bg: 'var(--neg)', fg: 'var(--onStatus)' },
+  push: { tag: 'PUSH', bg: 'var(--surface2)', fg: 'var(--ink)' }
 };
 // A leg in a few words for a collapsed card: "Allen TD", "London 80+ rec", "Dolphins ML", "JAX–CIN o51.5".
 const STAT_SHORT = [[/pass/i, 'pass'], [/rush/i, 'rush'], [/recep|catches/i, 'catches'], [/rec/i, 'rec']];
@@ -758,7 +759,7 @@ class Component extends DCLogic {
         // Collapsed cards show the legs in a few words: solid green ✓ hit, solid red ✗ miss,
         // outlined for legs still to play.
         peek: p.legs.map(l => { const s = l.status || 'open';
-          return { t: (s == 'hit' ? '✓ ' : s == 'miss' ? '✗ ' : '') + legShort(l),
+          return { t: (s == 'hit' ? '✓ ' : s == 'miss' ? '✗ ' : s == 'push' ? '= ' : '') + legShort(l) + (s == 'push' ? ' push' : ''),
             bg: s == 'hit' ? 'var(--pos)' : s == 'miss' ? 'var(--neg)' : 'transparent', fg: s == 'open' ? 'var(--ink)' : 'var(--onStatus)',
             border: s == 'hit' ? 'var(--pos)' : s == 'miss' ? 'var(--neg)' : 'var(--line)', weight: s == 'open' ? 500 : 700 }; }),
         showPeek: !S.prOpen?.[anchor],

@@ -59,10 +59,12 @@ export const toAmerican = d => d >= 2 ? '+' + Math.round((d - 1) * 100) : '−' 
 export const impliedProb = o => { const n = parseFloat(o); return isNaN(n) || n == 0 ? null : n > 0 ? 100 / (n + 100) : -n / (-n + 100); };
 export const pct = x => x < 0.1 ? (Math.max(x, 0.001) * 100).toFixed(1) + '%' : Math.round(x * 100) + '%';
 // The priced pieces of a ticket, multiplied together for the parlay odds: one per same-game
-// group (legs with sgp: n, priced by p.sgps[n - 1]) plus one per other leg.
+// group (legs with sgp: n, priced by p.sgps[n - 1]) plus one per other leg. A pushed leg
+// (status 'push': a moneyline that ended in a tie) is voided, so it drops out, as the book does.
 export function parlayParts(p) {
   const parts = [], seen = new Set();
   for (const l of p.legs) {
+    if (l.status == 'push' && !l.sgp) continue;
     if (l.sgp) { if (!seen.has(l.sgp)) { seen.add(l.sgp); parts.push(p.sgps?.[l.sgp - 1] ?? null); } }
     else parts.push(l.odds ?? null);
   }
@@ -72,7 +74,8 @@ export function parlayParts(p) {
 // A ticket-level price (the book's, for the whole slip) overrides the leg math.
 export function parlayState(p) {
   const st = p.legs.map(l => l.status || 'open');
-  const status = st.includes('miss') ? 'BUSTED' : st.length && st.every(s => s == 'hit') ? 'CASHED' : 'OPEN';
+  const live = st.filter(s => s != 'push');
+  const status = st.includes('miss') ? 'BUSTED' : live.length && live.every(s => s == 'hit') ? 'CASHED' : 'OPEN';
   if (toDecimal(p.odds)) return { status, priced: true, dec: toDecimal(p.odds) };
   const decs = parlayParts(p).map(toDecimal), priced = decs.length > 0 && decs.every(d => d != null);
   return { status, priced, dec: priced ? decs.reduce((a, b) => a * b, 1) : null };
