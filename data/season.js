@@ -338,6 +338,21 @@ window.SEASON = {
         ]
       },
       {
+        owner: 'The Booth', init: 'TB', title: 'Booth’s Parlay', id: 'booths-parlay',
+        // Claude's own long shot for the games left after the 3:05 kickoff: four anytime TDs, one per
+        // game, each team's main red-zone target. Graded against a 100-point rubric (rules, target
+        // odds, hit chance per dollar, football case per leg, independence, price sense) by Claude
+        // and by an independent agent; built until the two averaged 95 or better.
+        // Odds: DraftKings via The Odds API, Sun Oct 11, 3:01 PM CT. Ticket ≈ +2540.
+        legs: [
+          { text: 'Trey McBride anytime TD', player: 'Trey McBride', type: 'td', count: 1, game: 'Sun 3:25 PM · DET @ ARI', odds: '+100', status: 'open' },
+          { text: 'Mike Evans anytime TD', player: 'Mike Evans', type: 'td', count: 1, game: 'Sun 3:25 PM · SF @ SEA', odds: '+200', status: 'open' },
+          { text: 'Drake London anytime TD', player: 'Drake London', type: 'td', count: 1, game: 'Sun 7:20 PM · BAL @ ATL', odds: '+120', status: 'open' },
+          { text: 'Davante Adams anytime TD', player: 'Davante Adams', type: 'td', count: 1, game: 'Mon 7:15 PM · BUF @ LAR', odds: '+100', status: 'open' }
+        ],
+        booth: 'The Booth’s long shot: four red-zone targets in four games. McBride in the highest total of the day, Evans with the 49ers chasing in Seattle, London at home, and Adams on Monday night. For fun, not a lock.'
+      },
+      {
         owner: 'Andy', title: 'Ground and Pound', request: 'Andy', requestAt: '2026-10-07T13:51:36.692Z',
         // Built by Claude for Andy's Balanced request (+250 to +600, any legs, Javonte Williams TD
         // and Jahmyr Gibbs TD). Both TDs come to +75, so a third leg: the Giants moneyline (Andy
