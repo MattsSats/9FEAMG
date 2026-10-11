@@ -760,8 +760,8 @@ class Component extends DCLogic {
         // outlined for legs still to play.
         peek: p.legs.map(l => { const s = l.status || 'open';
           return { t: (s == 'hit' ? '✓ ' : s == 'miss' ? '✗ ' : s == 'push' ? '= ' : '') + legShort(l) + (s == 'push' ? ' push' : ''),
-            bg: s == 'hit' ? 'var(--pos)' : s == 'miss' ? 'var(--neg)' : 'transparent', fg: s == 'open' ? 'var(--ink)' : 'var(--onStatus)',
-            border: s == 'hit' ? 'var(--pos)' : s == 'miss' ? 'var(--neg)' : 'var(--line)', weight: s == 'open' ? 500 : 700 }; }),
+            bg: s == 'hit' ? 'var(--pos)' : s == 'miss' ? 'var(--neg)' : 'transparent', fg: s == 'open' || s == 'push' ? 'var(--ink)' : 'var(--onStatus)',
+            border: s == 'hit' ? 'var(--pos)' : s == 'miss' ? 'var(--neg)' : s == 'push' ? 'var(--muted)' : 'var(--line)', weight: s == 'open' ? 500 : 700 }; }),
         showPeek: !S.prOpen?.[anchor],
         stampColor: status == 'CASHED' ? 'var(--pos)' : 'var(--neg)',
         statusBg: status == 'CASHED' ? 'var(--pos)' : status == 'BUSTED' ? 'var(--neg)' : 'var(--surface2)',
