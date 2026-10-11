@@ -322,6 +322,22 @@ window.SEASON = {
         ]
       },
       {
+        owner: 'Tristan', title: 'Late Window', request: 'Tristan', requestAt: '2026-10-10T16:04:31.265Z',
+        // Built by Claude for Tristan's request (Sat Oct 10, 11:04 AM CT: Long shot +1500 to +5000,
+        // 4 legs, Bijan Robinson TD, Bhayshul Tuten TD, Aaron Jones typed in). Tuten's London game
+        // was already under way, so Matt swapped that leg for Jones yards (Sun). LaPorta and Evans
+        // are Tristan's own players; one leg per game.
+        // Odds: DraftKings. Jones 70+ rushing yards is a live price from Matt's DraftKings app
+        // screenshot, Sun Oct 11, ~12:20 PM CT (1st quarter, 9:04 left, Jones 2-7). The rest
+        // DraftKings via The Odds API, Sun Oct 11, 12:28 PM CT. Ticket ≈ +2136.
+        legs: [
+          { text: 'Aaron Jones Sr. 70+ rushing yards', player: 'Aaron Jones Sr.', type: 'over', stat: 'Rush Yds', line: 69.5, game: 'Sun 12:00 PM · MIN @ NO', odds: '+100', status: 'open' },
+          { text: 'Sam LaPorta anytime TD', player: 'Sam LaPorta', type: 'td', count: 1, game: 'Sun 3:25 PM · DET @ ARI', odds: '+165', status: 'open' },
+          { text: 'Mike Evans anytime TD', player: 'Mike Evans', type: 'td', count: 1, game: 'Sun 3:25 PM · SF @ SEA', odds: '+190', status: 'open' },
+          { text: 'Bijan Robinson anytime TD', player: 'Bijan Robinson', type: 'td', count: 1, game: 'Sun 7:20 PM · BAL @ ATL', odds: '-220', status: 'open' }
+        ]
+      },
+      {
         owner: 'Andy', title: 'Ground and Pound', request: 'Andy', requestAt: '2026-10-07T13:51:36.692Z',
         // Built by Claude for Andy's Balanced request (+250 to +600, any legs, Javonte Williams TD
         // and Jahmyr Gibbs TD). Both TDs come to +75, so a third leg: the Giants moneyline (Andy
