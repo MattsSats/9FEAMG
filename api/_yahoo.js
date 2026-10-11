@@ -26,12 +26,13 @@ export const writeJson = (path, data) =>
 // or throws to stop without writing.
 export async function updateJson(path, change, tries = 8) {
   let last = '';
+  // Reads can come back with a weak ETag (W/"…"), which never matches on a write: compare the bare tag.
   for (let i = 0; i < tries; i++) {
     const r = await get(path, { access: 'private', useCache: false });
     const data = r ? JSON.parse(await new Response(r.stream).text()) : null;
     const next = await change(data);
     try {
-      await put(path, JSON.stringify(next), { access: 'private', contentType: 'application/json', addRandomSuffix: false, cacheControlMaxAge: 60, ...(r ? { ifMatch: r.blob.etag } : { allowOverwrite: false }) });
+      await put(path, JSON.stringify(next), { access: 'private', contentType: 'application/json', addRandomSuffix: false, cacheControlMaxAge: 60, ...(r ? { ifMatch: r.blob.etag.replace(/^W//, '') } : { allowOverwrite: false }) });
       return next;
     } catch (e) {
       // Someone else wrote first, is writing right now, or created the file first: try again on top
