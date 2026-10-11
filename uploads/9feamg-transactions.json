@@ -1,5 +1,65 @@
 [
   {
+    "when": "Oct 10, 12:53 pm",
+    "yahooTeam": "Definitely not a Boomer",
+    "manager": "Mr. G",
+    "action": "add",
+    "player": "T.J. Hockenson",
+    "nfl": "Min",
+    "pos": "TE",
+    "faab": null,
+    "via": "Free Agency",
+    "notes": "Yahoo facts Sun Oct 11, 10:59 AM CT"
+  },
+  {
+    "when": "Oct 10, 12:53 pm",
+    "yahooTeam": "Definitely not a Boomer",
+    "manager": "Mr. G",
+    "action": "drop",
+    "player": "Kenyon Sadiq",
+    "nfl": "NYJ",
+    "pos": "TE",
+    "faab": null,
+    "via": "Waivers",
+    "notes": "Yahoo facts Sun Oct 11, 10:59 AM CT"
+  },
+  {
+    "when": "Oct 10, 12:48 pm",
+    "yahooTeam": "Definitely not a Boomer",
+    "manager": "Mr. G",
+    "action": "drop",
+    "player": "Kyler Murray",
+    "nfl": "Min",
+    "pos": "QB",
+    "faab": null,
+    "via": "Waivers",
+    "notes": "Yahoo facts Sun Oct 11, 10:59 AM CT"
+  },
+  {
+    "when": "Oct 10, 12:28 pm",
+    "yahooTeam": "He was #1",
+    "manager": "Pablo",
+    "action": "add",
+    "player": "Malik Washington",
+    "nfl": "Mia",
+    "pos": "WR",
+    "faab": null,
+    "via": "Free Agency",
+    "notes": "Yahoo facts Sun Oct 11, 10:59 AM CT"
+  },
+  {
+    "when": "Oct 10, 12:28 pm",
+    "yahooTeam": "He was #1",
+    "manager": "Pablo",
+    "action": "drop",
+    "player": "Geno Smith",
+    "nfl": "NYJ",
+    "pos": "QB",
+    "faab": null,
+    "via": "Waivers",
+    "notes": "Yahoo facts Sun Oct 11, 10:59 AM CT"
+  },
+  {
     "when": "Oct 10, 2:53 am",
     "yahooTeam": "Squirtle Squad",
     "manager": "Tristan",

@@ -59,18 +59,18 @@ window.SEASON = {
   // The week in progress. Set to null between weeks.
   live: {
     week: 5,
-    status: 'Live · Thursday final (TB 24, DAL 16) · Sunday next',
+    status: 'Live · London Q3 (PHI 14, JAX 10) · noon games next',
     // When these numbers were pulled from Yahoo (Central); shows as "Scores as of Thu 10:19 PM".
-    asOf: '2026-10-10T10:21:00-05:00',
+    asOf: '2026-10-11T10:59:00-05:00',
     // [current points, projected final]
-    // Yahoo as of Sat Oct 10, 10:21 AM CT: Thursday final, Sunday projections. Tristan has five of
-    // nine starters set (QB, RB, TE and DEF empty), so Yahoo projects him 60.37.
+    // Yahoo as of Sun Oct 11, 10:59 AM CT: Thursday final, London game (PHI @ JAX) in Q3,
+    // every lineup full.
     scores: {
-      Matt: [0.00, 116.36], DLin: [24.50, 118.36],
-      Tristan: [0.00, 60.37], Colin: [0.00, 114.11],
-      Jerger: [1.90, 94.62], Kurt: [28.84, 102.46],
-      Tony: [30.50, 128.21], Andy: [20.20, 120.60],
-      'Mr. G': [0.00, 116.77], Pablo: [5.00, 79.32]
+      Matt: [0.00, 115.12], DLin: [24.50, 117.46],
+      Tristan: [5.60, 108.91], Colin: [1.00, 108.24],
+      Jerger: [1.90, 94.42], Kurt: [28.84, 102.88],
+      Tony: [30.50, 127.79], Andy: [34.38, 121.33],
+      'Mr. G': [14.90, 121.02], Pablo: [5.00, 97.44]
     },
     // Points so far for every player whose game has started (starters and bench).
     // Players listed in inProgress are still playing; the rest are final.
@@ -78,10 +78,11 @@ window.SEASON = {
       'Bucky Irving': 30.50, 'Emeka Egbuka': 14.20, 'Dak Prescott': 14.64,
       'Javonte Williams': 13.20, 'Chase McLaughlin': 7.00, 'George Pickens': 23.50,
       'Cowboys': 1.00, 'Jake Ferguson': 3.40, 'Kenny Gainwell': 4.30,
-      'CeeDee Lamb': 1.90, 'Brandon Aubrey': 5.00, 'Chris Godwin Jr.': 5.50
+      'CeeDee Lamb': 1.90, 'Brandon Aubrey': 5.00, 'Chris Godwin Jr.': 5.50,
+      'Trevor Lawrence': 14.18, 'Parker Washington': 14.90, 'Bhayshul Tuten': 5.60, 'Jaguars': 1.00, 'Jalen Hurts': 10.40, 'Dallas Goedert': 3.70
     },
-    inProgress: [],
-    sheetNote: 'Thursday final; Sunday projections as of Sat 10:21 AM CT. Each player is tagged Final, Live or proj.'
+    inProgress: ['Trevor Lawrence', 'Parker Washington', 'Bhayshul Tuten', 'Jaguars', 'Jalen Hurts', 'Dallas Goedert'],
+    sheetNote: 'Thursday final; London game live; Sunday projections as of Sun 10:59 AM CT. Each player is tagged Final, Live or proj.'
   },
 
   // The NFL week: every game ('Sun 12:00 PM · CHI @ GB', kickoff Central, same form as parlay legs)
