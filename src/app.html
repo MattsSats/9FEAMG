@@ -1023,6 +1023,14 @@ button{font-family:inherit;color:inherit}
             <span>PAPER · NOBODY BET THESE</span><span>{{ paperLine }}</span>
           </div>
         </sc-if>
+        <sc-if value="{{ hasLatestTaps }}" hint-placeholder-val="{{ false }}">
+          <div class="no-shot" style="padding:10px 0 14px;border-top:1px solid var(--line)">
+            <div style="font-family:'JetBrains Mono';font-size:10px;font-weight:600;letter-spacing:.1em;color:var(--muted)">LATEST TAPS</div>
+            <sc-for list="{{ latestTaps }}" as="lt" hint-placeholder-count="3">
+              <a href="{{ lt.href }}" style="display:block;padding:6px 0;text-decoration:none;color:var(--ink);font-size:13px;line-height:1.35"><b style="font-weight:600">{{ lt.ticket }}</b><span style="display:block;font-family:'JetBrains Mono';font-size:11px;color:{{ lt.color }}">{{ lt.t }}</span></a>
+            </sc-for>
+          </div>
+        </sc-if>
         <div class="shot-footer"><b>9FEAMG</b><span>{{ shotLedger }}</span></div>
       </div>
     </div>

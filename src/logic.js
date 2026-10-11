@@ -167,6 +167,12 @@ class Component extends DCLogic {
     // with plain listeners; everything else on the form is a tap.
     if (LW) this.loadRequests();
     this.loadTails();
+    // Taps keep coming in while the page is open: re-read the live week's every 2 minutes
+    // (and on coming back to the tab), so the cards and Latest taps stay current.
+    if (LW) {
+      setInterval(() => { if (!document.hidden) this.loadTails(LW); }, 120000);
+      document.addEventListener('visibilitychange', () => { if (!document.hidden) this.loadTails(LW); });
+    }
     const onReq = e => {
       const el = e.target;
       if (el?.dataset?.reqRisk != null) this.setState({ req: { ...this.state.req, risk: +el.value } });
@@ -277,9 +283,9 @@ class Component extends DCLogic {
     fetch('/api/requests?week=' + LW, { cache: 'no-store' }).then(r => r.ok ? r.json() : null)
       .then(d => d && this.setState({ reqs: d.requests || {} })).catch(() => {});
   }
-  // Who's on each ticket (/api/tails), for every week that has tickets.
-  loadTails() {
-    for (const w of Object.keys(D?.parlays || {}))
+  // Who's on each ticket (/api/tails), for every week that has tickets (or just one).
+  loadTails(only) {
+    for (const w of only ? [only] : Object.keys(D?.parlays || {}))
       fetch('/api/tails?week=' + w, { cache: 'no-store' }).then(r => r.ok ? r.json() : null)
         .then(d => d && this.setState({ tails: { ...this.state.tails, [w]: d.tails || {} }, passes: { ...this.state.passes, [w]: d.passes || {} }, tlog: { ...this.state.tlog, [w]: d.log || {} } })).catch(() => {});
   }
@@ -849,6 +855,11 @@ class Component extends DCLogic {
       { label: 'RECORD', value: `${ledger.w}–${ledger.l}`, color: 'var(--ink)' },
       { label: 'NET', value: money(ledger.net), color: moneyCol(ledger.net) },
       { label: 'OPEN', value: String(ledger.open), color: 'var(--ink)' }];
+    // Latest taps: the week's last six taps across every ticket, newest first, late ones marked.
+    const tapTickets = Object.fromEntries((D.parlays?.[wk] || []).map(p => [ticketSlug(wk, p), p]));
+    const latestTaps = Object.entries(S.tlog?.[wk] || {}).flatMap(([slug, es]) => tapTickets[slug] ? es.map(e => ({ e, p: tapTickets[slug], slug })) : [])
+      .sort((x, y) => String(y.e.at).localeCompare(String(x.e.at))).slice(0, 6)
+      .map(({ e, p, slug }) => ({ t: tapLine(e, p.owners || [p.owner]), ticket: p.title ?? p.owner + '’s parlay', href: '#' + slug, color: e.late ? 'var(--accentInk)' : 'var(--muted)' }));
     const ledgerSub = `${bets} ${bets == 1 ? 'bet' : 'bets'} · $10 each · counts tickets someone placed or tapped I’m on it; Paper is the rest` + (ledger.unpriced ? ` · ${ledger.unpriced} cashed without a line` : '');
     // Best net first; each row: crest, record, open count, net.
     const ledgerOwners = Object.values(byOwner).sort((a, b) => b.net - a.net || b.w - a.w || a.l - b.l).map(o => ({
@@ -1054,7 +1065,7 @@ class Component extends DCLogic {
       compactCls: S.compact ? 'app compact' : 'app',
       deskTabs: tabs,
       weekChips, isW5: isNext, nextTitle, nextNote, hasWeek, hero: hero || blank, matchups, heroLabel: heroMine ? 'Your matchup' : wk == LW ? 'Matchup of the week' : 'Closest finish', heroCaption: this.heroCaption(wk, hero),
-      weekStatus, parlays, hasParlays: parlays.length > 0, hasLedger: allParlays.length > 0, ledgerTiles, ledgerSub, ledgerOwners, hasLedgerRows: ledgerOwners.length > 0, hasPaper, paperLine,
+      weekStatus, parlays, hasParlays: parlays.length > 0, hasLedger: allParlays.length > 0, ledgerTiles, ledgerSub, ledgerOwners, hasLedgerRows: ledgerOwners.length > 0, hasPaper, paperLine, latestTaps, hasLatestTaps: latestTaps.length > 0,
       shareLedger: e => this.share('ledger', e), ledgerLabel: S.sharing == 'ledger' ? '…' : 'Image',
       linkLedger: e => this.shareLink(location.origin + '/s/ledger', '9FEAMG · Parlay ledger', e), shotLedger: `Parlay ledger · through week ${LW ?? NF}`,
       hasReq, reqForm, reqList, hasReqList: reqList.length > 0,
