@@ -987,7 +987,7 @@ button{font-family:inherit;color:inherit}
         </sc-if>
         <sc-if value="{{ pr.hasHistory }}" hint-placeholder-val="{{ false }}">
           <div class="no-shot" style="margin-top:12px;padding:10px 16px 0;border-top:1px dashed var(--line);font-family:'JetBrains Mono';font-size:10px;line-height:1.7;color:var(--muted)">
-            <div style="letter-spacing:.1em;text-transform:uppercase;font-weight:600">Taps</div>
+            <div style="letter-spacing:.1em;text-transform:uppercase;font-weight:600">Receipts</div>
             <sc-for list="{{ pr.history }}" as="hx" hint-placeholder-count="2"><div>{{ hx.t }}</div></sc-for>
           </div>
         </sc-if>
@@ -1033,7 +1033,7 @@ button{font-family:inherit;color:inherit}
         </sc-if>
         <sc-if value="{{ hasLatestTaps }}" hint-placeholder-val="{{ false }}">
           <div class="no-shot" style="padding:10px 0 14px;border-top:1px solid var(--line)">
-            <div style="font-family:'JetBrains Mono';font-size:10px;font-weight:600;letter-spacing:.1em;color:var(--muted)">LATEST TAPS</div>
+            <div style="font-family:'JetBrains Mono';font-size:10px;font-weight:600;letter-spacing:.1em;color:var(--muted)">LATEST RECEIPTS</div>
             <sc-for list="{{ latestTaps }}" as="lt" hint-placeholder-count="3">
               <a href="{{ lt.href }}" style="display:block;padding:6px 0;text-decoration:none;color:var(--ink);font-size:13px;line-height:1.35"><b style="font-weight:600">{{ lt.ticket }}</b><span style="display:block;font-family:'JetBrains Mono';font-size:11px;color:{{ lt.color }}">{{ lt.t }}</span></a>
             </sc-for>
