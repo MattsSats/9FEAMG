@@ -1,5 +1,29 @@
 [
   {
+    "when": "Oct 11, 6:31 pm",
+    "yahooTeam": "Squirtle Squad",
+    "manager": "Tristan",
+    "action": "add",
+    "player": "Chiefs",
+    "nfl": "Kc",
+    "pos": "DEF",
+    "faab": null,
+    "via": "Free Agency",
+    "notes": "Yahoo facts Sun Oct 11, 6:37 PM CT"
+  },
+  {
+    "when": "Oct 11, 6:31 pm",
+    "yahooTeam": "Squirtle Squad",
+    "manager": "Tristan",
+    "action": "drop",
+    "player": "Tyler Bass",
+    "nfl": "Buf",
+    "pos": "K",
+    "faab": null,
+    "via": "Waivers",
+    "notes": "Yahoo facts Sun Oct 11, 6:37 PM CT"
+  },
+  {
     "when": "Oct 11, 12:31 pm",
     "yahooTeam": "Squirtle Squad",
     "manager": "Tristan",

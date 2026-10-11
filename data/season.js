@@ -59,18 +59,18 @@ window.SEASON = {
   // The week in progress. Set to null between weeks.
   live: {
     week: 5,
-    status: 'Live · DEN 23, LAC 17 final · 3:25 games in the 4th · Sunday night BAL @ ATL',
+    status: 'Live · Sunday afternoon final · Sunday night BAL @ ATL · Monday BUF @ LAR',
     // When these numbers were pulled from Yahoo (Central); shows as "Scores as of Thu 10:19 PM".
-    asOf: '2026-10-11T16:05:00-05:00',
+    asOf: '2026-10-11T18:37:00-05:00',
     // [current points, projected final]
-    // Yahoo as of Sun Oct 11, ~4:05 PM CT (Matt's screenshots of the matchup pages): noon games
-    // final, Giants–Commanders a 27–27 tie, 3:05 and 3:25 games in the 2nd quarter.
+    // Yahoo as of Sun Oct 11, 6:37 PM CT: Thursday final, everything final except SF @ SEA (Q4,
+    // 1:00 left), Sunday night and Monday night.
     scores: {
-      Matt: [105.08, 132.05], DLin: [46.74, 80.40],
-      Tristan: [64.42, 107.12], Colin: [94.50, 138.96],
-      Jerger: [90.02, 103.93], Kurt: [99.94, 120.18],
-      Tony: [90.00, 133.90], Andy: [99.24, 137.03],
-      'Mr. G': [91.66, 116.50], Pablo: [63.34, 95.78]
+      Matt: [136.68, 136.95], DLin: [78.62, 86.13],
+      Tristan: [99.48, 120.30], Colin: [97.00, 126.32],
+      Jerger: [90.02, 103.93], Kurt: [101.94, 124.08],
+      Tony: [110.90, 133.27], Andy: [133.14, 147.65],
+      'Mr. G': [109.76, 109.82], Pablo: [63.34, 95.85]
     },
     // Points so far for every player whose game has started (starters and bench).
     // Players listed in inProgress are still playing; the rest are final.
@@ -82,7 +82,7 @@ window.SEASON = {
       'Trevor Lawrence': 14.18, 'Parker Washington': 14.90, 'Bhayshul Tuten': 5.60, 'Jaguars': 1.00, 'Jalen Hurts': 10.40, 'Dallas Goedert': 3.70
     },
     inProgress: ['Trevor Lawrence', 'Parker Washington', 'Bhayshul Tuten', 'Jaguars', 'Jalen Hurts', 'Dallas Goedert'],
-    sheetNote: 'Team totals as of Sun ~4:05 PM CT; player points through Thursday and the London game’s third quarter. Each player is tagged Final, Live or proj.'
+    sheetNote: 'Team totals as of Sun 6:37 PM CT; player points through Thursday and the London game’s third quarter (these pulls had no player points). Each player is tagged Final, Live or proj.'
   },
 
   // The NFL week: every game ('Sun 12:00 PM · CHI @ GB', kickoff Central, same form as parlay legs)
@@ -169,7 +169,15 @@ window.SEASON = {
   boothPreviewAt: { 5: '2026-10-07' },
   // Pre-SNF lines, one per matchup in the same order: written Sunday after the afternoon games,
   // before Sunday Night Football. [manager, line, written at].
-  boothSnf: {},
+  boothSnf: {
+    5: [
+      ['Kurt', 'Matt finally started Watson, and Watson scored 29.30. Kurt now needs 34.74 from Flowers and a kicker.', '2026-10-11T18:48-05:00', 'claude'],
+      ['Tony', 'The Booth put Tony on fraud watch Wednesday. Tony leads first-place Tristan 110.90–99.48 with Allen still to play, and Tristan has only Bijan left.', '2026-10-11T18:48-05:00', 'claude'],
+      ['Jerger', 'Mr. G leads Jerger 109.76–90.02, and Jerger is down to one player: Cook on Monday, projected for 13.91 and needing 19.74.', '2026-10-11T18:48-05:00', 'claude'],
+      ['DLin', 'DLin trails Colin 97.00–78.62 with one player left: Loop, Baltimore’s kicker. The Toilet Bowl King needs 18.38 from a kicker.', '2026-10-11T18:48-05:00', 'claude'],
+      ['Pablo', 'Gibbs scored 35.20 and Andy leads Pablo 133.14–63.34. Pablo needs 69.80 from Henry and Puka. It’s gibbing time.', '2026-10-11T18:48-05:00', 'claude']
+    ]
+  },
   boothPreview: {
     5: [
       ['Matt', 'The 1–3 bowl, between the two unluckiest teams in the league: Kurt at −1.00 and Matt at −0.89. Projected 115.63–100.37, Matt. “There is no 2nd best” is 9th.', '2026-10-07T08:54-05:00'],
@@ -276,7 +284,7 @@ window.SEASON = {
           { text: 'Packers moneyline vs Bears', type: 'ml', team: 'GB', teams: ['Chi', 'GB'], game: 'Sun 12:00 PM · CHI @ GB', odds: '+102', result: 'Final W 31–7', status: 'hit' },
           { text: '49ers moneyline at Seahawks', type: 'ml', team: 'SF', teams: ['SF', 'Sea'], game: 'Sun 3:25 PM · SF @ SEA', odds: '+136', status: 'open' },
           { text: 'Jets moneyline vs Browns', type: 'ml', team: 'NYJ', teams: ['Cle', 'NYJ'], game: 'Sun 12:00 PM · CLE @ NYJ', odds: '-130', result: 'Final W 17–12', status: 'hit' },
-          { text: 'Cardinals moneyline vs Lions', type: 'ml', team: 'Ari', teams: ['Det', 'Ari'], game: 'Sun 3:25 PM · DET @ ARI', odds: '+210', status: 'open' },
+          { text: 'Cardinals moneyline vs Lions', type: 'ml', team: 'Ari', teams: ['Det', 'Ari'], game: 'Sun 3:25 PM · DET @ ARI', odds: '+210', result: 'Final L 21–45', status: 'miss' },
           { text: 'Chargers moneyline vs Broncos', type: 'ml', team: 'LAC', teams: ['Den', 'LAC'], game: 'Sun 3:05 PM · DEN @ LAC', odds: '+160', result: 'Final L 17–23', status: 'miss' },
           { text: 'Steelers moneyline vs Colts', type: 'ml', team: 'Pit', teams: ['Ind', 'Pit'], game: 'Sun 12:00 PM · IND @ PIT', odds: '-148', result: 'Final W 34–22', status: 'hit' }
         ]
