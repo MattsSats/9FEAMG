@@ -97,7 +97,7 @@ const shortDate = d => MONS[d.getMonth()] + ' ' + d.getDate();
 const tapLine = (e, owners) => {
   const what = { on: owners.includes(e.m) ? 'placed it' : 'is on it', off: owners.includes(e.m) ? 'unmarked placed' : 'took back I’m on it', pass: 'didn’t bet it', unpass: 'undid didn’t bet' }[e.a] || e.a;
   const when = new Date(e.at).toLocaleString('en-US', { weekday: 'short', hour: 'numeric', minute: '2-digit', timeZone: 'America/Chicago' }).replace(',', '');
-  return `${e.m} ${what}${e.by ? ' (' + e.by + ' tapped)' : ''} · ${when}`;
+  return `${e.m} ${what}${e.by ? ' (' + e.by + ' tapped)' : ''} · ${when}${e.late ? ' · late' : ''}`;
 };
 // Transaction times ("Oct 9, 1:39 pm") are Central, read the same wherever the viewer is.
 const parseWhen = s => parseCT(s, D.year);
@@ -759,11 +759,13 @@ class Component extends DCLogic {
         // tailing your own opponent's parlay is a hedge (win the matchup or cash the ticket).
         withList: onIt.map(m => { const tag = owners.includes(m) ? 'PLACED' : m == vs ? 'HEDGE' : ''; return { m, init: INIT[m] ?? m.slice(0, 2).toUpperCase(), color: ownerCol(m), tag, hasTag: !!tag }; }),
         hasWith: onIt.length > 0, unbet: status == 'OPEN' && !onIt.length && !(me && owners.includes(me)), withLabel: status == 'CASHED' ? 'Cashed with' : status == 'BUSTED' ? 'Busted with' : 'On it',
-        canTail: !lockedNow && !(me && fixed.includes(me)) && !iPassed,
-        // "Taps lock Sun 12 PM": the ticket's first kickoff, while it can still be joined.
-        ...(k => ({ hasLock: !lockedNow && status == 'OPEN' && k < Infinity, lockLabel: k < Infinity ? 'Taps lock ' + new Date(k).toLocaleString('en-US', { weekday: 'short', hour: 'numeric', minute: '2-digit', timeZone: 'America/Chicago' }).replace(',', '').replace(':00 ', ' ') : '' }))(Math.min(Infinity, ...p.legs.map(l => kickoff(wk, l.game)?.getTime()).filter(Boolean))),
+        // Open until the ticket cashes or busts: someone who bet it can still say so after kickoff
+        // (that tap shows as late in Taps).
+        canTail: status == 'OPEN' && !(me && fixed.includes(me)) && !iPassed,
+        // "First game Sun 12 PM": the ticket's first kickoff, after which taps show as late.
+        ...(k => ({ hasLock: !lockedNow && status == 'OPEN' && k < Infinity, lockLabel: k < Infinity ? 'First game ' + new Date(k).toLocaleString('en-US', { weekday: 'short', hour: 'numeric', minute: '2-digit', timeZone: 'America/Chicago' }).replace(',', '').replace(':00 ', ' ') + ' · taps after that show as late' : '' }))(Math.min(Infinity, ...p.legs.map(l => kickoff(wk, l.game)?.getTime()).filter(Boolean))),
         // Nobody on it: "Nobody's on it yet" beside the button, or "Locked" once it can't be joined.
-        nobodyYet: !onIt.length && !passes.length && !lockedNow && !(me && makers.includes(me)), lockedPaper: status == 'OPEN' && !onIt.length && lockedNow, lockedLabel: passes.length ? 'Locked' : 'Locked · nobody bet this one', locked: lockedNow,
+        nobodyYet: !onIt.length && !passes.length && !lockedNow && !(me && makers.includes(me)), lockedPaper: status == 'OPEN' && !onIt.length && lockedNow, lockedLabel: 'Started · nobody’s marked it', locked: lockedNow,
         showTails: onIt.length > 0 || !lockedNow || passes.length > 0 || (!!me && makers.includes(me)) || (status == 'OPEN' && lockedNow),
         // "Didn't bet": shown to the ticket's owner or requester once the phone knows who you are.
         canPass: !!me && makers.includes(me) && !iPassed && status == 'OPEN',
@@ -775,7 +777,7 @@ class Component extends DCLogic {
         // Who tapped what and when, newest first (the last five): "Tony is on it · Fri 8:14 PM".
         history: (S.tlog?.[wk]?.[anchor] || []).slice(-5).reverse().map(e => ({ t: tapLine(e, owners) })),
         hasHistory: (S.tlog?.[wk]?.[anchor] || []).length > 0,
-        tailLabel: S.tailBusy == anchor ? '…' : iTapped ? (owners.includes(me) ? 'Placed ✓' : 'You’re on it ✓') : me && owners.includes(me) ? 'I placed it' : 'I’m on it',
+        tailLabel: S.tailBusy == anchor ? '…' : iTapped ? (owners.includes(me) ? 'Placed ✓' : 'You’re on it ✓') : me && owners.includes(me) ? 'I placed it' : lockedNow ? 'I bet it' : 'I’m on it',
         tailPressed: String(iTapped), tailBg: iTapped ? 'var(--accent)' : 'transparent', tailFg: iTapped ? 'var(--onAccent)' : 'var(--ink)', tailBorder: iTapped ? 'var(--accent)' : 'var(--line)',
         tapTail: () => this.toggleTail(wk, anchor, null, false),
         booth: p.booth || '', hasBooth: boothOn && !!p.booth,

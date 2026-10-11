@@ -2,8 +2,9 @@
 //   GET  ?week=5 -> { week, tails: { [slug]: [manager] }, passes: { [slug]: [manager] }, log: { [slug]: [entry] } }.
 //        Public, like requests.
 //   POST { week, slug, manager, on } -> puts that manager on the ticket (on: true) or takes them off
-//        (on: false). A ticket's owner on it means they placed it. Refused once the ticket's first
-//        game kicks off (or a leg is graded).
+//        (on: false). A ticket's owner on it means they placed it. Allowed until the ticket cashes
+//        or busts, so someone who bet it can still say so after kickoff; a tap after the first
+//        kickoff (or once a leg is graded) is logged as late, and the card shows it.
 //   POST { week, slug, manager, pass: true, on } -> "didn't bet it" for the ticket's owner or
 //        requester (on: false undoes it). Passing also takes them off the ticket. Allowed until the
 //        ticket settles (cashed or busted), so the ledger can't change after the fact.
@@ -11,7 +12,7 @@
 //   `on`, from an older page, it flips like before.) `by` is the phone's own team when someone
 //   else's "didn't bet" is undone for them; it goes in the log.
 // Every change that actually changes something is logged per ticket: { m, a: 'on'|'off'|'pass'|'unpass',
-// at, by? }, the last 30, so a stray tap shows up on the ticket.
+// at, by?, late? }, the last 30, so a stray tap shows up on the ticket.
 // Stored in the private Blob store next to the requests: tails/w<week>.json. Writes never overwrite
 // a tap saved at the same moment (api/_yahoo.js updateJson).
 import { readJson, updateJson, TEAMS } from './_yahoo.js';
@@ -54,7 +55,8 @@ export default {
     const pass = b.pass === true;
     if (pass && ![...(p.owners || [p.owner]), p.request].includes(manager)) return json({ error: 'Only the person the ticket was made for can say they didn’t bet it.' }, 403);
     if (pass && parlayState(p).status != 'OPEN') return json({ error: 'This ticket is settled, so who bet it is final.' }, 409);
-    if (!pass && locked(season, week, p)) return json({ error: 'Locked: this ticket’s first game has kicked off.' }, 409);
+    if (!pass && parlayState(p).status != 'OPEN') return json({ error: 'This ticket is settled, so who bet it is final.' }, 409);
+    const late = !pass && locked(season, week, p);
 
     try {
       const doc = await updateJson(path(week), d => {
@@ -66,7 +68,7 @@ export default {
           if (on) list.push(manager);
           if (list.length) map[slug] = list; else delete map[slug];
         };
-        const log = a => { d.log[slug] = [...(d.log[slug] || []), { m: manager, a, at: new Date().toISOString(), ...(by ? { by } : {}) }].slice(-30); };
+        const log = a => { d.log[slug] = [...(d.log[slug] || []), { m: manager, a, at: new Date().toISOString(), ...(by ? { by } : {}), ...(late ? { late: true } : {}) }].slice(-30); };
         if (pass) {
           const want = b.on ?? !has(d.passes);
           if (want != has(d.passes)) { set(d.passes, want); log(want ? 'pass' : 'unpass'); }

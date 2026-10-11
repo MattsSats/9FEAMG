@@ -645,8 +645,9 @@ button{font-family:inherit;color:inherit}
 </sc-if>
 
 <sc-if value="{{ hasRecap }}" hint-placeholder-val="{{ false }}">
-  <!-- The recap image renders from this off-screen card. -->
-  <div class="offstage" aria-hidden="true" style="width:400px">
+  <!-- The recap image renders from this card. It stays hidden (the share button copies it out
+       to make the image), so each Booth line shows once on Gameday, in The Booth. -->
+  <div style="display:none">
     <div data-shot="recap" style="padding:14px 16px 0;background:var(--bg)">
       <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:26px;line-height:1;text-transform:uppercase;margin-bottom:2px">{{ recapTitle }}</div>
       <sc-for list="{{ recap }}" as="r" hint-placeholder-count="5">
