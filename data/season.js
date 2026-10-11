@@ -335,7 +335,7 @@ window.SEASON = {
         legs: [
           { text: 'Aaron Jones Sr. 70+ rushing yards', player: 'Aaron Jones Sr.', type: 'over', stat: 'Rush Yds', line: 69.5, game: 'Sun 12:00 PM · MIN @ NO', odds: '+100', result: '25-113 rush yds, 1 TD', status: 'hit' },
           { text: 'Sam LaPorta anytime TD', player: 'Sam LaPorta', type: 'td', count: 1, game: 'Sun 3:25 PM · DET @ ARI', odds: '+165', status: 'open' },
-          { text: 'Mike Evans anytime TD', player: 'Mike Evans', type: 'td', count: 1, game: 'Sun 3:25 PM · SF @ SEA', odds: '+190', status: 'open' },
+          { text: 'Mike Evans anytime TD', player: 'Mike Evans', type: 'td', count: 1, game: 'Sun 3:25 PM · SF @ SEA', odds: '+190', result: '2-yd rec TD (Q1)', status: 'hit' },
           { text: 'Bijan Robinson anytime TD', player: 'Bijan Robinson', type: 'td', count: 1, game: 'Sun 7:20 PM · BAL @ ATL', odds: '-220', status: 'open' }
         ]
       },
@@ -348,7 +348,7 @@ window.SEASON = {
         // Odds: DraftKings via The Odds API, Sun Oct 11, 3:01 PM CT. Ticket ≈ +2540.
         legs: [
           { text: 'Trey McBride anytime TD', player: 'Trey McBride', type: 'td', count: 1, game: 'Sun 3:25 PM · DET @ ARI', odds: '+100', status: 'open' },
-          { text: 'Mike Evans anytime TD', player: 'Mike Evans', type: 'td', count: 1, game: 'Sun 3:25 PM · SF @ SEA', odds: '+200', status: 'open' },
+          { text: 'Mike Evans anytime TD', player: 'Mike Evans', type: 'td', count: 1, game: 'Sun 3:25 PM · SF @ SEA', odds: '+200', result: '2-yd rec TD (Q1)', status: 'hit' },
           { text: 'Drake London anytime TD', player: 'Drake London', type: 'td', count: 1, game: 'Sun 7:20 PM · BAL @ ATL', odds: '+120', status: 'open' },
           { text: 'Davante Adams anytime TD', player: 'Davante Adams', type: 'td', count: 1, game: 'Mon 7:15 PM · BUF @ LAR', odds: '+100', status: 'open' }
         ],
