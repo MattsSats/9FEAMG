@@ -171,11 +171,11 @@ window.SEASON = {
   // before Sunday Night Football. [manager, line, written at].
   boothSnf: {
     5: [
-      ['Kurt', 'Matt finally started Watson, and Watson scored 29.30. Kurt now needs 34.74 from Flowers and a kicker.', '2026-10-11T18:48-05:00', 'claude'],
-      ['Tony', 'The Booth put Tony on fraud watch Wednesday. Tony leads first-place Tristan 110.90–99.48 with Allen still to play, and Tristan has only Bijan left.', '2026-10-11T18:48-05:00', 'claude'],
-      ['Jerger', 'Mr. G leads Jerger 109.76–90.02, and Jerger is down to one player: Cook on Monday, projected for 13.91 and needing 19.74.', '2026-10-11T18:48-05:00', 'claude'],
-      ['DLin', 'DLin trails Colin 97.00–78.62 with one player left: Loop, Baltimore’s kicker. The Toilet Bowl King needs 18.38 from a kicker.', '2026-10-11T18:48-05:00', 'claude'],
-      ['Pablo', 'Gibbs scored 35.20 and Andy leads Pablo 133.14–63.34. Pablo needs 69.80 from Henry and Puka. It’s gibbing time.', '2026-10-11T18:48-05:00', 'claude']
+      ['Kurt', 'Matt finally started Watson, and Watson scored 29.30. Kurt now needs 34.74 from Flowers and a kicker.', '2026-10-11T18:40-05:00', 'claude'],
+      ['Tony', 'The Booth put Tony on fraud watch Wednesday. Tony leads first-place Tristan 110.90–99.48 with Allen still to play, and Tristan has only Bijan left.', '2026-10-11T18:40-05:00', 'claude'],
+      ['Jerger', 'Mr. G leads Jerger 109.76–90.02, and Jerger is down to one player: Cook on Monday, projected for 13.91 and needing 19.74.', '2026-10-11T18:40-05:00', 'claude'],
+      ['DLin', 'DLin trails Colin 97.00–78.62 with one player left: Loop, Baltimore’s kicker. The Toilet Bowl King needs 18.38 from a kicker.', '2026-10-11T18:40-05:00', 'claude'],
+      ['Pablo', 'Gibbs scored 35.20 and Andy leads Pablo 133.14–63.34. Pablo needs 69.80 from Henry and Puka. It’s gibbing time.', '2026-10-11T18:40-05:00', 'claude']
     ]
   },
   boothPreview: {
