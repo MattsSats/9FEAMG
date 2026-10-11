@@ -632,7 +632,8 @@ class Component extends DCLogic {
     const recap = hasRecap ? PAIRS[wk].map(([a, b], i) => {
       const sa = isFinal ? SC[a][wk - 1] : LIVE.scores[a]?.[liveIdx] ?? 0, sb = isFinal ? SC[b][wk - 1] : LIVE.scores[b]?.[liveIdx] ?? 0;
       const side = (m, s, win) => ({ m, init: INIT[m], color: col(m), score: f2(s), weight: win ? 800 : 500, fg: win ? 'var(--ink)' : 'var(--muted)' });
-      const line = boothOn ? (isFinal ? D.booth?.[wk]?.[i]?.[1] : (D.boothSnf?.[wk]?.[i] || D.boothPreview?.[wk]?.[i])?.[1]) || '' : '';
+      const bl = isFinal ? D.booth?.[wk]?.[i] : D.boothSnf?.[wk]?.[i] || D.boothPreview?.[wk]?.[i];
+      const line = boothOn && bl ? bl[1] + (bl[3] == 'claude' ? ' *' : '') : '';
       return { a: side(a, sa, sa > sb), b: side(b, sb, sb > sa), booth: line, hasBooth: !!line, gap: Math.abs(sa - sb), winner: sa > sb ? a : b };
     }).sort((x, y) => x.gap - y.gap).map((r, i) => ({ ...r, wide: i == 0, wideLabel: `Closest finish · ${r.winner} by ${f2(r.gap)}` })) : [];
     // The Booth, per matchup slot: up to three lines a week, the Preview (before Thursday), the
@@ -647,7 +648,9 @@ class Component extends DCLogic {
       return 'Written ' + d.toLocaleDateString('en-US', { ...o, weekday: 'short', month: 'short', day: 'numeric' }).replace(',', '') + (line[2] ? ', ' + d.toLocaleTimeString('en-US', { ...o, hour: 'numeric', minute: '2-digit' }) : '');
     };
     const boothLines = [...Array(Math.max(...stages.map(([, l]) => l.length))).keys()].map(i => {
-      const here = stages.filter(([, l]) => l[i]).map(([label, l]) => ({ label, text: l[i][1], when: written(l[i], label), m: l[i][0] }));
+      // A fourth field 'claude' marks a line Claude wrote before the Booth writer's pass: " *".
+      const here = stages.filter(([, l]) => l[i]).map(([label, l]) => { const c = l[i][3] == 'claude';
+        return { label, text: l[i][1] + (c ? ' *' : ''), when: written(l[i], label) + (c ? ' · * Claude, before the Booth’s pass' : ''), m: l[i][0] }; });
       if (!here.length) return null;
       const [main, ...earlier] = here, pair = PAIRS[wk]?.[i] || [main.m];
       return { crests: pair.map(m => ({ m, init: INIT[m], color: col(m) })), matchup: pair.join(' vs '),

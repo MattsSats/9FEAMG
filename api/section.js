@@ -195,7 +195,7 @@ function matchupOf(season, st, wk, aSlug, bSlug, rosters) {
   // The Pre-SNF line (Sunday, before the night game) is newer than the preview, so it wins.
   const snf = (season.boothSnf?.[wk] || []).find(([m]) => m == A.m || m == B.m);
   const pre = snf || (season.boothPreview?.[wk] || []).find(([m]) => m == A.m || m == B.m);
-  const booth = recap ? recap[1] : pre ? pre[1] : '';
+  const line = recap || pre, booth = line ? line[1] + (line[3] == 'claude' ? ' *' : '') : '';
   const preAt = pre?.[2] || (!snf && season.boothPreviewAt?.[wk] ? season.boothPreviewAt[wk] + 'T12:00:00-05:00' : null);
   const preDay = preAt ? new Date(preAt).toLocaleDateString('en-US', { weekday: 'short', timeZone: 'America/Chicago' }) : '';
   const boothLabel = !booth ? '' : recap ? 'The Booth' : (snf ? 'Booth · Pre-SNF' : 'Booth preview') + (preDay && !snf ? ' · ' + preDay : '');
