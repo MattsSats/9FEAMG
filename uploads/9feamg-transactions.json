@@ -1,5 +1,77 @@
 [
   {
+    "when": "Oct 11, 12:31 pm",
+    "yahooTeam": "Squirtle Squad",
+    "manager": "Tristan",
+    "action": "add",
+    "player": "Tyler Bass",
+    "nfl": "Buf",
+    "pos": "K",
+    "faab": null,
+    "via": "Free Agency",
+    "notes": "Yahoo facts Sun Oct 11, 3:09 PM CT"
+  },
+  {
+    "when": "Oct 11, 12:31 pm",
+    "yahooTeam": "Squirtle Squad",
+    "manager": "Tristan",
+    "action": "drop",
+    "player": "Jake Bates",
+    "nfl": "Det",
+    "pos": "K",
+    "faab": null,
+    "via": "Waivers",
+    "notes": "Yahoo facts Sun Oct 11, 3:09 PM CT"
+  },
+  {
+    "when": "Oct 11, 12:30 pm",
+    "yahooTeam": "Squirtle Squad",
+    "manager": "Tristan",
+    "action": "add",
+    "player": "Oronde Gadsden",
+    "nfl": "LAC",
+    "pos": "TE",
+    "faab": null,
+    "via": "Free Agency",
+    "notes": "Yahoo facts Sun Oct 11, 3:09 PM CT"
+  },
+  {
+    "when": "Oct 11, 12:30 pm",
+    "yahooTeam": "Squirtle Squad",
+    "manager": "Tristan",
+    "action": "drop",
+    "player": "KC Concepcion Jr.",
+    "nfl": "Cle",
+    "pos": "WR",
+    "faab": null,
+    "via": "Waivers",
+    "notes": "Yahoo facts Sun Oct 11, 3:09 PM CT"
+  },
+  {
+    "when": "Oct 11, 12:29 pm",
+    "yahooTeam": "Squirtle Squad",
+    "manager": "Tristan",
+    "action": "add",
+    "player": "Jake Bates",
+    "nfl": "Det",
+    "pos": "K",
+    "faab": null,
+    "via": "Free Agency",
+    "notes": "Yahoo facts Sun Oct 11, 3:09 PM CT"
+  },
+  {
+    "when": "Oct 11, 12:29 pm",
+    "yahooTeam": "Squirtle Squad",
+    "manager": "Tristan",
+    "action": "drop",
+    "player": "Mike Washington Jr.",
+    "nfl": "Lv",
+    "pos": "RB",
+    "faab": null,
+    "via": "Waivers",
+    "notes": "Yahoo facts Sun Oct 11, 3:09 PM CT"
+  },
+  {
     "when": "Oct 10, 12:53 pm",
     "yahooTeam": "Definitely not a Boomer",
     "manager": "Mr. G",

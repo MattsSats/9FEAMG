@@ -59,18 +59,18 @@ window.SEASON = {
   // The week in progress. Set to null between weeks.
   live: {
     week: 5,
-    status: 'Live · London Q3 (PHI 14, JAX 10) · noon games next',
+    status: 'Live · noon games ending · 3:25 games next · Sunday night BAL @ ATL',
     // When these numbers were pulled from Yahoo (Central); shows as "Scores as of Thu 10:19 PM".
-    asOf: '2026-10-11T10:59:00-05:00',
+    asOf: '2026-10-11T15:09:00-05:00',
     // [current points, projected final]
-    // Yahoo as of Sun Oct 11, 10:59 AM CT: Thursday final, London game (PHI @ JAX) in Q3,
-    // every lineup full.
+    // Yahoo as of Sun Oct 11, 3:09 PM CT: Thursday final, noon games final or in the last two
+    // minutes, late games starting.
     scores: {
-      Matt: [0.00, 115.12], DLin: [24.50, 117.46],
-      Tristan: [5.60, 108.91], Colin: [1.00, 108.24],
-      Jerger: [1.90, 94.42], Kurt: [28.84, 102.88],
-      Tony: [30.50, 127.79], Andy: [34.38, 121.33],
-      'Mr. G': [14.90, 121.02], Pablo: [5.00, 97.44]
+      Matt: [97.78, 136.39], DLin: [41.90, 86.02],
+      Tristan: [53.40, 104.42], Colin: [83.50, 133.80],
+      Jerger: [85.12, 99.58], Kurt: [97.84, 117.65],
+      Tony: [83.70, 134.99], Andy: [93.44, 142.20],
+      'Mr. G': [81.66, 125.98], Pablo: [63.44, 95.96]
     },
     // Points so far for every player whose game has started (starters and bench).
     // Players listed in inProgress are still playing; the rest are final.
@@ -82,7 +82,7 @@ window.SEASON = {
       'Trevor Lawrence': 14.18, 'Parker Washington': 14.90, 'Bhayshul Tuten': 5.60, 'Jaguars': 1.00, 'Jalen Hurts': 10.40, 'Dallas Goedert': 3.70
     },
     inProgress: ['Trevor Lawrence', 'Parker Washington', 'Bhayshul Tuten', 'Jaguars', 'Jalen Hurts', 'Dallas Goedert'],
-    sheetNote: 'Thursday final; London game live; Sunday projections as of Sun 10:59 AM CT. Each player is tagged Final, Live or proj.'
+    sheetNote: 'Team totals as of Sun 3:09 PM CT; player points through Thursday and the London game’s third quarter (this pull had no player points). Each player is tagged Final, Live or proj.'
   },
 
   // The NFL week: every game ('Sun 12:00 PM · CHI @ GB', kickoff Central, same form as parlay legs)
