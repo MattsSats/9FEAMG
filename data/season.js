@@ -183,15 +183,15 @@ window.SEASON = {
   },
   // The day each week's previews were written; each line's own time (third field) wins when it has one.
   boothPreviewAt: { 5: '2026-10-07' },
-  // Pre-SNF lines, one per matchup in the same order: written Sunday after the afternoon games,
-  // before Sunday Night Football. [manager, line, written at].
+  // Post-SNF lines, one per matchup in the same order: written Sunday after the night game, with
+  // what each matchup still needs on Monday. [manager, line, written at].
   boothSnf: {
     5: [
-      ['Kurt', 'Watson scored 29.30 in Matt’s lineup this week instead of on the bench. Kurt now needs 34.74 from Flowers and a kicker.', '2026-10-11T18:40-05:00'],
-      ['Tony', 'The Booth put Tony on fraud watch Wednesday. Tony leads first-place Tristan 110.90–99.48 with Allen still to play, and Tristan has only Bijan left.', '2026-10-11T18:40-05:00'],
-      ['Jerger', 'Mr. G leads Jerger 109.76–90.02, and Jerger is down to one player: Cook on Monday, projected for 13.91 and needing 19.74.', '2026-10-11T18:40-05:00'],
-      ['DLin', 'DLin trails Colin 97.00–78.62 with one player left: Loop, Baltimore’s kicker. The Toilet Bowl King needs 18.38 from a kicker.', '2026-10-11T18:40-05:00'],
-      ['Pablo', 'Gibbs scored 35.20 and Andy leads Pablo 133.14–63.34. Pablo needs 69.80 from Henry and Puka. It’s gibbing time.', '2026-10-11T18:40-05:00']
+      ['Kurt', 'Matt is done at 136.68, and Kurt needs 24.15 from Mevis, a kicker projected for 8.51. Average Sports Enthusiast is headed to 1–4.', '2026-10-11T23:06-05:00'],
+      ['Tristan', 'Tristan is done at 113.28, and Tony needs 2.39 from Josh Allen, projected for 21.88. Tristan left Evans\' 22.80 on the bench to start Doubs for 2.10.', '2026-10-11T23:06-05:00'],
+      ['Jerger', 'Jerger needs 19.75 from Cook, projected for 13.91, to catch Mr. G. Jameson Williams scored 17.70 on Jerger\'s bench while CeeDee started for 1.90.', '2026-10-11T23:06-05:00'],
+      ['DLin', 'DLin is done at 92.62, and Colin already has 97.00 with Kyren and Davante still to play. Fannin started at tight end for DLin and scored 0.90.', '2026-10-11T23:06-05:00'],
+      ['Pablo', 'Andy is done at 148.44, the top score of the week so far. Pablo needs 64.61 from Puka, who is projected for 17.63.', '2026-10-11T23:06-05:00']
     ]
   },
   boothPreview: {

@@ -638,11 +638,11 @@ class Component extends DCLogic {
       return { a: side(a, sa, sa > sb), b: side(b, sb, sb > sa), booth: line, hasBooth: !!line, gap: Math.abs(sa - sb), winner: sa > sb ? a : b };
     }).sort((x, y) => x.gap - y.gap).map((r, i) => ({ ...r, wide: i == 0, wideLabel: `Closest finish · ${r.winner} by ${f2(r.gap)}` })) : [];
     // The Booth, per matchup slot: up to three lines a week, the Preview (before Thursday), the
-    // Pre-SNF line (Sunday, before the night game) and the Recap (after Monday night). The newest
+    // Post-SNF line (Sunday, after the night game) and the Recap (after Monday night). The newest
     // leads; the earlier ones sit under it. Each says when it was written (the line's third field;
     // previews without one fall back to boothPreviewAt).
-    // The Sunday set: written before the night game in Week 5 (Pre-SNF), after it from Week 6 on (Post-SNF).
-    const stages = [['Recap', D.booth?.[wk] || []], [wk >= 6 ? 'Post-SNF' : 'Pre-SNF', D.boothSnf?.[wk] || []], ['Preview', D.boothPreview?.[wk] || []]];
+    // The Sunday set is written after the night game (Post-SNF).
+    const stages = [['Recap', D.booth?.[wk] || []], ['Post-SNF', D.boothSnf?.[wk] || []], ['Preview', D.boothPreview?.[wk] || []]];
     const written = (line, label) => {
       const at = line[2] || (label == 'Preview' && D.boothPreviewAt?.[wk] ? D.boothPreviewAt[wk] + 'T12:00:00-05:00' : null);
       if (!at) return '';

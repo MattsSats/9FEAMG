@@ -192,13 +192,13 @@ function matchupOf(season, st, wk, aSlug, bSlug, rosters) {
   // A finished week shows its recap line; otherwise the preview, labelled with the day it was
   // written so its projections don't read as a mistake next to the live numbers.
   const recap = !live && (season.booth?.[wk] || []).find(([m]) => m == A.m || m == B.m);
-  // The Pre-SNF line (Sunday, before the night game) is newer than the preview, so it wins.
+  // The Post-SNF line (Sunday, after the night game) is newer than the preview, so it wins.
   const snf = (season.boothSnf?.[wk] || []).find(([m]) => m == A.m || m == B.m);
   const pre = snf || (season.boothPreview?.[wk] || []).find(([m]) => m == A.m || m == B.m);
   const line = recap || pre, booth = line ? line[1] + (line[3] == 'claude' ? ' *' : '') : '';
   const preAt = pre?.[2] || (!snf && season.boothPreviewAt?.[wk] ? season.boothPreviewAt[wk] + 'T12:00:00-05:00' : null);
   const preDay = preAt ? new Date(preAt).toLocaleDateString('en-US', { weekday: 'short', timeZone: 'America/Chicago' }) : '';
-  const boothLabel = !booth ? '' : recap ? 'The Booth' : (snf ? (wk >= 6 ? 'Booth · Post-SNF' : 'Booth · Pre-SNF') : 'Booth preview') + (preDay && !snf ? ' · ' + preDay : '');
+  const boothLabel = !booth ? '' : recap ? 'The Booth' : (snf ? 'Booth · Post-SNF' : 'Booth preview') + (preDay && !snf ? ' · ' + preDay : '');
   const asOf = live && season.live.asOf ? new Date(season.live.asOf).toLocaleString('en-US', { weekday: 'short', hour: 'numeric', minute: '2-digit', timeZone: 'America/Chicago' }).replace(',', '') : '';
   return { wk, live, a, b, chip, booth, boothLabel, asOf };
 }
