@@ -1103,6 +1103,9 @@ class Component extends DCLogic {
       // Wire: the view on screen (this fantasy week or the season), as a link preview or an image.
       menuWire: this.shareMenu(seasonMode ? 'Wire · season' : 'Wire · Week ' + wireWk, e => this.shareLink(location.origin + (seasonMode ? '/s/wire-season' : '/s/wire-week'), seasonMode ? '9FEAMG · Wire · season' : '9FEAMG · Wire · Week ' + wireWk, e), e => this.share('wire', e)),
       shotWire: seasonMode ? 'Wire · season' : 'Wire · Week ' + wireWk,
+      // The Booth: an image of each matchup's newest line (earlier stages stay off the image).
+      boothKicker: `Week ${wk} · On the record`, boothShotLabel: `The Booth · Week ${wk}`,
+      menuBooth: this.shareMenu('The Booth · Week ' + wk, e => this.shareLink(location.origin + '/#booth', '9FEAMG · The Booth', e), e => this.share('booth', e)),
       menuLedger: this.shareMenu('Parlay ledger', e => this.shareLink(location.origin + '/s/ledger', '9FEAMG · Parlay ledger', e), e => this.share('ledger', e)),
       ...Object.fromEntries([['Pfpa', 'pfpa', 'Points for vs against'], ['Luck', 'luck', 'Luck'], ['Bench', 'bench', 'Points left on bench']].map(([k, id, title]) =>
         ['menu' + k, this.shareMenu(title, e => this.shareLink(location.origin + '/s/' + id, '9FEAMG · ' + title, e), e => this.share(id, e))])),
