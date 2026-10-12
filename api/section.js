@@ -311,7 +311,7 @@ function powerCard(season, st) {
   return frame(`SEASON · THROUGH WEEK ${st.NF}`, 'Power rankings', '50% all-play · 25% record · 25% recent', h('div', { flexDirection: 'column', marginTop: 14 }, ...now.map(line)));
 }
 
-function teamOf(season, st, slug) {
+function teamOf(season, st, slug, tx) {
   const mg = season.managers.find(x => slugOf(x.m) == slug); if (!mg) return null;
   const m = mg.m, rows = [...st.rows].sort((a, b) => b.w - a.w || b.pf - a.pf), r = st.rows.find(x => x.m == m);
   const rank = (key, desc = true) => [...st.rows].sort((a, b) => desc ? b[key] - a[key] : a[key] - b[key]).findIndex(x => x.m == m) + 1;
@@ -320,10 +320,20 @@ function teamOf(season, st, slug) {
   for (let w = 1; w <= st.NF; w++) { const p = (season.schedule[w] || []).find(p => p.includes(m)); if (!p) continue; const o = p[0] == m ? p[1] : p[0]; res.push(season.scores[m][w - 1] > season.scores[o][w - 1] ? 'W' : 'L'); }
   let k = 0; while (k < res.length && res[res.length - 1 - k] == res[res.length - 1]) k++;
   const LW = season.live?.week, pair = LW ? (season.schedule[LW] || []).find(p => p.includes(m)) : null, o = pair ? (pair[0] == m ? pair[1] : pair[0]) : null;
-  const sc = season.live?.scores || {};
-  const week = o ? `Week ${LW}: ${(sc[m]?.[1] ?? 0).toFixed(2)}–${(sc[o]?.[1] ?? 0).toFixed(2)} projected vs ${o}` : '';
+  // Like the matchup cards: once games start, the live score next to the projection.
+  const sc = season.live?.scores || {}, f2 = n => (n ?? 0).toFixed(2);
+  const started = o && ((sc[m]?.[0] || 0) > 0 || (sc[o]?.[0] || 0) > 0);
+  const week = !o ? '' : `Week ${LW} vs ${o}: ` + (started ? `${f2(sc[m]?.[0])}–${f2(sc[o]?.[0])} now · ` : '') + `${f2(sc[m]?.[1])}–${f2(sc[o]?.[1])} projected`;
+  // The bottom row: Max PF and points left on the bench (when every final week has a box score)
+  // and FAAB left (when the transactions file loaded).
+  const spent = tx ? tx.filter(t => t.manager == m && t.action == 'add' && t.faab).reduce((a, t) => a + (parseInt(String(t.faab).replace('$', '')) || 0), 0) : null;
+  const benchOf = x => x.max - x.pf, benchRank = [...st.rows].sort((a, b) => benchOf(b) - benchOf(a)).findIndex(x => x.m == m) + 1;
+  const extras = [
+    ...(r.max != null ? [['MAX PF', r.max.toFixed(1), ordinal(rank('max')) + ' in league'], ['BENCH', benchOf(r).toFixed(1), ordinal(benchRank) + ' most left']] : []),
+    ...(spent != null && season.faabBudget ? [['FAAB LEFT', '$' + (season.faabBudget - spent), '$' + season.faabBudget + ' to start']] : [])
+  ];
   return { ...mg, slug, rec: `${r.w}–${r.l}`, place: rows.findIndex(x => x.m == m) + 1, streak: res.length ? res[res.length - 1] + k : '',
-    pf: r.pf, pfRank: rank('pf'), pa: r.pa, paRank: rank('pa', false), luck: r.luck, roast: season.roasts?.[m] || '', week, NF: st.NF };
+    pf: r.pf, pfRank: rank('pf'), pa: r.pa, paRank: rank('pa', false), luck: r.luck, roast: season.roasts?.[m] || '', week, extras, NF: st.NF };
 }
 
 function teamCard(T) {
@@ -340,7 +350,11 @@ function teamCard(T) {
       tile('PF', T.pf.toFixed(1), ordinal(T.pfRank) + ' in league'), tile('PA', T.pa.toFixed(1), ordinal(T.paRank) + ' fewest'),
       tile('LUCK', signed(T.luck), 'W − xW', T.luck > 0 ? C.pos : T.luck < 0 ? C.neg : C.ink)),
     T.roast ? h('div', { marginTop: 18, maxHeight: 62, overflow: 'hidden', fontFamily: F.sans, fontSize: 24, fontWeight: 600, lineHeight: 1.3, color: C.ink }, T.roast) : null,
-    T.week ? h('div', { marginTop: 10, fontFamily: F.mono, fontSize: 20, fontWeight: 600, color: C.accentInk }, T.week) : null));
+    T.week ? h('div', { marginTop: 10, fontFamily: F.mono, fontSize: 20, fontWeight: 600, color: C.accentInk }, T.week) : null,
+    T.extras.length ? h('div', { gap: 12, marginTop: 16 }, ...T.extras.map(([label, value, sub]) => h('div', { flex: 1, alignItems: 'baseline', gap: 12, padding: '10px 18px', borderRadius: 14, border: `2px solid ${C.line}` },
+      h('div', { fontFamily: F.mono, fontSize: 15, fontWeight: 600, letterSpacing: 2, color: C.muted }, label),
+      h('div', { fontFamily: F.display, fontSize: 32, fontWeight: 900, lineHeight: 1, color: C.ink }, value),
+      h('div', { fontFamily: F.mono, fontSize: 14, fontWeight: 600, color: C.muted }, sub)))) : null));
 }
 
 function weekOf(season, st, wk) {
@@ -397,7 +411,7 @@ async function sectionRoute(url, request, name) {
   }
   let season, st, data = null;
   try { season = await loadSeason(url.origin); st = seasonStats(season, null); } catch { return fallback(); }
-  if (kind == 'team') data = teamOf(season, st, team[1]);
+  if (kind == 'team') { const [box, tx] = await Promise.all([loadBox(url.origin).catch(() => null), loadTx(url.origin)]); data = teamOf(season, seasonStats(season, box), team[1], tx); }
   if (kind == 'week') data = weekOf(season, st, +wkm[1]);
   if (kind == 'wire') { const tx = await loadTx(url.origin); if (!tx) return isImg ? fallback() : Response.redirect(dest, 302); data = wireOf(season, tx, await loadBox(url.origin), name == 'wire-season' ? 'season' : 'week'); }
   if ((kind == 'team' || kind == 'week') && !data) return isImg ? fallback() : Response.redirect(dest, 302);
