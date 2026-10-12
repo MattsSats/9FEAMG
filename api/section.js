@@ -198,7 +198,7 @@ function matchupOf(season, st, wk, aSlug, bSlug, rosters) {
   const line = recap || pre, booth = line ? line[1] + (line[3] == 'claude' ? ' *' : '') : '';
   const preAt = pre?.[2] || (!snf && season.boothPreviewAt?.[wk] ? season.boothPreviewAt[wk] + 'T12:00:00-05:00' : null);
   const preDay = preAt ? new Date(preAt).toLocaleDateString('en-US', { weekday: 'short', timeZone: 'America/Chicago' }) : '';
-  const boothLabel = !booth ? '' : recap ? 'The Booth' : (snf ? 'Booth · Pre-SNF' : 'Booth preview') + (preDay && !snf ? ' · ' + preDay : '');
+  const boothLabel = !booth ? '' : recap ? 'The Booth' : (snf ? (wk >= 6 ? 'Booth · Post-SNF' : 'Booth · Pre-SNF') : 'Booth preview') + (preDay && !snf ? ' · ' + preDay : '');
   const asOf = live && season.live.asOf ? new Date(season.live.asOf).toLocaleString('en-US', { weekday: 'short', hour: 'numeric', minute: '2-digit', timeZone: 'America/Chicago' }).replace(',', '') : '';
   return { wk, live, a, b, chip, booth, boothLabel, asOf };
 }

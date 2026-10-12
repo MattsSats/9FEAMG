@@ -641,7 +641,8 @@ class Component extends DCLogic {
     // Pre-SNF line (Sunday, before the night game) and the Recap (after Monday night). The newest
     // leads; the earlier ones sit under it. Each says when it was written (the line's third field;
     // previews without one fall back to boothPreviewAt).
-    const stages = [['Recap', D.booth?.[wk] || []], ['Pre-SNF', D.boothSnf?.[wk] || []], ['Preview', D.boothPreview?.[wk] || []]];
+    // The Sunday set: written before the night game in Week 5 (Pre-SNF), after it from Week 6 on (Post-SNF).
+    const stages = [['Recap', D.booth?.[wk] || []], [wk >= 6 ? 'Post-SNF' : 'Pre-SNF', D.boothSnf?.[wk] || []], ['Preview', D.boothPreview?.[wk] || []]];
     const written = (line, label) => {
       const at = line[2] || (label == 'Preview' && D.boothPreviewAt?.[wk] ? D.boothPreviewAt[wk] + 'T12:00:00-05:00' : null);
       if (!at) return '';
