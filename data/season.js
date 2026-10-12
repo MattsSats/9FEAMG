@@ -282,7 +282,7 @@ window.SEASON = {
         // moneylines via ESPN, Tue Oct 6, 11:10 PM CT.
         legs: [
           { text: 'Packers moneyline vs Bears', type: 'ml', team: 'GB', teams: ['Chi', 'GB'], game: 'Sun 12:00 PM · CHI @ GB', odds: '+102', result: 'Final W 31–7', status: 'hit' },
-          { text: '49ers moneyline at Seahawks', type: 'ml', team: 'SF', teams: ['SF', 'Sea'], game: 'Sun 3:25 PM · SF @ SEA', odds: '+136', status: 'open' },
+          { text: '49ers moneyline at Seahawks', type: 'ml', team: 'SF', teams: ['SF', 'Sea'], game: 'Sun 3:25 PM · SF @ SEA', odds: '+136', result: 'Final W 32–29', status: 'hit' },
           { text: 'Jets moneyline vs Browns', type: 'ml', team: 'NYJ', teams: ['Cle', 'NYJ'], game: 'Sun 12:00 PM · CLE @ NYJ', odds: '-130', result: 'Final W 17–12', status: 'hit' },
           { text: 'Cardinals moneyline vs Lions', type: 'ml', team: 'Ari', teams: ['Det', 'Ari'], game: 'Sun 3:25 PM · DET @ ARI', odds: '+210', result: 'Final L 21–45', status: 'miss' },
           { text: 'Chargers moneyline vs Broncos', type: 'ml', team: 'LAC', teams: ['Den', 'LAC'], game: 'Sun 3:05 PM · DEN @ LAC', odds: '+160', result: 'Final L 17–23', status: 'miss' },
@@ -328,7 +328,7 @@ window.SEASON = {
           { text: 'Kyren Williams 2+ TDs', player: 'Kyren Williams', type: 'td', count: 2, game: 'Mon 7:15 PM · BUF @ LAR', odds: '+340', status: 'open' },
           { text: 'Ja’Marr Chase anytime TD', player: "Ja'Marr Chase", type: 'td', count: 1, game: 'Sun 12:00 PM · CIN @ MIA', odds: '-125', result: '1 rec TD (6-77)', status: 'hit' },
           { text: 'Brock Bowers anytime TD', player: 'Brock Bowers', type: 'td', count: 1, game: 'Sun 12:00 PM · LV @ NE', odds: '+130', result: '1 rec TD (8-110)', status: 'hit' },
-          { text: 'Deebo Samuel anytime TD', player: 'Deebo Samuel Sr.', type: 'td', count: 1, game: 'Sun 3:25 PM · SF @ SEA', odds: '+250', status: 'open' }
+          { text: 'Deebo Samuel anytime TD', player: 'Deebo Samuel Sr.', type: 'td', count: 1, game: 'Sun 3:25 PM · SF @ SEA', odds: '+250', result: 'No TD (2-4 rush, 2-21 rec), left injured', status: 'miss' }
         ]
       },
       {
