@@ -187,11 +187,11 @@ window.SEASON = {
   // what each matchup still needs on Monday. [manager, line, written at].
   boothSnf: {
     5: [
-      ['Matt', 'Kurt needs 24.15 from Mevis, a kicker projected for 8.51, to pass Matt. Matt is winning anyway with Daniels’ 32.26 on the bench.', '2026-10-12T05:13-05:00'],
-      ['Tristan', 'Tony needs 2.39 from Josh Allen to pass Tristan. Evans scored 22.80 on Tristan’s bench while Doubs started for 2.10.', '2026-10-12T05:13-05:00'],
-      ['Jerger', 'Maye scored 39.46 for Mr. G. Jerger needs 19.75 from Cook, projected for 13.91, and started CeeDee for 1.90.', '2026-10-12T05:13-05:00'],
-      ['DLin', 'Colin leads DLin 97.00–92.62 with Kyren and Davante still to play. Fannin scored 20.60 on DLin’s bench in Week 3 and 0.90 as a starter this week.', '2026-10-12T05:13-05:00'],
-      ['Pablo', 'Gibbs scored 35.20 of Andy’s 148.44, the best score so far this week. Pablo needs 64.61 from Puka. It’s gibbing time.', '2026-10-12T05:13-05:00']
+      ['Matt', 'Matt leads Kurt by 24.14, and Kurt is down to a kicker, Mevis. Daniels’ 32.26 sat on Matt’s bench behind Love’s 25.28.', '2026-10-11T22:48-05:00'],
+      ['Tristan', 'Tony needs 2.39 from Josh Allen to pass Tristan. Evans scored 22.80 on Tristan’s bench while Doubs started for 2.10.', '2026-10-11T22:48-05:00'],
+      ['Jerger', 'Mr. G is done at 109.76, and Jerger needs 19.75 from Cook to pass. Jerger started CeeDee for 1.90 and benched Jameson Williams’ 17.70.', '2026-10-11T22:48-05:00'],
+      ['DLin', 'DLin is done at 92.62, and Colin leads by 4.38 with Kyren and Davante still to play. Goff scored 28.94, and DLin’s other eight starters managed 63.68.', '2026-10-11T22:48-05:00'],
+      ['Pablo', 'Pablo needs 64.61 from Puka, projected for 17.63, to pass Andy. Gibbs alone scored 35.20. It’s gibbing time.', '2026-10-11T22:48-05:00']
     ]
   },
   boothPreview: {
