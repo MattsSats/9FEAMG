@@ -1107,7 +1107,7 @@ class Component extends DCLogic {
       boothSets: boothSets.map(([label]) => ({ label, on: String(label == boothSet[0]), bg: label == boothSet[0] ? 'var(--ink)' : 'transparent', fg: label == boothSet[0] ? 'var(--bg)' : 'var(--muted)',
         pick: () => this.setState({ boothSet: { ...this.state.boothSet, [wk]: label } }) })),
       boothShotLabel: `The Booth · Week ${wk} · ${boothSet[0]}`,
-      menuBooth: this.shareMenu('The Booth · Week ' + wk, e => this.shareLink(location.origin + '/#booth', '9FEAMG · The Booth', e), e => this.share('booth', e)),
+      menuBooth: this.shareMenu('The Booth · Week ' + wk, e => this.shareLink(location.origin + '/s/booth', '9FEAMG · The Booth', e), e => this.share('booth', e)),
       menuLedger: this.shareMenu('Parlay ledger', e => this.shareLink(location.origin + '/s/ledger', '9FEAMG · Parlay ledger', e), e => this.share('ledger', e)),
       ...Object.fromEntries([['Pfpa', 'pfpa', 'Points for vs against'], ['Luck', 'luck', 'Luck'], ['Bench', 'bench', 'Points left on bench']].map(([k, id, title]) =>
         ['menu' + k, this.shareMenu(title, e => this.shareLink(location.origin + '/s/' + id, '9FEAMG · ' + title, e), e => this.share(id, e))])),

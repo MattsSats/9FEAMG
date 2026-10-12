@@ -400,11 +400,34 @@ function wireCard(Wd) {
     h('div', { gap: 40, marginTop: 6 }, col(Wd.rows.slice(0, 5)), col(Wd.rows.slice(5)))));
 }
 
+// The Booth: the newest set of lines for the live week (or the latest week with any), one per
+// matchup in schedule order, with both crests: the Recap, else Post-SNF, else the Preview.
+function boothOf(season) {
+  const sets = w => [['Recap', season.booth?.[w]], ['Post-SNF', season.boothSnf?.[w]], ['Preview', season.boothPreview?.[w]]].filter(([, l]) => l?.length);
+  const weeks = Object.keys(season.schedule || {}).map(Number).filter(w => sets(w).length).sort((a, b) => b - a);
+  const wk = sets(season.live?.week).length ? season.live.week : weeks[0];
+  if (!wk) return null;
+  const [label, lines] = sets(wk)[0], look = Object.fromEntries(season.managers.map(x => [x.m, x]));
+  const at = lines.map(l => l[2]).filter(Boolean).sort().at(-1) || (label == 'Preview' && season.boothPreviewAt?.[wk] ? season.boothPreviewAt[wk] + 'T12:00:00-05:00' : null);
+  const o = { timeZone: 'America/Chicago' }, d = at ? new Date(at) : null;
+  const when = !d ? '' : d.toLocaleDateString('en-US', { ...o, weekday: 'short' }) + (label == 'Post-SNF' ? ' ' + d.toLocaleTimeString('en-US', { ...o, hour: 'numeric', minute: '2-digit' }) : '');
+  const rows = lines.map((l, i) => ({ pair: (season.schedule[wk]?.[i] || [l[0]]).map(m => look[m]).filter(Boolean), text: l[1] + (l[3] == 'claude' ? ' *' : '') }));
+  return { wk, label, when, rows };
+}
+
+function boothCard(B) {
+  const row = r => h('div', { alignItems: 'center', gap: 18, minHeight: 84, padding: '8px 0', borderTop: `1px solid ${C.line}` },
+    h('div', { gap: 6, width: 78, flexShrink: 0 }, ...r.pair.map(m => crest(m, 34))),
+    h('div', { flex: 1, maxHeight: 64, overflow: 'hidden', fontFamily: F.sans, fontSize: 21, fontWeight: 600, lineHeight: 1.45, color: C.ink }, r.text));
+  return frame(`THE BOOTH · WEEK ${B.wk} · ${B.label.toUpperCase()}${B.when ? ' · ' + B.when.toUpperCase() : ''}`, null, null,
+    h('div', { flexDirection: 'column', marginTop: 22 }, ...B.rows.map(row)));
+}
+
 async function sectionRoute(url, request, name) {
   const team = name.match(/^team-([a-z0-9-]+)$/), wkm = name.match(/^w(\d+)$/);
-  const kind = name == 'standings' || name == 'power' ? name : name == 'wire-week' || name == 'wire-season' ? 'wire' : team ? 'team' : wkm ? 'week' : null;
+  const kind = name == 'standings' || name == 'power' || name == 'booth' ? name : name == 'wire-week' || name == 'wire-season' ? 'wire' : team ? 'team' : wkm ? 'week' : null;
   if (!kind) return null;
-  const dest = new URL(kind == 'standings' ? '/#season' : kind == 'power' ? '/#power' : kind == 'wire' ? (name == 'wire-season' ? '/#wire-season' : '/#wire') : kind == 'team' ? '/#team-' + team[1] : '/#w' + wkm[1], url.origin).href;
+  const dest = new URL(kind == 'standings' ? '/#season' : kind == 'power' ? '/#power' : kind == 'booth' ? '/#booth' : kind == 'wire' ? (name == 'wire-season' ? '/#wire-season' : '/#wire') : kind == 'team' ? '/#team-' + team[1] : '/#w' + wkm[1], url.origin).href;
   const fallback = () => Response.redirect(new URL('/og.png', url.origin).href, 302), isImg = url.searchParams.has('img');
   if (!isImg && !BOTS.test(request.headers.get('user-agent') || '')) {
     return new Response(null, { status: 302, headers: { location: dest, 'cache-control': 'private, no-store', vary: 'User-Agent' } });
@@ -413,11 +436,12 @@ async function sectionRoute(url, request, name) {
   try { season = await loadSeason(url.origin); st = seasonStats(season, null); } catch { return fallback(); }
   if (kind == 'team') { const [box, tx] = await Promise.all([loadBox(url.origin).catch(() => null), loadTx(url.origin)]); data = teamOf(season, seasonStats(season, box), team[1], tx); }
   if (kind == 'week') data = weekOf(season, st, +wkm[1]);
+  if (kind == 'booth') data = boothOf(season);
   if (kind == 'wire') { const tx = await loadTx(url.origin); if (!tx) return isImg ? fallback() : Response.redirect(dest, 302); data = wireOf(season, tx, await loadBox(url.origin), name == 'wire-season' ? 'season' : 'week'); }
-  if ((kind == 'team' || kind == 'week') && !data) return isImg ? fallback() : Response.redirect(dest, 302);
-  if (!st.NF && kind != 'week') return isImg ? fallback() : Response.redirect(dest, 302);
+  if ((kind == 'team' || kind == 'week' || kind == 'booth') && !data) return isImg ? fallback() : Response.redirect(dest, 302);
+  if (!st.NF && kind != 'week' && kind != 'booth') return isImg ? fallback() : Response.redirect(dest, 302);
   if (isImg) {
-    const card = kind == 'standings' ? standingsCard(season, st) : kind == 'power' ? powerCard(season, st) : kind == 'wire' ? wireCard(data) : kind == 'team' ? teamCard(data) : weekCard(data);
+    const card = kind == 'standings' ? standingsCard(season, st) : kind == 'power' ? powerCard(season, st) : kind == 'wire' ? wireCard(data) : kind == 'team' ? teamCard(data) : kind == 'booth' ? boothCard(data) : weekCard(data);
     return new ImageResponse(card, { width: 1200, height: 630, fonts: await fonts(), headers: { 'cache-control': 'public, max-age=300, s-maxage=300' } });
   }
   let title, desc, ver;
@@ -435,6 +459,10 @@ async function sectionRoute(url, request, name) {
     title = (data.mode == 'season' ? 'Wire · season' : `Wire · Week ${data.wk}`) + ' · 9FEAMG';
     desc = data.line + ' ' + data.rows.filter(r => r.n).slice(0, 3).map(r => `${r.m} ${r.n} add${r.n == 1 ? '' : 's'} (${r.rec})`).join(' · ') + (data.total ? '.' : '');
     ver = [data.line, data.rows.map(r => [r.m, r.n, r.rec])];
+  } else if (kind == 'booth') {
+    title = `The Booth · Week ${data.wk} · ${data.label} · 9FEAMG`;
+    desc = data.rows[0]?.text || '';
+    ver = [data.wk, data.label, data.when, data.rows.map(r => r.text)];
   } else if (kind == 'team') {
     title = `${data.m} · ${data.rec}, ${ordinal(data.place)} · 9FEAMG`;
     desc = [`PF ${data.pf.toFixed(1)} (${ordinal(data.pfRank)}), PA ${data.pa.toFixed(1)}, luck ${signed(data.luck)}.`, data.week ? data.week + '.' : '', data.roast].filter(Boolean).join(' ');
