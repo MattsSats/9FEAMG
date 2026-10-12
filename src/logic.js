@@ -637,29 +637,27 @@ class Component extends DCLogic {
       const line = boothOn && bl ? bl[1] + (bl[3] == 'claude' ? ' *' : '') : '';
       return { a: side(a, sa, sa > sb), b: side(b, sb, sb > sa), booth: line, hasBooth: !!line, gap: Math.abs(sa - sb), winner: sa > sb ? a : b };
     }).sort((x, y) => x.gap - y.gap).map((r, i) => ({ ...r, wide: i == 0, wideLabel: `Closest finish · ${r.winner} by ${f2(r.gap)}` })) : [];
-    // The Booth, per matchup slot: up to three lines a week, the Preview (before Thursday), the
-    // Post-SNF line (Sunday, after the night game) and the Recap (after Monday night). The newest
-    // leads; the earlier ones sit under it. Each says when it was written (the line's third field;
-    // previews without one fall back to boothPreviewAt).
-    // The Sunday set is written after the night game (Post-SNF).
-    const stages = [['Recap', D.booth?.[wk] || []], ['Post-SNF', D.boothSnf?.[wk] || []], ['Preview', D.boothPreview?.[wk] || []]];
+    // The Booth: up to three sets a week, one line per matchup in each: the Preview (before
+    // Thursday), Post-SNF (Sunday, after the night game) and the Recap (after Monday night).
+    // Buttons pick the set (newest by default); a sentence under the heading says when it was
+    // written, and each line's tag says the day ("PREVIEW · WED", "POST-SNF · SUN 11:06 PM").
+    const boothSets = [['Preview', D.boothPreview?.[wk]], ['Post-SNF', D.boothSnf?.[wk]], ['Recap', D.booth?.[wk]]].filter(([, l]) => l?.length);
+    const boothSet = boothSets.find(([label]) => label == S.boothSet?.[wk]) || boothSets.at(-1) || ['Preview', []];
+    const BOOTH_NOTE = { Preview: 'Written before Thursday’s kickoff. Numbers are from then.', 'Post-SNF': 'Written after Sunday night. Monday night is still to play.', Recap: 'Final.' };
     const written = (line, label) => {
       const at = line[2] || (label == 'Preview' && D.boothPreviewAt?.[wk] ? D.boothPreviewAt[wk] + 'T12:00:00-05:00' : null);
       if (!at) return '';
       const d = new Date(at), o = { timeZone: 'America/Chicago' };
-      // Short: "Sun 6:40 PM" within the last six days, otherwise just the date ("Oct 6").
+      // Short: the day ("Wed"; the Sunday set adds the time) within six days, else the date ("Oct 6").
       if (Date.now() - d > 6 * 864e5) return d.toLocaleDateString('en-US', { ...o, month: 'short', day: 'numeric' });
-      return d.toLocaleDateString('en-US', { ...o, weekday: 'short' }) + (line[2] ? ' ' + d.toLocaleTimeString('en-US', { ...o, hour: 'numeric', minute: '2-digit' }) : '');
+      return d.toLocaleDateString('en-US', { ...o, weekday: 'short' }) + (label == 'Post-SNF' && line[2] ? ' ' + d.toLocaleTimeString('en-US', { ...o, hour: 'numeric', minute: '2-digit' }) : '');
     };
-    const boothLines = [...Array(Math.max(...stages.map(([, l]) => l.length))).keys()].map(i => {
-      // A fourth field 'claude' marks a line Claude wrote before the Booth writer's pass: " *".
-      const here = stages.filter(([, l]) => l[i]).map(([label, l]) => { const c = l[i][3] == 'claude';
-        return { label, text: l[i][1] + (c ? ' *' : ''), when: written(l[i], label) + (c ? ' · * Claude draft' : ''), m: l[i][0] }; });
-      if (!here.length) return null;
-      const [main, ...earlier] = here, pair = PAIRS[wk]?.[i] || [main.m];
+    // A fourth field 'claude' marks a line Claude wrote before the Booth writer's pass: " *".
+    const boothLines = boothSet[1].map((line, i) => {
+      const [label] = boothSet, c = line[3] == 'claude', when = written(line, label), pair = PAIRS[wk]?.[i] || [line[0]];
       return { crests: pair.map(m => ({ m, init: INIT[m], color: col(m) })), matchup: pair.join(' vs '),
-        text: main.text, label: main.label, when: main.when, hasWhen: !!main.when, earlier, hasEarlier: earlier.length > 0 };
-    }).filter(Boolean);
+        text: line[1] + (c ? ' *' : ''), label: label + (when ? ' · ' + when : ''), draft: c };
+    });
     // Same order as the matchup cards: the featured one, then the rest.
     const cardOrder = hasWeek ? [hero, ...matchups].map(x => x.a.m) : [];
     const slotOf = b => { const i = cardOrder.findIndex(m => b.crests.some(c => c.m == m)); return i < 0 ? 99 : i; };
@@ -1105,7 +1103,10 @@ class Component extends DCLogic {
       menuWire: this.shareMenu(seasonMode ? 'Wire · season' : 'Wire · Week ' + wireWk, e => this.shareLink(location.origin + (seasonMode ? '/s/wire-season' : '/s/wire-week'), seasonMode ? '9FEAMG · Wire · season' : '9FEAMG · Wire · Week ' + wireWk, e), e => this.share('wire', e)),
       shotWire: seasonMode ? 'Wire · season' : 'Wire · Week ' + wireWk,
       // The Booth: an image of each matchup's newest line (earlier stages stay off the image).
-      boothKicker: `Week ${wk} · On the record`, boothShotLabel: `The Booth · Week ${wk}`,
+      boothNote: BOOTH_NOTE[boothSet[0]] || '', hasBoothSets: boothSets.length > 1,
+      boothSets: boothSets.map(([label]) => ({ label, on: String(label == boothSet[0]), bg: label == boothSet[0] ? 'var(--ink)' : 'transparent', fg: label == boothSet[0] ? 'var(--bg)' : 'var(--muted)',
+        pick: () => this.setState({ boothSet: { ...this.state.boothSet, [wk]: label } }) })),
+      boothShotLabel: `The Booth · Week ${wk} · ${boothSet[0]}`,
       menuBooth: this.shareMenu('The Booth · Week ' + wk, e => this.shareLink(location.origin + '/#booth', '9FEAMG · The Booth', e), e => this.share('booth', e)),
       menuLedger: this.shareMenu('Parlay ledger', e => this.shareLink(location.origin + '/s/ledger', '9FEAMG · Parlay ledger', e), e => this.share('ledger', e)),
       ...Object.fromEntries([['Pfpa', 'pfpa', 'Points for vs against'], ['Luck', 'luck', 'Luck'], ['Bench', 'bench', 'Points left on bench']].map(([k, id, title]) =>
