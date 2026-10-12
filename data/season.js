@@ -59,7 +59,7 @@ window.SEASON = {
   // The week in progress. Set to null between weeks.
   live: {
     week: 5,
-    status: 'Live · Sunday afternoon final · Sunday night BAL @ ATL · Monday BUF @ LAR',
+    status: 'Live · Sunday final (BAL 30, ATL 23 in OT) · Monday BUF @ LAR',
     // When these numbers were pulled from Yahoo (Central); shows as "Scores as of Thu 10:19 PM".
     asOf: '2026-10-11T18:37:00-05:00',
     // [current points, projected final]
@@ -344,7 +344,7 @@ window.SEASON = {
           { text: 'Aaron Jones Sr. 70+ rushing yards', player: 'Aaron Jones Sr.', type: 'over', stat: 'Rush Yds', line: 69.5, game: 'Sun 12:00 PM · MIN @ NO', odds: '+100', result: '25-113 rush yds, 1 TD', status: 'hit' },
           { text: 'Sam LaPorta anytime TD', player: 'Sam LaPorta', type: 'td', count: 1, game: 'Sun 3:25 PM · DET @ ARI', odds: '+165', result: '38-yd rec TD (Q2)', status: 'hit' },
           { text: 'Mike Evans anytime TD', player: 'Mike Evans', type: 'td', count: 1, game: 'Sun 3:25 PM · SF @ SEA', odds: '+190', result: '2-yd rec TD (Q1)', status: 'hit' },
-          { text: 'Bijan Robinson anytime TD', player: 'Bijan Robinson', type: 'td', count: 1, game: 'Sun 7:20 PM · BAL @ ATL', odds: '-220', status: 'open' }
+          { text: 'Bijan Robinson anytime TD', player: 'Bijan Robinson', type: 'td', count: 1, game: 'Sun 7:20 PM · BAL @ ATL', odds: '-220', result: 'No TD (17-86 rush, 4-32 rec)', status: 'miss' }
         ]
       },
       {
@@ -357,7 +357,7 @@ window.SEASON = {
         legs: [
           { text: 'Trey McBride anytime TD', player: 'Trey McBride', type: 'td', count: 1, game: 'Sun 3:25 PM · DET @ ARI', odds: '+100', result: '9-yd rec TD (Q4, 2:11)', status: 'hit' },
           { text: 'Mike Evans anytime TD', player: 'Mike Evans', type: 'td', count: 1, game: 'Sun 3:25 PM · SF @ SEA', odds: '+200', result: '2-yd rec TD (Q1)', status: 'hit' },
-          { text: 'Drake London anytime TD', player: 'Drake London', type: 'td', count: 1, game: 'Sun 7:20 PM · BAL @ ATL', odds: '+120', status: 'open' },
+          { text: 'Drake London anytime TD', player: 'Drake London', type: 'td', count: 1, game: 'Sun 7:20 PM · BAL @ ATL', odds: '+120', result: 'No TD (7-118 rec)', status: 'miss' },
           { text: 'Davante Adams anytime TD', player: 'Davante Adams', type: 'td', count: 1, game: 'Mon 7:15 PM · BUF @ LAR', odds: '+100', status: 'open' }
         ],
         booth: 'The Booth’s long shot: four red-zone targets in four games. McBride in the highest total of the day, Evans with the 49ers chasing in Seattle, London at home, and Adams on Monday night. For fun, not a lock.'
