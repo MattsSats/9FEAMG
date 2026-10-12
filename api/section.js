@@ -329,7 +329,7 @@ function teamOf(season, st, slug, tx) {
   const spent = tx ? tx.filter(t => t.manager == m && t.action == 'add' && t.faab).reduce((a, t) => a + (parseInt(String(t.faab).replace('$', '')) || 0), 0) : null;
   const benchOf = x => x.max - x.pf, benchRank = [...st.rows].sort((a, b) => benchOf(b) - benchOf(a)).findIndex(x => x.m == m) + 1;
   const extras = [
-    ...(r.max != null ? [['MAX PF', r.max.toFixed(1), ordinal(rank('max')) + ' in league'], ['BENCH', benchOf(r).toFixed(1), ordinal(benchRank) + ' most left']] : []),
+    ...(r.max != null ? [['MAX PF', r.max.toFixed(1), ordinal(rank('max')) + ' in league'], ['BENCH', benchOf(r).toFixed(1), benchRank == st.rows.length ? 'fewest left' : benchRank == 1 ? 'most left' : ordinal(benchRank) + ' most left']] : []),
     ...(spent != null && season.faabBudget ? [['FAAB LEFT', '$' + (season.faabBudget - spent), '$' + season.faabBudget + ' to start']] : [])
   ];
   return { ...mg, slug, rec: `${r.w}–${r.l}`, place: rows.findIndex(x => x.m == m) + 1, streak: res.length ? res[res.length - 1] + k : '',
