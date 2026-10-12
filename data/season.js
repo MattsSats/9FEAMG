@@ -75,14 +75,30 @@ window.SEASON = {
     // Points so far for every player whose game has started (starters and bench).
     // Players listed in inProgress are still playing; the rest are final.
     playerPoints: {
-      'Bucky Irving': 30.50, 'Emeka Egbuka': 14.20, 'Dak Prescott': 14.64,
-      'Javonte Williams': 13.20, 'Chase McLaughlin': 7.00, 'George Pickens': 23.50,
-      'Cowboys': 1.00, 'Jake Ferguson': 3.40, 'Kenny Gainwell': 4.30,
-      'CeeDee Lamb': 1.90, 'Brandon Aubrey': 5.00, 'Chris Godwin Jr.': 5.50,
-      'Trevor Lawrence': 14.18, 'Parker Washington': 14.90, 'Bhayshul Tuten': 5.60, 'Jaguars': 1.00, 'Jalen Hurts': 10.40, 'Dallas Goedert': 3.70
+      'Jacoby Brissett': 25.78, 'Bijan Robinson': 13.80, 'Aaron Jones Sr.': 17.20, 'Rome Odunze': 3.50,
+      'Romeo Doubs': 2.10, 'Sam LaPorta': 17.30, 'Bhayshul Tuten': 10.60, 'Evan McPherson': 7.00,
+      'Jets': 16.00, 'Kirk Cousins': 13.72, 'Braelon Allen': 18.10, 'CeeDee Lamb': 1.90,
+      'Chris Olave': 6.60, 'Tucker Kraft': 9.10, 'Malik Nabers': 23.60, 'Matt Gay': 6.00,
+      'Vikings': 11.00, 'Bucky Irving': 30.50, 'Ollie Gordon II': 14.80, 'Matthew Golden': 17.30,
+      'Jaxon Smith-Njigba': 20.30, 'George Kittle': 4.90, 'Carnell Tate': 1.10, 'Will Reichard': 16.00,
+      'Commanders': 6.00, 'Dak Prescott': 14.64, 'Jacory Croskey-Merritt': 14.20, 'Jaylen Warren': 33.80,
+      'Zay Flowers': 10.60, 'Emeka Egbuka': 14.20, 'Colston Loveland': 2.90, 'Terry McLaurin': 10.20,
+      'Broncos': 12.00, 'Joe Burrow': 24.60, 'Emanuel Wilson': 12.20, "Ja'Marr Chase": 16.70,
+      'Brock Bowers': 19.00, 'Deebo Samuel Sr.': 1.50, 'Spencer Shrader': 21.00, 'Jaguars': 2.00,
+      'Drake Maye': 39.46, 'Chase Brown': 5.50, 'Jeremiyah Love': 2.20, 'Nico Collins': 8.10,
+      'Parker Washington': 27.40, 'T.J. Hockenson': 1.20, 'Amon-Ra St. Brown': 9.90, 'Eddy Pineiro': 7.00,
+      'Seahawks': 9.00, 'Trevor Lawrence': 22.74, 'Jahmyr Gibbs': 35.20, 'Javonte Williams': 13.20,
+      'Drake London': 15.30, 'Jaylen Waddle': 3.80, 'Isaiah Likely': 26.90, "D'Andre Swift": 15.30,
+      'Chase McLaughlin': 7.00, 'Bengals': 9.00, 'Jordan Love': 25.28, 'Christian McCaffrey': 15.80,
+      'Quinshon Judkins': 6.50, 'Garrett Wilson': 19.90, 'Christian Watson': 29.30, 'Trey McBride': 17.10,
+      'Justin Jefferson': 15.80, 'Cameron Dicker': 6.00, 'Steelers': 1.00, 'Jared Goff': 28.94,
+      'Jonathan Taylor': 9.70, 'Cam Skattebo': 6.10, 'George Pickens': 23.50, 'Tee Higgins': 3.20,
+      'Harold Fannin Jr.': 0.90, 'Michael Wilson': 5.28, 'Tyler Loop': 14.00, 'Cowboys': 1.00,
+      'C.J. Stroud': 20.94, 'Derrick Henry': 20.50, 'Tony Pollard': 5.20, 'Malik Washington': 9.10,
+      'Dalton Schultz': 4.50, 'Juwan Johnson': 3.60, 'Brandon Aubrey': 5.00, 'Texans': 15.00
     },
-    inProgress: ['Trevor Lawrence', 'Parker Washington', 'Bhayshul Tuten', 'Jaguars', 'Jalen Hurts', 'Dallas Goedert'],
-    sheetNote: 'Team totals as of Sun 10:48 PM CT; player points through Thursday and the London game’s third quarter (these pulls had no player points). Each player is tagged Final, Live or proj.'
+    inProgress: [],
+    sheetNote: 'Yahoo as of Sun 10:48 PM CT: every Sunday game final, Monday night (BUF @ LAR) to play. Each player is tagged Final, Live or proj.'
   },
 
   // The NFL week: every game ('Sun 12:00 PM · CHI @ GB', kickoff Central, same form as parlay legs)
