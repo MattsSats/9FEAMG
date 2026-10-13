@@ -167,6 +167,13 @@ window.SEASON = {
       ['Matt', 'Matt lost by 22.60 to the reigning Toilet Bowl King. DLin’s JT and Higgins outscored Matt’s three starting receivers by 29.90.', '2026-10-06T22:16-05:00'],
       ['Kurt', 'Jerger left Nabers’ 20.20 on the bench and still won, because Kurt started Saquon (1.50) over JCM (6.00). Two bad lineups, one loser.', '2026-10-06T21:50-05:00'],
       ['Mr. G', 'Pablo was projected to lose to Mr. G by 30.35 and won by 39.94. Opponents keep saving their best for Mr. G.', '2026-10-06T21:50-05:00']
+    ],
+    5: [
+      ['Matt', 'Kurt set a lineup 2.52 points from perfect and still lost to Matt by 20.14, with Daniels’ 32.26 sitting on Matt’s bench. Kurt did the homework, and Matt got the grade.', '2026-10-13T18:19-05:00'],
+      ['Tony', 'The Booth put Tony on fraud watch Wednesday. Tony scored 142.40, beat Tristan by 29.12 and took first with the league’s best luck. The watch continues, from first place.', '2026-10-13T18:19-05:00'],
+      ['Jerger', 'Jerger beat Mr. G by 2.56 because Mr. G started Jeremiyah Love (2.20) over Stevenson (16.00). Jerger has won the season’s two closest games, and both came gift-wrapped.', '2026-10-13T18:19-05:00'],
+      ['DLin', 'DLin was projected to beat Colin and lost by 40.58 with 92.62, the week’s lowest, as Higgins and Fannin combined for 4.10. The projections lied, and DLin believed them.', '2026-10-13T18:19-05:00'],
+      ['Pablo', 'Take Gibbs’ 35.20 out of Andy’s week-best 148.44 and Andy still beats Pablo by 0.20. The gibbing was optional.', '2026-10-13T18:19-05:00']
     ]
   },
   // The day each week's previews were written; each line's own time (third field) wins when it has one.
