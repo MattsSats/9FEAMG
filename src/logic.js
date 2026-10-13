@@ -643,7 +643,7 @@ class Component extends DCLogic {
     // written, and each line's tag says the day ("PREVIEW · WED", "POST-SNF · SUN 11:06 PM").
     const boothSets = [['Preview', D.boothPreview?.[wk]], ['Post-SNF', D.boothSnf?.[wk]], ['Recap', D.booth?.[wk]]].filter(([, l]) => l?.length);
     const boothSet = boothSets.find(([label]) => label == S.boothSet?.[wk]) || boothSets.at(-1) || ['Preview', []];
-    const BOOTH_NOTE = { Preview: 'Written before Thursday’s kickoff. Numbers are from then.', 'Post-SNF': 'Written after Sunday night. Monday night is still to play.', Recap: 'Final.' };
+    const BOOTH_NOTE = { Preview: 'Written before Thursday’s kickoff. Numbers are from then.', 'Post-SNF': isFinal ? 'Written after Sunday night, before Monday night’s game.' : 'Written after Sunday night. Monday night is still to play.', Recap: 'Final.' };
     const written = (line, label) => {
       const at = line[2] || (label == 'Preview' && D.boothPreviewAt?.[wk] ? D.boothPreviewAt[wk] + 'T12:00:00-05:00' : null);
       if (!at) return '';

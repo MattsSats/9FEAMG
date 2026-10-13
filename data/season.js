@@ -39,66 +39,45 @@ window.SEASON = {
     2: [['DLin', 'Kurt'], ['Tony', 'Mr. G'], ['Tristan', 'Jerger'], ['Matt', 'Andy'], ['Colin', 'Pablo']],
     3: [['Andy', 'Colin'], ['Tony', 'Pablo'], ['Tristan', 'Matt'], ['DLin', 'Jerger'], ['Kurt', 'Mr. G']],
     4: [['Tony', 'Andy'], ['Tristan', 'Colin'], ['Matt', 'DLin'], ['Jerger', 'Kurt'], ['Mr. G', 'Pablo']],
-    5: [['Matt', 'Kurt'], ['Tristan', 'Tony'], ['Jerger', 'Mr. G'], ['Colin', 'DLin'], ['Andy', 'Pablo']]
+    5: [['Matt', 'Kurt'], ['Tristan', 'Tony'], ['Jerger', 'Mr. G'], ['Colin', 'DLin'], ['Andy', 'Pablo']],
+    6: [['Matt', 'Jerger'], ['Tristan', 'Pablo'], ['Tony', 'DLin'], ['Kurt', 'Colin'], ['Mr. G', 'Andy']]
   },
 
   // Final scores (Yahoo, two decimals), one per completed week.
   scores: {
-    Tony: [123.06, 154.52, 95.42, 90.82],
-    Tristan: [144.36, 104.10, 121.64, 125.88],
-    Andy: [139.34, 75.96, 127.98, 96.38],
-    Matt: [107.86, 105.64, 114.48, 92.08],
-    Kurt: [100.60, 89.36, 135.88, 112.22],
-    Jerger: [124.06, 92.60, 102.14, 113.66],
-    'Mr. G': [135.22, 84.42, 75.06, 93.84],
-    Colin: [65.66, 100.08, 124.14, 129.92],
-    DLin: [99.82, 100.56, 82.52, 114.68],
-    Pablo: [112.66, 70.92, 86.38, 133.78]
+    Tony: [123.06, 154.52, 95.42, 90.82, 142.40],
+    Tristan: [144.36, 104.10, 121.64, 125.88, 113.28],
+    Andy: [139.34, 75.96, 127.98, 96.38, 148.44],
+    Matt: [107.86, 105.64, 114.48, 92.08, 136.68],
+    Kurt: [100.60, 89.36, 135.88, 112.22, 116.54],
+    Jerger: [124.06, 92.60, 102.14, 113.66, 112.32],
+    'Mr. G': [135.22, 84.42, 75.06, 93.84, 109.76],
+    Colin: [65.66, 100.08, 124.14, 129.92, 133.20],
+    DLin: [99.82, 100.56, 82.52, 114.68, 92.62],
+    Pablo: [112.66, 70.92, 86.38, 133.78, 113.04]
   },
 
   // The week in progress. Set to null between weeks.
   live: {
-    week: 5,
-    status: 'Live · Sunday final (BAL 30, ATL 23 in OT) · Monday BUF @ LAR',
+    week: 6,
+    status: 'Week 6 · projections · Thursday SEA @ DEN',
     // When these numbers were pulled from Yahoo (Central); shows as "Scores as of Thu 10:19 PM".
-    asOf: '2026-10-11T22:48:00-05:00',
+    asOf: '2026-10-13T10:15:00-05:00',
     // [current points, projected final]
-    // Yahoo as of Sun Oct 11, 10:48 PM CT: Thursday final, every Sunday game final; Monday night
-    // (BUF @ LAR) left.
+    // Yahoo as of Tue Oct 13, 10:15 AM CT: Week 6 projections for current lineups (several still
+    // start bye-week players: Jefferson, the Vikings DEF, Goff, Higgins).
     scores: {
-      Matt: [136.68, 136.68], DLin: [92.62, 92.62],
-      Tristan: [113.28, 113.28], Colin: [97.00, 126.12],
-      Jerger: [90.02, 103.93], Kurt: [112.54, 121.05],
-      Tony: [110.90, 132.78], Andy: [148.44, 148.44],
-      'Mr. G': [109.76, 109.76], Pablo: [83.84, 101.47]
+      Matt: [0.00, 107.41], DLin: [0.00, 76.27],
+      Tristan: [0.00, 93.70], Colin: [0.00, 109.10],
+      Jerger: [0.00, 103.37], Kurt: [0.00, 108.06],
+      Tony: [0.00, 103.70], Andy: [0.00, 102.90],
+      'Mr. G': [0.00, 107.61], Pablo: [0.00, 102.84]
     },
     // Points so far for every player whose game has started (starters and bench).
     // Players listed in inProgress are still playing; the rest are final.
-    playerPoints: {
-      'Jacoby Brissett': 25.78, 'Bijan Robinson': 13.80, 'Aaron Jones Sr.': 17.20, 'Rome Odunze': 3.50,
-      'Romeo Doubs': 2.10, 'Sam LaPorta': 17.30, 'Bhayshul Tuten': 10.60, 'Evan McPherson': 7.00,
-      'Jets': 16.00, 'Kirk Cousins': 13.72, 'Braelon Allen': 18.10, 'CeeDee Lamb': 1.90,
-      'Chris Olave': 6.60, 'Tucker Kraft': 9.10, 'Malik Nabers': 23.60, 'Matt Gay': 6.00,
-      'Vikings': 11.00, 'Bucky Irving': 30.50, 'Ollie Gordon II': 14.80, 'Matthew Golden': 17.30,
-      'Jaxon Smith-Njigba': 20.30, 'George Kittle': 4.90, 'Carnell Tate': 1.10, 'Will Reichard': 16.00,
-      'Commanders': 6.00, 'Dak Prescott': 14.64, 'Jacory Croskey-Merritt': 14.20, 'Jaylen Warren': 33.80,
-      'Zay Flowers': 10.60, 'Emeka Egbuka': 14.20, 'Colston Loveland': 2.90, 'Terry McLaurin': 10.20,
-      'Broncos': 12.00, 'Joe Burrow': 24.60, 'Emanuel Wilson': 12.20, "Ja'Marr Chase": 16.70,
-      'Brock Bowers': 19.00, 'Deebo Samuel Sr.': 1.50, 'Spencer Shrader': 21.00, 'Jaguars': 2.00,
-      'Drake Maye': 39.46, 'Chase Brown': 5.50, 'Jeremiyah Love': 2.20, 'Nico Collins': 8.10,
-      'Parker Washington': 27.40, 'T.J. Hockenson': 1.20, 'Amon-Ra St. Brown': 9.90, 'Eddy Pineiro': 7.00,
-      'Seahawks': 9.00, 'Trevor Lawrence': 22.74, 'Jahmyr Gibbs': 35.20, 'Javonte Williams': 13.20,
-      'Drake London': 15.30, 'Jaylen Waddle': 3.80, 'Isaiah Likely': 26.90, "D'Andre Swift": 15.30,
-      'Chase McLaughlin': 7.00, 'Bengals': 9.00, 'Jordan Love': 25.28, 'Christian McCaffrey': 15.80,
-      'Quinshon Judkins': 6.50, 'Garrett Wilson': 19.90, 'Christian Watson': 29.30, 'Trey McBride': 17.10,
-      'Justin Jefferson': 15.80, 'Cameron Dicker': 6.00, 'Steelers': 1.00, 'Jared Goff': 28.94,
-      'Jonathan Taylor': 9.70, 'Cam Skattebo': 6.10, 'George Pickens': 23.50, 'Tee Higgins': 3.20,
-      'Harold Fannin Jr.': 0.90, 'Michael Wilson': 5.28, 'Tyler Loop': 14.00, 'Cowboys': 1.00,
-      'C.J. Stroud': 20.94, 'Derrick Henry': 20.50, 'Tony Pollard': 5.20, 'Malik Washington': 9.10,
-      'Dalton Schultz': 4.50, 'Juwan Johnson': 3.60, 'Brandon Aubrey': 5.00, 'Texans': 15.00
-    },
+    playerPoints: {},
     inProgress: [],
-    sheetNote: 'Yahoo as of Sun 10:48 PM CT: every Sunday game final, Monday night (BUF @ LAR) to play. Each player is tagged Final, Live or proj.'
+    sheetNote: 'Week 6 projections as of Tue 10:15 AM CT. Each player is tagged Final, Live or proj.'
   },
 
   // The NFL week: every game ('Sun 12:00 PM · CHI @ GB', kickoff Central, same form as parlay legs)
@@ -111,6 +90,15 @@ window.SEASON = {
         'Sun 12:00 PM · IND @ PIT', 'Sun 12:00 PM · NYG @ WAS', 'Sun 3:05 PM · DEN @ LAC', 'Sun 3:25 PM · DET @ ARI',
         'Sun 3:25 PM · SF @ SEA', 'Sun 7:20 PM · BAL @ ATL', 'Mon 7:15 PM · BUF @ LAR'],
       byes: ['CAR', 'KC']
+    },
+    6: {
+      games: [
+        'Thu 7:15 PM · SEA @ DEN', 'Sun 8:30 AM · HOU @ JAX', 'Sun 12:00 PM · CHI @ ATL', 'Sun 12:00 PM · BAL @ CLE',
+        'Sun 12:00 PM · TEN @ IND', 'Sun 12:00 PM · NYJ @ NE', 'Sun 12:00 PM · NO @ NYG', 'Sun 12:00 PM · CAR @ PHI',
+        'Sun 12:00 PM · PIT @ TB', 'Sun 3:05 PM · ARI @ LAR', 'Sun 3:25 PM · LAC @ KC', 'Sun 3:25 PM · BUF @ LV',
+        'Sun 7:20 PM · DAL @ GB', 'Mon 7:15 PM · WAS @ SF'
+      ],
+      byes: ['CIN', 'DET', 'MIA', 'MIN']
     }
   },
 
@@ -120,9 +108,9 @@ window.SEASON = {
 
   // Shown on the week after the live one.
   next: {
-    week: 6,
-    dates: 'Oct 15–19',
-    note: 'Week 6 matchups post once Week 5 goes final.'
+    week: 7,
+    dates: 'Oct 22–26',
+    note: 'Week 7 matchups post once Week 6 goes final.'
   },
 
   // Player projections for the live week, used when the roster file has none.
