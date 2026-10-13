@@ -430,15 +430,15 @@ window.SEASON = {
 
   // One-liner on each team page.
   roasts: {
-    Tony: '3–1 with the fewest points against in the league (332.84). Power rankings have Tony 7th.',
-    Tristan: 'First at 3–1 with the most points (495.98) and the fewest left on the bench (30.30). Declared the season over after one loss anyway.',
-    Andy: '3–1 while being outscored 444.66–439.66 on the season. 12 adds, second only to Colin.',
-    Matt: 'Second-unluckiest manager in the league at −0.89. Would still like you to know that.',
-    Kurt: 'Unluckiest manager in the league at −1.00. Lost Week 4 by 1.44 with JCM’s 6.00 on the bench and Saquon starting for 1.50.',
-    Jerger: 'Two straight wins after an 0–2 start. Still has 91.52 points left on the bench.',
-    'Mr. G': 'Fewest points scored in the league (388.54) and the most allowed (524.00). Mr. G is losing from both ends.',
-    Colin: '28 adds, more than double anyone else, and the most points left on the bench (110.74). Somehow 2–2.',
-    DLin: '2–2 on a 14–22 all-play record, second-worst in the league. The Toilet Bowl King’s title defense is merely delayed.',
-    Pablo: 'Projected 9th in Week 4, finished first with 133.78. Still has 99.56 bench points, second only to Colin.'
+    Tony: 'First at 4–1 with the fewest points against (446.12) and the league’s best luck, +1.22. Power rankings still have Tony 4th.',
+    Tristan: 'Most points in the league (609.26) and 33–12 against the whole field, yet 3rd after two straight losses. The season Tristan declared over is going fine.',
+    Andy: '4–1, first in the power rankings, and the top score of Week 5 at 148.44. It’s gibbing time, and it has been for three straight weeks.',
+    Matt: '6th at 2–3, holding the last playoff spot, with 111.18 points left on the bench. Daniels’ 32.26 in Week 5 was the most expensive of them.',
+    Kurt: '1–4 with the 5th-most points, the league’s best lineup efficiency (94.3%) and its worst luck (−1.56). Average Sports Enthusiast, below-average schedule.',
+    Jerger: 'Three straight wins, two of them by a combined 4.00, and a 21–24 record against the whole league. #1 Y! Fan, and Yahoo’s schedule is returning the favor.',
+    'Mr. G': 'Last at 1–4, with 636.32 points allowed, 56.32 more than anyone else. Definitely not a Boomer, definitely the opponent everyone wants.',
+    Colin: '28 adds, the least waiver money left, and 121.34 points on the bench, the most in the league. C Lambs Biggest Hater is 3–2 anyway.',
+    DLin: 'The fewest points in the league (490.20) and a 14–31 record against the whole field, but 2–3, level with 6th place. The Toilet Bowl King wins ugly.',
+    Pablo: 'The only team with luck at exactly 0.00, and 7th at 2–3, a tiebreaker out of the last playoff spot. He was #1 for one week, in Week 4 (133.78).'
   }
 };
