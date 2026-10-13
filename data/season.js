@@ -413,6 +413,18 @@ window.SEASON = {
       DLin: 'Holding at 8th after beating Matt by 22.60. The Toilet Bowl King’s title defense is a respectable 2–2.',
       Matt: 'Down five after scoring 92.08. There is no 2nd best, but there is a 9th.',
       'Mr. G': 'Last, but opponents have averaged 131.00 against Mr. G. The schedule owes Mr. G an apology.'
+    },
+    5: {
+      Andy: 'Up one to first after the week’s top score, 148.44. Andy now outscores opponents 588.10–557.70 on the season, so Andy would like you to start checking.',
+      Tristan: 'Two straight losses, and still the most points in the league (609.26) and the best all-play record, 33–12. Tristan’s toughest opponent is the schedule.',
+      Colin: 'Holding at 3rd with the league’s best two-week form, 14–4 against the field. Kamara and Deebo have both been dropped since Sunday. The churn continues.',
+      Tony: 'Up three, tied for the biggest jump, and first in the standings. Still 4th here, with the fewest points against in the league (446.12). The luck stat would like a word.',
+      Jerger: 'Three straight wins and down one anyway, because the all-play record is 21–24. Two of those wins came by a combined 4.00.',
+      Matt: 'Up three, tied for the biggest jump, after scoring 136.68. There is no 2nd best, but 6th is a playoff spot.',
+      Pablo: 'Down one despite going 12–6 against the field over the last two weeks. Pablo’s luck is exactly 0.00, so the 2–3 is fully earned.',
+      Kurt: 'Down three while going 23–22 against the whole league. Kurt is 1–4 anyway. The numbers and the standings disagree, and the standings are winning.',
+      DLin: 'Down one after the week’s low score, 92.62. 14–31 against the field and still 2–3. The Toilet Bowl King is overachieving.',
+      'Mr. G': 'Still last, and opponents have now put 636.32 on Mr. G, 56.32 more than anyone else has allowed. Mr. G is the league’s favorite opponent.'
     }
   },
 
