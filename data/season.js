@@ -314,7 +314,7 @@ window.SEASON = {
         // 11:54-11:56 PM CT; moneylines from DraftKings via ESPN, Tue Oct 6, 11:10 PM CT. Eagles +280
         // re-checked: DraftKings via The Odds API, Wed Oct 7, 6:06 PM CT (Jaguars -355, home in London).
         legs: [
-          { text: 'Josh Allen 250+ passing yards', player: 'Josh Allen', type: 'over', stat: 'Pass Yds', line: 249.5, game: 'Mon 7:15 PM · BUF @ LAR', odds: '+101', status: 'open' },
+          { text: 'Josh Allen 250+ passing yards', player: 'Josh Allen', type: 'over', stat: 'Pass Yds', line: 249.5, game: 'Mon 7:15 PM · BUF @ LAR', odds: '+101', result: '210 pass yds', status: 'miss' },
           { text: 'Jaxon Smith-Njigba anytime TD', player: 'Jaxon Smith-Njigba', type: 'td', count: 1, game: 'Sun 3:25 PM · SF @ SEA', odds: '-120', result: '16-yd rec TD (Q3)', status: 'hit' },
           { text: 'Eagles moneyline at Jaguars', player: 'Eagles', type: 'ml', team: 'Phi', teams: ['Phi', 'Jax'], game: 'Sun 8:30 AM · PHI @ JAX', odds: '+280', result: 'Final L 17–19', status: 'miss' },
           { text: 'Chargers moneyline vs Broncos', type: 'ml', team: 'LAC', teams: ['Den', 'LAC'], game: 'Sun 3:05 PM · DEN @ LAC', odds: '+154', result: 'Final L 17–23', status: 'miss' }
@@ -328,7 +328,7 @@ window.SEASON = {
         // Odds: DraftKings. Allen and JSN anytime TD from Matt's DraftKings app screenshots, Fri Oct 9,
         // ~8 PM CT; moneylines DraftKings via The Odds API, Fri Oct 9, 8:05 PM CT. Ticket ≈ +5154.
         legs: [
-          { text: 'Josh Allen anytime TD', player: 'Josh Allen', type: 'td', count: 1, game: 'Mon 7:15 PM · BUF @ LAR', odds: '-120', status: 'open' },
+          { text: 'Josh Allen anytime TD', player: 'Josh Allen', type: 'td', count: 1, game: 'Mon 7:15 PM · BUF @ LAR', odds: '-120', result: '1 rush TD (10-121)', status: 'hit' },
           { text: 'Jaxon Smith-Njigba anytime TD', player: 'Jaxon Smith-Njigba', type: 'td', count: 1, game: 'Sun 3:25 PM · SF @ SEA', odds: '-110', result: '16-yd rec TD (Q3)', status: 'hit' },
           { text: 'Dolphins moneyline vs Bengals', player: 'Dolphins', type: 'ml', team: 'Mia', teams: ['Cin', 'Mia'], game: 'Sun 12:00 PM · CIN @ MIA', odds: '+280', result: 'Final L 24–31', status: 'miss' },
           { text: 'Titans moneyline vs Texans', player: 'Titans', type: 'ml', team: 'Ten', teams: ['Hou', 'Ten'], game: 'Sun 12:00 PM · HOU @ TEN', odds: '+295', result: 'Final L 3–26', status: 'miss' }
@@ -341,7 +341,7 @@ window.SEASON = {
         // about +2255, so Kyren Williams goes for 2+ TDs. Chase is listed Q on Yahoo.
         // Odds: DraftKings via The Odds API, Sat Oct 10, 12:21 AM CT. Ticket ≈ +6276.
         legs: [
-          { text: 'Kyren Williams 2+ TDs', player: 'Kyren Williams', type: 'td', count: 2, game: 'Mon 7:15 PM · BUF @ LAR', odds: '+340', status: 'open' },
+          { text: 'Kyren Williams 2+ TDs', player: 'Kyren Williams', type: 'td', count: 2, game: 'Mon 7:15 PM · BUF @ LAR', odds: '+340', result: '1 rush TD (16-49 rush, 6-27 rec)', status: 'miss' },
           { text: 'Ja’Marr Chase anytime TD', player: "Ja'Marr Chase", type: 'td', count: 1, game: 'Sun 12:00 PM · CIN @ MIA', odds: '-125', result: '1 rec TD (6-77)', status: 'hit' },
           { text: 'Brock Bowers anytime TD', player: 'Brock Bowers', type: 'td', count: 1, game: 'Sun 12:00 PM · LV @ NE', odds: '+130', result: '1 rec TD (8-110)', status: 'hit' },
           { text: 'Deebo Samuel anytime TD', player: 'Deebo Samuel Sr.', type: 'td', count: 1, game: 'Sun 3:25 PM · SF @ SEA', odds: '+250', result: 'No TD (2-4 rush, 2-21 rec), left injured', status: 'miss' }
@@ -374,7 +374,7 @@ window.SEASON = {
           { text: 'Trey McBride anytime TD', player: 'Trey McBride', type: 'td', count: 1, game: 'Sun 3:25 PM · DET @ ARI', odds: '+100', result: '9-yd rec TD (Q4, 2:11)', status: 'hit' },
           { text: 'Mike Evans anytime TD', player: 'Mike Evans', type: 'td', count: 1, game: 'Sun 3:25 PM · SF @ SEA', odds: '+200', result: '2-yd rec TD (Q1)', status: 'hit' },
           { text: 'Drake London anytime TD', player: 'Drake London', type: 'td', count: 1, game: 'Sun 7:20 PM · BAL @ ATL', odds: '+120', result: 'No TD (7-118 rec)', status: 'miss' },
-          { text: 'Davante Adams anytime TD', player: 'Davante Adams', type: 'td', count: 1, game: 'Mon 7:15 PM · BUF @ LAR', odds: '+100', status: 'open' }
+          { text: 'Davante Adams anytime TD', player: 'Davante Adams', type: 'td', count: 1, game: 'Mon 7:15 PM · BUF @ LAR', odds: '+100', result: '2 rec TDs (5-51)', status: 'hit' }
         ],
         booth: 'The Booth’s long shot: four red-zone targets in four games. McBride in the highest total of the day, Evans with the 49ers chasing in Seattle, London at home, and Adams on Monday night. For fun, not a lock.'
       },
