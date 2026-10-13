@@ -187,11 +187,11 @@ window.SEASON = {
   // what each matchup still needs on Monday. [manager, line, written at].
   boothSnf: {
     5: [
-      ['Matt', 'Matt leads Kurt by 24.14, and Kurt is down to a kicker, Mevis. Daniels’ 32.26 sat on Matt’s bench behind Love’s 25.28.', '2026-10-11T22:48-05:00'],
-      ['Tristan', 'Tony needs 2.39 from Josh Allen to pass Tristan. Evans scored 22.80 on Tristan’s bench while Doubs started for 2.10.', '2026-10-11T22:48-05:00'],
-      ['Jerger', 'Mr. G is done at 109.76, and Jerger needs 19.75 from Cook to pass. Jerger started CeeDee for 1.90 and benched Jameson Williams’ 17.70.', '2026-10-11T22:48-05:00'],
-      ['DLin', 'DLin is done at 92.62, and Colin leads by 4.38 with Kyren and Davante still to play. Goff scored 28.94, and DLin’s other eight starters managed 63.68.', '2026-10-11T22:48-05:00'],
-      ['Pablo', 'Pablo needs 64.61 from Puka, projected for 17.63, to pass Andy. Gibbs alone scored 35.20. It’s gibbing time.', '2026-10-11T22:48-05:00']
+      ['Matt', 'Matt scored 136.68, second-best of the week so far, and Kurt needs 24.15 from a kicker. There is no 2nd best, apparently.', '2026-10-11T22:48-05:00'],
+      ['Tristan', 'Tristan benched Evans’ 22.80 to start Doubs for 2.10, and now Tony needs 2.39 from Josh Allen. Bring back the tilt.', '2026-10-11T22:48-05:00'],
+      ['Jerger', 'Opponents usually save their best for Mr. G. Jerger brought 90.02 and needs 19.75 from Cook, projected for 13.91, to keep the tradition alive.', '2026-10-11T22:48-05:00'],
+      ['Colin', 'Colin leads DLin by 4.38, and CeeDee scored 1.90 for Jerger. C Lambs Biggest Hater wins twice.', '2026-10-11T22:48-05:00'],
+      ['Pablo', 'Pablo had the top score in Week 4 at 133.78 and has the lowest so far in Week 5 at 83.84. Andy, sitting on 148.44, sends regards.', '2026-10-11T22:48-05:00']
     ]
   },
   boothPreview: {
