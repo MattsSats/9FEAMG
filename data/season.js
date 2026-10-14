@@ -84,6 +84,34 @@ window.SEASON = {
   // and the teams on bye. Lineups use it for kickoff times and bye/empty-slot alerts.
   // Week 5 from ESPN's scoreboard, Fri Oct 9.
   nfl: {
+    1: {
+      games: ['Wed 7:20 PM · NE @ SEA', 'Thu 7:35 PM · SF @ LAR', 'Sun 12:00 PM · TB @ CIN', 'Sun 12:00 PM · NO @ DET',
+        'Sun 12:00 PM · NYJ @ TEN', 'Sun 12:00 PM · BAL @ IND', 'Sun 12:00 PM · ATL @ PIT', 'Sun 12:00 PM · CHI @ CAR',
+        'Sun 12:00 PM · CLE @ JAX', 'Sun 12:00 PM · BUF @ HOU', 'Sun 3:25 PM · MIA @ LV', 'Sun 3:25 PM · GB @ MIN',
+        'Sun 3:25 PM · WSH @ PHI', 'Sun 3:25 PM · ARI @ LAC', 'Sun 7:20 PM · DAL @ NYG', 'Mon 7:15 PM · DEN @ KC'],
+      byes: []
+    },
+    2: {
+      games: ['Thu 7:15 PM · DET @ BUF', 'Sun 12:00 PM · CAR @ ATL', 'Sun 12:00 PM · MIN @ CHI', 'Sun 12:00 PM · PHI @ TEN',
+        'Sun 12:00 PM · PIT @ NE', 'Sun 12:00 PM · GB @ NYJ', 'Sun 12:00 PM · CLE @ TB', 'Sun 12:00 PM · NO @ BAL',
+        'Sun 12:00 PM · CIN @ HOU', 'Sun 3:05 PM · JAX @ DEN', 'Sun 3:05 PM · LV @ LAC', 'Sun 3:25 PM · WSH @ DAL',
+        'Sun 3:25 PM · SEA @ ARI', 'Sun 3:25 PM · MIA @ SF', 'Sun 7:20 PM · IND @ KC', 'Mon 7:15 PM · NYG @ LAR'],
+      byes: []
+    },
+    3: {
+      games: ['Thu 7:15 PM · ATL @ GB', 'Sun 12:00 PM · LAC @ BUF', 'Sun 12:00 PM · CAR @ CLE', 'Sun 12:00 PM · NYJ @ DET',
+        'Sun 12:00 PM · HOU @ IND', 'Sun 12:00 PM · KC @ MIA', 'Sun 12:00 PM · TEN @ NYG', 'Sun 12:00 PM · CIN @ PIT',
+        'Sun 12:00 PM · SEA @ WSH', 'Sun 12:00 PM · NE @ JAX', 'Sun 3:05 PM · ARI @ SF', 'Sun 3:05 PM · MIN @ TB',
+        'Sun 3:25 PM · BAL @ DAL', 'Sun 3:25 PM · LV @ NO', 'Sun 7:20 PM · LAR @ DEN', 'Mon 7:15 PM · PHI @ CHI'],
+      byes: []
+    },
+    4: {
+      games: ['Thu 7:15 PM · PIT @ CLE', 'Sun 8:30 AM · IND @ WSH', 'Sun 12:00 PM · NE @ BUF', 'Sun 12:00 PM · NYJ @ CHI',
+        'Sun 12:00 PM · JAX @ CIN', 'Sun 12:00 PM · ARI @ NYG', 'Sun 12:00 PM · LAR @ PHI', 'Sun 12:00 PM · GB @ TB',
+        'Sun 12:00 PM · TEN @ BAL', 'Sun 12:00 PM · DAL @ HOU', 'Sun 3:05 PM · MIA @ MIN', 'Sun 3:25 PM · KC @ LV',
+        'Sun 3:25 PM · DEN @ SF', 'Sun 3:25 PM · LAC @ SEA', 'Sun 7:20 PM · DET @ CAR', 'Mon 7:15 PM · ATL @ NO'],
+      byes: []
+    },
     5: {
       games: ['Thu 7:15 PM · TB @ DAL', 'Sun 8:30 AM · PHI @ JAX', 'Sun 12:00 PM · CHI @ GB', 'Sun 12:00 PM · HOU @ TEN',
         'Sun 12:00 PM · CIN @ MIA', 'Sun 12:00 PM · LV @ NE', 'Sun 12:00 PM · MIN @ NO', 'Sun 12:00 PM · CLE @ NYJ',

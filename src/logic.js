@@ -937,6 +937,12 @@ class Component extends DCLogic {
     const adds = {}, spent = {}; MGR.forEach(m => { adds[m] = 0; spent[m] = 0; });
     tx.forEach(t => { if (t.action == 'add' && t.manager in adds) { adds[t.manager]++; if (t.faab) spent[t.manager] += parseInt(String(t.faab).replace('$', '')) || 0; } });
     const budget = D.faabBudget;
+    // Every draft pick, add and trade with the points it scored for that team in the final weeks
+    // (api/_shared.js acquisitionsOf). Wire = adds; the tag says how the player arrived.
+    const ACQ = S.loaded && S.box && S.draft ? acquisitionsOf(D, S.box, S.draft, tx) : [];
+    const boxWeeks = Object.keys(S.box?.weeks || {}).length;
+    const howTag = a => a.how == 'draft' ? 'Rd ' + a.round : a.how == 'trade' ? 'Trade' : a.waivers ? 'Waivers' + (a.faab != null ? ' $' + a.faab : '') : 'Free agent';
+    const acqOfTx = new Map(ACQ.filter(a => a.at).map(a => [a.m + '|' + nameKey(a.player) + '|' + a.at.getTime(), a]));
 
     // Teams
     const tm = S.team, s = ST.find(x => x.m == tm), place = ST.indexOf(s) + 1;
@@ -951,6 +957,16 @@ class Component extends DCLogic {
       const ap = allPlay(tm, w), win = won(tm, w);
       return { w, opp: o, color: col(o), sub: ord(ap.rank) + ' of ' + MGR.length + ' · all-play ' + ap.w + '–' + ap.l, score: f2(SC[tm][w - 1]) + '–' + f2(SC[o][w - 1]), r: win ? 'W' : 'L', rbg: win ? 'var(--accent)' : 'var(--surface2)', rfg: win ? 'var(--onAccent)' : 'var(--muted)', open: () => this.setState({ sheet: { a: tm, b: o, wk: w } }) };
     });
+    const teamAcq = ACQ.filter(a => a.m == tm && a.weeks > 0).sort((a, b) => b.started - a.started || b.bench - a.bench);
+    const srcTotal = teamAcq.reduce((t, a) => t + a.started, 0), srcOf = h => teamAcq.filter(a => h.includes(a.how)).reduce((t, a) => t + a.started, 0);
+    const srcParts = [['Draft', ['draft'], 'var(--ink)'], ['Wire', ['add'], 'var(--accent)'], ['Trades', ['trade'], 'var(--muted)']]
+      .map(([label, h, color]) => ({ label, pts: srcOf(h), color })).filter(x => x.pts > 0)
+      .map(x => ({ ...x, w: (x.pts / srcTotal * 100) + '%', text: x.label + ' ' + Math.round(x.pts / srcTotal * 100) + '%' }));
+    const srcAll = !!S.srcAll, SRC_N = 10;
+    const src = { has: srcTotal > 0, sub: 'Started points · through Week ' + boxWeeks, parts: srcParts,
+      rows: (srcAll ? teamAcq : teamAcq.slice(0, SRC_N)).map(a => ({ player: a.player, tag: howTag(a) + ' · ' + a.pos, wire: a.how != 'draft',
+        tagFg: a.how == 'draft' ? 'var(--muted)' : 'var(--accentInk)', pts: a.started ? f2(a.started) : '—', starts: String(a.starts), bench: a.bench ? f2(a.bench) : '—' })),
+      more: teamAcq.length > SRC_N, moreLabel: srcAll ? 'Show fewer ▴' : 'Show all ' + teamAcq.length + ' ▾', toggle: () => this.setState({ srcAll: !srcAll }) };
     const pl = this.players(tm), lineupWeek = LW ?? NF + 1;
     const lineupMsg = !S.loaded ? 'Loading rosters…' : !S.rosters ? 'Couldn’t load rosters. Try refreshing in a minute.' : '';
     const team = {
@@ -960,7 +976,7 @@ class Component extends DCLogic {
       stats: [{ label: 'PF', value: f1(s.pf), sub: ord(pfRank) + ' in league' }, { label: 'PA', value: f1(s.pa), sub: ord(paRank) + ' fewest' }, { label: 'Luck', value: sgn(s.luck), sub: 'W − xW', color: s.luck > 0 ? 'var(--pos)' : s.luck < 0 ? 'var(--neg)' : 'var(--ink)' }, { label: 'xW', value: s.xw.toFixed(2), sub: 'vs ' + s.w + ' real wins' }, { label: 'Max PF', value: maxOk ? f1(s.max) : '—', sub: maxOk ? ord(maxRank) + ' best possible' : 'Best possible lineup' }, { label: 'Bench', value: maxOk ? f1(bn) : '—', sub: 'Points left sitting' }, { label: 'FAAB left', value: txOk ? '$' + (budget - spent[tm]) : '—', sub: 'of $' + budget }, { label: 'Adds', value: txOk ? String(adds[tm]) : '—', sub: 'This season' }].map(x => ({ color: 'var(--ink)', isLuck: x.label == 'Luck', isBench: x.label == 'Bench', ...x })),
       log, starters: this.starters(tm, lineupWeek), alerts: this.lineupAlerts(tm, lineupWeek).map(t => ({ t })), hasAlerts: this.lineupAlerts(tm, lineupWeek).length > 0,
       bench: pl.filter(p => p.slot != 'starter').map(p => { const lp = LIVEPTS[p.name]; const v = lp ?? p.proj ?? p.projected ?? p.projections?.[lineupWeek] ?? PPROJ[p.name]; return { slot: p.slot == 'IR' ? 'IR' : p.pos, name: p.name, meta: (p.nfl || '').toUpperCase() + (lp == null && p.slot != 'IR' && lineupWeek == LW ? this.preGame(p, lineupWeek) : '') + (lp == null && v != null && p.slot != 'IR' && !(lineupWeek == LW && (nflGame(p.nfl, lineupWeek) || onBye(p.nfl, lineupWeek))) ? ' · proj' : lp != null && PLAYING.has(p.name) ? ' · live' : ''), pts: p.slot == 'IR' ? '' : (v != null ? f2(+v) : '—') }; }),
-      benchCount: pl.filter(p => p.slot != 'starter').length, lineupMsg, hasLineup: !lineupMsg
+      benchCount: pl.filter(p => p.slot != 'starter').length, lineupMsg, hasLineup: !lineupMsg, src
     };
     const teamPicker = MGR.map(m => ({ m, init: INIT[m], color: col(m), ring: m == tm ? '2px solid var(--accent)' : '2px solid transparent', ringFill: m == tm ? 'var(--accent)' : 'transparent', op: m == tm ? 1 : .75, fg: m == tm ? 'var(--ink)' : 'var(--muted)', pick: () => this.setState({ team: m }) }));
 
@@ -994,17 +1010,27 @@ class Component extends DCLogic {
     const wireWk = W?.wk, cut = W?.cut;
     const groups = []; tx.forEach(t => { const d = parseWhen(t.when); const last = groups[groups.length - 1]; if (last && last.m == t.manager && last.when == t.when) last.items.push(t); else groups.push({ m: t.manager, when: t.when, d, items: [t] }); });
     const ym = n => dr?.managerMap?.[n] ?? n;
-    const shown = groups.filter(g => seasonMode || g.d >= cut);
+    const wireMgr = seasonMode && MGR.includes(S.wireMgr) ? S.wireMgr : null;
+    const shown = groups.filter(g => (seasonMode || g.d >= cut) && (!wireMgr || g.m == wireMgr));
+    const wireMgrs = [{ m: null, label: 'All' }, ...MGR.map(m => ({ m, label: INIT[m] }))].map(x => { const on = x.m == wireMgr;
+      return { label: x.label, title: x.m || 'Everyone', pressed: String(on), bg: on ? (x.m ? col(x.m) : 'var(--ink)') : 'var(--surface)', fg: on ? (x.m ? 'var(--onAccent)' : 'var(--bg)') : 'var(--ink)', border: on ? (x.m ? col(x.m) : 'var(--ink)') : 'var(--line)', pick: () => this.setState({ wireMgr: x.m }) }; });
+    const addPts = t => { const a = t.action != 'drop' && acqOfTx.get(t.manager + '|' + nameKey(t.player) + '|' + parseWhen(t.when).getTime()); return a && a.starts ? ' · ' + f2(a.started) + ' pts started' : ''; };
     const days = []; shown.forEach(g => {
       // Grouped by the Central date the move was made ("Oct 9"), wherever the viewer is.
       const key = g.when.split(',')[0]; let day = days.find(x => x.key == key);
       if (!day) { day = { key, label: g.d.toLocaleDateString('en-US', { weekday: 'short', timeZone: 'America/Chicago' }).toUpperCase() + ' · ' + key.toUpperCase(), moves: [] }; days.push(day); }
       const time = g.when.split(', ')[1].toUpperCase();
-      day.moves.push({ m: g.m, init: INIT[g.m], color: col(g.m), time, lines: g.items.sort((a, b) => (a.action == 'drop') - (b.action == 'drop')).map(t => ({ sign: t.action == 'add' ? '+' : t.action == 'drop' ? '−' : '⇄', color: t.action == 'add' ? 'var(--pos)' : t.action == 'drop' ? 'var(--neg)' : 'var(--accentInk)', player: t.player, weight: t.action == 'drop' ? 400 : 600, fg: t.action == 'drop' ? 'var(--muted)' : 'var(--ink)', meta: [t.pos, (t.nfl || '').toUpperCase(), t.action == 'trade' ? 'Trade with ' + ym(t.via.replace('trade from ', '')) : t.action == 'add' ? (t.via == 'Waivers' ? 'Waivers ' + (typeof t.faab == 'number' ? '$' + t.faab : t.faab ?? '') : 'Free agent') : null].filter(Boolean).join(' · ') })) });
+      day.moves.push({ m: g.m, init: INIT[g.m], color: col(g.m), time, lines: g.items.sort((a, b) => (a.action == 'drop') - (b.action == 'drop')).map(t => ({ sign: t.action == 'add' ? '+' : t.action == 'drop' ? '−' : '⇄', color: t.action == 'add' ? 'var(--pos)' : t.action == 'drop' ? 'var(--neg)' : 'var(--accentInk)', player: t.player, weight: t.action == 'drop' ? 400 : 600, fg: t.action == 'drop' ? 'var(--muted)' : 'var(--ink)', meta: [t.pos, (t.nfl || '').toUpperCase(), t.action == 'trade' ? 'Trade with ' + ym(t.via.replace('trade from ', '')) : t.action == 'add' ? (t.via == 'Waivers' ? 'Waivers ' + (typeof t.faab == 'number' ? '$' + t.faab : t.faab ?? '') : 'Free agent') : null].filter(Boolean).join(' · ') + addPts(t) })) });
     });
     const wireModes = ['This week', 'Season'].map(l => ({ label: l, bg: S.wire == l ? 'var(--surface2)' : 'transparent', fg: S.wire == l ? 'var(--ink)' : 'var(--muted)', pick: () => this.setState({ wire: l }) }));
     // Activity vs record: season adds on Season, this fantasy week's adds on This week.
-    const activity = W ? W.rows.map(r => ({ m: r.m, n: r.n, w: (r.n / Math.max(1, W.rows[0].n) * 100) + '%', color: col(r.m), rec: r.rec })) : [];
+    const quiet = W && !seasonMode && W.total == 0 && wireWk > 1, AW = quiet ? wireOf(D, tx, (name, w) => this.fantasyPts(name, w), 'week', cut.getTime() - 1) : W;
+    const wirePts = m => ACQ.filter(a => a.m == m && a.how != 'draft').reduce((t, a) => t + a.started, 0);
+    const activity = AW ? AW.rows.map(r => ({ m: r.m, n: r.n, w: (r.n / Math.max(1, AW.rows[0].n) * 100) + '%', color: col(r.m), rec: r.rec, pts: seasonMode && ACQ.length ? f1(wirePts(r.m)) : '' })) : [];
+    const activityLabel = seasonMode ? 'Adds · season' : quiet ? 'Adds · Week ' + AW.wk + ' (none yet in Week ' + wireWk + ')' : 'Adds · Week ' + wireWk;
+    // Best pickups: the season's adds by points scored as a starter for the team that added them.
+    const pickups = ACQ.filter(a => a.how == 'add' && a.started > 0).sort((a, b) => b.started - a.started).slice(0, 5)
+      .map((a, i) => ({ n: i + 1, player: a.player, m: a.m, color: col(a.m), tag: howTag(a) + ' · ' + a.starts + (a.starts == 1 ? ' start' : ' starts'), pts: f2(a.started) }));
     const wireRoast = !S.loaded ? 'Loading the wire…' : !txOk ? 'Couldn’t load transactions. Try refreshing in a minute.' : W.line;
     const faab = [...MGR].sort((a, b) => spent[a] - spent[b]).map(m => ({ m, left: '$' + (budget - spent[m]), w: ((budget - spent[m]) / budget * 100) + '%', color: col(m) }));
     const noMoves = txOk && !days.length;
@@ -1091,7 +1117,7 @@ class Component extends DCLogic {
       heat, heatHead, heatColsM, heatColsD, heatMinM, heatMinD,
       team, teamPicker,
       draftInfo: D.draftInfo, draftToolUrl: D.draftToolUrl || '', hasDraftTool: !!D.draftToolUrl, draftOk: !draftMsg, draftMsg, draftFirsts, draftModes, draftChips, draftPicks, draftTitle, draftSub,
-      wireSub: 'Adds, drops, trades and FAAB · through ' + shortDate(now), wireModes, activityLabel: seasonMode ? 'Adds · season' : 'Adds · Week ' + wireWk, wireSeason: txOk, wireDays: days, noMoves, activity, wireRoast, wireBanner: boothOn || !txOk, faab, faabBudget: 'Waiver bid money left · $' + budget + ' to start', txOk,
+      wireSub: 'Adds, drops, trades and FAAB · through ' + shortDate(now), wireModes, activityLabel, wireSeason: txOk, showWirePts: seasonMode && ACQ.length > 0, wireMgrs, showWireMgrs: seasonMode && txOk, pickups, hasPickups: seasonMode && pickups.length > 0, pickupsSub: 'Points as a starter · through Week ' + boxWeeks, wireDays: days, noMoves, activity, wireRoast, wireBanner: boothOn || !txOk, faab, faabBudget: 'Waiver bid money left · $' + budget + ' to start', txOk,
       sheetOpen: !!S.sheet, sheet, closeSheet: () => this.setState({ sheet: null }),
       // Share buttons
       // The matchup link goes through /s/w5-andy-vs-pablo so chats show a picture of it (api/section.js).

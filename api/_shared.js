@@ -7,7 +7,8 @@
 
 // ---- Time: everything is US Central ----
 export const MON = { Jan: 0, Feb: 1, Mar: 2, Apr: 3, May: 4, Jun: 5, Jul: 6, Aug: 7, Sep: 8, Oct: 9, Nov: 10, Dec: 11 };
-const KICK_DAYS = { Thu: 0, Fri: 1, Sat: 2, Sun: 3, Mon: 4, Tue: 5, Wed: 6 };
+// Days from the week's Thursday. A Wednesday game (the opener, Christmas) is the day before it.
+const KICK_DAYS = { Wed: -1, Thu: 0, Fri: 1, Sat: 2, Sun: 3, Mon: 4, Tue: 5 };
 // Central Daylight Time until the first Sunday of November (month 0-based).
 const isCDT = (y, mo, d) => mo < 10 || (mo == 10 && d < 1 + ((7 - new Date(Date.UTC(y, 10, 1)).getUTCDay()) % 7));
 // A game's kickoff as a Date, from its day and Central time ('Sun 12:00 PM · CHI @ GB'),
@@ -201,6 +202,33 @@ export function pointsOf(season, box, name, w) {
   if (w == season.live?.week) return season.live?.playerPoints?.[name] ?? null;
   for (const t of Object.values(box?.weeks?.[w] || {})) { const p = [...t.starters, ...t.bench].find(x => x[1] == name); if (p) return p[4]; }
   return null;
+}
+
+// ---- Where a team's points come from ----
+// Names are compared on letters and digits only (the draft has "JK Dobbins", box scores "J.K. Dobbins").
+export const nameKey = n => String(n || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+// Every way a team got a player (draft pick, add, trade) with the points he scored for that team
+// in the final weeks' box scores. Each week's points go to the team's latest way of getting him
+// before his kickoff, so a player added, dropped and added again counts as two stints.
+// Returns [{ m, player, pos, nfl, how: 'draft'|'add'|'trade', round, faab, waivers, at, started,
+// starts, bench, weeks }], where faab is the winning bid (null for free agents) and at a Date
+// (null for draft picks).
+export function acquisitionsOf(season, box, draft, tx) {
+  const bidOf = t => { const n = parseFloat(String(t.faab ?? '').replace('$', '')); return isNaN(n) ? null : n; }; // "$11" in the file
+  const ev = {}, all = [], put = (m, name, a) => { a.m = m; a.player = name; a.started = 0; a.starts = 0; a.bench = 0; a.weeks = 0; all.push(a); (ev[m + '|' + nameKey(name)] ||= []).push(a); };
+  for (const r of Object.values(draft?.rosters || {})) for (const p of r.picks || []) put(r.manager, p.player, { how: 'draft', round: p.round, overall: p.overall, pos: p.pos, nfl: p.nfl, at: null });
+  for (const t of tx || []) if (t.action == 'add' || t.action == 'trade') put(t.manager, t.player, { how: t.action, pos: t.pos, nfl: t.nfl, at: parseCT(t.when, season.year), faab: bidOf(t), waivers: t.via == 'Waivers' });
+  Object.values(ev).forEach(l => l.sort((a, b) => (a.at ?? -Infinity) - (b.at ?? -Infinity)));
+  for (const [w, W] of Object.entries(box?.weeks || {})) for (const [m, T] of Object.entries(W)) {
+    for (const [list, started] of [[T.starters, true], [T.bench, false]]) for (const p of list) {
+      const kick = kickoffAt(season, +w, nflGameOf(season, p[2], +w) || 'Sun 12:00 PM');
+      const a = (ev[m + '|' + nameKey(p[1])] || []).filter(a => !a.at || !kick || a.at < kick).pop();
+      if (!a) continue;
+      a.weeks++;
+      if (started) { a.started += p[4] || 0; a.starts++; } else a.bench += p[4] || 0;
+    }
+  }
+  return all;
 }
 
 // ---- Lineup alerts (live week) ----
