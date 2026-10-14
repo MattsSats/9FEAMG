@@ -17,8 +17,13 @@ if (/^export /m.test(shared)) throw new Error("api/_shared.js: only `export cons
 const logicSrc = fs.readFileSync(path.join(__dirname, "src", "logic.js"), "utf8");
 if (!logicSrc.includes("/*SHARED*/")) throw new Error("src/logic.js has no /*SHARED*/ placeholder");
 const logic = logicSrc.split("/*SHARED*/").join(shared);
-const app = fs.readFileSync(path.join(__dirname, "src", "app.html"), "utf8")
+let app = fs.readFileSync(path.join(__dirname, "src", "app.html"), "utf8")
   .split("/*LOGIC*/").join(logic);
+// Parlay tickets: the markup between <!--TICKETS--> and <!--/TICKETS--> (a loop over `parlays`) is
+// repeated wherever <!--TICKETS:name--> appears, looping over `name` instead.
+const tickets = app.match(/<!--TICKETS-->([\s\S]*?)<!--\/TICKETS-->/);
+if (!tickets) throw new Error("src/app.html has no <!--TICKETS--> block");
+app = app.replace(/<!--TICKETS:(\w+)-->/g, (_, name) => tickets[1].replace('list="{{ parlays }}"', `list="{{ ${name} }}"`));
 
 const start = html.indexOf(OPEN);
 if (start === -1) throw new Error("template script tag not found in index.html");

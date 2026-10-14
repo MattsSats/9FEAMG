@@ -397,6 +397,7 @@ button{font-family:inherit;color:inherit}
   .cols>.col-wide{grid-column:1/-1;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:0 12px;align-items:start}
   .cols>.col-wide>*{min-width:0}
   .cols>.col-wide>.ledger,.cols>.col-wide>.col-head,.cols>.col-wide>.busted-bar{grid-column:1/-1}
+  .cols>.gd-more:empty{display:none}
   .tiles{grid-template-columns:repeat(4,minmax(0,1fr))}
   .sheet-wrap{align-items:center!important}
 }
@@ -419,7 +420,7 @@ button{font-family:inherit;color:inherit}
   .compact .wsub{display:none!important}
   .compact .jump-to{scroll-margin-top:100px}
   /* Parlays column: a flex column so CSS order can put the ledger between the groups. */
-  #parlays{display:flex;flex-direction:column}
+  #parlays,#parlays-more{display:flex;flex-direction:column}
 }
 /* Desktop: tabs up top, no bottom bar, and a compact week row. */
 @media (min-width:900px){
@@ -485,11 +486,12 @@ button{font-family:inherit;color:inherit}
 @media (min-width:1320px){
   .app,.tabbar{max-width:1440px}
   .cols{grid-template-columns:repeat(3,minmax(0,1fr))}
-  /* Gameday: matchups, the Booth beside them, then parlays as one column (CSS order keeps the
-     ledger between the groups). */
-  .gd-cols{grid-template-areas:"mu bo pa"}
+  /* Gameday: matchups, the Booth beside them, and tickets someone's on with the ledger in the
+     third column; Nobody's on these and Busted run three-up underneath, full width. */
+  .gd-cols{grid-template-areas:"mu bo pa" "mo mo mo"}
   .gd-cols>#matchups{grid-area:mu}.gd-cols>.gd-booth{grid-area:bo}.gd-cols>#parlays{grid-area:pa}
   .gd-cols>#parlays{grid-column:auto;display:flex;flex-direction:column;align-items:stretch}
+  .gd-cols>#parlays-more{grid-area:mo;grid-template-columns:repeat(3,minmax(0,1fr))}
   .cols.two{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
 /* Teams and Wire on desktop: two columns; Wire's charts stay in view beside the list. */
@@ -883,6 +885,7 @@ button{font-family:inherit;color:inherit}
       <div style="font-family:'JetBrains Mono';font-size:10px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase">$10 stakes · for fun</div>
     </div>
   </sc-if>
+  <!--TICKETS-->
   <sc-for list="{{ parlays }}" as="pr" hint-placeholder-count="1">
     <sc-if value="{{ pr.firstGroup }}" hint-placeholder-val="{{ false }}">
       <div class="busted-bar" style="padding:12px 20px 0;order:{{ pr.order }}">
@@ -1004,6 +1007,7 @@ button{font-family:inherit;color:inherit}
       </div>
     </div>
   </sc-for>
+  <!--/TICKETS-->
   <sc-if value="{{ hasLedger }}" hint-placeholder-val="{{ true }}">
     <div id="ledger" class="ledger" style="order:2;padding:16px 20px 0;scroll-margin-top:64px">
       <div data-shot="ledger" style="background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:16px 16px 0">
@@ -1048,6 +1052,11 @@ button{font-family:inherit;color:inherit}
       </div>
     </div>
   </sc-if>
+</div>
+<!-- Wide desktop: Nobody's on these and Busted run full width under the matchups and the Booth.
+     build.cjs repeats the ticket markup above here, for parlaysMore. -->
+<div id="parlays-more" class="col-wide gd-more">
+  <!--TICKETS:parlaysMore-->
 </div>
 </div>
 </sc-if>

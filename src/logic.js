@@ -1082,7 +1082,7 @@ class Component extends DCLogic {
       compactCls: S.compact ? 'app compact' : 'app',
       deskTabs: tabs,
       weekChips, isW5: isNext, nextTitle, nextNote, hasWeek, hero: hero || blank, matchups, heroLabel: heroMine ? 'Your matchup' : wk == LW ? 'Matchup of the week' : 'Closest finish', heroCaption: this.heroCaption(wk, hero),
-      weekStatus, parlays, hasParlays: parlays.length > 0, hasLedger: allParlays.length > 0, ledgerTiles, ledgerSub, ledgerOwners, hasLedgerRows: ledgerOwners.length > 0, hasPaper, paperLine, latestTaps, hasLatestTaps: latestTaps.length > 0,
+      weekStatus, parlays: parlays.filter(x => group(x) == 0), parlaysMore: parlays.filter(x => group(x) > 0), hasParlays: parlays.length > 0, hasLedger: allParlays.length > 0, ledgerTiles, ledgerSub, ledgerOwners, hasLedgerRows: ledgerOwners.length > 0, hasPaper, paperLine, latestTaps, hasLatestTaps: latestTaps.length > 0,
       shareLedger: e => this.share('ledger', e), ledgerLabel: S.sharing == 'ledger' ? '…' : 'Image',
       linkLedger: e => this.shareLink(location.origin + '/s/ledger', '9FEAMG · Parlay ledger', e), shotLedger: `Parlay ledger · through week ${LW ?? NF}`,
       hasReq, reqForm, reqList, hasReqList: reqList.length > 0,
