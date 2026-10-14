@@ -4,7 +4,7 @@ import { sync } from './sync.js';
 
 const page = (title, body, status = 200) => new Response(
   `<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${title}</title>` +
-  `<body style="font-family:system-ui,sans-serif;background:#0D1424;color:#EEF2F8;padding:32px;line-height:1.5"><h1 style="font-size:22px">${title}</h1>${body}<p><a style="color:#FF7A52" href="/">Back to 9FEAMG</a></p></body>`,
+  `<body style="font-family:system-ui,sans-serif;background:#151413;color:#F2EFE9;padding:32px;line-height:1.5"><h1 style="font-size:22px">${title}</h1>${body}<p><a style="color:#FF7A52" href="/">Back to 9FEAMG</a></p></body>`,
   { status, headers: { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'no-store' } });
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 

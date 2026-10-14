@@ -480,7 +480,7 @@ class Component extends DCLogic {
   applyTheme() {
     const t = this.theme();
     document.documentElement.dataset.theme = t;
-    document.querySelector('meta[name="theme-color"]')?.setAttribute('content', getComputedStyle(document.documentElement).getPropertyValue('--bg').trim() || (t == 'dark' ? '#0D1424' : '#F7F5F0'));
+    document.querySelector('meta[name="theme-color"]')?.setAttribute('content', getComputedStyle(document.documentElement).getPropertyValue('--bg').trim() || (t == 'dark' ? '#151413' : '#F7F5F0'));
   }
   players(m) { const t = this.state.rosters?.teams?.find(t => t.name == m); return t ? t.players : []; }
   // Whose roster a player (or team defense, by team name) is on: { m, starter, pos }.
