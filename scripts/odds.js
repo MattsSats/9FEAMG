@@ -6,6 +6,7 @@
 //                                               add "alt" for alternate lines (e.g. 250+ passing yards)
 //   node scripts/odds.js props <team> <market>  just one market, e.g. player_tds_over (Over 1.5 = 2+ TDs);
 //                                               cheapest way to price one leg (about 1 credit)
+//   node scripts/odds.js credits                credits left this month (free)
 //
 // Every call prints the time it was pulled and the credits left, so the ticket can cite
 // "DraftKings via The Odds API, <time>".
@@ -71,10 +72,20 @@ async function props(team, flag) {
   return left;
 }
 
+// Credits left this month, for free: the sports list doesn't count against the quota.
+async function credits() {
+  const r = await fetch(`https://api.the-odds-api.com/v4/sports?apiKey=${KEY}`);
+  if (!r.ok) throw new Error(`The Odds API said ${r.status}`);
+  return r.headers.get('x-requests-remaining');
+}
+
 const [cmd, arg, flag] = process.argv.slice(2);
 if (!KEY) { console.error('Add ODDS_API_KEY=... to .env.local first.'); process.exit(1); }
 try {
-  const left = cmd == 'games' ? await games() : cmd == 'props' && arg ? await props(arg, flag) : null;
-  if (left === null) { console.error('Use: node scripts/odds.js games | props <team> [alt]'); process.exitCode = 1; } else
-  console.log(`\nDraftKings via The Odds API, ${stamp()} · ${left} credits left`);
+  if (cmd == 'credits') console.log(`${await credits()} credits left (${stamp()})`);
+  else {
+    const left = cmd == 'games' ? await games() : cmd == 'props' && arg ? await props(arg, flag) : null;
+    if (left === null) { console.error('Use: node scripts/odds.js games | props <team> [alt|<market>] | credits'); process.exitCode = 1; } else
+    console.log(`\nDraftKings via The Odds API, ${stamp()} · ${left} credits left`);
+  }
 } catch (e) { console.error(e.message); process.exitCode = 1; }
