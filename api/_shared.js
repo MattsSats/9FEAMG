@@ -163,6 +163,14 @@ export function seasonStats(season, box) {
 }
 // Standings order: wins, then points for.
 export const byStandings = (a, b) => b.w - a.w || b.pf - a.pf;
+// The league's week-to-week spread: how far a team's weekly score lands from its own average
+// (pooled standard deviation through week W0; 25 before there's enough to go on).
+export function weeklySpread(season, W0) {
+  const MGR = season.managers.map(x => x.m), SC = season.scores;
+  let ss = 0, n = 0;
+  for (const m of MGR) { const s = SC[m].slice(0, W0), mu = s.reduce((t, x) => t + x, 0) / (s.length || 1); for (const x of s) { ss += (x - mu) ** 2; n++; } }
+  return n > MGR.length ? Math.sqrt(ss / (n - MGR.length)) : 25;
+}
 // Playoff odds: the rest of the regular season played out `sims` times. A team's weekly score is
 // drawn around its average, pulled toward the league average as if it had played `shrink` more weeks
 // at the league average (halfway after five weeks, less as the season goes on), with the league's
@@ -186,9 +194,7 @@ export function playoffOdds(season, { through, live = true, sims = 20000, shrink
   // Each team's expected weekly score, and the league's week-to-week spread around team averages.
   const all = MGR.flatMap(m => SC[m].slice(0, W0)), lg = all.length ? all.reduce((s, x) => s + x, 0) / all.length : 110;
   const avg = Object.fromEntries(MGR.map(m => { const s = SC[m].slice(0, W0); return [m, (s.reduce((t, x) => t + x, 0) + shrink * lg) / (s.length + shrink)]; }));
-  let ss = 0, n = 0;
-  for (const m of MGR) { const s = SC[m].slice(0, W0), mu = s.reduce((t, x) => t + x, 0) / (s.length || 1); for (const x of s) { ss += (x - mu) ** 2; n++; } }
-  const sd = n > N ? Math.sqrt(ss / (n - N)) : 25;
+  const sd = weeklySpread(season, W0);
   // The live week (the one right after W0) from Yahoo: points so far plus the rest of the projection.
   const LV = live && season.live?.week == W0 + 1 && season.live.scores ? season.live.scores : null;
   const wk = {};
@@ -217,6 +223,38 @@ export function playoffOdds(season, { through, live = true, sims = 20000, shrink
 }
 // A share as the site shows it. Simulated ends aren't certain, so they read ">99%" and "<1%"; once
 // no weeks are left (done = true) they're "In" and "Out".
+// Win odds for the live week's matchups, in schedule order: { a, b, pa } with pa a's chance to win.
+// Each side is its points so far plus the rest of Yahoo's projection; the league's weekly spread
+// (weeklySpread) shrinks with the share of the projection still to play, so a finished side counts
+// as certain. Before kickoff it's projection against projection. Same model as the live week in
+// playoffOdds.
+export function matchupOdds(season) {
+  const L = season.live, wk = L?.week, NF = Math.max(0, ...season.managers.map(x => (season.scores[x.m] || []).length));
+  if (!L?.scores || !season.schedule?.[wk]) return null;
+  const sd = weeklySpread(season, NF);
+  // Normal CDF through erf (Abramowitz and Stegun 7.1.26).
+  const erf = x => { const t = 1 / (1 + 0.3275911 * Math.abs(x)), y = 1 - (((((1.061405429 * t - 1.453152027) * t) + 1.421413741) * t - 0.284496736) * t + 0.254829592) * t * Math.exp(-x * x); return x < 0 ? -y : y; };
+  const side = m => { const [now, proj] = L.scores[m] || [0, 0]; return { proj: proj || now || 0, left: proj > 0 ? Math.max(0, proj - (now || 0)) / proj : 0 }; };
+  return season.schedule[wk].map(([a, b]) => {
+    const A = side(a), B = side(b), v = sd * sd * (A.left + B.left), d = A.proj - B.proj;
+    return { a, b, pa: v > 0 ? 0.5 * (1 + erf(d / Math.sqrt(2 * v))) : d > 0 ? 1 : d < 0 ? 0 : 0.5 };
+  });
+}
+// The Booth's picks: boothPicks[week] holds [pick, win % when picked] per matchup in schedule order.
+// A pick is graded once its week is final. Returns { graded: [{ wk, i, pick, pct, winner, hit }], w, l }.
+export function boothPickRecord(season) {
+  const NF = Math.max(0, ...season.managers.map(x => (season.scores[x.m] || []).length)), graded = [];
+  for (const [w, picks] of Object.entries(season.boothPicks || {})) {
+    if (+w > NF) continue;
+    (picks || []).forEach((p, i) => {
+      const pair = season.schedule?.[w]?.[i]; if (!p || !pair) return;
+      const [a, b] = pair, sa = season.scores[a][w - 1], sb = season.scores[b][w - 1];
+      const winner = sa > sb ? a : sb > sa ? b : null;
+      graded.push({ wk: +w, i, pick: p[0], pct: p[1], winner, hit: winner == p[0] });
+    });
+  }
+  return { graded, w: graded.filter(g => g.hit).length, l: graded.filter(g => g.winner && !g.hit).length };
+}
 export const oddsPct = (x, done) => done ? (x >= 0.5 ? 'In' : 'Out') : x >= 0.995 ? '>99%' : x < 0.005 ? '<1%' : Math.round(x * 100) + '%';
 // Power rankings through week n, 0–100: half season all-play win %, a quarter actual win %,
 // a quarter all-play win % over the last two weeks (form). Ties go to PF.

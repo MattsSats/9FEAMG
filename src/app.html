@@ -714,7 +714,7 @@ button{font-family:inherit;color:inherit}
               <sc-for list="{{ hero.alerts }}" as="al" hint-placeholder-count="1"><div>⚠ {{ al.t }}</div></sc-for>
             </div>
           </sc-if>
-    <div style="padding:14px 16px 16px"><span style="font-family:'JetBrains Mono';font-weight:700;font-size:12px;color:var(--ink);padding:4px 9px;border-radius:6px;background:var(--surface2);border:1px solid var(--line)">{{ hero.chip }}</span></div>
+    <div style="padding:14px 16px 16px;display:flex;flex-wrap:wrap;gap:6px"><span style="font-family:'JetBrains Mono';font-weight:700;font-size:12px;color:var(--ink);padding:4px 9px;border-radius:6px;background:var(--surface2);border:1px solid var(--line)">{{ hero.chip }}</span><sc-if value="{{ hero.hasPick }}" hint-placeholder-val="{{ false }}"><span style="font-family:'JetBrains Mono';font-weight:700;font-size:12px;color:{{ hero.pickColor }};padding:4px 9px;border-radius:6px;border:1px solid currentColor;white-space:nowrap">{{ hero.pickText }}</span></sc-if></div>
     <div class="shot-footer" style="padding:0 16px 14px"><b>9FEAMG</b><span>{{ shotHero }}</span></div>
   </div>
   <div style="padding:10px 20px 0">
@@ -738,7 +738,7 @@ button{font-family:inherit;color:inherit}
             </div>
           </sc-if>
           <button sc-camel-on-click="{{ mu.open }}" class="hov" style="width:100%;display:flex;justify-content:space-between;align-items:center;gap:8px;min-height:44px;padding:0 16px;border:0;border-top:1px solid var(--line);background:transparent;cursor:pointer;font-family:'JetBrains Mono';font-size:11px">
-            <span style="font-family:'JetBrains Mono';font-weight:700;font-size:12px;color:var(--ink);padding:4px 9px;border-radius:6px;background:var(--surface2);border:1px solid var(--line)">{{ mu.chip }}</span><span style="flex:none;color:var(--accentInk);font-weight:600">Lineups ›</span>
+            <span style="display:flex;flex-wrap:wrap;gap:6px;min-width:0;padding:6px 0"><span style="font-family:'JetBrains Mono';font-weight:700;font-size:12px;color:var(--ink);padding:4px 9px;border-radius:6px;background:var(--surface2);border:1px solid var(--line)">{{ mu.chip }}</span><sc-if value="{{ mu.hasPick }}" hint-placeholder-val="{{ false }}"><span style="font-family:'JetBrains Mono';font-weight:700;font-size:12px;color:{{ mu.pickColor }};padding:4px 9px;border-radius:6px;border:1px solid currentColor;white-space:nowrap">{{ mu.pickText }}</span></sc-if></span><span style="flex:none;color:var(--accentInk);font-weight:600">Lineups ›</span>
           </button>
         </div>
       </sc-for>

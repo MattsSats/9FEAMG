@@ -214,6 +214,12 @@ window.SEASON = {
   },
   // The day each week's previews were written; each line's own time (third field) wins when it has one.
   boothPreviewAt: { 5: '2026-10-07', 6: '2026-10-15' },
+  // The Booth's picks, made with the previews: [pick, win % when picked], one per matchup in schedule
+  // order. The win % is check.js's "Win odds" line before kickoff. The site grades them once the week is
+  // final and keeps the season record.
+  boothPicks: {
+    6: [['Matt', 60], ['Tristan', 62], ['Tony', 68], ['Colin', 69], ['Mr. G', 62]]
+  },
   // Post-SNF lines, one per matchup in the same order: written Sunday after the night game, with
   // what each matchup still needs on Monday. [manager, line, written at].
   boothSnf: {

@@ -43,6 +43,10 @@ const MY_TEAM = (() => { try { const m = localStorage.getItem('9feamg-req-mgr');
 // "Scores as of Thu 10:19 PM" (Central).
 const asOfLabel = iso => { const d = new Date(iso); return isNaN(d) ? '' : 'Scores as of ' + d.toLocaleString('en-US', { weekday: 'short', hour: 'numeric', minute: '2-digit', timeZone: 'America/Chicago' }).replace(',', ''); };
 const PAIRS = D ? D.schedule : {};
+// Win odds for the live week's matchups (matchupOdds in api/_shared.js), by "a|b".
+const WIN = D ? Object.fromEntries((matchupOdds(D) || []).map(o => [o.a + '|' + o.b, o.pa])) : {};
+// The Booth's pick for a matchup: [pick, win % when picked] (boothPicks[week], schedule order).
+const pickOf = (wk, pair) => { const i = (PAIRS[wk] || []).findIndex(p => p[0] == pair[0] && p[1] == pair[1]); return i < 0 ? null : D?.boothPicks?.[wk]?.[i] || null; };
 const PROJ = Object.fromEntries(MGR.map(m => [m, LIVE?.scores?.[m]?.[1] ?? 0]));
 // Parlay request risk levels: total American odds, low to high (null = no top).
 const RISKS = [
@@ -556,11 +560,16 @@ class Component extends DCLogic {
     const lead = A.raw > B.raw ? A.m : B.raw > A.raw ? B.m : null;
     // Lineup alerts, one line per manager: "Pablo: Tetairoa McMillan is on a bye".
     const alerts = [a, b].flatMap(m => { const l = this.lineupAlerts(m, wk); return l.length ? [`${m}: ${l.join('; ')}`] : []; });
+    // Win odds for the live week, and the Booth's pick (graded once the week is final).
+    const pa = live ? WIN[a + '|' + b] : undefined, fav = pa == null ? null : pa >= 0.5 ? a : b, fp = pa == null ? 0 : Math.max(pa, 1 - pa);
+    const pk = pickOf(wk, pair), done = wk <= NF, winner = done ? (A.raw > B.raw ? a : B.raw > A.raw ? b : null) : null;
     return { a: A, b: B, live, alerts: alerts.map(t => ({ t })), hasAlerts: alerts.length > 0,
+      hasPick: !!pk, pickText: pk ? `Booth: ${pk[0]}` + (done ? (winner == pk[0] ? ' ✓' : ' ✗') : '') : '',
+      pickColor: !pk || !done ? 'var(--accentInk)' : winner == pk[0] ? 'var(--pos)' : 'var(--neg)',
       // Column headers: Now (live only) and Proj, or Final once the week is done.
       colNow: live ? 'Now' : '', colScore: live ? 'Proj' : 'Final',
       // The gap in words, leader first: "Pablo +3.55 proj" or "Tony won by 9.04".
-      chip: lead ? (live ? `${lead} +${f2(gap)} proj` : `${lead} won by ${f2(gap)}`) : live ? 'Even on projection' : 'Tied',
+      chip: (lead ? (live ? `${lead} +${f2(gap)} proj` : `${lead} won by ${f2(gap)}`) : live ? 'Even on projection' : 'Tied') + (lead && fav == lead ? ` · ${oddsPct(fp)} to win` : fav ? ` · ${fav} ${oddsPct(fp)} to win` : ''),
       open: () => this.setState({ sheet: { a, b, wk } }) };
   }
   // Live week: how many of a manager's starters haven't finished (not started or still playing).
@@ -665,14 +674,17 @@ class Component extends DCLogic {
     // A fourth field 'claude' marks a line Claude wrote before the Booth writer's pass: " *".
     const boothLines = boothSet[1].map((line, i) => {
       const [label] = boothSet, c = line[3] == 'claude', when = written(line, label), pair = PAIRS[wk]?.[i] || [line[0]];
+      // The Booth's pick rides on the preview (with its odds then) and the recap (graded).
+      const pk = D.boothPicks?.[wk]?.[i], fin = wk <= NF, won = fin && PAIRS[wk]?.[i] ? (([x, y]) => SC[x][wk - 1] > SC[y][wk - 1] ? x : SC[y][wk - 1] > SC[x][wk - 1] ? y : null)(PAIRS[wk][i]) : null;
+      const pickTag = !pk ? '' : label == 'Preview' ? ` · Pick ${pk[0]} ${pk[1]}%` : label == 'Recap' && fin ? ` · Pick ${pk[0]} ${won == pk[0] ? '✓' : '✗'}` : '';
       return { crests: pair.map(m => ({ m, init: INIT[m], color: col(m) })), matchup: pair.join(' vs '),
-        text: line[1] + (c ? ' *' : ''), label: label + (when ? ' · ' + when : ''), draft: c };
+        text: line[1] + (c ? ' *' : ''), label: label + (when ? ' · ' + when : '') + pickTag, draft: c };
     });
     // Same order as the matchup cards: the featured one, then the rest.
     const cardOrder = hasWeek ? [hero, ...matchups].map(x => x.a.m) : [];
     const slotOf = b => { const i = cardOrder.findIndex(m => b.crests.some(c => c.m == m)); return i < 0 ? 99 : i; };
     boothLines.sort((x, y) => slotOf(x) - slotOf(y));
-    const boothWaiting = boothOn && !boothLines.length;
+    const boothWaiting = boothOn && !boothLines.length, PICKS = boothPickRecord(D);
     // What an empty set says: when its lines go up (the live week), or that the week didn't have any.
     const boothEmpty = wk != LW ? `No ${boothSet[0] == 'Post-SNF' ? 'Post-SNF' : boothSet[0].toLowerCase()} lines for Week ${wk}.`
       : boothSet[0] == 'Preview' ? (LIVE_STARTED ? `No preview lines for Week ${wk}.` : `Week ${wk} previews go up before Thursday’s kickoff.`)
@@ -1167,7 +1179,7 @@ class Component extends DCLogic {
       menuWire: this.shareMenu(seasonMode ? 'Wire · season' : 'Wire · Week ' + wireWk, e => this.shareLink(location.origin + (seasonMode ? '/s/wire-season' : '/s/wire-week'), seasonMode ? '9FEAMG · Wire · season' : '9FEAMG · Wire · Week ' + wireWk, e), e => this.share('wire', e)),
       shotWire: seasonMode ? 'Wire · season' : 'Wire · Week ' + wireWk,
       // The Booth: an image of each matchup's newest line (earlier stages stay off the image).
-      boothNote: boothWaiting ? boothEmpty : BOOTH_NOTE[boothSet[0]] || '', hasBoothSets: true,
+      boothNote: (boothWaiting ? boothEmpty : BOOTH_NOTE[boothSet[0]] || '') + (PICKS.w + PICKS.l ? ` The Booth’s picks: ${PICKS.w}–${PICKS.l} this season.` : ''), hasBoothSets: true,
       boothSets: boothAll.map(([label, l]) => ({ label, on: String(label == boothSet[0]), bg: label == boothSet[0] ? 'var(--ink)' : 'transparent', fg: label == boothSet[0] ? 'var(--bg)' : 'var(--muted)', op: l.length || label == boothSet[0] ? 1 : 0.45,
         pick: () => this.setState({ boothSet: { ...this.state.boothSet, [wk]: label } }) })),
       boothShotLabel: `The Booth · Week ${wk} · ${boothSet[0]}`,

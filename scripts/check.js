@@ -3,7 +3,7 @@
 // for the Wire line and lineup alerts. Exits 1 if anything is wrong. Usage: node scripts/check.js
 import { readFileSync } from 'node:fs';
 import vm from 'node:vm';
-import { seasonStats, byStandings, kickoffAt, nflKey, lineupIssues, wireOf, pointsOf, ticketSlug, parlayState, toAmerican, playoffOdds, oddsPct } from '../api/_shared.js';
+import { seasonStats, byStandings, kickoffAt, nflKey, lineupIssues, wireOf, pointsOf, ticketSlug, parlayState, toAmerican, playoffOdds, oddsPct, matchupOdds, boothPickRecord } from '../api/_shared.js';
 
 const read = p => readFileSync(new URL('../' + p, import.meta.url), 'utf8');
 const box = { window: {} }; vm.runInNewContext(read('data/season.js'), box);
@@ -54,6 +54,17 @@ for (const t of rosters.teams) if (!MGR.includes(t.name)) bad.push(`Roster file 
 const out = [];
 const ST = [...st.rows].sort(byStandings);
 out.push('Standings: ' + ST.map((r, i) => `${i + 1}. ${r.m} ${r.w}–${r.l}`).join(', '));
+// Win odds for the live week's matchups (Post-SNF lines quote these), and the Booth's picks.
+const MO = matchupOdds(S);
+if (MO) out.push(`Win odds, Week ${LW}: ` + MO.map(o => `${o.a} ${oddsPct(o.pa)}–${oddsPct(1 - o.pa)} ${o.b}`).join(', '));
+for (const [w, picks] of Object.entries(S.boothPicks || {})) (picks || []).forEach((p, i) => {
+  const pair = S.schedule[w]?.[i];
+  if (!pair) bad.push(`boothPicks[${w}][${i}] has no matchup.`);
+  else if (!pair.includes(p?.[0])) bad.push(`boothPicks[${w}][${i}] picks ${p?.[0]}, who isn't in ${pair.join(' vs ')}.`);
+  else if (!(p[1] >= 1 && p[1] <= 99)) bad.push(`boothPicks[${w}][${i}]: the win % should be 1–99, not ${p[1]}.`);
+});
+{ const R = boothPickRecord(S), open = Object.entries(S.boothPicks || {}).filter(([w]) => +w > NF).flatMap(([w, p]) => p.map(x => `W${w} ${x[0]} ${x[1]}%`));
+  if (R.graded.length || open.length) out.push(`Booth picks: ${R.w}–${R.l} graded${open.length ? ' · open: ' + open.join(', ') : ''}`); }
 // Playoff odds as the site shows them (to check odds quoted in Booth lines against).
 const OD = playoffOdds(S);
 if (!OD) warn.push(`No playoff odds: the schedule needs every week through ${S.regularSeasonWeeks}.`);
