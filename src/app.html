@@ -756,7 +756,7 @@ button{font-family:inherit;color:inherit}
       <sc-if value="{{ hasBoothSets }}" hint-placeholder-val="{{ false }}">
         <div class="no-shot" role="tablist" aria-label="Booth lines" style="display:inline-flex;gap:4px;margin-top:10px;padding:3px;border:1px solid var(--line);border-radius:999px">
           <sc-for list="{{ boothSets }}" as="bs" hint-placeholder-count="2">
-            <button role="tab" aria-selected="{{ bs.on }}" sc-camel-on-click="{{ bs.pick }}" style="min-height:32px;padding:0 12px;border:0;border-radius:999px;background:{{ bs.bg }};color:{{ bs.fg }};font-family:'JetBrains Mono';font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;cursor:pointer">{{ bs.label }}</button>
+            <button role="tab" aria-selected="{{ bs.on }}" sc-camel-on-click="{{ bs.pick }}" style="min-height:32px;padding:0 12px;border:0;border-radius:999px;background:{{ bs.bg }};color:{{ bs.fg }};font-family:'JetBrains Mono';font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;opacity:{{ bs.op }}">{{ bs.label }}</button>
           </sc-for>
         </div>
       </sc-if>

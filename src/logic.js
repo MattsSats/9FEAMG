@@ -649,8 +649,10 @@ class Component extends DCLogic {
     // Thursday), Post-SNF (Sunday, after the night game) and the Recap (after Monday night).
     // Buttons pick the set (newest by default); a sentence under the heading says when it was
     // written, and each line's tag says the day ("PREVIEW · WED", "POST-SNF · SUN 11:06 PM").
-    const boothSets = [['Preview', D.boothPreview?.[wk]], ['Post-SNF', D.boothSnf?.[wk]], ['Recap', D.booth?.[wk]]].filter(([, l]) => l?.length);
-    const boothSet = boothSets.find(([label]) => label == S.boothSet?.[wk]) || boothSets.at(-1) || ['Preview', []];
+    // All three buttons show every week; a set with no lines yet is dimmed and says when they go up.
+    const boothAll = [['Preview', D.boothPreview?.[wk] || []], ['Post-SNF', D.boothSnf?.[wk] || []], ['Recap', D.booth?.[wk] || []]];
+    const boothSets = boothAll.filter(([, l]) => l.length);
+    const boothSet = boothAll.find(([label]) => label == S.boothSet?.[wk]) || boothSets.at(-1) || boothAll[0];
     const BOOTH_NOTE = { Preview: 'Written before Thursday’s kickoff. Numbers are from then.', 'Post-SNF': isFinal ? 'Written after Sunday night, before Monday night’s game.' : 'Written after Sunday night. Monday night is still to play.', Recap: 'Final.' };
     const written = (line, label) => {
       const at = line[2] || (label == 'Preview' && D.boothPreviewAt?.[wk] ? D.boothPreviewAt[wk] + 'T12:00:00-05:00' : null);
@@ -670,7 +672,11 @@ class Component extends DCLogic {
     const cardOrder = hasWeek ? [hero, ...matchups].map(x => x.a.m) : [];
     const slotOf = b => { const i = cardOrder.findIndex(m => b.crests.some(c => c.m == m)); return i < 0 ? 99 : i; };
     boothLines.sort((x, y) => slotOf(x) - slotOf(y));
-    const boothWaiting = boothOn && wk == LW && !boothLines.length;
+    const boothWaiting = boothOn && !boothLines.length;
+    // What an empty set says: when its lines go up (the live week), or that the week didn't have any.
+    const boothEmpty = wk != LW ? `No ${boothSet[0] == 'Post-SNF' ? 'Post-SNF' : boothSet[0].toLowerCase()} lines for Week ${wk}.`
+      : boothSet[0] == 'Preview' ? (LIVE_STARTED ? `No preview lines for Week ${wk}.` : `Week ${wk} previews go up before Thursday’s kickoff.`)
+      : boothSet[0] == 'Post-SNF' ? `Week ${wk}’s Post-SNF lines go up after Sunday night’s game.` : `Week ${wk}’s recaps go up after Monday night’s game.`;
     // Parlay requests (live week only): who's asking, a risk slider, legs, and optional
     // players (their own starters) or a game. A published parlay with request: <manager> fills it.
     const hasReq = !!LW && wk == LW, R = S.req, rk = RISKS[R.risk], rm = S.reqMgr, mine = S.reqs?.[rm];
@@ -1143,7 +1149,7 @@ class Component extends DCLogic {
       hasReq, reqForm, reqList, hasReqList: reqList.length > 0,
       // The live week before its first lines: the heading and when they're coming, so the Booth's
       // column isn't left blank on desktop.
-      showBooth: boothOn, booth: boothLines, hasBooth: boothOn && (boothLines.length > 0 || boothWaiting), boothCanShare: boothLines.length > 0,
+      showBooth: boothOn, booth: boothLines, hasBooth: boothOn && (boothLines.length > 0 || hasWeek), boothCanShare: boothLines.length > 0,
       seasonSub, seasonTiles, standings, playoffLine: `Playoff line · top ${P} of ${MGR.length}`, oddsRows, oddsSub,
       heat, heatHead, heatColsM, heatColsD, heatMinM, heatMinD,
       team, teamPicker,
@@ -1161,8 +1167,8 @@ class Component extends DCLogic {
       menuWire: this.shareMenu(seasonMode ? 'Wire · season' : 'Wire · Week ' + wireWk, e => this.shareLink(location.origin + (seasonMode ? '/s/wire-season' : '/s/wire-week'), seasonMode ? '9FEAMG · Wire · season' : '9FEAMG · Wire · Week ' + wireWk, e), e => this.share('wire', e)),
       shotWire: seasonMode ? 'Wire · season' : 'Wire · Week ' + wireWk,
       // The Booth: an image of each matchup's newest line (earlier stages stay off the image).
-      boothNote: boothWaiting ? (LIVE_STARTED ? `Week ${wk}’s next lines go up after Sunday night’s game.` : `Week ${wk} previews go up before Thursday’s kickoff.`) : BOOTH_NOTE[boothSet[0]] || '', hasBoothSets: boothSets.length > 1,
-      boothSets: boothSets.map(([label]) => ({ label, on: String(label == boothSet[0]), bg: label == boothSet[0] ? 'var(--ink)' : 'transparent', fg: label == boothSet[0] ? 'var(--bg)' : 'var(--muted)',
+      boothNote: boothWaiting ? boothEmpty : BOOTH_NOTE[boothSet[0]] || '', hasBoothSets: true,
+      boothSets: boothAll.map(([label, l]) => ({ label, on: String(label == boothSet[0]), bg: label == boothSet[0] ? 'var(--ink)' : 'transparent', fg: label == boothSet[0] ? 'var(--bg)' : 'var(--muted)', op: l.length || label == boothSet[0] ? 1 : 0.45,
         pick: () => this.setState({ boothSet: { ...this.state.boothSet, [wk]: label } }) })),
       boothShotLabel: `The Booth · Week ${wk} · ${boothSet[0]}`,
       menuBooth: this.shareMenu('The Booth · Week ' + wk, e => this.shareLink(location.origin + '/s/booth', '9FEAMG · The Booth', e), e => this.share('booth', e)),
