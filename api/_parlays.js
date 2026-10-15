@@ -6,14 +6,19 @@ import vm from 'node:vm';
 import { readData } from './_yahoo.js';
 import { kickoffAt, ticketSlug, onTicket, toAmerican, hitChance, pct, parlayState, mergeYahoo } from './_shared.js';
 
-export async function loadSeason(origin) {
+// data/season.js alone, without the Yahoo sync (api/league.js only needs the NFL schedule).
+export async function loadSeasonFile(origin) {
   const res = await fetch(new URL('/data/season.js', origin), { cache: 'no-store' });
   if (!res.ok) throw new Error('season.js ' + res.status);
   const sandbox = { window: {} };
   vm.runInNewContext(await res.text(), sandbox, { timeout: 1000 });
+  return sandbox.window.SEASON;
+}
+export async function loadSeason(origin) {
+  const season = await loadSeasonFile(origin);
   let yahoo = null;
   try { yahoo = await readData(); } catch { /* not connected yet */ }
-  return mergeYahoo(sandbox.window.SEASON, yahoo);
+  return mergeYahoo(season, yahoo);
 }
 
 export const anchorFor = ticketSlug;

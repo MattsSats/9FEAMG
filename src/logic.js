@@ -93,11 +93,11 @@ const SHOT_LIB = {
   integrity: 'sha384-Tha/42qsYmpYmQ07pX+nJzkKumO0BzKJxK/uzVc7xyBQxVCUgQBhQIG8L7vXK+9C'
 };
 const ORD = { QB: 0, RB: 1, WR: 2, TE: 3, WRT: 4, K: 5, DEF: 6 };
-const MONS = Object.keys(MON);
 const f1 = n => n.toFixed(1), f2 = n => n.toFixed(2);
 const sgn = n => n > 0 ? '+' + n.toFixed(2) : n < 0 ? '−' + Math.abs(n).toFixed(2) : '0.00';
 const ord = n => n + (n % 10 == 1 && n != 11 ? 'st' : n % 10 == 2 && n != 12 ? 'nd' : n % 10 == 3 && n != 13 ? 'rd' : 'th');
-const shortDate = d => MONS[d.getMonth()] + ' ' + d.getDate();
+// "Oct 14", in Central wherever the viewer is.
+const shortDate = d => d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: 'America/Chicago' });
 // One tap in a ticket's history: "Tony is on it · Fri 8:14 PM" (owners "placed it").
 const tapLine = (e, owners) => {
   const what = { on: owners.includes(e.m) ? 'placed it' : 'is on it', off: owners.includes(e.m) ? 'unmarked placed' : 'took back I’m on it', pass: 'didn’t bet it', unpass: 'undid didn’t bet' }[e.a] || e.a;
@@ -154,7 +154,7 @@ class Component extends DCLogic {
   state = { tab: this.props.startTab ?? 'Gameday', week: HOME_WK, theme: null, sheet: null, team: MY_TEAM || MGR[0], wire: 'This week', draftMode: 'By round', draftRound: 1, draftTeam: MGR[0], rosters: null, draft: null, tx: null, loaded: false,
     // Parlay request form: who's asking is remembered on this device.
     reqMgr: MY_TEAM, teamSheet: null, reqOpen: false, shareSheet: null, newScores: false, compact: false,
-    req: { risk: 1, legs: 'any', players: [], playerLegs: {}, game: '', sending: false }, tails: {}, passes: {}, tlog: {}, tailBusy: null, reqs: null };
+    req: { risk: 1, legs: 'any', players: [], playerLegs: {}, game: '', sending: false }, tails: {}, passes: {}, tlog: {}, tailsDone: {}, tailBusy: null, reqs: null };
   componentDidMount() {
     // Keyboard: Enter or Space activates clickable rows (role="button"); Escape closes the lineup sheet.
     document.addEventListener('keydown', e => {
@@ -233,20 +233,17 @@ class Component extends DCLogic {
     // Back/forward and typed hashes (popstate fires for both).
     window.addEventListener('popstate', () => this.openHash(true));
   }
-  // Game days (Thursday, Sunday, Monday and the early hours after): check season.js and the Yahoo
-  // feed every 3 minutes. New numbers refresh the page in place unless someone is mid-something,
-  // in which case a "New scores" button does it.
+  // Game days (any day with a kickoff on the NFL schedule, Saturdays and Christmas included, and
+  // the early hours after; api/_shared.js isGameDay): check season.js and the Yahoo feed every
+  // 3 minutes. New numbers refresh the page in place unless someone is mid-something, in which
+  // case a "New scores" button does it.
   pollScores() {
     if (!LW) return;
     const read = () => Promise.all(['/data/season.js', '/api/league?format=js'].map(u => fetch(u, { cache: 'no-store' }).then(r => r.ok ? r.text() : '').catch(() => ''))).then(a => a.join('\n'));
-    const gameDay = () => {
-      const d = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/Chicago' })), day = d.getDay(), h = d.getHours();
-      return [4, 0, 1].includes(day) || ([5, 2].includes(day) && h < 2);
-    };
     let base = null;
     read().then(t => { base = t; });
     setInterval(async () => {
-      if (base == null || document.hidden || !gameDay()) return;
+      if (base == null || document.hidden || !isGameDay(D)) return;
       const t = await read();
       if (!t || t == base) return;
       base = t;
@@ -289,11 +286,15 @@ class Component extends DCLogic {
     fetch('/api/requests?week=' + LW, { cache: 'no-store' }).then(r => r.ok ? r.json() : null)
       .then(d => d && this.setState({ reqs: d.requests || {} })).catch(() => {});
   }
-  // Who's on each ticket (/api/tails), for every week that has tickets (or just one).
+  // Who's on each ticket (/api/tails), for every week that has tickets (or just one). tailsDone
+  // marks the weeks that have answered (or failed), so the ledger waits for all of them.
   loadTails(only) {
-    for (const w of only ? [only] : Object.keys(D?.parlays || {}))
+    for (const w of only ? [only] : Object.keys(D?.parlays || {})) {
+      const done = () => ({ tailsDone: { ...this.state.tailsDone, [w]: true } });
       fetch('/api/tails?week=' + w, { cache: 'no-store' }).then(r => r.ok ? r.json() : null)
-        .then(d => d && this.setState({ tails: { ...this.state.tails, [w]: d.tails || {} }, passes: { ...this.state.passes, [w]: d.passes || {} }, tlog: { ...this.state.tlog, [w]: d.log || {} } })).catch(() => {});
+        .then(d => this.setState({ ...done(), ...(d ? { tails: { ...this.state.tails, [w]: d.tails || {} }, passes: { ...this.state.passes, [w]: d.passes || {} }, tlog: { ...this.state.tlog, [w]: d.log || {} } } : {}) }))
+        .catch(() => this.setState(done()));
+    }
   }
   // "I'm on it": the first tap asks who you are (remembered with the request form's pick).
   // "Didn't bet it" (pass) goes through the same endpoint; only the ticket's owner or requester can.
@@ -574,7 +575,7 @@ class Component extends DCLogic {
   lineupAlerts(m, wk) {
     if (wk != LW) return [];
     const { bye, out, empty } = lineupIssues(D, this.players(m).filter(p => p.slot == 'starter'), wk, LIVEPTS);
-    const lines = [...bye.map(p => `${p.name} is on a bye`), ...out.map(p => `${p.name} is listed Out`)];
+    const lines = [...bye.map(p => `${p.pos == 'DEF' ? p.name + ' defense' : p.name} is on a bye`), ...out.map(p => `${p.name} is listed Out`)];
     // Empty slots only once the rosters have loaded (before then every lineup looks empty).
     const names = this.state.rosters ? empty.map(k => SLOT_NAME[k]) : [];
     if (names.length) lines.push(names.length == 1 ? `Empty ${names[0]} slot` : `${names.length} empty slots (${[...new Set(names)].join(', ')})`);
@@ -583,7 +584,8 @@ class Component extends DCLogic {
   startersLeft(m) {
     const st = this.players(m).filter(p => p.slot == 'starter');
     if (!st.length) return null;
-    return st.filter(p => LIVEPTS[p.name] == null || PLAYING.has(p.name)).length;
+    // A starter on bye has nothing left to play.
+    return st.filter(p => !onBye(p.nfl, LW) && (LIVEPTS[p.name] == null || PLAYING.has(p.name))).length;
   }
   // A week's caption. Strings always show; { pair, text } only when that pair is featured.
   // A live week whose featured matchup has no caption gets a plain one from the scores.
@@ -876,21 +878,24 @@ class Component extends DCLogic {
     });
     const money = n => (n < 0 ? '−' : n > 0 ? '+' : '') + '$' + Math.abs(n).toFixed(2), moneyCol = n => n > 0 ? 'var(--pos)' : n < 0 ? 'var(--neg)' : 'var(--muted)';
     const bets = ledger.w + ledger.l + ledger.open;
-    const ledgerTiles = [
+    // Until every week's taps are in, season.js alone undercounts, so the numbers wait.
+    const tailsReady = Object.keys(D.parlays || {}).every(w => S.tailsDone?.[w]);
+    const ledgerTiles = tailsReady ? [
       { label: 'RECORD', value: `${ledger.w}–${ledger.l}`, color: 'var(--ink)' },
       { label: 'NET', value: money(ledger.net), color: moneyCol(ledger.net) },
-      { label: 'OPEN', value: String(ledger.open), color: 'var(--ink)' }];
+      { label: 'OPEN', value: String(ledger.open), color: 'var(--ink)' }]
+      : ['RECORD', 'NET', 'OPEN'].map(label => ({ label, value: '—', color: 'var(--muted)' }));
     // Latest taps: the week's last six taps across every ticket, newest first, late ones marked.
     const tapTickets = Object.fromEntries((D.parlays?.[wk] || []).map(p => [ticketSlug(wk, p), p]));
     const latestTaps = Object.entries(S.tlog?.[wk] || {}).flatMap(([slug, es]) => tapTickets[slug] ? es.map(e => ({ e, p: tapTickets[slug], slug })) : [])
       .sort((x, y) => String(y.e.at).localeCompare(String(x.e.at))).slice(0, 6)
       .map(({ e, p, slug }) => ({ t: tapLine(e, p.owners || [p.owner]), ticket: p.title ?? p.owner + '’s parlay', href: '#' + slug, color: e.late ? 'var(--accentInk)' : 'var(--muted)' }));
-    const ledgerSub = `${bets} ${bets == 1 ? 'bet' : 'bets'} · $10 each · counts tickets someone placed or tapped I’m on it; Paper is the rest` + (ledger.unpriced ? ` · ${ledger.unpriced} cashed without a line` : '');
+    const ledgerSub = !tailsReady ? 'Loading who’s on each ticket…' : `${bets} ${bets == 1 ? 'bet' : 'bets'} · $10 each · counts tickets someone placed or tapped I’m on it; Paper is the rest` + (ledger.unpriced ? ` · ${ledger.unpriced} cashed without a line` : '');
     // Best net first; each row: crest, record, open count, net.
     const ledgerOwners = Object.values(byOwner).sort((a, b) => b.net - a.net || b.w - a.w || a.l - b.l).map(o => ({
       m: o.m, init: INIT[o.m] ?? o.m.slice(0, 2).toUpperCase(), color: ownerCol(o.m), rec: `${o.w}–${o.l}`,
       open: o.open ? o.open + ' open' : '', net: money(o.net), netColor: moneyCol(o.net) }));
-    const hasPaper = paper.w + paper.l + paper.open > 0;
+    const hasPaper = tailsReady && paper.w + paper.l + paper.open > 0;
     const paperLine = `${paper.w}–${paper.l}` + (paper.open ? ` · ${paper.open} open` : '');
     const weekStatus = wk == LW ? `Week ${wk} · ${LIVE.status}` : NEXT && wk == NEXT.week ? `Week ${wk} · ${NEXT.dates}` : `Week ${wk} · Final`;
 
@@ -969,7 +974,8 @@ class Component extends DCLogic {
     const srcTotal = teamAcq.reduce((t, a) => t + a.started, 0), srcOf = h => teamAcq.filter(a => h.includes(a.how)).reduce((t, a) => t + a.started, 0);
     const srcParts = [['Draft', ['draft'], 'var(--ink)'], ['Wire', ['add'], 'var(--accent)'], ['Trades', ['trade'], 'var(--muted)']]
       .map(([label, h, color]) => ({ label, pts: srcOf(h), color })).filter(x => x.pts > 0)
-      .map(x => ({ ...x, w: (x.pts / srcTotal * 100) + '%', text: x.label + ' ' + Math.round(x.pts / srcTotal * 100) + '%' }));
+      // A sliver that rounds to 0% (or the rest to 100%) reads <1% (>99%), since it isn't nothing.
+      .map(x => ({ ...x, w: (x.pts / srcTotal * 100) + '%', text: x.label + ' ' + (r => r == 0 ? '<1' : r == 100 && x.pts < srcTotal ? '>99' : r)(Math.round(x.pts / srcTotal * 100)) + '%' }));
     const srcAll = !!S.srcAll, SRC_N = 10;
     const src = { has: srcTotal > 0, sub: 'Started points · through Week ' + boxWeeks, parts: srcParts,
       rows: (srcAll ? teamAcq : teamAcq.slice(0, SRC_N)).map(a => ({ player: a.player, tag: howTag(a) + ' · ' + a.pos, wire: a.how != 'draft',
@@ -1116,7 +1122,7 @@ class Component extends DCLogic {
       compactCls: S.compact ? 'app compact' : 'app',
       deskTabs: tabs,
       weekChips, isW5: isNext, nextTitle, nextNote, hasWeek, hero: hero || blank, matchups, heroLabel: heroMine ? 'Your matchup' : wk == LW ? 'Matchup of the week' : 'Closest finish', heroCaption: this.heroCaption(wk, hero),
-      weekStatus, parlays: parlays.filter(x => group(x) == 0), parlaysMore: parlays.filter(x => group(x) > 0), hasParlays: parlays.length > 0, hasLedger: allParlays.length > 0, ledgerTiles, ledgerSub, ledgerOwners, hasLedgerRows: ledgerOwners.length > 0, hasPaper, paperLine, latestTaps, hasLatestTaps: latestTaps.length > 0,
+      weekStatus, parlays: parlays.filter(x => group(x) == 0), parlaysMore: parlays.filter(x => group(x) > 0), hasParlays: parlays.length > 0, hasLedger: allParlays.length > 0, ledgerTiles, ledgerSub, ledgerOwners, hasLedgerRows: tailsReady && ledgerOwners.length > 0, hasPaper, paperLine, latestTaps, hasLatestTaps: latestTaps.length > 0,
       shareLedger: e => this.share('ledger', e), ledgerLabel: S.sharing == 'ledger' ? '…' : 'Image',
       linkLedger: e => this.shareLink(location.origin + '/s/ledger', '9FEAMG · Parlay ledger', e), shotLedger: `Parlay ledger · through week ${LW ?? NF}`,
       hasReq, reqForm, reqList, hasReqList: reqList.length > 0,

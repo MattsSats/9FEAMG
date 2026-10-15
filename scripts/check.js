@@ -3,7 +3,7 @@
 // for the Wire line and lineup alerts. Exits 1 if anything is wrong. Usage: node scripts/check.js
 import { readFileSync } from 'node:fs';
 import vm from 'node:vm';
-import { seasonStats, byStandings, kickoffAt, lineupIssues, wireOf, pointsOf, ticketSlug, parlayState, toAmerican } from '../api/_shared.js';
+import { seasonStats, byStandings, kickoffAt, nflKey, lineupIssues, wireOf, pointsOf, ticketSlug, parlayState, toAmerican } from '../api/_shared.js';
 
 const read = p => readFileSync(new URL('../' + p, import.meta.url), 'utf8');
 const box = { window: {} }; vm.runInNewContext(read('data/season.js'), box);
@@ -31,13 +31,15 @@ for (const key of ['booth', 'boothSnf', 'boothPreview']) for (const [w, lines] o
   else if (!pair.includes(m)) bad.push(`${key}[${w}] line ${i + 1} is tagged ${m} but matchup ${i + 1} is ${pair.join(' vs ')}.`);
 });
 // Parlays: unique links, legs with a readable kickoff and a game this week, and a price.
+// Games compare on their teams (nflKey), since weeks spell Washington WSH or WAS.
+const matchupKey = g => { const m = String(g || '').match(/·\s*(\S+)\s*@\s*(\S+)/); return m ? nflKey(m[1]) + '@' + nflKey(m[2]) : null; };
 for (const [w, list] of Object.entries(S.parlays || {})) {
   const slugs = list.map(p => ticketSlug(w, p));
   slugs.forEach((s, i) => { if (slugs.indexOf(s) != i) bad.push(`Two week ${w} tickets share the link ${s}.`); });
   for (const p of list) {
     for (const l of p.legs) {
       if (!kickoffAt(S, +w, l.game)) bad.push(`${ticketSlug(w, p)}: leg "${l.text}" has no readable kickoff ("${l.game}").`);
-      else if (S.nfl?.[w] && !S.nfl[w].games.some(g => g.split(' · ')[1] == String(l.game).split(' · ')[1]) && / · /.test(l.game)) warn.push(`${ticketSlug(w, p)}: "${l.game}" isn't in nfl[${w}].`);
+      else if (S.nfl?.[w] && !S.nfl[w].games.some(g => matchupKey(g) == matchupKey(l.game)) && / · /.test(l.game)) warn.push(`${ticketSlug(w, p)}: "${l.game}" isn't in nfl[${w}].`);
       if (!['open', 'hit', 'miss', 'push', undefined].includes(l.status)) bad.push(`${ticketSlug(w, p)}: leg "${l.text}" has status "${l.status}".`);
     }
     const ps = parlayState(p);

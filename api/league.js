@@ -7,16 +7,22 @@
 import { waitUntil } from '@vercel/functions';
 import { readData, readJson, writeJson } from './_yahoo.js';
 import { sync } from './yahoo/sync.js';
+import { loadSeasonFile } from './_parlays.js';
+import { isGameTime } from './_shared.js';
 
 const FRESH = 10 * 60e3, MARK = 'yahoo/refresh.json';
 
-// Game time (Central): Thursday night, all Sunday, Monday night, and the hour after each.
-function gameTime(now = new Date()) {
-  const d = new Date(now.toLocaleString('en-US', { timeZone: 'America/Chicago' })), day = d.getDay(), h = d.getHours();
-  return (day == 4 && h >= 19) || (day == 5 && h < 1) || (day == 0 && h >= 8) || (day == 1 && (h < 1 || h >= 19)) || (day == 2 && h < 1);
+// Game time (api/_shared.js isGameTime): 15 minutes before each kickoff on data/season.js's NFL
+// schedule until 5 hours after it, so Saturday and Christmas games count. The schedule is read at
+// most every 10 minutes per instance.
+let season = null, seasonAt = 0;
+async function gameTime(origin) {
+  if (!season || Date.now() - seasonAt > FRESH) { season = await loadSeasonFile(origin); seasonAt = Date.now(); }
+  return isGameTime(season);
 }
 
 async function refresh(origin) {
+  if (!await gameTime(origin)) return;
   const mark = await readJson(MARK).catch(() => null);
   if (mark?.at && Date.now() - mark.at < FRESH) return;
   await writeJson(MARK, { at: Date.now() });
@@ -28,7 +34,7 @@ export default {
     const url = new URL(request.url), js = url.searchParams.get('format') == 'js';
     let data = null;
     try { data = await readData(); } catch { /* not connected yet */ }
-    if (data?.syncedAt && gameTime() && Date.now() - Date.parse(data.syncedAt) > FRESH) waitUntil(refresh(url.origin).catch(() => {}));
+    if (data?.syncedAt && Date.now() - Date.parse(data.syncedAt) > FRESH) waitUntil(refresh(url.origin).catch(() => {}));
     const body = js ? `window.YAHOO=${JSON.stringify(data).replace(/</g, '\\u003c')};` : JSON.stringify(data);
     return new Response(body, {
       headers: {

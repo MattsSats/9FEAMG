@@ -163,15 +163,16 @@ const crest = (mg, size) => h('div', { position: 'relative', width: size, height
 // final scores for a finished one.
 // One short lineup alert per team for the live week, from api/_shared.js (the site's own rules):
 // empty slots and starters on bye until the week's last kickoff, a starter listed Out until his game.
+// It shows under the team's own row, so it has no name; og:description adds it.
 function lineupAlert(season, rosters, m, wk) {
   const team = rosters?.teams?.find(t => t.name == m);
   if (!team || season.live?.week != wk) return '';
   const { bye, out, empty } = lineupIssues(season, team.players.filter(p => p.slot == 'starter'), wk, season.live.playerPoints || {});
-  const bits = [];
-  if (empty.length) bits.push(`${empty.length} empty lineup slot${empty.length == 1 ? '' : 's'}`);
-  if (bye.length) bits.push(bye.length == 1 ? `${bye[0].name} on bye` : `${bye.length} starters on bye`);
+  const bits = [], slots = empty.map(k => k == 'WRT' ? 'FLEX' : k);
+  if (slots.length) bits.push(slots.length == 1 ? `Empty ${slots[0]} slot` : `${slots.length} empty slots (${[...new Set(slots)].join(', ')})`);
+  if (bye.length) bits.push(bye.length == 1 ? `${bye[0].pos == 'DEF' ? bye[0].name + ' defense' : bye[0].name} on bye` : `${bye.length} starters on bye`);
   if (out.length) bits.push(out.length == 1 ? `${out[0].name} listed Out` : `${out.length} starters listed Out`);
-  return bits.length ? `${m}: ${bits.join(' · ')}` : '';
+  return bits.join(' · ');
 }
 
 function matchupOf(season, st, wk, aSlug, bSlug, rosters) {
@@ -249,7 +250,7 @@ async function matchupRoute(url, request, m) {
   const name = m[0], e = escapeHtml;
   const title = `${M.a.m} vs ${M.b.m} · Week ${wk}${M.live ? ' · live' : ' · final'} · 9FEAMG`;
   const score = s => M.live ? `${s.m} ${s.now.toFixed(2)} now, ${s.score.toFixed(2)} projected` : `${s.m} ${s.score.toFixed(2)}`;
-  const desc = `${score(M.a)}; ${score(M.b)}. ${M.chip}.` + [M.a.alert, M.b.alert].filter(Boolean).map(t => ' ⚠ ' + t + '.').join('') + (M.booth ? ` ${M.boothLabel}: ${M.booth}` : '');
+  const desc = `${score(M.a)}; ${score(M.b)}. ${M.chip}.` + [M.a, M.b].filter(s => s.alert).map(s => ` ⚠ ${s.m}: ${s.alert}.`).join('') + (M.booth ? ` ${M.boothLabel}: ${M.booth}` : '');
   const img = new URL(`/api/section?name=${name}&img=1&v=${hash(JSON.stringify([M.a.now, M.a.score, M.b.now, M.b.score, M.asOf, M.a.alert, M.b.alert, M.boothLabel, M.booth]))}`, url.origin).href;
   return new Response(`<!doctype html><html><head><meta charset="utf-8">
 <title>${e(title)}</title>

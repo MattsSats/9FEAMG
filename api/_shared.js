@@ -9,8 +9,10 @@
 export const MON = { Jan: 0, Feb: 1, Mar: 2, Apr: 3, May: 4, Jun: 5, Jul: 6, Aug: 7, Sep: 8, Oct: 9, Nov: 10, Dec: 11 };
 // Days from the week's Thursday. A Wednesday game (the opener, Christmas) is the day before it.
 const KICK_DAYS = { Wed: -1, Thu: 0, Fri: 1, Sat: 2, Sun: 3, Mon: 4, Tue: 5 };
-// Central Daylight Time until the first Sunday of November (month 0-based).
-const isCDT = (y, mo, d) => mo < 10 || (mo == 10 && d < 1 + ((7 - new Date(Date.UTC(y, 10, 1)).getUTCDay()) % 7));
+// Central Daylight Time from the second Sunday of March until the first Sunday of November
+// (month 0-based), so the January weeks (17 and 18) are Standard Time.
+const nthSun = (y, mo, n) => 1 + ((7 - new Date(Date.UTC(y, mo, 1)).getUTCDay()) % 7) + 7 * (n - 1);
+const isCDT = (y, mo, d) => (mo > 2 && mo < 10) || (mo == 2 && d >= nthSun(y, 2, 2)) || (mo == 10 && d < nthSun(y, 10, 1));
 // A game's kickoff as a Date, from its day and Central time ('Sun 12:00 PM · CHI @ GB'),
 // counted from that week's Thursday.
 export function kickoffAt(season, week, game) {
@@ -21,24 +23,40 @@ export function kickoffAt(season, week, game) {
   const h = (+m[2] % 12) + (m[4] == 'PM' ? 12 : 0), ymd = d.toISOString().slice(0, 10);
   return new Date(`${ymd}T${String(h).padStart(2, '0')}:${m[3]}:00${isCDT(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate()) ? '-05:00' : '-06:00'}`);
 }
-// A transaction time ("Oct 9, 1:39 pm", Central) as a Date, wherever the code runs.
+// A transaction time ("Oct 9, 1:39 pm", Central) as a Date, wherever the code runs. Yahoo leaves
+// the year off, so January to June moves belong to the year after the season's.
 export function parseCT(s, year) {
   const m = String(s || '').match(/(\w+) (\d+), (\d+):(\d+) (am|pm)/);
   if (!m) return new Date(Date.UTC(year, 8, 1));
   let h = +m[3] % 12; if (m[5] == 'pm') h += 12;
-  const mo = MON[m[1]], d = +m[2];
-  return new Date(Date.UTC(year, mo, d, h + (isCDT(year, mo, d) ? 5 : 6), +m[4]));
+  const mo = MON[m[1]], d = +m[2], y = mo < 6 ? year + 1 : year;
+  return new Date(Date.UTC(y, mo, d, h + (isCDT(y, mo, d) ? 5 : 6), +m[4]));
 }
 // When a week is over: its last kickoff (Monday night when the schedule isn't on file) plus 3.5 hours.
 export function weekEndAt(season, w) {
   const ks = (season.nfl?.[w]?.games || []).map(g => kickoffAt(season, w, g)?.getTime()).filter(Boolean);
   return new Date((ks.length ? Math.max(...ks) : kickoffAt(season, w, 'Mon 7:15 PM').getTime()) + 3.5 * 36e5);
 }
+// The NFL regular season's weeks: the fantasy playoffs (15 to 17) run past regularSeasonWeeks.
+const NFL_WEEKS = 18;
 // The fantasy week a moment falls in, and when it started (the end of the week before).
 export function fantasyWeekAt(season, now = Date.now()) {
-  let wk = 1; while (wk < season.regularSeasonWeeks && now >= weekEndAt(season, wk).getTime()) wk++;
+  let wk = 1; while (wk < NFL_WEEKS && now >= weekEndAt(season, wk).getTime()) wk++;
   return { wk, start: wk > 1 ? weekEndAt(season, wk - 1) : new Date(Date.UTC(season.year, 7, 1)) };
 }
+// Game days, for polling: a Central day with a kickoff in this fantasy week or the last one,
+// until 2 AM the next morning. Weeks without a schedule on file use the usual Thursday,
+// Sunday and Monday slots; weeks 15 to 17 add Saturdays, and Christmas can fall on any day.
+const USUAL_KICKS = ['Thu 7:15 PM', 'Sun 8:30 AM', 'Sun 12:00 PM', 'Sun 3:25 PM', 'Sun 7:20 PM', 'Mon 7:15 PM'];
+const kickoffsAround = (season, now) => { const { wk } = fantasyWeekAt(season, now);
+  return [wk - 1, wk].filter(w => w >= 1).flatMap(w => (season.nfl?.[w]?.games?.length ? season.nfl[w].games : USUAL_KICKS).map(g => kickoffAt(season, w, g)?.getTime()).filter(Boolean)); };
+const ctDay = t => new Date(t).toLocaleDateString('en-CA', { timeZone: 'America/Chicago' });
+export function isGameDay(season, now = Date.now()) {
+  const today = ctDay(now - 2 * 36e5);
+  return kickoffsAround(season, now).some(k => ctDay(k) == today);
+}
+// Game time, for the server's Yahoo refresh: 15 minutes before a kickoff until 5 hours after it.
+export const isGameTime = (season, now = Date.now()) => kickoffsAround(season, now).some(k => now >= k - 15 * 6e4 && now < k + 5 * 36e5);
 
 // ---- NFL schedule: a team's game this week, and byes ----
 // Roster files spell a few teams differently (Was/WSH, Jac/JAX), so compare normalized.
