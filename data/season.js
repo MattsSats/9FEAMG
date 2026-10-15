@@ -226,14 +226,14 @@ window.SEASON = {
     ]
   },
   boothPreview: {
-    // Week 6: written by Claude at Matt's request (Thu Oct 15, before TNF), from Yahoo's Wed 11:23 PM
-    // projections; marked 'claude' until the writer's versions replace them.
+    // Week 6: the Booth's pass (done by Claude agents at Matt's request, Thu Oct 15, before TNF) on
+    // Claude's drafts, from Yahoo's Wed 11:23 PM projections and the season math through Week 5.
     6: [
-      ['Jerger', 'Jerger has won three straight with a 21–24 all-play record, and Matt is projected to win 118.97–110.75. 5th vs. 6th on the playoff line, and the streak has been living on credit.', '2026-10-15T00:15-05:00', 'claude'],
-      ['Tristan', 'Tristan cut the only backup QB and is riding Lamar, tagged Q, into a game projected 111.88–102.81 over Pablo. Bold move for a team on a two-game skid.', '2026-10-15T00:15-05:00', 'claude'],
-      ['Tony', 'First place draws last in points scored: Tony, with the league’s fewest points against (446.12), gets DLin. Projected 115.49–101.35, Tony. The schedule keeps delivering.', '2026-10-15T00:15-05:00', 'claude'],
-      ['Kurt', 'Kurt sets the league’s most efficient lineups (94.3%) and, as of Thursday, has nobody at kicker. Colin is projected to win 116.51–101.31. The one lineup Kurt forgot to set.', '2026-10-15T00:15-05:00', 'claude'],
-      ['Andy', 'Last-place Mr. G is projected to beat Andy 109.60–99.78, because Andy is starting waiver pickup Winston (14.63) over Lawrence (17.88). Gibbs is on bye, and so is the gibbing.', '2026-10-15T00:15-05:00', 'claude']
+      ['Jerger', 'Jerger has won three straight with a 21–24 all-play record. In 5th vs. 6th, Matt is projected to win 118.97–110.75. That streak has been living on credit.', '2026-10-15T00:35-05:00'],
+      ['Tristan', 'Tristan cut backup QB Brissett on Wednesday for Germie Bernard, so Lamar, tagged Q, is Squirtle Squad’s only QB. Projected 111.88–102.81 over Pablo, if the tag behaves.', '2026-10-15T00:35-05:00'],
+      ['DLin', 'Pre-kickoff playoff odds give Tony 97% and DLin 24%, and Yahoo projects Tony 115.49–101.35. The projections lied about DLin last week. This time DLin needs them to.', '2026-10-15T00:35-05:00'],
+      ['Kurt', 'As of Wednesday night, Kurt’s K slot is empty and Mevis is on the bench, projected for 0.00. Colin is projected to win 116.51–101.31. The league’s best lineup efficiency (94.3%) has a hole in it.', '2026-10-15T00:35-05:00'],
+      ['Andy', 'Last-place Mr. G is projected to beat Andy 109.60–99.78, and Andy is helping by starting waiver pickup Winston (14.63) over Lawrence (17.88). Gibbs is on bye, and so is the gibbing.', '2026-10-15T00:35-05:00']
     ],
     5: [
       ['Matt', 'The 1–3 bowl, between the two unluckiest teams in the league: Kurt at −1.00 and Matt at −0.89. Projected 115.63–100.37, Matt. “There is no 2nd best” is 9th.', '2026-10-07T08:54-05:00'],
