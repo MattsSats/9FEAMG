@@ -60,7 +60,7 @@ window.SEASON = {
   // The week in progress. Set to null between weeks.
   live: {
     week: 6,
-    status: 'Week 6 · projections · Thursday SEA @ DEN',
+    status: 'Kicks off Thursday · SEA @ DEN, 7:15 PM',
     // When these numbers were pulled from Yahoo (Central); shows as "Scores as of Thu 10:19 PM".
     asOf: '2026-10-14T22:40:00-05:00',
     // [current points, projected final]
@@ -82,7 +82,7 @@ window.SEASON = {
 
   // The NFL week: every game ('Sun 12:00 PM · CHI @ GB', kickoff Central, same form as parlay legs)
   // and the teams on bye. Lineups use it for kickoff times and bye/empty-slot alerts.
-  // Week 5 from ESPN's scoreboard, Fri Oct 9.
+  // Weeks 1-6 from ESPN's scoreboard; Week 6 re-checked against it Wed Oct 14.
   nfl: {
     1: {
       games: ['Wed 7:20 PM · NE @ SEA', 'Thu 7:35 PM · SF @ LAR', 'Sun 12:00 PM · TB @ CIN', 'Sun 12:00 PM · NO @ DET',

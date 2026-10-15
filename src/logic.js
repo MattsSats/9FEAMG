@@ -28,11 +28,11 @@ const NEXT = D ? D.next : null;
 const LIVEPTS = LIVE?.playerPoints || {};
 // Players still on the field: their points are so far, not final.
 const PLAYING = new Set(LIVE?.inProgress || []);
+// The live week has points on the board (until then it's a preview: projections, "Week 6 · Preview").
+const LIVE_STARTED = !!LIVE && (Object.keys(LIVEPTS).length > 0 || Object.values(LIVE.scores || {}).some(s => s[0] > 0));
 // Gameday opens on the week that just finished through Tuesday (Monday night's results), then
 // on the live week from Wednesday, or sooner once it has points on the board.
-const LIVE_STARTED = !!LIVE && (Object.keys(LIVEPTS).length > 0 || Object.values(LIVE.scores || {}).some(s => s[0] > 0)
-  || Date.now() >= (kickoffAt(D, LIVE.week, 'Wed 12:00 AM')?.getTime() ?? Infinity));
-const HOME_WK = LW && (LIVE_STARTED || !NF) ? LW : NF;
+const HOME_WK = LW && (LIVE_STARTED || !NF || Date.now() >= (kickoffAt(D, LW, 'Wed 12:00 AM')?.getTime() ?? Infinity)) ? LW : NF;
 const PPROJ = D?.projections || {};
 // "Your team": the manager this phone picked (request form, "I'm on it" or the Gameday prompt).
 const MY_TEAM = (() => { try { const m = localStorage.getItem('9feamg-req-mgr'); return MGR.includes(m) ? m : null; } catch { return null; } })();
