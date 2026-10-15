@@ -443,6 +443,8 @@ button{font-family:inherit;color:inherit}
 .sec-btns{display:flex;gap:6px}
 .sec-cap{grid-column:1/-1;font-family:'JetBrains Mono';font-size:11px;color:var(--muted)}
 @media (max-width:440px){.hide-xs{display:none}}
+/* Phones: the header's three buttons fit in 360px (no sideways scroll before a team is picked). */
+@media (max-width:420px){.hdr-btns button+button{padding-left:10px!important;padding-right:10px!important}.hdr-btns .pick{padding:0 2px!important}}
 /* Wire on phones: the FAAB and activity charts come before the long list of moves. */
 .wire-cols{display:flex;flex-direction:column}
 .act-row{display:grid;grid-template-columns:60px minmax(0,1fr) 30px 36px;gap:10px}
@@ -587,7 +589,7 @@ button{font-family:inherit;color:inherit}
 <div class="hdr" style="position:sticky;top:0;z-index:20;background:var(--bg);display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 20px 12px;border-bottom:1px solid var(--line)">
   <a href="/" sc-camel-on-click="{{ goHome }}" aria-label="9FEAMG home" style="display:flex;gap:8px;color:inherit;text-decoration:none;min-height:34px;align-items:center">
     <span class="logo" style="font-family:'Big Shoulders Display';font-weight:900;font-size:26px;letter-spacing:.02em;line-height:1">9FEAMG</span>
-    <span style="font-family:'JetBrains Mono';font-size:11px;color:var(--accentInk);letter-spacing:.06em">2026</span>
+    <span class="hide-xs" style="font-family:'JetBrains Mono';font-size:11px;color:var(--accentInk);letter-spacing:.06em">2026</span>
   </a>
   <!-- Desktop: the tabs live up here instead of the bottom bar. -->
   <nav class="desk-tabs" aria-label="Sections">
@@ -598,7 +600,7 @@ button{font-family:inherit;color:inherit}
   <div class="hdr-btns" style="display:flex;gap:8px">
     <button sc-camel-on-click="{{ openTeamSheet }}" aria-label="{{ meLabel }}" title="{{ meLabel }}" style="min-height:34px;min-width:34px;padding:0 4px;border:1px solid var(--line);border-radius:999px;background:var(--surface);cursor:pointer;display:flex;align-items:center;justify-content:center">
       <sc-if value="{{ hasMe }}" hint-placeholder-val="{{ false }}"><span class="crest" style="width:24px;height:24px;background:{{ meColor }};color:var(--onAccent);display:flex;align-items:center;justify-content:center;font-family:'Big Shoulders Display';font-weight:800;font-size:10px"><span class="ini" data-i="{{ meInit }}">{{ meInit }}</span></span></sc-if>
-      <sc-if value="{{ noMe }}" hint-placeholder-val="{{ true }}"><span style="padding:0 8px;font-family:'JetBrains Mono';font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink);white-space:nowrap">Pick team</span></sc-if>
+      <sc-if value="{{ noMe }}" hint-placeholder-val="{{ true }}"><span class="pick" style="padding:0 8px;font-family:'JetBrains Mono';font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink);white-space:nowrap">Pick team</span></sc-if>
     </button>
     <button sc-camel-on-click="{{ openDraft }}" aria-label="Draft results" style="background:{{ draftBtnBg }};color:{{ draftBtnFg }};border:1px solid {{ draftBtnBorder }};border-radius:999px;padding:0 14px;font-family:'JetBrains Mono';font-size:11px;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;min-height:34px;display:flex;align-items:center;gap:6px"><svg class="{{ draftIconCls }}" width="16" height="16" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 5 H29 M24 5 V9"></path><circle class="trk" cx="24" cy="25" r="16" style="stroke:var(--line)"></circle><circle class="a-ring" cx="24" cy="25" r="16" transform="rotate(-90 24 25)" style="stroke:var(--hi-a)"></circle><path class="a-hand" d="M24 25 V15"></path><circle cx="24" cy="25" r="2" stroke="none" style="fill:var(--hi-a)"></circle></svg>Draft</button>
     <button sc-camel-on-click="{{ toggleTheme }}" style="background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:0 14px;font-family:'JetBrains Mono';font-size:11px;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;min-height:34px">{{ themeLabel }}</button>
@@ -745,7 +747,7 @@ button{font-family:inherit;color:inherit}
     <div id="booth" class="jump-to" data-shot="booth" style="padding:28px 20px 0;background:var(--bg)">
       <div style="display:flex;align-items:baseline;justify-content:space-between">
         <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:26px;text-transform:uppercase;display:flex;align-items:center;gap:8px"><svg class="hi play" width="26" height="26" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="18" y="5" width="12" height="21" rx="6" style="fill:var(--hi-a)"></rect><path d="M12 22 a12 12 0 0 0 24 0 M24 34 V42 M17 42 H31"></path><path class="a-wr" d="M38 12 q4 6 0 12"></path><path class="a-wr a-w2" d="M42 8 q7 10 0 20"></path><path class="a-wl" d="M10 12 q-4 6 0 12"></path><path class="a-wl a-w2" d="M6 8 q-7 10 0 20"></path></svg>The Booth</div>
-        <span style="display:flex;align-items:center;gap:10px"><button class="share-btn no-shot" sc-camel-on-click="{{ menuBooth }}" aria-label="Share the Booth">Share</button></span>
+        <sc-if value="{{ boothCanShare }}" hint-placeholder-val="{{ true }}"><span style="display:flex;align-items:center;gap:10px"><button class="share-btn no-shot" sc-camel-on-click="{{ menuBooth }}" aria-label="Share the Booth">Share</button></span></sc-if>
       </div>
       <sc-if value="{{ hasBoothSets }}" hint-placeholder-val="{{ false }}">
         <div class="no-shot" role="tablist" aria-label="Booth lines" style="display:inline-flex;gap:4px;margin-top:10px;padding:3px;border:1px solid var(--line);border-radius:999px">

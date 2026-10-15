@@ -33,6 +33,10 @@ const LIVE_STARTED = !!LIVE && (Object.keys(LIVEPTS).length > 0 || Object.values
 // Gameday opens on the week that just finished through Tuesday (Monday night's results), then
 // on the live week from Wednesday, or sooner once it has points on the board.
 const HOME_WK = LW && (LIVE_STARTED || !NF || Date.now() >= (kickoffAt(D, LW, 'Wed 12:00 AM')?.getTime() ?? Infinity)) ? LW : NF;
+// The week /#booth opens (the /s/booth link): the live week once it has lines, else the latest
+// week with any, the same set api/section.js puts in the link preview.
+const BOOTH_WK = (() => { const has = w => [D?.boothPreview, D?.boothSnf, D?.booth].some(s => s?.[w]?.length);
+  return has(LW) ? LW : Object.keys(D?.schedule || {}).map(Number).filter(has).sort((a, b) => b - a)[0] ?? HOME_WK; })();
 const PPROJ = D?.projections || {};
 // "Your team": the manager this phone picked (request form, "I'm on it" or the Gameday prompt).
 const MY_TEAM = (() => { try { const m = localStorage.getItem('9feamg-req-mgr'); return MGR.includes(m) ? m : null; } catch { return null; } })();
@@ -346,6 +350,7 @@ class Component extends DCLogic {
     // Season sections: #power, #pfpa, #luck, #bench open the Season tab scrolled to that section.
     if (['#power', '#pfpa', '#luck', '#bench'].includes(h)) { this.setState({ tab: 'Season', sheet: null }); setTimeout(() => document.getElementById(h.slice(1))?.scrollIntoView({ block: 'start' }), 350); return; }
     if (h == '#ledger') { this.setState({ tab: 'Gameday', week: HOME_WK, sheet: null }); setTimeout(() => document.getElementById('ledger')?.scrollIntoView({ block: 'start' }), 350); return; }
+    if (h == '#booth') { this.setState({ tab: 'Gameday', week: BOOTH_WK, sheet: null }); setTimeout(() => document.getElementById('booth')?.scrollIntoView({ block: 'start' }), 350); return; }
     if (tm) { const t = MGR.find(x => teamSlug(x) == tm[1]); if (t) { this.setState({ tab: 'Teams', team: t, sheet: null }); window.scrollTo(0, 0); } return; }
     const m = h.match(/^#w(\d+)-([\w-]+)$/);
     if (!m) return;
@@ -458,7 +463,7 @@ class Component extends DCLogic {
       : S.tab == 'Season' ? '#season' : S.tab == 'Teams' ? '#team-' + teamSlug(S.team)
       : S.tab == 'Wire' ? (S.wire == 'Season' ? '#wire-season' : '#wire') : S.tab == 'Draft' ? '#draft' : null;
     if (want == null || h == want) return;
-    if (S.tab == 'Gameday' && (h == '#w' + S.week || h.startsWith('#w' + S.week + '-') || h == '#ledger')) return;
+    if (S.tab == 'Gameday' && (h == '#w' + S.week || h.startsWith('#w' + S.week + '-') || h == '#ledger' || (h == '#booth' && S.week == BOOTH_WK))) return;
     if (S.tab == 'Season' && ['#power', '#pfpa', '#luck', '#bench'].includes(h)) return;
     if (!want && !h) return;
     history.pushState(null, '', want || location.pathname + location.search);
@@ -663,6 +668,7 @@ class Component extends DCLogic {
     const cardOrder = hasWeek ? [hero, ...matchups].map(x => x.a.m) : [];
     const slotOf = b => { const i = cardOrder.findIndex(m => b.crests.some(c => c.m == m)); return i < 0 ? 99 : i; };
     boothLines.sort((x, y) => slotOf(x) - slotOf(y));
+    const boothWaiting = boothOn && wk == LW && !boothLines.length;
     // Parlay requests (live week only): who's asking, a risk slider, legs, and optional
     // players (their own starters) or a game. A published parlay with request: <manager> fills it.
     const hasReq = !!LW && wk == LW, R = S.req, rk = RISKS[R.risk], rm = S.reqMgr, mine = S.reqs?.[rm];
@@ -672,8 +678,9 @@ class Component extends DCLogic {
     const sentAt = iso => { const d = new Date(iso); return isNaN(d) ? '' : d.toLocaleString('en-US', { weekday: 'short', hour: 'numeric', minute: '2-digit', timeZone: 'America/Chicago' }).replace(',', ''); };
     const anchorOf = p => `w${LW}-` + String(p.id ?? p.title ?? p.owner).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
     const pickMgr = m => () => { try { localStorage.setItem('9feamg-req-mgr', m); } catch {} this.setState({ reqMgr: m, reqPicking: false, req: { ...R, players: [], playerLegs: {} } }); };
-    // The requester's starters (no K or DEF), and the two with the best points per game in final weeks.
-    const reqStarters = !hasReq || !rm ? [] : this.players(rm).filter(p => p.slot == 'starter' && !['K', 'DEF'].includes(p.pos));
+    // The requester's starters (no K or DEF, nobody on bye, Out or on IR, since a leg on a player who
+    // can't play only bounces at build time), and the two with the best points per game in final weeks.
+    const reqStarters = !hasReq || !rm ? [] : this.players(rm).filter(p => p.slot == 'starter' && !['K', 'DEF'].includes(p.pos) && !onBye(p.nfl, LW) && !['O', 'IR'].includes(p.inj));
     const ppg = n => { let t = 0, g = 0; for (let w = 1; w <= NF; w++) { const v = this.fantasyPts(n, w); if (v != null) { t += v; g++; } } return g ? t / g : 0; };
     const suggNames = reqStarters.map(p => [p.name, ppg(p.name)]).sort((a, b) => b[1] - a[1]).slice(0, 2).map(x => x[0]);
     const togglePlayer = n => () => { const on = R.players.includes(n), players = on ? R.players.filter(x => x != n) : [...R.players, n].slice(-3), playerLegs = {};
@@ -1113,7 +1120,9 @@ class Component extends DCLogic {
       shareLedger: e => this.share('ledger', e), ledgerLabel: S.sharing == 'ledger' ? '…' : 'Image',
       linkLedger: e => this.shareLink(location.origin + '/s/ledger', '9FEAMG · Parlay ledger', e), shotLedger: `Parlay ledger · through week ${LW ?? NF}`,
       hasReq, reqForm, reqList, hasReqList: reqList.length > 0,
-      showBooth: boothOn, booth: boothLines, hasBooth: boothOn && boothLines.length > 0,
+      // The live week before its first lines: the heading and when they're coming, so the Booth's
+      // column isn't left blank on desktop.
+      showBooth: boothOn, booth: boothLines, hasBooth: boothOn && (boothLines.length > 0 || boothWaiting), boothCanShare: boothLines.length > 0,
       seasonSub, seasonTiles, standings, playoffLine: `Playoff line · top ${P} of ${MGR.length}`,
       heat, heatHead, heatColsM, heatColsD, heatMinM, heatMinD,
       team, teamPicker,
@@ -1130,7 +1139,7 @@ class Component extends DCLogic {
       menuWire: this.shareMenu(seasonMode ? 'Wire · season' : 'Wire · Week ' + wireWk, e => this.shareLink(location.origin + (seasonMode ? '/s/wire-season' : '/s/wire-week'), seasonMode ? '9FEAMG · Wire · season' : '9FEAMG · Wire · Week ' + wireWk, e), e => this.share('wire', e)),
       shotWire: seasonMode ? 'Wire · season' : 'Wire · Week ' + wireWk,
       // The Booth: an image of each matchup's newest line (earlier stages stay off the image).
-      boothNote: BOOTH_NOTE[boothSet[0]] || '', hasBoothSets: boothSets.length > 1,
+      boothNote: boothWaiting ? (LIVE_STARTED ? `Week ${wk}’s next lines go up after Sunday night’s game.` : `Week ${wk} previews go up before Thursday’s kickoff.`) : BOOTH_NOTE[boothSet[0]] || '', hasBoothSets: boothSets.length > 1,
       boothSets: boothSets.map(([label]) => ({ label, on: String(label == boothSet[0]), bg: label == boothSet[0] ? 'var(--ink)' : 'transparent', fg: label == boothSet[0] ? 'var(--bg)' : 'var(--muted)',
         pick: () => this.setState({ boothSet: { ...this.state.boothSet, [wk]: label } }) })),
       boothShotLabel: `The Booth · Week ${wk} · ${boothSet[0]}`,

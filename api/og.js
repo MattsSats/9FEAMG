@@ -7,7 +7,8 @@ import { readJson } from './_yahoo.js';
 import { C, F, h, fonts } from './_ogkit.js';
 
 // Open pills use surface2 so they stand out from the page instead of white on cream.
-const TAG = { open: [C.surface2, C.muted, 'OPEN'], hit: [C.pos, C.onStatus, 'HIT'], miss: [C.neg, C.onStatus, 'MISS'] };
+// A push (a tie the book voids) drops out of the price, like the site's PUSH tag.
+const TAG = { open: [C.surface2, C.muted, 'OPEN'], hit: [C.pos, C.onStatus, 'HIT'], miss: [C.neg, C.onStatus, 'MISS'], push: [C.surface2, C.ink, 'PUSH'] };
 const STATUS = { OPEN: [C.surface2, C.muted], CASHED: [C.pos, C.onStatus], BUSTED: [C.neg, C.onStatus] };
 
 const MAX_LEGS = 6;
