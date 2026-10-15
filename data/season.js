@@ -40,7 +40,16 @@ window.SEASON = {
     3: [['Andy', 'Colin'], ['Tony', 'Pablo'], ['Tristan', 'Matt'], ['DLin', 'Jerger'], ['Kurt', 'Mr. G']],
     4: [['Tony', 'Andy'], ['Tristan', 'Colin'], ['Matt', 'DLin'], ['Jerger', 'Kurt'], ['Mr. G', 'Pablo']],
     5: [['Matt', 'Kurt'], ['Tristan', 'Tony'], ['Jerger', 'Mr. G'], ['Colin', 'DLin'], ['Andy', 'Pablo']],
-    6: [['Matt', 'Jerger'], ['Tristan', 'Pablo'], ['Tony', 'DLin'], ['Kurt', 'Colin'], ['Mr. G', 'Andy']]
+    6: [['Matt', 'Jerger'], ['Tristan', 'Pablo'], ['Tony', 'DLin'], ['Kurt', 'Colin'], ['Mr. G', 'Andy']],
+    // The rest of the regular season, from Yahoo's matchup pages (Wed Oct 14), for the playoff odds.
+    7: [['Matt', 'Mr. G'], ['Tristan', 'Andy'], ['Jerger', 'Colin'], ['Tony', 'Kurt'], ['DLin', 'Pablo']],
+    8: [['Matt', 'Colin'], ['Tristan', 'Mr. G'], ['Jerger', 'Tony'], ['Kurt', 'Pablo'], ['Andy', 'DLin']],
+    9: [['Matt', 'Tony'], ['Tristan', 'DLin'], ['Jerger', 'Pablo'], ['Kurt', 'Andy'], ['Colin', 'Mr. G']],
+    10: [['Matt', 'Pablo'], ['Tristan', 'Kurt'], ['Jerger', 'Andy'], ['Tony', 'Colin'], ['Mr. G', 'DLin']],
+    11: [['Matt', 'Andy'], ['Tristan', 'Jerger'], ['Tony', 'Mr. G'], ['Kurt', 'DLin'], ['Colin', 'Pablo']],
+    12: [['Matt', 'Tristan'], ['Jerger', 'DLin'], ['Tony', 'Pablo'], ['Kurt', 'Mr. G'], ['Colin', 'Andy']],
+    13: [['Matt', 'DLin'], ['Tristan', 'Colin'], ['Jerger', 'Kurt'], ['Tony', 'Andy'], ['Mr. G', 'Pablo']],
+    14: [['Matt', 'Kurt'], ['Tristan', 'Tony'], ['Jerger', 'Mr. G'], ['Colin', 'DLin'], ['Andy', 'Pablo']]
   },
 
   // Final scores (Yahoo, two decimals), one per completed week.

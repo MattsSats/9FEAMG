@@ -163,6 +163,61 @@ export function seasonStats(season, box) {
 }
 // Standings order: wins, then points for.
 export const byStandings = (a, b) => b.w - a.w || b.pf - a.pf;
+// Playoff odds: the rest of the regular season played out `sims` times. A team's weekly score is
+// drawn around its average, pulled toward the league average as if it had played `shrink` more weeks
+// at the league average (halfway after five weeks, less as the season goes on), with the league's
+// week-to-week spread. The live week starts from Yahoo's projection, and its spread shrinks as points
+// come in. Seeds go by wins, then points for, like the standings; the top `playoffTeams` make it and
+// the seeds that skip the first round (two of six) get a bye. A fixed seed makes every run give the
+// same numbers, so the site, link previews and check.js agree. `through` (default: every final week)
+// with live: false gives the odds as they stood after an earlier week, for the change since then.
+// Returns null when a week left to play has no schedule.
+export function playoffOdds(season, { through, live = true, sims = 20000, shrink = 5 } = {}) {
+  const MGR = season.managers.map(x => x.m), SC = season.scores, PAIRS = season.schedule || {};
+  const NF = Math.max(0, ...MGR.map(m => (SC[m] || []).length)), W0 = Math.min(through ?? NF, NF), R = season.regularSeasonWeeks || 14;
+  const P = season.playoffTeams || 6, byes = Math.max(0, 2 ** Math.ceil(Math.log2(P)) - P), N = MGR.length;
+  for (let w = W0 + 1; w <= R; w++) if (!PAIRS[w]) return null;
+  // Record and points through week W0.
+  const wins = Object.fromEntries(MGR.map(m => [m, 0])), pf = Object.fromEntries(MGR.map(m => [m, 0]));
+  for (let w = 1; w <= W0; w++) for (const [a, b] of PAIRS[w] || []) {
+    const sa = SC[a][w - 1], sb = SC[b][w - 1]; pf[a] += sa; pf[b] += sb;
+    if (sa > sb) wins[a]++; else if (sb > sa) wins[b]++; else { wins[a] += 0.5; wins[b] += 0.5; }
+  }
+  // Each team's expected weekly score, and the league's week-to-week spread around team averages.
+  const all = MGR.flatMap(m => SC[m].slice(0, W0)), lg = all.length ? all.reduce((s, x) => s + x, 0) / all.length : 110;
+  const avg = Object.fromEntries(MGR.map(m => { const s = SC[m].slice(0, W0); return [m, (s.reduce((t, x) => t + x, 0) + shrink * lg) / (s.length + shrink)]; }));
+  let ss = 0, n = 0;
+  for (const m of MGR) { const s = SC[m].slice(0, W0), mu = s.reduce((t, x) => t + x, 0) / (s.length || 1); for (const x of s) { ss += (x - mu) ** 2; n++; } }
+  const sd = n > N ? Math.sqrt(ss / (n - N)) : 25;
+  // The live week (the one right after W0) from Yahoo: points so far plus the rest of the projection.
+  const LV = live && season.live?.week == W0 + 1 && season.live.scores ? season.live.scores : null;
+  const wk = {};
+  for (let w = W0 + 1; w <= R; w++) wk[w] = Object.fromEntries(MGR.map(m => {
+    const s = LV && w == W0 + 1 ? LV[m] : null;
+    if (!s || !(s[1] > 0)) return [m, [avg[m], sd]];
+    const left = Math.max(0, s[1] - (s[0] || 0)) / s[1];
+    return [m, [s[1], sd * Math.sqrt(left)]];
+  }));
+  // Seeded random numbers (mulberry32) and normal draws (Box-Muller).
+  let seed = 9 + W0 * 7919 + (LV ? Math.round(MGR.reduce((t, m) => t + LV[m][0] * 100 + LV[m][1], 0)) : 0);
+  const rand = () => { seed = (seed + 0x6D2B79F5) | 0; let t = Math.imul(seed ^ (seed >>> 15), 1 | seed); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
+  const draw = (mu, s) => s ? mu + s * Math.sqrt(-2 * Math.log(1 - rand())) * Math.cos(2 * Math.PI * rand()) : mu;
+  const out = Object.fromEntries(MGR.map(m => [m, { playoffs: 0, bye: 0, top: 0, last: 0, wins: 0 }]));
+  for (let i = 0; i < sims; i++) {
+    const W = { ...wins }, F = { ...pf };
+    for (let w = W0 + 1; w <= R; w++) for (const [a, b] of PAIRS[w]) {
+      const sa = draw(...wk[w][a]), sb = draw(...wk[w][b]); F[a] += sa; F[b] += sb;
+      if (sa > sb) W[a]++; else if (sb > sa) W[b]++; else { W[a] += 0.5; W[b] += 0.5; }
+    }
+    const order = MGR.map(m => ({ m, w: W[m], pf: F[m] })).sort(byStandings);
+    order.forEach((r, k) => { const o = out[r.m]; o.wins += W[r.m]; if (k < P) o.playoffs++; if (k < byes) o.bye++; if (k == 0) o.top++; if (k == N - 1) o.last++; });
+  }
+  for (const m of MGR) for (const k in out[m]) out[m][k] /= sims;
+  return { through: W0, weeksLeft: R - W0, live: !!LV, sims, playoffTeams: P, byes, teams: out };
+}
+// A share as the site shows it. Simulated ends aren't certain, so they read ">99%" and "<1%"; once
+// no weeks are left (done = true) they're "In" and "Out".
+export const oddsPct = (x, done) => done ? (x >= 0.5 ? 'In' : 'Out') : x >= 0.995 ? '>99%' : x < 0.005 ? '<1%' : Math.round(x * 100) + '%';
 // Power rankings through week n, 0–100: half season all-play win %, a quarter actual win %,
 // a quarter all-play win % over the last two weeks (form). Ties go to PF.
 export function powerRanks(season, n) {

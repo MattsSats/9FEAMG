@@ -461,7 +461,7 @@ button{font-family:inherit;color:inherit}
 @media (max-width:899px){
   .season-grid{display:flex;flex-direction:column}
   .season-grid>.sg-c1,.season-grid>.sg-c2,.season-grid>.sg-c3{display:contents}
-  .sg-st{order:1}.sg-pw{order:2}.sg-ch{order:3}.sg-lk{order:4}.sg-bn{order:5}.sg-hs{order:6}.sg-hr{order:7}
+  .sg-st{order:1}.sg-od{order:1}.sg-pw{order:2}.sg-ch{order:3}.sg-lk{order:4}.sg-bn{order:5}.sg-hs{order:6}.sg-hr{order:7}
 }
 /* Weekly scores grid: phones (weeks so far + one "rest" cell) and desktop (all 14 weeks). */
 .heat-grid{display:grid;grid-template-columns:var(--heat-m);gap:4px}
@@ -1114,6 +1114,33 @@ button{font-family:inherit;color:inherit}
     </sc-if>
   </sc-for>
   <div class="shot-footer"><b>9FEAMG</b><span>{{ shotStandings }}</span></div>
+</div>
+
+<div id="odds" data-shot="odds" class="sg-od" style="padding:30px 20px 0;scroll-margin-top:64px">
+  <div class="sec-head">
+    <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:26px;text-transform:uppercase">Playoff odds</div>
+    <span class="sec-btns no-shot"><button class="share-btn" sc-camel-on-click="{{ menuOdds }}" aria-label="Share the playoff odds">Share</button></span>
+    <div class="sec-cap">{{ oddsSub }}</div>
+  </div>
+  <div style="display:grid;grid-template-columns:minmax(98px,1fr) minmax(0,1.25fr) 30px 36px 36px;gap:8px;padding:14px 0 8px;font-family:'JetBrains Mono';font-size:10px;letter-spacing:.08em;color:var(--muted);border-bottom:1px solid var(--line)">
+    <span>MANAGER</span><span>PLAYOFFS</span><span style="text-align:right">±</span><span style="text-align:right">BYE</span><span style="text-align:right">LAST</span>
+  </div>
+  <sc-for list="{{ oddsRows }}" as="o" hint-placeholder-count="10">
+    <div sc-camel-on-click="{{ o.open }}" class="hov shot-tight" tabindex="0" role="button" style="display:grid;grid-template-columns:minmax(98px,1fr) minmax(0,1.25fr) 30px 36px 36px;gap:8px;align-items:center;padding:9px 6px;margin:0 -6px;border-radius:8px;border-bottom:1px solid var(--line);cursor:pointer">
+      <div style="display:flex;align-items:center;gap:10px;min-width:0">
+        <div class="crest" style="width:26px;height:26px;background:{{ o.color }};color:var(--onAccent);display:flex;align-items:center;justify-content:center;font-family:'Big Shoulders Display';font-weight:800;font-size:11px;flex:none"><span class="ini" data-i="{{ o.init }}">{{ o.init }}</span></div>
+        <div style="min-width:0"><div style="font-weight:600;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ o.m }}</div><div style="font-family:'JetBrains Mono';font-size:11px;color:var(--muted);margin-top:1px">{{ o.wl }}</div></div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;min-width:0">
+        <div style="flex:1;min-width:24px;height:8px;border-radius:4px;background:var(--surface2);overflow:hidden"><div style="width:{{ o.bar }};height:100%;border-radius:4px;background:var(--accent)"></div></div>
+        <span style="font-family:'JetBrains Mono';font-size:13px;font-weight:600;min-width:36px;text-align:right">{{ o.pct }}</span>
+      </div>
+      <span style="text-align:right;font-family:'JetBrains Mono';font-size:12px;font-weight:600;color:{{ o.moveColor }}">{{ o.move }}</span>
+      <span style="text-align:right;font-family:'JetBrains Mono';font-size:12px">{{ o.bye }}</span>
+      <span style="text-align:right;font-family:'JetBrains Mono';font-size:12px;color:var(--muted)">{{ o.last }}</span>
+    </div>
+  </sc-for>
+  <div class="shot-footer"><b>9FEAMG</b><span>{{ shotOdds }}</span></div>
 </div>
 
 <div id="bench" data-shot="bench" class="sg-bn" style="padding:30px 20px 0;scroll-margin-top:64px">

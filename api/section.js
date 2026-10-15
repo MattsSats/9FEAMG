@@ -1,5 +1,5 @@
 // /s/<chart> (rewritten here by vercel.json) for the Season charts (luck, bench, pfpa), the
-// Gameday parlay ledger (ledger), matchups (w5-andy-vs-pablo), standings, power, team-<name>
+// Gameday parlay ledger (ledger), matchups (w5-andy-vs-pablo), standings, power, odds, team-<name>
 // and a week's Gameday (w5).
 // Link-preview bots get a page whose Open Graph tags point at a 1200x630 image of the chart
 // (this same function with &img=1); people are sent to the chart on the site (/#<chart>).
@@ -9,7 +9,7 @@ import { loadSeason, escapeHtml, hash, anchorFor, describe } from './_parlays.js
 import { readJson } from './_yahoo.js';
 import { seasonStats, loadBox, powerRanks } from './_stats.js';
 import { loadTx, wireOf } from './_wire.js';
-import { lineupIssues } from './_shared.js';
+import { lineupIssues, playoffOdds, oddsPct } from './_shared.js';
 import { C, F, h, fonts, mgrColor } from './_ogkit.js';
 
 const BOTS = /bot|crawl|spider|facebookexternalhit|facebot|twitterbot|slackbot|discordbot|whatsapp|telegram|linkedin|embedly|skype|iframely|preview/i;
@@ -298,6 +298,29 @@ function standingsCard(season, st) {
     ...rows.slice(0, P).map(line), cut, ...rows.slice(P).map(line)));
 }
 
+// Playoff odds: every team's chance to make the playoffs (bar), the change since last week, a bye and last place.
+function oddsOf(season, st) {
+  const now = playoffOdds(season), prev = st.NF > 1 ? playoffOdds(season, { through: st.NF - 1, live: false }) : null;
+  if (!now) return null;
+  const done = now.weeksLeft == 0, look = Object.fromEntries(st.rows.map(r => [r.m, r]));
+  const rows = season.managers.map(x => x.m).map(m => ({ m, r: look[m], o: now.teams[m], ch: prev ? Math.round(now.teams[m].playoffs * 100) - Math.round(prev.teams[m].playoffs * 100) : null }))
+    .sort((a, b) => b.o.playoffs - a.o.playoffs || b.o.bye - a.o.bye || a.o.last - b.o.last);
+  return { NF: st.NF, live: now.live, liveWeek: season.live?.week, done, rows, pct: x => oddsPct(x, done) };
+}
+
+function oddsCard(O) {
+  const head = h('div', { marginTop: 14, paddingBottom: 6, fontFamily: F.mono, fontSize: 16, fontWeight: 600, letterSpacing: 2, color: C.muted },
+    h('div', { flex: 1, marginLeft: 46 }, 'MANAGER'), h('div', { width: 400 }, 'PLAYOFFS'), mono(80, '±', C.muted, 16), mono(100, 'BYE', C.muted, 16), mono(100, 'LAST', C.muted, 16));
+  const line = ({ m, r, o, ch }) => h('div', { alignItems: 'center', height: 41, borderTop: `1px solid ${C.line}` },
+    crest(r, 30), h('div', { flex: 1, marginLeft: 16, fontFamily: F.sans, fontSize: 25, fontWeight: 600, color: C.ink }, m),
+    h('div', { width: 400, alignItems: 'center', gap: 14 },
+      h('div', { width: 300, height: 14, borderRadius: 7, background: C.surface2, overflow: 'hidden' }, h('div', { width: Math.max(2, Math.round(o.playoffs * 300)), height: 14, borderRadius: 7, background: C.accent })),
+      h('div', { fontFamily: F.mono, fontSize: 22, fontWeight: 600, color: C.ink }, O.pct(o.playoffs))),
+    mono(80, ch == null ? '' : ch > 0 ? '▲' + ch : ch < 0 ? '▼' + -ch : '–', ch > 0 ? C.pos : ch < 0 ? C.neg : C.muted, 20),
+    mono(100, O.pct(o.bye), C.ink), mono(100, O.pct(o.last)));
+  return frame(`SEASON · THROUGH WEEK ${O.NF}${O.live ? ' + WEEK ' + O.liveWeek + ' PROJECTIONS' : ''}`, 'Playoff odds', null, h('div', { flexDirection: 'column' }, head, ...O.rows.map(line)));
+}
+
 function powerCard(season, st) {
   const now = powerRanks(season, st.NF), prev = st.NF > 1 ? powerRanks(season, st.NF - 1).map(r => r.m) : [];
   const look = Object.fromEntries(st.rows.map(r => [r.m, r]));
@@ -426,9 +449,9 @@ function boothCard(B) {
 
 async function sectionRoute(url, request, name) {
   const team = name.match(/^team-([a-z0-9-]+)$/), wkm = name.match(/^w(\d+)$/);
-  const kind = name == 'standings' || name == 'power' || name == 'booth' ? name : name == 'wire-week' || name == 'wire-season' ? 'wire' : team ? 'team' : wkm ? 'week' : null;
+  const kind = name == 'standings' || name == 'power' || name == 'booth' || name == 'odds' ? name : name == 'wire-week' || name == 'wire-season' ? 'wire' : team ? 'team' : wkm ? 'week' : null;
   if (!kind) return null;
-  const dest = new URL(kind == 'standings' ? '/#season' : kind == 'power' ? '/#power' : kind == 'booth' ? '/#booth' : kind == 'wire' ? (name == 'wire-season' ? '/#wire-season' : '/#wire') : kind == 'team' ? '/#team-' + team[1] : '/#w' + wkm[1], url.origin).href;
+  const dest = new URL(kind == 'standings' ? '/#season' : kind == 'power' ? '/#power' : kind == 'odds' ? '/#odds' : kind == 'booth' ? '/#booth' : kind == 'wire' ? (name == 'wire-season' ? '/#wire-season' : '/#wire') : kind == 'team' ? '/#team-' + team[1] : '/#w' + wkm[1], url.origin).href;
   const fallback = () => Response.redirect(new URL('/og.png', url.origin).href, 302), isImg = url.searchParams.has('img');
   if (!isImg && !BOTS.test(request.headers.get('user-agent') || '')) {
     return new Response(null, { status: 302, headers: { location: dest, 'cache-control': 'private, no-store', vary: 'User-Agent' } });
@@ -438,11 +461,12 @@ async function sectionRoute(url, request, name) {
   if (kind == 'team') { const [box, tx] = await Promise.all([loadBox(url.origin).catch(() => null), loadTx(url.origin)]); data = teamOf(season, seasonStats(season, box), team[1], tx); }
   if (kind == 'week') data = weekOf(season, st, +wkm[1]);
   if (kind == 'booth') data = boothOf(season);
+  if (kind == 'odds') data = oddsOf(season, st);
   if (kind == 'wire') { const tx = await loadTx(url.origin); if (!tx) return isImg ? fallback() : Response.redirect(dest, 302); data = wireOf(season, tx, await loadBox(url.origin), name == 'wire-season' ? 'season' : 'week'); }
-  if ((kind == 'team' || kind == 'week' || kind == 'booth') && !data) return isImg ? fallback() : Response.redirect(dest, 302);
+  if ((kind == 'team' || kind == 'week' || kind == 'booth' || kind == 'odds') && !data) return isImg ? fallback() : Response.redirect(dest, 302);
   if (!st.NF && kind != 'week' && kind != 'booth') return isImg ? fallback() : Response.redirect(dest, 302);
   if (isImg) {
-    const card = kind == 'standings' ? standingsCard(season, st) : kind == 'power' ? powerCard(season, st) : kind == 'wire' ? wireCard(data) : kind == 'team' ? teamCard(data) : kind == 'booth' ? boothCard(data) : weekCard(data);
+    const card = kind == 'standings' ? standingsCard(season, st) : kind == 'power' ? powerCard(season, st) : kind == 'odds' ? oddsCard(data) : kind == 'wire' ? wireCard(data) : kind == 'team' ? teamCard(data) : kind == 'booth' ? boothCard(data) : weekCard(data);
     return new ImageResponse(card, { width: 1200, height: 630, fonts: await fonts(), headers: { 'cache-control': 'public, max-age=300, s-maxage=300' } });
   }
   let title, desc, ver;
@@ -451,6 +475,10 @@ async function sectionRoute(url, request, name) {
     title = `Standings · through week ${st.NF} · 9FEAMG`;
     desc = rows.slice(0, 3).map((r, i) => `${i + 1}. ${r.m} ${r.w}–${r.l}`).join(' · ') + `. Top ${season.playoffTeams || 6} make the playoffs.`;
     ver = rows.map(r => [r.m, r.w, r.pf]);
+  } else if (kind == 'odds') {
+    title = `Playoff odds · through week ${data.NF} · 9FEAMG`;
+    desc = data.rows.slice(0, 3).map(x => `${x.m} ${data.pct(x.o.playoffs)}`).join(' · ') + ' to make the playoffs. On the bubble: ' + data.rows.slice(5, 7).map(x => `${x.m} ${data.pct(x.o.playoffs)}`).join(', ') + '.';
+    ver = data.rows.map(x => [x.m, data.pct(x.o.playoffs), data.pct(x.o.bye), data.pct(x.o.last), x.ch]);
   } else if (kind == 'power') {
     const pr = powerRanks(season, st.NF), note = season.powerNotes?.[st.NF]?.[pr[0].m];
     title = `Power rankings · through week ${st.NF} · 9FEAMG`;

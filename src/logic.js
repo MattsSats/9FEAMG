@@ -349,7 +349,7 @@ class Component extends DCLogic {
     if (wk) { this.setState({ tab: 'Gameday', week: +wk[1], sheet: null }); window.scrollTo(0, 0); return; }
     if (h == '#season') { this.setState({ tab: 'Season', sheet: null }); window.scrollTo(0, 0); return; }
     // Season sections: #power, #pfpa, #luck, #bench open the Season tab scrolled to that section.
-    if (['#power', '#pfpa', '#luck', '#bench'].includes(h)) { this.setState({ tab: 'Season', sheet: null }); setTimeout(() => document.getElementById(h.slice(1))?.scrollIntoView({ block: 'start' }), 350); return; }
+    if (['#power', '#odds', '#pfpa', '#luck', '#bench'].includes(h)) { this.setState({ tab: 'Season', sheet: null }); setTimeout(() => document.getElementById(h.slice(1))?.scrollIntoView({ block: 'start' }), 350); return; }
     if (h == '#ledger') { this.setState({ tab: 'Gameday', week: HOME_WK, sheet: null }); setTimeout(() => document.getElementById('ledger')?.scrollIntoView({ block: 'start' }), 350); return; }
     if (h == '#booth') { this.setState({ tab: 'Gameday', week: BOOTH_WK, sheet: null }); setTimeout(() => document.getElementById('booth')?.scrollIntoView({ block: 'start' }), 350); return; }
     if (tm) { const t = MGR.find(x => teamSlug(x) == tm[1]); if (t) { this.setState({ tab: 'Teams', team: t, sheet: null }); window.scrollTo(0, 0); } return; }
@@ -465,7 +465,7 @@ class Component extends DCLogic {
       : S.tab == 'Wire' ? (S.wire == 'Season' ? '#wire-season' : '#wire') : S.tab == 'Draft' ? '#draft' : null;
     if (want == null || h == want) return;
     if (S.tab == 'Gameday' && (h == '#w' + S.week || h.startsWith('#w' + S.week + '-') || h == '#ledger' || (h == '#booth' && S.week == BOOTH_WK))) return;
-    if (S.tab == 'Season' && ['#power', '#pfpa', '#luck', '#bench'].includes(h)) return;
+    if (S.tab == 'Season' && ['#power', '#odds', '#pfpa', '#luck', '#bench'].includes(h)) return;
     if (!want && !h) return;
     history.pushState(null, '', want || location.pathname + location.search);
   }
@@ -914,6 +914,21 @@ class Component extends DCLogic {
     const standings = ST.map((s, i) => ({ rank: i + 1, m: s.m, rowBg: s.m == S.reqMgr ? 'var(--surface2)' : 'transparent', rowEdge: s.m == S.reqMgr ? col(s.m) : 'transparent', you: s.m == S.reqMgr,
       // The row just above the playoff line has no rule of its own; the line is the divider.
       rowLine: i == P - 1 ? 'transparent' : 'var(--line)', init: INIT[s.m], color: col(s.m), pa: f1(s.pa), max: s.max == null ? '—' : f1(s.max), wl: s.w + '–' + s.l, pf: f1(s.pf), luck: sgn(s.luck), luckColor: s.luck > 0 ? 'var(--pos)' : s.luck < 0 ? 'var(--neg)' : 'var(--muted)', cut: i == P - 1, open: () => { this.setState({ tab: 'Teams', team: s.m }); window.scrollTo(0, 0); } }));
+    // Playoff odds (playoffOdds in api/_shared.js) with the change since the week before. 20,000 seasons
+    // take a moment on a phone, so they're worked out only on the Season tab, once per set of numbers.
+    const oddsKey = S.tab == 'Season' ? NF + '|' + JSON.stringify(LIVE?.scores || null) : null;
+    if (oddsKey && this.oddsMemo?.key != oddsKey) this.oddsMemo = { key: oddsKey, now: playoffOdds(D), prev: NF > 1 ? playoffOdds(D, { through: NF - 1, live: false }) : null };
+    const OD = oddsKey ? this.oddsMemo : null, oddsDone = OD?.now?.weeksLeft == 0;
+    const oddsRows = !OD?.now ? [] : MGR.map(m => ({ m, o: OD.now.teams[m], p: OD.prev?.teams[m], s: ST.find(x => x.m == m) }))
+      .sort((a, b) => b.o.playoffs - a.o.playoffs || b.o.bye - a.o.bye || a.o.last - b.o.last).map(({ m, o, p, s }) => {
+        const ch = p ? Math.round(o.playoffs * 100) - Math.round(p.playoffs * 100) : 0;
+        return { m, init: INIT[m], color: col(m), wl: s.w + '–' + s.l, pct: oddsPct(o.playoffs, oddsDone), bar: (o.playoffs * 100).toFixed(1) + '%',
+          bye: oddsPct(o.bye, oddsDone), last: oddsPct(o.last, oddsDone), move: !p ? '' : ch > 0 ? '▲' + ch : ch < 0 ? '▼' + -ch : '–',
+          moveColor: ch > 0 ? 'var(--pos)' : ch < 0 ? 'var(--neg)' : 'var(--muted)', open: () => { this.setState({ tab: 'Teams', team: m }); window.scrollTo(0, 0); } };
+      });
+    const oddsSub = !OD ? '' : !OD.now ? 'Odds start once the rest of the regular season is on the schedule.'
+      : oddsDone ? 'The regular season is over.'
+      : `${OD.now.sims.toLocaleString('en-US')} simulated seasons · ${OD.now.live ? `Week ${LW} from Yahoo’s projections · ` : ''}${OD.prev ? '± since last week' : ''}`;
     const allS = Object.values(SC).flat(), lo = Math.min(...allS), hi = Math.max(...allS);
     // Weekly scores: one column per regular-season week. Played weeks are shaded (darker = higher),
     // the live week shows current points, and future weeks are faint empty cells on desktop.
@@ -1129,7 +1144,7 @@ class Component extends DCLogic {
       // The live week before its first lines: the heading and when they're coming, so the Booth's
       // column isn't left blank on desktop.
       showBooth: boothOn, booth: boothLines, hasBooth: boothOn && (boothLines.length > 0 || boothWaiting), boothCanShare: boothLines.length > 0,
-      seasonSub, seasonTiles, standings, playoffLine: `Playoff line · top ${P} of ${MGR.length}`,
+      seasonSub, seasonTiles, standings, playoffLine: `Playoff line · top ${P} of ${MGR.length}`, oddsRows, oddsSub,
       heat, heatHead, heatColsM, heatColsD, heatMinM, heatMinD,
       team, teamPicker,
       draftInfo: D.draftInfo, draftToolUrl: D.draftToolUrl || '', hasDraftTool: !!D.draftToolUrl, draftOk: !draftMsg, draftMsg, draftFirsts, draftModes, draftChips, draftPicks, draftTitle, draftSub,
@@ -1139,6 +1154,7 @@ class Component extends DCLogic {
       // The matchup link goes through /s/w5-andy-vs-pablo so chats show a picture of it (api/section.js).
       menuHero: this.shareMenu('This matchup', e => this.shareLink(location.origin + (hero ? `/s/w${S.week}-${teamSlug(hero.a.m)}-vs-${teamSlug(hero.b.m)}` : '/#w' + S.week), hero ? `9FEAMG · ${hero.a.m} vs ${hero.b.m}` : '9FEAMG · Week ' + S.week, e), e => this.share('hero', e)),
       menuStandings: this.shareMenu('Standings', e => this.shareLink(location.origin + '/s/standings', '9FEAMG · Standings', e), e => this.share('standings', e)),
+      menuOdds: this.shareMenu('Playoff odds', e => this.shareLink(location.origin + '/s/odds', '9FEAMG · Playoff odds', e), e => this.share('odds', e)),
       menuPower: this.shareMenu('Power rankings', e => this.shareLink(location.origin + '/s/power', '9FEAMG · Power rankings', e), e => this.share('power', e)),
       menuTeam: this.shareMenu(S.team, e => this.shareLink(location.origin + '/s/team-' + teamSlug(S.team), '9FEAMG · ' + S.team, e), e => this.share('team', e)),
       // Wire: the view on screen (this fantasy week or the season), as a link preview or an image.
@@ -1167,7 +1183,7 @@ class Component extends DCLogic {
       linkHero: e => this.shareLink(location.origin + '/#w' + S.week, '9FEAMG · Week ' + S.week, e),
       linkStandings: e => this.shareLink(location.origin + '/#season', '9FEAMG · Standings', e),
       linkTeam: e => this.shareLink(location.origin + '/#team-' + teamSlug(S.team), '9FEAMG · ' + S.team, e),
-      shotHero: `Week ${wk} · ${wk == LW ? 'Live' : 'Final'}`, shotStandings: `Standings · through week ${NF}`, shotTeam: `${tm} · through week ${NF}`,
+      shotHero: `Week ${wk} · ${wk == LW ? 'Live' : 'Final'}`, shotStandings: `Standings · through week ${NF}`, shotOdds: `Playoff odds · through week ${NF}${OD?.now?.live ? ' + Week ' + LW + ' projections' : ''}`, shotTeam: `${tm} · through week ${NF}`,
       toastOn: !!S.toast, toastText: S.toast?.text ?? '', toastAct: !!S.toast?.file,
       toastDo: () => { const f = S.toast?.file; this.setState({ toast: null }); if (f) navigator.share({ files: [f] }).catch(() => {}); }
     };
