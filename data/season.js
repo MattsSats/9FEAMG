@@ -62,22 +62,22 @@ window.SEASON = {
     week: 6,
     status: 'Week 6 · projections · Thursday SEA @ DEN',
     // When these numbers were pulled from Yahoo (Central); shows as "Scores as of Thu 10:19 PM".
-    asOf: '2026-10-13T10:15:00-05:00',
+    asOf: '2026-10-14T22:40:00-05:00',
     // [current points, projected final]
-    // Yahoo as of Tue Oct 13, 10:15 AM CT: Week 6 projections for current lineups (several still
-    // start bye-week players: Jefferson, the Vikings DEF, Goff, Higgins).
+    // Yahoo as of Wed Oct 14, 10:40 PM CT (Week 6 matchup pages): projections for current lineups,
+    // after Wednesday's waivers. Kurt has no kicker in his lineup (Mevis is benched, tagged NA).
     scores: {
-      Matt: [0.00, 107.41], DLin: [0.00, 76.27],
-      Tristan: [0.00, 93.70], Colin: [0.00, 109.10],
-      Jerger: [0.00, 103.37], Kurt: [0.00, 108.06],
-      Tony: [0.00, 103.70], Andy: [0.00, 102.90],
-      'Mr. G': [0.00, 107.61], Pablo: [0.00, 102.84]
+      Matt: [0.00, 118.97], Jerger: [0.00, 110.75],
+      Tristan: [0.00, 111.93], Pablo: [0.00, 102.81],
+      Tony: [0.00, 115.49], DLin: [0.00, 101.35],
+      Kurt: [0.00, 101.33], Colin: [0.00, 116.51],
+      'Mr. G': [0.00, 109.63], Andy: [0.00, 99.84]
     },
     // Points so far for every player whose game has started (starters and bench).
     // Players listed in inProgress are still playing; the rest are final.
     playerPoints: {},
     inProgress: [],
-    sheetNote: 'Week 6 projections as of Tue 10:15 AM CT. Each player is tagged Final, Live or proj.'
+    sheetNote: 'Week 6 projections as of Wed 10:40 PM CT. Each player is tagged Final, Live or proj.'
   },
 
   // The NFL week: every game ('Sun 12:00 PM · CHI @ GB', kickoff Central, same form as parlay legs)
@@ -465,7 +465,7 @@ window.SEASON = {
     Kurt: '1–4 with the 5th-most points, the league’s best lineup efficiency (94.3%) and its worst luck (−1.56). Average Sports Enthusiast, below-average schedule.',
     Jerger: 'Three straight wins, two of them by a combined 4.00, and a 21–24 record against the whole league. #1 Y! Fan, and Yahoo’s schedule is returning the favor.',
     'Mr. G': 'Last at 1–4, with 636.32 points allowed, 56.32 more than anyone else. Definitely not a Boomer, definitely the opponent everyone wants.',
-    Colin: '28 adds, the least waiver money left, and 121.34 points on the bench, the most in the league. C Lambs Biggest Hater is 3–2 anyway.',
+    Colin: '29 adds, the least waiver money left, and 121.34 points on the bench, the most in the league. C Lambs Biggest Hater is 3–2 anyway.',
     DLin: 'The fewest points in the league (490.20) and a 14–31 record against the whole field, but 2–3, level with 6th place. The Toilet Bowl King wins ugly.',
     Pablo: 'The only team with luck at exactly 0.00, and 7th at 2–3, a tiebreaker out of the last playoff spot. He was #1 for one week, in Week 4 (133.78).'
   }
