@@ -1,5 +1,53 @@
 [
   {
+    "when": "Oct 15, 4:41 pm",
+    "yahooTeam": "11 Shots In",
+    "manager": "Tony",
+    "action": "add",
+    "player": "Dameon Pierce",
+    "nfl": "Phi",
+    "pos": "RB",
+    "faab": null,
+    "via": "Free Agency",
+    "notes": "Yahoo facts Thu Oct 15, 5:32 PM CT"
+  },
+  {
+    "when": "Oct 15, 4:41 pm",
+    "yahooTeam": "11 Shots In",
+    "manager": "Tony",
+    "action": "drop",
+    "player": "TreVeyon Henderson",
+    "nfl": "NE",
+    "pos": "RB",
+    "faab": null,
+    "via": "Waivers",
+    "notes": "Yahoo facts Thu Oct 15, 5:32 PM CT"
+  },
+  {
+    "when": "Oct 15, 12:42 pm",
+    "yahooTeam": "Toilet Bowl King",
+    "manager": "DLin",
+    "action": "add",
+    "player": "Giants",
+    "nfl": "NYG",
+    "pos": "DEF",
+    "faab": null,
+    "via": "Free Agency",
+    "notes": "Yahoo facts Thu Oct 15, 5:32 PM CT"
+  },
+  {
+    "when": "Oct 15, 12:42 pm",
+    "yahooTeam": "Toilet Bowl King",
+    "manager": "DLin",
+    "action": "drop",
+    "player": "Cowboys",
+    "nfl": "Dal",
+    "pos": "DEF",
+    "faab": null,
+    "via": "Waivers",
+    "notes": "Yahoo facts Thu Oct 15, 5:32 PM CT"
+  },
+  {
     "when": "Oct 14, 9:49 am",
     "yahooTeam": "Squirtle Squad",
     "manager": "Tristan",
