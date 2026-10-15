@@ -62,22 +62,21 @@ window.SEASON = {
     week: 6,
     status: 'Kicks off Thursday · SEA @ DEN, 7:15 PM',
     // When these numbers were pulled from Yahoo (Central); shows as "Scores as of Thu 10:19 PM".
-    asOf: '2026-10-14T22:40:00-05:00',
+    asOf: '2026-10-14T23:23:00-05:00',
     // [current points, projected final]
-    // Yahoo as of Wed Oct 14, 10:40 PM CT (Week 6 matchup pages): projections for current lineups,
-    // after Wednesday's waivers. Kurt has no kicker in his lineup (Mevis is benched, tagged NA).
+    // Yahoo as of Wed Oct 14, 11:23 PM CT (Week 6 matchup pages).
     scores: {
       Matt: [0.00, 118.97], Jerger: [0.00, 110.75],
-      Tristan: [0.00, 111.93], Pablo: [0.00, 102.81],
+      Tristan: [0.00, 111.88], Pablo: [0.00, 102.81],
       Tony: [0.00, 115.49], DLin: [0.00, 101.35],
-      Kurt: [0.00, 101.33], Colin: [0.00, 116.51],
-      'Mr. G': [0.00, 109.63], Andy: [0.00, 99.84]
+      Kurt: [0.00, 101.31], Colin: [0.00, 116.51],
+      'Mr. G': [0.00, 109.60], Andy: [0.00, 99.78]
     },
     // Points so far for every player whose game has started (starters and bench).
     // Players listed in inProgress are still playing; the rest are final.
     playerPoints: {},
     inProgress: [],
-    sheetNote: 'Week 6 projections as of Wed 10:40 PM CT. Each player is tagged Final, Live or proj.'
+    sheetNote: 'Week 6 projections as of Wed 11:23 PM CT. Each player is tagged Final, Live or proj.'
   },
 
   // The NFL week: every game ('Sun 12:00 PM · CHI @ GB', kickoff Central, same form as parlay legs)
