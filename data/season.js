@@ -213,7 +213,7 @@ window.SEASON = {
     ]
   },
   // The day each week's previews were written; each line's own time (third field) wins when it has one.
-  boothPreviewAt: { 5: '2026-10-07' },
+  boothPreviewAt: { 5: '2026-10-07', 6: '2026-10-15' },
   // Post-SNF lines, one per matchup in the same order: written Sunday after the night game, with
   // what each matchup still needs on Monday. [manager, line, written at].
   boothSnf: {
@@ -226,6 +226,15 @@ window.SEASON = {
     ]
   },
   boothPreview: {
+    // Week 6: written by Claude at Matt's request (Thu Oct 15, before TNF), from Yahoo's Wed 11:23 PM
+    // projections; marked 'claude' until the writer's versions replace them.
+    6: [
+      ['Jerger', 'Jerger has won three straight with a 21–24 all-play record, and Matt is projected to win 118.97–110.75. 5th vs. 6th on the playoff line, and the streak has been living on credit.', '2026-10-15T00:15-05:00', 'claude'],
+      ['Tristan', 'Tristan cut the only backup QB and is riding Lamar, tagged Q, into a game projected 111.88–102.81 over Pablo. Bold move for a team on a two-game skid.', '2026-10-15T00:15-05:00', 'claude'],
+      ['Tony', 'First place draws last in points scored: Tony, with the league’s fewest points against (446.12), gets DLin. Projected 115.49–101.35, Tony. The schedule keeps delivering.', '2026-10-15T00:15-05:00', 'claude'],
+      ['Kurt', 'Kurt sets the league’s most efficient lineups (94.3%) and, as of Thursday, has nobody at kicker. Colin is projected to win 116.51–101.31. The one lineup Kurt forgot to set.', '2026-10-15T00:15-05:00', 'claude'],
+      ['Andy', 'Last-place Mr. G is projected to beat Andy 109.60–99.78, because Andy is starting waiver pickup Winston (14.63) over Lawrence (17.88). Gibbs is on bye, and so is the gibbing.', '2026-10-15T00:15-05:00', 'claude']
+    ],
     5: [
       ['Matt', 'The 1–3 bowl, between the two unluckiest teams in the league: Kurt at −1.00 and Matt at −0.89. Projected 115.63–100.37, Matt. “There is no 2nd best” is 9th.', '2026-10-07T08:54-05:00'],
       ['Tony', 'First vs. second, both 3–1, projected 114.57–109.42 for Tristan. Tony has the league’s best luck at +1.11 and the 7th-best power ranking. Fraud watch is on.', '2026-10-07T08:54-05:00'],
