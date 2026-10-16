@@ -69,23 +69,27 @@ window.SEASON = {
   // The week in progress. Set to null between weeks.
   live: {
     week: 6,
-    status: 'Kicks off Thursday · SEA @ DEN, 7:15 PM',
+    status: 'Live · Thursday final (DEN 17, SEA 14) · Sunday next',
     // When these numbers were pulled from Yahoo (Central); shows as "Scores as of Thu 10:19 PM".
-    asOf: '2026-10-15T18:55:00-05:00',
+    asOf: '2026-10-15T22:49:00-05:00',
     // [current points, projected final]
-    // Yahoo as of Thu Oct 15, 6:55 PM CT (Week 6 matchup pages).
+    // Yahoo as of Thu Oct 15, 10:49 PM CT (Week 6 matchup pages).
     scores: {
-      Matt: [0.00, 119.40], Jerger: [0.00, 111.78],
-      Tristan: [0.00, 110.94], Pablo: [0.00, 105.05],
-      Tony: [0.00, 117.52], DLin: [0.00, 85.14],
-      Kurt: [0.00, 101.36], Colin: [0.00, 115.05],
-      'Mr. G': [0.00, 108.40], Andy: [0.00, 100.23]
+      Matt: [0.00, 119.16], Jerger: [0.00, 111.48],
+      Tristan: [0.00, 111.05], Pablo: [0.00, 104.95],
+      Tony: [27.40, 117.48], DLin: [13.10, 85.07],
+      Kurt: [12.00, 101.39], Colin: [5.20, 114.97],
+      'Mr. G': [3.00, 108.30], Andy: [4.40, 100.21]
     },
     // Points so far for every player whose game has started (starters and bench).
     // Players listed in inProgress are still playing; the rest are final.
-    playerPoints: {},
+    playerPoints: {
+      'Jaxon Smith-Njigba': 19.40, 'Jason Myers': 8.00, 'Jaylen Waddle': 4.40, 'Broncos': 12.00,
+      'Courtland Sutton': 2.90, 'J.K. Dobbins': 12.10, 'Seahawks': 3.00, 'Emanuel Wilson': 5.20,
+      'Zach Charbonnet': 0.00, 'RJ Harvey': 13.10
+    },
     inProgress: [],
-    sheetNote: 'Week 6 projections as of Thu 6:55 PM CT. Each player is tagged Final, Live or proj.'
+    sheetNote: 'Yahoo as of Thu 10:49 PM CT. Orange = points so far; the rest are projections.'
   },
 
   // The NFL week: every game ('Sun 12:00 PM · CHI @ GB', kickoff Central, same form as parlay legs)
