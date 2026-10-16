@@ -1,10 +1,10 @@
 {
-  "asOf": "2026-10-15T22:49:00-05:00",
+  "asOf": "2026-10-16T00:25:00-05:00",
   "source": "Signed-in Yahoo Fantasy league 935526 team roster pages (full reconcile)",
   "week": 6,
   "baseline": "yahoo-live",
   "baselineAvailable": true,
-  "baselineNote": "Rosters from Yahoo's Week 6 matchup pages (read in the built-in browser), with every player's Yahoo projection (proj) and injury tag (inj) as of Thu Oct 15, 10:49 PM CT.",
+  "baselineNote": "Rosters from Yahoo's Week 6 matchup pages (read in the built-in browser), with every player's Yahoo projection (proj) and injury tag (inj) as of Fri Oct 16, 12:25 AM CT.",
   "teams": [
     {
       "id": "1",
@@ -74,7 +74,7 @@
           "pos": "DEF",
           "slot": "starter",
           "nfl": "Bal",
-          "proj": 7.39
+          "proj": 7.4
         },
         {
           "name": "Devaughn Vele",
@@ -141,7 +141,7 @@
           "pos": "QB",
           "slot": "starter",
           "nfl": "Bal",
-          "proj": 17.72,
+          "proj": 17.75,
           "inj": "Q"
         },
         {
@@ -199,7 +199,7 @@
           "pos": "DEF",
           "slot": "starter",
           "nfl": "KC",
-          "proj": 7.79
+          "proj": 7.76
         },
         {
           "name": "Sam LaPorta",
@@ -227,7 +227,7 @@
           "pos": "WR",
           "slot": "bench",
           "nfl": "LAC",
-          "proj": 7.84,
+          "proj": 7.88,
           "inj": "Q"
         },
         {
@@ -266,7 +266,7 @@
           "pos": "QB",
           "slot": "starter",
           "nfl": "KC",
-          "proj": 18.36
+          "proj": 18.29
         },
         {
           "name": "Kyren Williams",
@@ -294,7 +294,7 @@
           "pos": "WR",
           "slot": "starter",
           "nfl": "KC",
-          "proj": 10.34,
+          "proj": 10.21,
           "inj": "Q"
         },
         {
@@ -309,7 +309,7 @@
           "pos": "WRT",
           "slot": "starter",
           "nfl": "Cle",
-          "proj": 10.11,
+          "proj": 10.1,
           "inj": "Q"
         },
         {
@@ -413,7 +413,7 @@
           "pos": "TE",
           "slot": "starter",
           "nfl": "Cle",
-          "proj": 8.99
+          "proj": 8.98
         },
         {
           "name": "RJ Harvey",
@@ -427,7 +427,7 @@
           "pos": "K",
           "slot": "starter",
           "nfl": "Bal",
-          "proj": 7.98
+          "proj": 7.99
         },
         {
           "name": "Giants",
@@ -517,7 +517,7 @@
           "pos": "RB",
           "slot": "starter",
           "nfl": "Bal",
-          "proj": 15.86
+          "proj": 15.89
         },
         {
           "name": "Tony Pollard",
@@ -587,7 +587,7 @@
           "pos": "WR",
           "slot": "bench",
           "nfl": "LAC",
-          "proj": 6.37,
+          "proj": 6.38,
           "inj": "Q"
         },
         {
@@ -689,7 +689,7 @@
           "pos": "RB",
           "slot": "bench",
           "nfl": "LAC",
-          "proj": 7.51
+          "proj": 7.54
         },
         {
           "name": "Carnell Tate",
@@ -905,7 +905,7 @@
           "pos": "K",
           "slot": "starter",
           "nfl": "LAC",
-          "proj": 6.89
+          "proj": 6.91
         },
         {
           "name": "Steelers",
@@ -919,7 +919,7 @@
           "pos": "RB",
           "slot": "bench",
           "nfl": "Cle",
-          "proj": 9.95,
+          "proj": 9.94,
           "inj": "Q"
         },
         {
@@ -941,7 +941,7 @@
           "pos": "WR",
           "slot": "bench",
           "nfl": "KC",
-          "proj": 9.3
+          "proj": 9.24
         },
         {
           "name": "MarShawn Lloyd",
@@ -1050,7 +1050,7 @@
           "pos": "TE",
           "slot": "bench",
           "nfl": "KC",
-          "proj": 9.47
+          "proj": 9.4
         },
         {
           "name": "Jameson Williams",
@@ -1109,7 +1109,7 @@
           "pos": "RB",
           "slot": "starter",
           "nfl": "KC",
-          "proj": 19.53
+          "proj": 19.46
         },
         {
           "name": "Jaylen Warren",
