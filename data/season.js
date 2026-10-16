@@ -238,7 +238,7 @@ window.SEASON = {
       ['Jerger', 'Jerger has won three straight with a 21–24 all-play record. In 5th vs. 6th, Matt is projected to win 118.97–110.75. That streak has been living on credit.', '2026-10-15T00:35-05:00'],
       ['Tristan', 'Tristan cut backup QB Brissett on Wednesday for Germie Bernard, so a questionable Lamar is Squirtle Squad’s only QB. Projected 111.88–102.81 over Pablo, as long as Lamar plays.', '2026-10-15T00:35-05:00'],
       ['DLin', 'Pre-kickoff playoff odds give Tony 97% and DLin 24%, and Yahoo projects Tony 115.49–101.35. The projections lied about DLin last week. This time DLin needs them to.', '2026-10-15T00:35-05:00'],
-      ['Kurt', 'As of Wednesday night, Kurt’s K slot is empty and Mevis is on the bench, projected for 0.00. Colin is projected to win 116.51–101.31. The league’s best lineup efficiency (94.3%) has a hole in it.', '2026-10-15T00:35-05:00'],
+      ['Kurt', 'Kurt sets the league’s most efficient lineups and is 1–4; Colin has made 29 adds and is 3–2. Projected 116.51–101.31, Colin. Tinkering keeps beating homework.', '2026-10-15T00:35-05:00'],
       ['Andy', 'Last-place Mr. G is projected to beat Andy 109.60–99.78, and Andy is helping by starting waiver pickup Winston (14.63) over Lawrence (17.88). Gibbs is on bye, and so is the gibbing.', '2026-10-15T00:35-05:00']
     ],
     5: [
