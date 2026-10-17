@@ -71,15 +71,15 @@ window.SEASON = {
     week: 6,
     status: 'Live · Thursday final (DEN 17, SEA 14) · Sunday next',
     // When these numbers were pulled from Yahoo (Central); shows as "Scores as of Thu 10:19 PM".
-    asOf: '2026-10-16T00:25:00-05:00',
+    asOf: '2026-10-16T21:35:00-05:00',
     // [current points, projected final]
-    // Yahoo as of Fri Oct 16, 12:25 AM CT (Week 6 matchup pages).
+    // Yahoo as of Fri Oct 16, 9:35 PM CT (Week 6 matchup pages).
     scores: {
-      Matt: [0.00, 119.18], Jerger: [0.00, 111.48],
-      Tristan: [0.00, 111.05], Pablo: [0.00, 104.98],
-      Tony: [27.40, 117.48], DLin: [13.10, 85.07],
-      Kurt: [12.00, 101.32], Colin: [5.20, 114.76],
-      'Mr. G': [3.00, 108.30], Andy: [4.40, 100.22]
+      Matt: [0.00, 119.29], Jerger: [0.00, 111.71],
+      Tristan: [0.00, 93.09], Pablo: [0.00, 105.98],
+      Tony: [27.40, 118.72], DLin: [13.10, 13.84],
+      Kurt: [12.00, 101.54], Colin: [5.20, 103.84],
+      'Mr. G': [3.00, 107.96], Andy: [4.40, 100.99]
     },
     // Points so far for every player whose game has started (starters and bench).
     // Players listed in inProgress are still playing; the rest are final.
@@ -89,7 +89,7 @@ window.SEASON = {
       'Zach Charbonnet': 0.00, 'RJ Harvey': 13.10
     },
     inProgress: [],
-    sheetNote: 'Yahoo as of Fri 12:25 AM CT. Orange = points so far; the rest are projections.'
+    sheetNote: 'Yahoo as of Fri 9:35 PM CT. Orange = points so far; the rest are projections.'
   },
 
   // The NFL week: every game ('Sun 12:00 PM · CHI @ GB', kickoff Central, same form as parlay legs)
