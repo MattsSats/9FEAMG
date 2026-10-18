@@ -261,7 +261,8 @@ window.SEASON = {
   //                 ('Ravens'). The site tags whose fantasy roster it's on and
   //                 shows the player's fantasy points once they're in.
   //   legs[].type   'td' (anytime TD; count: 2 for 2+ TDs), 'over' (player stat;
-  //                 needs stat + line), 'ml' (moneyline), 'spread' (team + line,
+  //                 needs stat + line), 'under' (player stat under, e.g. against a fantasy
+  //                 opponent's starter; stat + line), 'ml' (moneyline), 'spread' (team + line,
   //                 e.g. team 'Bal', line -11.5) or 'total' (game points; needs
   //                 side + line); tells the weekly update how to grade the leg
   //   legs[].stat / legs[].line  for 'over' legs, e.g. stat 'Rec Yds', line 62.5

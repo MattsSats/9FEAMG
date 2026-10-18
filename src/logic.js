@@ -128,7 +128,7 @@ const LEG_TAG = {
   miss: { tag: 'MISS', bg: 'var(--neg)', fg: 'var(--onStatus)' },
   push: { tag: 'PUSH', bg: 'var(--surface2)', fg: 'var(--ink)' }
 };
-// A leg in a few words for a collapsed card: "Allen TD", "London 80+ rec", "Dolphins ML", "JAX–CIN o51.5".
+// A leg in a few words for a collapsed card: "Allen TD", "London 80+ rec", "Nabers u54.5 rec", "Dolphins ML", "JAX–CIN o51.5".
 const STAT_SHORT = [[/pass/i, 'pass'], [/rush/i, 'rush'], [/recep|catches/i, 'catches'], [/rec/i, 'rec']];
 function legShort(l) {
   const t = String(l.text || '');
@@ -136,6 +136,10 @@ function legShort(l) {
   if (l.type == 'over' && l.player && l.line != null) {
     const st = (STAT_SHORT.find(([re]) => re.test(l.stat || t)) || [])[1];
     return `${lastName(l.player)} ${Math.ceil(l.line)}+` + (st ? ' ' + st : '');
+  }
+  if (l.type == 'under' && l.player && l.line != null) {
+    const st = (STAT_SHORT.find(([re]) => re.test(l.stat || t)) || [])[1];
+    return `${lastName(l.player)} u${l.line}` + (st ? ' ' + st : '');
   }
   if (l.type == 'ml' && / moneyline/.test(t)) return t.split(' moneyline')[0] + ' ML';
   if (l.type == 'spread') return t.split(' spread')[0] + (l.line != null ? ' ' + (l.line > 0 ? '+' : '') + l.line : ' spread');
@@ -158,7 +162,7 @@ class Component extends DCLogic {
   state = { tab: this.props.startTab ?? 'Gameday', week: HOME_WK, theme: null, sheet: null, team: MY_TEAM || MGR[0], wire: 'This week', draftMode: 'By round', draftRound: 1, draftTeam: MGR[0], rosters: null, draft: null, tx: null, loaded: false,
     // Parlay request form: who's asking is remembered on this device.
     reqMgr: MY_TEAM, teamSheet: null, reqOpen: false, shareSheet: null, newScores: false, compact: false,
-    req: { risk: 1, legs: 'any', players: [], playerLegs: {}, game: '', sending: false }, tails: {}, passes: {}, tlog: {}, tailsDone: {}, tailBusy: null, reqs: null };
+    req: { risk: 1, legs: 'any', players: [], playerLegs: {}, game: '', bias: false, sending: false }, tails: {}, passes: {}, tlog: {}, tailsDone: {}, tailBusy: null, reqs: null };
   componentDidMount() {
     // Keyboard: Enter or Space activates clickable rows (role="button"); Escape closes the lineup sheet.
     document.addEventListener('keydown', e => {
@@ -325,7 +329,7 @@ class Component extends DCLogic {
     const S = this.state, m = S.reqMgr;
     if (!m || S.req.sending) return;
     const body = cancel ? { week: LW, manager: m, cancel: true }
-      : { week: LW, manager: m, risk: RISKS[S.req.risk].k, legs: S.req.legs, betType: 'mix', players: S.req.players, playerLegs: S.req.playerLegs, game: S.reqAddOpen ? S.req.game.trim() : '' };
+      : { week: LW, manager: m, risk: RISKS[S.req.risk].k, legs: S.req.legs, betType: 'mix', players: S.req.players, playerLegs: S.req.playerLegs, game: S.reqAddOpen ? S.req.game.trim() : '', bias: !!S.req.bias };
     this.setState({ req: { ...S.req, sending: true } });
     try {
       const r = await fetch('/api/requests', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) });
@@ -708,6 +712,7 @@ class Component extends DCLogic {
       this.setState({ req: { ...R, players, playerLegs } }); };
     const chip = n => { const on = R.players.includes(n); return { name: n, short: n.replace(/^(\S)\S*\s+/, '$1. '), bg: on ? 'var(--accent)' : 'transparent', fg: on ? 'var(--onAccent)' : 'var(--ink)', border: on ? 'var(--accent)' : 'var(--line)', pressed: String(on), pick: togglePlayer(n) }; };
     const sugg = suggNames.map(chip), otherPicks = R.players.filter(n => !suggNames.includes(n)).length;
+    const oppOf = m => { const p = (PAIRS?.[LW] || []).find(x => x.includes(m)); return p ? p.find(x => x != m) : null; };
     const parlaysBy = m => Object.values(D.parlays || {}).flat().filter(p => p.owner == m || p.owners?.includes(m)).length;
     const reqForm = !hasReq ? {} : {
       // One sliding row, most parlays made first (ties keep league order).
@@ -731,6 +736,11 @@ class Component extends DCLogic {
       // "Add a leg?": a typed player or team, folded away until asked for. Opening or closing it starts fresh.
       addOpen: !!S.reqAddOpen, addLabel: S.reqAddOpen ? '− Add a leg?' : '+ Add a leg?',
       toggleAdd: () => this.setState({ reqAddOpen: !this.state.reqAddOpen, req: { ...this.state.req, game: '' } }),
+      // Team bias (off by default): off builds the best parlay on the board from any game; on leans the
+      // open legs on the requester's starters and against their opponent's this week.
+      bias: { on: !!R.bias, pressed: String(!!R.bias), bg: R.bias ? 'var(--accent)' : 'var(--line)', knob: R.bias ? '20px' : '2px',
+        note: R.bias ? `Leans on your starters${oppOf(rm) ? ' and against ' + oppOf(rm) + '’s' : ''}.` : 'Off: the best parlay on the board, from any game.',
+        toggle: () => this.setState({ req: { ...this.state.req, bias: !this.state.req.bias } }) },
       sendLabel: R.sending ? 'Sending…' : mine && !builtFor(mine) ? 'Update request' : mine ? 'Request another' : 'Request parlay', send: () => this.sendRequest(false),
       hasMine: !!mine && !builtFor(mine), cancel: () => this.sendRequest(true)
     };
@@ -738,7 +748,7 @@ class Component extends DCLogic {
       const band = RISKS.find(x => x.k == r.risk) || RISKS[1], built = builtFor(r);
       // Older requests may carry a bet type or a typed game bet; show them if so.
       const who = (r.players || []).map(n => r.playerLegs?.[n] ? `${n} ${pickText[r.playerLegs[n]]}` : n);
-      const bits = [band.label + ' (' + riskText(band) + ')', r.betType && r.betType != 'mix' ? (BET_TYPES.find(x => x.k == r.betType) || {}).label : '', r.legs == 'any' ? 'any legs' : r.legs + ' legs', who.length ? 'with ' + who.join(', ') : '', r.game || ''].filter(Boolean);
+      const bits = [band.label + ' (' + riskText(band) + ')', r.betType && r.betType != 'mix' ? (BET_TYPES.find(x => x.k == r.betType) || {}).label : '', r.legs == 'any' ? 'any legs' : r.legs + ' legs', who.length ? 'with ' + who.join(', ') : '', r.game || '', r.bias ? 'team bias' : ''].filter(Boolean);
       return { m: r.manager, init: INIT[r.manager], color: col(r.manager), text: bits.join(' · '), status: built ? 'Built ›' : 'Waiting · sent ' + sentAt(r.at),
         statusFg: built ? 'var(--pos)' : 'var(--muted)', href: built ? '#' + anchorOf(built) : null, hasHref: !!built, waiting: !built };
     });

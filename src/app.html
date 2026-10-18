@@ -859,6 +859,14 @@ button{font-family:inherit;color:inherit}
           </div>
           </sc-if>
 
+          <button role="switch" aria-checked="{{ reqForm.bias.pressed }}" sc-camel-on-click="{{ reqForm.bias.toggle }}" style="display:flex;align-items:center;gap:10px;width:100%;min-height:44px;margin-top:10px;padding:0;border:0;background:transparent;color:var(--ink);text-align:left;cursor:pointer">
+            <span style="display:flex;flex-direction:column;gap:2px;flex:1;min-width:0">
+              <span style="font-family:'JetBrains Mono';font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)">Team bias</span>
+              <span style="font-size:12.5px;line-height:1.35;color:var(--ink)">{{ reqForm.bias.note }}</span>
+            </span>
+            <span aria-hidden="true" style="position:relative;flex:none;width:40px;height:22px;border-radius:999px;background:{{ reqForm.bias.bg }};transition:background .15s"><span style="position:absolute;top:2px;left:{{ reqForm.bias.knob }};width:18px;height:18px;border-radius:50%;background:var(--bg);transition:left .15s"></span></span>
+          </button>
+
           <button sc-camel-on-click="{{ reqForm.toggleAdd }}" aria-expanded="{{ reqForm.addOpen }}" style="display:flex;align-items:center;min-height:40px;margin-top:6px;padding:0;border:0;background:transparent;font-family:'JetBrains Mono';font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);cursor:pointer">{{ reqForm.addLabel }}</button>
           <sc-if value="{{ reqForm.addOpen }}" hint-placeholder-val="{{ false }}">
             <input type="text" data-req-game="" maxlength="60" aria-label="Add a leg: a player or team" placeholder="Player or team, e.g. Puka Nacua" style="display:block;width:100%;margin-top:6px;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink);font:15px 'Instrument Sans',system-ui,sans-serif">

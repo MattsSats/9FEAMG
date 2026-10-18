@@ -1,6 +1,6 @@
 // /api/requests : parlay requests from the live week's Gameday tab.
 //   GET  ?week=5  -> { week, requests: { [manager]: request } }. Public: the league sees who asked.
-//   POST { week, manager, risk, legs, betType, players, playerLegs, game }  -> saves the manager's request for the week,
+//   POST { week, manager, risk, legs, betType, players, playerLegs, game, bias }  -> saves the manager's request for the week,
 //        replacing any earlier one. { week, manager, cancel: true } removes it.
 // Claude Code reads these on "sync", builds each parlay from real book lines and publishes it
 // in data/season.js with request: <manager>, which the site shows as the request being filled.
@@ -14,6 +14,7 @@ const RISK = { safe: [100, 250], balanced: [250, 600], spicy: [600, 1500], longs
 const LEGS = ['any', '2', '3', '4', '5', '6+'];
 // What kind of legs to build with. The form now always sends mix (older requests may differ);
 // game is the form's "Add a leg?" text: a player or team (older requests: a typed game bet).
+// bias (team bias, off by default): lean the open legs on the requester's starters and against their opponent's.
 const BET_TYPES = ['mix', 'td', 'yards', 'lines'];
 const PICK_LEGS = ['td', 'yards', 'ml'];
 const json = (body, status = 200) => new Response(JSON.stringify(body), {
@@ -52,7 +53,7 @@ export default {
       // Each picked player's leg: td (anytime TD), yards (yardage over) or ml (their team's moneyline).
       const playerLegs = {};
       for (const p of players) { const l = b.playerLegs?.[p]; if (PICK_LEGS.includes(l)) playerLegs[p] = l; }
-      entry = { manager, risk: b.risk, odds: RISK[b.risk], legs, betType, players, playerLegs, game: clean(b.game, 60), at: new Date().toISOString() };
+      entry = { manager, risk: b.risk, odds: RISK[b.risk], legs, betType, players, playerLegs, game: clean(b.game, 60), bias: b.bias === true, at: new Date().toISOString() };
     }
     try {
       const doc = await updateJson(path(week), d => {
