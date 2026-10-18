@@ -131,23 +131,41 @@ export function hitChance(p) {
 export function fairProb(l) {
   if (typeof l.fair == 'number') return l.fair > 0 && l.fair < 1 ? l.fair : null;
   const a = impliedProb(l.odds), b = impliedProb(l.vs);
-  return a != null && b != null ? a / (a + b) : null;
+  if (a != null && b != null) return a / (a + b);
+  return ladderProb(l);
+}
+// The one estimate (Matt, Oct 18, 2026): a TD leg has no No side, so its fair chance is estimated from
+// the book's own TD ladder, `ladder: ['-190', '+285', '+1100']` (1+, 2+, 3+ TDs, same book and pull).
+// TDs follow a Poisson count, so the ratio of the 2+ price to the 1+ price fixes the scoring rate λ
+// whatever the cut (assumed the same share on both rungs); the leg's fair chance is P(count ≥ n | λ).
+const poissonAtLeast = (lam, n) => { let s = 0, t = Math.exp(-lam); for (let i = 0; i < n; i++) { s += t; t *= lam / (i + 1); } return 1 - s; };
+export function ladderProb(l) {
+  if (l.type != 'td' || !Array.isArray(l.ladder)) return null;
+  const q1 = impliedProb(l.ladder[0]), q2 = impliedProb(l.ladder[1]);
+  if (q1 == null || q2 == null || !(q2 < q1)) return null;
+  const ratio = q2 / q1;
+  let lo = 0.01, hi = 6; // P(≥2)/P(≥1) rises with λ
+  for (let i = 0; i < 60; i++) { const m = (lo + hi) / 2; poissonAtLeast(m, 2) / poissonAtLeast(m, 1) < ratio ? lo = m : hi = m; }
+  return poissonAtLeast((lo + hi) / 2, l.count || 1);
 }
 // A ticket's fair (no-vig) price and the book's edge on it: fair decimal = 1 / Πp, edge = 1 − dec × Πp.
 // Null unless every priced leg has a fair value (anytime TDs usually don't: DraftKings only offers
-// Yes), and for book-priced tickets and same-game groups, which have no other side to compare.
+// Yes; a TD leg with its `ladder` gets an estimate), and for book-priced tickets and same-game groups,
+// which have no other side to compare. est is true when a ladder estimate went in, and the site then
+// shows "fair ~+X (est.) · book edge ~Y%".
 export function parlayFair(p) {
   if (toDecimal(p.odds) || p.legs.some(l => l.sgp)) return null;
   const { priced, dec } = parlayState(p);
   if (!priced) return null;
-  let prob = 1;
+  let prob = 1, est = false;
   for (const l of p.legs) {
     if (l.status == 'push') continue;
     const f = fairProb(l);
     if (f == null) return null;
+    if (typeof l.fair != 'number' && l.vs == null) est = true; // from a TD ladder
     prob *= f;
   }
-  return { dec: 1 / prob, prob, edge: 1 - dec * prob };
+  return { dec: 1 / prob, prob, edge: 1 - dec * prob, est };
 }
 // Everyone on a ticket (placedBy, tailers, "I'm on it" taps), minus anyone who said they didn't bet it.
 export const onTicket = (p, taps = [], passes = []) => [...new Set([...(p.placedBy || []), ...(p.tailers || []), ...taps])].filter(m => !passes.includes(m));

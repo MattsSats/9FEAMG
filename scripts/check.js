@@ -42,6 +42,7 @@ for (const [w, list] of Object.entries(S.parlays || {})) {
       else if (S.nfl?.[w] && !S.nfl[w].games.some(g => matchupKey(g) == matchupKey(l.game)) && / · /.test(l.game)) warn.push(`${ticketSlug(w, p)}: "${l.game}" isn't in nfl[${w}].`);
       if (!['open', 'hit', 'miss', 'push', undefined].includes(l.status)) bad.push(`${ticketSlug(w, p)}: leg "${l.text}" has status "${l.status}".`);
       if (l.fair != null && !(typeof l.fair == 'number' && l.fair > 0 && l.fair < 1)) bad.push(`${ticketSlug(w, p)}: leg "${l.text}" has fair ${l.fair} (a chance between 0 and 1).`);
+      if (l.ladder != null && (l.type != 'td' || !Array.isArray(l.ladder) || l.ladder.length < 2 || l.ladder.some(o => impliedProb(o) == null))) bad.push(`${ticketSlug(w, p)}: leg "${l.text}" has a bad ladder (a TD leg's 1+, 2+ and 3+ TD prices).`);
       if (l.vs != null && impliedProb(l.vs) == null) bad.push(`${ticketSlug(w, p)}: leg "${l.text}" has an unreadable vs price "${l.vs}".`);
     }
     const ps = parlayState(p);
@@ -81,7 +82,7 @@ if (LW) for (const t of rosters.teams) {
   const bits = [...bye.map(p => p.name + ' on bye'), ...o.map(p => p.name + ' Out'), ...(empty.length ? [empty.length + ' empty'] : [])];
   if (bits.length) out.push(`Alert, ${t.name}: ${bits.join(', ')}`);
 }
-for (const p of S.parlays?.[LW] || []) { const s = parlayState(p); const f = parlayFair(p); out.push(`Ticket ${ticketSlug(LW, p)}: ${s.status}${s.priced ? ' ' + toAmerican(s.dec) : ''}${f ? ` (fair ${toAmerican(f.dec)}, book edge ${(f.edge * 100).toFixed(1)}%)` : ''}`); }
+for (const p of S.parlays?.[LW] || []) { const s = parlayState(p); const f = parlayFair(p); out.push(`Ticket ${ticketSlug(LW, p)}: ${s.status}${s.priced ? ' ' + toAmerican(s.dec) : ''}${f ? ` (fair ${f.est ? '~' : ''}${toAmerican(f.dec)}${f.est ? ' est.' : ''}, book edge ${(f.edge * 100).toFixed(1)}%)` : ''}`); }
 
 console.log(out.join('\n'));
 if (warn.length) console.log('\n' + warn.map(x => '! ' + x).join('\n'));

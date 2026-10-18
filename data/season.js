@@ -291,7 +291,12 @@ window.SEASON = {
   //                 (no-vig) price and the book's edge: "Parlay +603 · fair +707 · book edge 13%".
   //   legs[].fair   optional instead of vs: the leg's no-vig chance (0.4957). The fair price
   //                 shows only when every priced leg has one; anytime TDs usually can't (the
-  //                 book only offers Yes), and book-priced or same-game tickets never do.
+  //                 book only offers Yes) unless they carry a ladder, and book-priced or
+  //                 same-game tickets never do.
+  //   legs[].ladder TD legs only (they have no No side): the book's 1+, 2+ and 3+ TD prices
+  //                 for that player from the same pull (['-190', '+285', '+1100']). The site
+  //                 estimates the fair chance from them (the only estimate it makes) and shows
+  //                 "fair ~+X (est.) · book edge ~Y%".
   //   placedBy      managers who actually bet it (a real slip). The ledger counts only
   //                 placed and tailed tickets, plus "I'm on it" taps on the site.
   //   tailers       managers riding along; tailing your own opponent shows HEDGE.
@@ -473,12 +478,13 @@ window.SEASON = {
         owner: 'Colin', title: 'Four Doubles', placedBy: ['Colin'],
         // Colin's 4-leg 2+ TD parlay, from Matt (Sat Oct 17). Colin placed it (Matt, Sun Oct 18). Prices are DraftKings'
         // Over 1.5 TDs (2+), not the +250 to +300 the slip guessed; Taylor is the shortest leg, not Kyren.
-        // Odds: DraftKings via The Odds API, Sun Oct 18, 1:16 AM CT. Ticket ≈ +19,700.
+        // Odds: DraftKings via The Odds API, Sun Oct 18, 1:16 AM CT. Ticket ≈ +19,700. Ladders (1+, 2+, 3+ TDs, for
+        // the fair estimate): 2+ and 3+ from the 1:16 AM pull, 1+ from the 1:24 AM pull.
         legs: [
-          { text: 'Kyren Williams 2+ TDs', player: 'Kyren Williams', type: 'td', count: 2, game: 'Sun 3:05 PM · ARI @ LAR', odds: '+285', status: 'open' },
-          { text: 'Kenneth Walker III 2+ TDs', player: 'Kenneth Walker III', type: 'td', count: 2, game: 'Sun 3:25 PM · LAC @ KC', odds: '+330', status: 'open' },
-          { text: 'Jonathan Taylor 2+ TDs', player: 'Jonathan Taylor', type: 'td', count: 2, game: 'Sun 12:00 PM · TEN @ IND', odds: '+185', status: 'open' },
-          { text: 'James Cook 2+ TDs', player: 'James Cook III', type: 'td', count: 2, game: 'Sun 3:25 PM · BUF @ LV', odds: '+320', status: 'open' }
+          { text: 'Kyren Williams 2+ TDs', player: 'Kyren Williams', type: 'td', count: 2, game: 'Sun 3:05 PM · ARI @ LAR', odds: '+285', ladder: ['-190', '+285', '+1100'], status: 'open' },
+          { text: 'Kenneth Walker III 2+ TDs', player: 'Kenneth Walker III', type: 'td', count: 2, game: 'Sun 3:25 PM · LAC @ KC', odds: '+330', ladder: ['-170', '+330', '+1500'], status: 'open' },
+          { text: 'Jonathan Taylor 2+ TDs', player: 'Jonathan Taylor', type: 'td', count: 2, game: 'Sun 12:00 PM · TEN @ IND', odds: '+185', ladder: ['-290', '+185', '+750'], status: 'open' },
+          { text: 'James Cook 2+ TDs', player: 'James Cook III', type: 'td', count: 2, game: 'Sun 3:25 PM · BUF @ LV', odds: '+320', ladder: ['-170', '+320', '+1400'], status: 'open' }
         ]
       },
       {
@@ -499,13 +505,15 @@ window.SEASON = {
         owner: 'The Booth', init: 'TB', title: 'Four Singles and a Bear',
         // Built by Claude at Matt's ask (Sun Oct 18): the anytime-TD shadow of Colin's Four Doubles,
         // with Odunze's TD to get it past +1000. Not marked placed.
-        // Odds: DraftKings via The Odds API, Sun Oct 18, 1:30 AM CT. Ticket ≈ +1190.
+        // Odds: DraftKings via The Odds API, Sun Oct 18, 1:30 AM CT. Ticket ≈ +1190. Ladders on the four backs
+        // (2+ and 3+ from 1:16 AM, 1+ from 1:30 AM); Odunze's 2+ wasn't pulled before kickoff, so this
+        // ticket has no fair estimate.
         legs: [
-          { text: 'Jonathan Taylor anytime TD', player: 'Jonathan Taylor', type: 'td', count: 1, game: 'Sun 12:00 PM · TEN @ IND', odds: '-290', status: 'open' },
+          { text: 'Jonathan Taylor anytime TD', player: 'Jonathan Taylor', type: 'td', count: 1, game: 'Sun 12:00 PM · TEN @ IND', odds: '-290', ladder: ['-290', '+185', '+750'], status: 'open' },
           { text: 'Rome Odunze anytime TD', player: 'Rome Odunze', type: 'td', count: 1, game: 'Sun 12:00 PM · CHI @ ATL', odds: '+150', status: 'open' },
-          { text: 'Kyren Williams anytime TD', player: 'Kyren Williams', type: 'td', count: 1, game: 'Sun 3:05 PM · ARI @ LAR', odds: '-190', status: 'open' },
-          { text: 'Kenneth Walker III anytime TD', player: 'Kenneth Walker III', type: 'td', count: 1, game: 'Sun 3:25 PM · LAC @ KC', odds: '-170', status: 'open' },
-          { text: 'James Cook anytime TD', player: 'James Cook III', type: 'td', count: 1, game: 'Sun 3:25 PM · BUF @ LV', odds: '-170', status: 'open' }
+          { text: 'Kyren Williams anytime TD', player: 'Kyren Williams', type: 'td', count: 1, game: 'Sun 3:05 PM · ARI @ LAR', odds: '-190', ladder: ['-190', '+285', '+1100'], status: 'open' },
+          { text: 'Kenneth Walker III anytime TD', player: 'Kenneth Walker III', type: 'td', count: 1, game: 'Sun 3:25 PM · LAC @ KC', odds: '-170', ladder: ['-170', '+330', '+1500'], status: 'open' },
+          { text: 'James Cook anytime TD', player: 'James Cook III', type: 'td', count: 1, game: 'Sun 3:25 PM · BUF @ LV', odds: '-170', ladder: ['-170', '+320', '+1400'], status: 'open' }
         ]
       }
     ]

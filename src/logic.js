@@ -809,7 +809,7 @@ class Component extends DCLogic {
         statusBg: status == 'CASHED' ? 'var(--pos)' : status == 'BUSTED' ? 'var(--neg)' : 'var(--surface2)',
         statusFg: status == 'OPEN' ? 'var(--muted)' : 'var(--onStatus)',
         // "Parlay +603 · fair +707 · book edge 13%" when every leg has the other side's price.
-        oddsLabel: (priced ? 'Parlay ' + toAmerican(dec) : 'Lines TBD') + (fair ? ` · fair ${toAmerican(fair.dec)} · book edge ${Math.round(fair.edge * 100)}%` : '') + (status == 'OPEN' && chance != null ? ` · ~${pct(chance)} to hit${p.legs.some(l => l.status == 'hit') ? ' now' : ''}` : ''),
+        oddsLabel: (priced ? 'Parlay ' + toAmerican(dec) : 'Lines TBD') + (fair ? ` · fair ${fair.est ? '~' : ''}${toAmerican(fair.dec)}${fair.est ? ' (est.)' : ''} · book edge ${fair.est ? '~' : ''}${Math.round(fair.edge * 100)}%` : '') + (status == 'OPEN' && chance != null ? ` · ~${pct(chance)} to hit${p.legs.some(l => l.status == 'hit') ? ' now' : ''}` : ''),
         by: (p.owners ? p.owners.join(' & ') : p.owner) + '’s Parlay',
         // e.g. "2.20 × 1.87 × 1.67 = ×6.86 · hits about 1 in 7 (15%)"
         oddsMath: toDecimal(p.odds) ? (new Set(p.legs.map(l => l.game)).size == 1 ? 'Same-game parlay · book price ' : 'Book price for the whole ticket ') + String(p.odds).replace('-', '−') : priced ? (() => {

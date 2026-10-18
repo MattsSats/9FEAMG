@@ -53,12 +53,13 @@ export function describe(week, p, taps = [], passes = []) {
     odds: priced ? toAmerican(dec) : null,
     payout: priced ? (10 * dec).toFixed(2) : null,
     // The fair (no-vig) price and the book's edge, when every leg has the other side's price.
-    fair: f ? { odds: toAmerican(f.dec), edge: Math.round(f.edge * 100) + '%' } : null,
+    // TD legs' fair chances are estimated from the TD ladder, so those show "~" and "(est.)".
+    fair: f ? { odds: (f.est ? '~' : '') + toAmerican(f.dec) + (f.est ? ' (est.)' : ''), edge: (f.est ? '~' : '') + Math.round(f.edge * 100) + '%' } : null,
     legs: p.legs.map(l => ({ text: l.text, odds: l.sgp ? 'SGP ' + l.sgp : l.odds ? String(l.odds).replace('-', '−') : '', status: l.status || 'open' })),
     // Managers on the ticket; the owner tapping their own ticket means they placed it.
     with: onIt(p, taps, passes).map(m => (p.owners || [p.owner]).includes(m) ? `${m} (placed)` : m),
     // Changes whenever odds or results change, so chat apps fetch a fresh image.
-    version: `${p.odds}|${p.sgps}|${f ? toAmerican(f.dec) : ''}|${onIt(p, taps, passes)}|` + p.legs.map(l => `${l.odds}:${l.status}`).join('|')
+    version: `${p.odds}|${p.sgps}|${f ? toAmerican(f.dec) + f.est : ''}|${onIt(p, taps, passes)}|` + p.legs.map(l => `${l.odds}:${l.status}`).join('|')
   };
 }
 
