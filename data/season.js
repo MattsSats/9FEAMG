@@ -464,6 +464,19 @@ window.SEASON = {
           { text: 'Jonathan Taylor 2+ TDs', player: 'Jonathan Taylor', type: 'td', count: 2, game: 'Sun 12:00 PM · TEN @ IND', odds: '+185', status: 'open' },
           { text: 'James Cook 2+ TDs', player: 'James Cook III', type: 'td', count: 2, game: 'Sun 3:25 PM · BUF @ LV', odds: '+320', status: 'open' }
         ]
+      },
+      {
+        owner: 'The Booth', init: 'TB', title: 'Four Singles and a Bear',
+        // Built by Claude at Matt's ask (Sun Oct 18): the anytime-TD shadow of Colin's Four Doubles,
+        // with Odunze's TD to get it past +1000. Not marked placed.
+        // Odds: DraftKings via The Odds API, Sun Oct 18, 1:30 AM CT. Ticket ≈ +1190.
+        legs: [
+          { text: 'Jonathan Taylor anytime TD', player: 'Jonathan Taylor', type: 'td', count: 1, game: 'Sun 12:00 PM · TEN @ IND', odds: '-290', status: 'open' },
+          { text: 'Rome Odunze anytime TD', player: 'Rome Odunze', type: 'td', count: 1, game: 'Sun 12:00 PM · CHI @ ATL', odds: '+150', status: 'open' },
+          { text: 'Kyren Williams anytime TD', player: 'Kyren Williams', type: 'td', count: 1, game: 'Sun 3:05 PM · ARI @ LAR', odds: '-190', status: 'open' },
+          { text: 'Kenneth Walker III anytime TD', player: 'Kenneth Walker III', type: 'td', count: 1, game: 'Sun 3:25 PM · LAC @ KC', odds: '-170', status: 'open' },
+          { text: 'James Cook anytime TD', player: 'James Cook III', type: 'td', count: 1, game: 'Sun 3:25 PM · BUF @ LV', odds: '-170', status: 'open' }
+        ]
       }
     ]
   },
