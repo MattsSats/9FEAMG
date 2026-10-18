@@ -454,8 +454,8 @@ window.SEASON = {
     ],
     6: [
       {
-        owner: 'Colin', title: 'Four Doubles',
-        // Colin's 4-leg 2+ TD parlay, from Matt (Sat Oct 17). Not marked placed. Prices are DraftKings'
+        owner: 'Colin', title: 'Four Doubles', placedBy: ['Colin'],
+        // Colin's 4-leg 2+ TD parlay, from Matt (Sat Oct 17). Colin placed it (Matt, Sun Oct 18). Prices are DraftKings'
         // Over 1.5 TDs (2+), not the +250 to +300 the slip guessed; Taylor is the shortest leg, not Kyren.
         // Odds: DraftKings via The Odds API, Sun Oct 18, 1:16 AM CT. Ticket ≈ +19,700.
         legs: [
