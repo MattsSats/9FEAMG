@@ -573,13 +573,18 @@ class Component extends DCLogic {
     // Win odds for the live week, and the Booth's pick (graded once the week is final).
     const pa = live ? winOf(this.state.rosters)[a + '|' + b] : undefined, fav = pa == null ? null : pa >= 0.5 ? a : b, fp = pa == null ? 0 : Math.max(pa, 1 - pa);
     const pk = pickOf(wk, pair), done = wk <= NF, winner = done ? (A.raw > B.raw ? a : B.raw > A.raw ? b : null) : null;
+    // Live: the gray chip is Yahoo's own win % ("Yahoo: Matt 59% to win", from the matchup page) and the
+    // Booth chip carries the site's own, more careful number for the Booth's pick ("Booth: Matt · 64%").
+    const yw = live ? LIVE?.yahooWin : null, yFav = yw && yw[a] != null && yw[b] != null ? (yw[a] >= yw[b] ? a : b) : null;
+    const pickP = pk && pa != null ? (pk[0] == a ? pa : 1 - pa) : null;
     return { a: A, b: B, live, alerts: alerts.map(t => ({ t })), hasAlerts: alerts.length > 0,
-      hasPick: !!pk, pickText: pk ? `Booth: ${pk[0]}` + (done ? (winner == pk[0] ? ' ✓' : ' ✗') : '') : '',
+      hasPick: !!pk, pickText: pk ? `Booth: ${pk[0]}` + (done ? (winner == pk[0] ? ' ✓' : ' ✗') : pickP != null ? ` · ${oddsPct(pickP)}` : '') : '',
       pickColor: !pk || !done ? 'var(--accentInk)' : winner == pk[0] ? 'var(--pos)' : 'var(--neg)',
       // Column headers: Now (live only) and Proj, or Final once the week is done.
       colNow: live ? 'Now' : '', colScore: live ? 'Proj' : 'Final',
       // The gap in words, leader first: "Pablo +3.55 proj" or "Tony won by 9.04".
-      chip: (lead ? (live ? `${lead} +${f2(gap)} proj` : `${lead} won by ${f2(gap)}`) : live ? 'Even on projection' : 'Tied') + (lead && fav == lead ? ` · ${oddsPct(fp)} to win` : fav ? ` · ${fav} ${oddsPct(fp)} to win` : ''),
+      chip: yFav ? `Yahoo: ${yFav} ${yw[yFav]}% to win`
+        : (lead ? (live ? `${lead} +${f2(gap)} proj` : `${lead} won by ${f2(gap)}`) : live ? 'Even on projection' : 'Tied') + (lead && fav == lead ? ` · ${oddsPct(fp)} to win` : fav ? ` · ${fav} ${oddsPct(fp)} to win` : ''),
       open: () => this.setState({ sheet: { a, b, wk } }) };
   }
   // Live week: how many of a manager's starters haven't finished (not started or still playing).
