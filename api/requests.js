@@ -10,7 +10,8 @@ import { readJson, updateJson, TEAMS } from './_yahoo.js';
 
 const MANAGERS = Object.values(TEAMS);
 // Total-odds bands the slider picks from (American odds).
-const RISK = { safe: [100, 250], balanced: [250, 600], spicy: [600, 1500], longshot: [1500, 5000], lottery: [5000, null] };
+// A doubling ladder (Oct 18, 2026); requests sent before then carry the old bands in odds.
+const RISK = { safe: [150, 400], balanced: [400, 900], spicy: [900, 1900], longshot: [1900, 4900], lottery: [4900, 19900] };
 const LEGS = ['any', '2', '3', '4', '5', '6+'];
 // What kind of legs to build with. The form now always sends mix (older requests may differ);
 // game is the form's "Add a leg?" text: a player or team (older requests: a typed game bet).

@@ -48,11 +48,12 @@ const WIN = D ? Object.fromEntries((matchupOdds(D) || []).map(o => [o.a + '|' + 
 // The Booth's pick for a matchup: [pick, win % when picked] (boothPicks[week], schedule order).
 const pickOf = (wk, pair) => { const i = (PAIRS[wk] || []).findIndex(p => p[0] == pair[0] && p[1] == pair[1]); return i < 0 ? null : D?.boothPicks?.[wk]?.[i] || null; };
 const PROJ = Object.fromEntries(MGR.map(m => [m, LIVE?.scores?.[m]?.[1] ?? 0]));
-// Parlay request risk levels: total American odds, low to high (null = no top).
+// Parlay request risk levels: total American odds, low to high. A doubling ladder (Matt, Oct 18, 2026):
+// each step up about doubles the payout and halves the chance to hit.
 const RISKS = [
-  { k: 'safe', label: 'Safe', lo: 100, hi: 250 }, { k: 'balanced', label: 'Balanced', lo: 250, hi: 600 },
-  { k: 'spicy', label: 'Spicy', lo: 600, hi: 1500 }, { k: 'longshot', label: 'Long shot', lo: 1500, hi: 5000 },
-  { k: 'lottery', label: 'Lottery', lo: 5000, hi: null }
+  { k: 'safe', label: 'Safe', lo: 150, hi: 400 }, { k: 'balanced', label: 'Balanced', lo: 400, hi: 900 },
+  { k: 'spicy', label: 'Spicy', lo: 900, hi: 1900 }, { k: 'longshot', label: 'Long shot', lo: 1900, hi: 4900 },
+  { k: 'lottery', label: 'Lottery', lo: 4900, hi: 19900 }
 ];
 // Parlay request bet types, with a rough range of what one leg of that kind pays (decimal odds),
 // used only to warn when a risk level and leg count are out of reach.
@@ -85,9 +86,11 @@ function reqReach(risk, bt, legs) {
   if (maxD < lo) return `Hard to hit: ${what} rarely reach ${risk.label}. Send it anyway and it’s built as close as the lines allow, flagged.`;
   return '';
 }
-const pay10 = a => '$' + Math.round(10 * (1 + a / 100));
+const pay10 = a => '$' + Math.round(10 * (1 + a / 100)).toLocaleString('en-US');
 const riskText = r => '+' + r.lo + (r.hi ? ' to +' + r.hi : ' and up');
 const riskPay = r => '$10 pays ' + pay10(r.lo) + (r.hi ? '–' + pay10(r.hi) : '+');
+// Rough chance to hit at the book's price: 1 in the decimal odds ("Hits about 1 in 5–10").
+const riskChance = r => 'Hits about 1 in ' + Math.round(1 + r.lo / 100) + (r.hi ? '–' + Math.round(1 + r.hi / 100) : '+');
 // Share images: CSS width they render at, at 3× pixels. Wide enough to stay short in a chat,
 // narrow enough that the text still reads in an iMessage bubble.
 const SHOT_W = 400;
@@ -719,7 +722,7 @@ class Component extends DCLogic {
       mgrs: [...MGR].sort((a, b) => parlaysBy(b) - parlaysBy(a)).map(m => ({ m, init: INIT[m], color: col(m), ring: m == rm ? 'var(--ink)' : 'transparent', fg: m == rm ? 'var(--ink)' : 'var(--muted)', pick: pickMgr(m), pressed: String(m == rm) })),
       // Once someone's picked, the ten crests fold into "Requesting as Matt · Change".
       mgrCollapsed: !!rm, needMgr: !rm, me: rm ? { m: rm, init: INIT[rm], color: col(rm) } : {}, changeMgr: () => this.setState({ teamSheet: {} }),
-      hasMgr: !!rm, risk: R.risk, riskLabel: rk.label, riskRange: riskText(rk), riskPay: riskPay(rk),
+      hasMgr: !!rm, risk: R.risk, riskLabel: rk.label, riskRange: riskText(rk), riskPay: riskPay(rk), riskChance: riskChance(rk),
       reach: reqReach(rk, 'mix', R.legs), hasReach: !!reqReach(rk, 'mix', R.legs),
       legs: ['any', '2', '3', '4', '5', '6+'].map(l => ({ label: l == 'any' ? 'Any' : l, bg: R.legs == l ? 'var(--ink)' : 'transparent', fg: R.legs == l ? 'var(--bg)' : 'var(--ink)', pressed: String(R.legs == l), pick: () => this.setState({ req: { ...R, legs: l } }) })),
       players: reqStarters.map(p => chip(p.name)),
