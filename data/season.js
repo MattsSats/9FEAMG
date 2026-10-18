@@ -465,6 +465,18 @@ window.SEASON = {
           { text: 'Trey McBride 40+ receiving yards', player: 'Trey McBride', type: 'over', stat: 'Rec Yds', line: 39.5, game: 'Sun 3:05 PM · ARI @ LAR', odds: '-465', status: 'open' },
           { text: 'Jordan Love anytime TD', player: 'Jordan Love', type: 'td', count: 1, game: 'Sun 7:20 PM · DAL @ GB', odds: '+900', status: 'open' }
         ]
+      },
+      {
+        owner: 'Colin', title: 'Four Doubles',
+        // Colin's 4-leg 2+ TD parlay, from Matt (Sat Oct 17). Not marked placed. Prices are DraftKings'
+        // Over 1.5 TDs (2+), not the +250 to +300 the slip guessed; Taylor is the shortest leg, not Kyren.
+        // Odds: DraftKings via The Odds API, Sun Oct 18, 1:16 AM CT. Ticket ≈ +19,700.
+        legs: [
+          { text: 'Kyren Williams 2+ TDs', player: 'Kyren Williams', type: 'td', count: 2, game: 'Sun 3:05 PM · ARI @ LAR', odds: '+285', status: 'open' },
+          { text: 'Kenneth Walker III 2+ TDs', player: 'Kenneth Walker III', type: 'td', count: 2, game: 'Sun 3:25 PM · LAC @ KC', odds: '+330', status: 'open' },
+          { text: 'Jonathan Taylor 2+ TDs', player: 'Jonathan Taylor', type: 'td', count: 2, game: 'Sun 12:00 PM · TEN @ IND', odds: '+185', status: 'open' },
+          { text: 'James Cook 2+ TDs', player: 'James Cook III', type: 'td', count: 2, game: 'Sun 3:25 PM · BUF @ LV', odds: '+320', status: 'open' }
+        ]
       }
     ]
   },
