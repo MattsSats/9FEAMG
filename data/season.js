@@ -454,19 +454,6 @@ window.SEASON = {
     ],
     6: [
       {
-        owner: 'Matt', title: 'Holdover', request: 'Matt', requestAt: '2026-10-12T14:34:42.457Z',
-        // Built by Claude for Matt's request from Mon Oct 12 (Spicy +600 to +1500, any legs, McBride
-        // yards, Jefferson moneyline, Love TD). It came in after Week 5's games, so Matt moved it to
-        // Week 6 and dropped the Jefferson leg (Vikings on bye). Love's TD lengthened from +550 (Tue)
-        // to +900, and McBride's standard 64.5 (-115) would take the ticket to about +1770, so McBride
-        // goes at DraftKings' alternate 40+ line instead. Love is Matt's own Packers player.
-        // Odds: DraftKings via The Odds API, Wed Oct 14, 10:42 PM CT. Ticket ≈ +1115.
-        legs: [
-          { text: 'Trey McBride 40+ receiving yards', player: 'Trey McBride', type: 'over', stat: 'Rec Yds', line: 39.5, game: 'Sun 3:05 PM · ARI @ LAR', odds: '-465', status: 'open' },
-          { text: 'Jordan Love anytime TD', player: 'Jordan Love', type: 'td', count: 1, game: 'Sun 7:20 PM · DAL @ GB', odds: '+900', status: 'open' }
-        ]
-      },
-      {
         owner: 'Colin', title: 'Four Doubles',
         // Colin's 4-leg 2+ TD parlay, from Matt (Sat Oct 17). Not marked placed. Prices are DraftKings'
         // Over 1.5 TDs (2+), not the +250 to +300 the slip guessed; Taylor is the shortest leg, not Kyren.
