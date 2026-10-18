@@ -476,6 +476,19 @@ window.SEASON = {
         ]
       },
       {
+        owner: 'Matt', title: 'Three Favorites', request: 'Matt', requestAt: '2026-10-18T17:14:11.785Z',
+        // Built by Claude for Matt's request from Sun Oct 18, 12:14 PM (Balanced +400 to +900, 3 legs, no
+        // picked players, team bias off). The noon games had kicked off, so the legs come from the late
+        // games: three favorites at near-even prices in three different games. The Packers leg is Matt's
+        // own team (he starts Love, Watson and Lloyd). Ticket ≈ +600.
+        // Odds: DraftKings via The Odds API, Sun Oct 18, 12:15 PM CT.
+        legs: [
+          { text: 'Bills spread (-5.5) at Raiders', type: 'spread', team: 'Buf', line: -5.5, teams: ['Buf', 'LV'], game: 'Sun 3:25 PM · BUF @ LV', odds: '-108', status: 'open' },
+          { text: 'Chiefs spread (-7.5) vs Chargers', type: 'spread', team: 'KC', line: -7.5, teams: ['LAC', 'KC'], game: 'Sun 3:25 PM · LAC @ KC', odds: '-105', status: 'open' },
+          { text: 'Packers moneyline vs Cowboys', type: 'ml', team: 'GB', teams: ['Dal', 'GB'], game: 'Sun 7:20 PM · DAL @ GB', odds: '-115', status: 'open' }
+        ]
+      },
+      {
         owner: 'The Booth', init: 'TB', title: 'Four Singles and a Bear',
         // Built by Claude at Matt's ask (Sun Oct 18): the anytime-TD shadow of Colin's Four Doubles,
         // with Odunze's TD to get it past +1000. Not marked placed.
