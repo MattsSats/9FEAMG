@@ -9,7 +9,7 @@ import { loadSeason, escapeHtml, hash, anchorFor, describe } from './_parlays.js
 import { readJson } from './_yahoo.js';
 import { seasonStats, loadBox, powerRanks } from './_stats.js';
 import { loadTx, wireOf } from './_wire.js';
-import { lineupIssues, playoffOdds, oddsPct } from './_shared.js';
+import { lineupIssues, playoffOdds, oddsPct, matchupOdds } from './_shared.js';
 import { C, F, h, fonts, mgrColor } from './_ogkit.js';
 
 const BOTS = /bot|crawl|spider|facebookexternalhit|facebot|twitterbot|slackbot|discordbot|whatsapp|telegram|linkedin|embedly|skype|iframely|preview/i;
@@ -189,7 +189,17 @@ function matchupOf(season, st, wk, aSlug, bSlug, rosters) {
     return { ...mg, rec: `${r.w}–${r.l} · ${ord(place(mg.m))}`, now, score: proj, alert: lineupAlert(season, rosters, mg.m, wk) };
   };
   const a = side(A), b = side(B), lead = a.score == b.score ? null : a.score > b.score ? a : b, gap = Math.abs(a.score - b.score);
-  const chip = lead ? (live ? `${lead.m} +${gap.toFixed(2)} proj` : `${lead.m} won by ${gap.toFixed(2)}`) : live ? 'Even on projection' : 'Tied';
+  // Like the site's card: live, the gray chip is Yahoo's own win % (live.yahooWin) and the Booth chip carries
+  // the site's own odds for the Booth's pick; a final week grades the pick ✓ or ✗.
+  const yw = live ? season.live.yahooWin : null, yFav = yw && yw[A.m] != null && yw[B.m] != null ? (yw[A.m] >= yw[B.m] ? A.m : B.m) : null;
+  const chip = yFav ? `Yahoo: ${yFav} ${yw[yFav]}% to win`
+    : lead ? (live ? `${lead.m} +${gap.toFixed(2)} proj` : `${lead.m} won by ${gap.toFixed(2)}`) : live ? 'Even on projection' : 'Tied';
+  const pi = (season.schedule[wk] || []).findIndex(p => p.includes(A.m) && p.includes(B.m)), pk = season.boothPicks?.[wk]?.[pi];
+  let pickP = null;
+  if (pk && live) { const o = (matchupOdds(season, rosters) || []).find(x => [x.a, x.b].includes(A.m)); if (o) pickP = o.a == pk[0] ? o.pa : 1 - o.pa; }
+  const winner = live || !lead ? null : lead.m;
+  const pick = !pk ? '' : `Booth: ${pk[0]}` + (!live ? (winner == pk[0] ? ' ✓' : ' ✗') : pickP != null ? ` · ${oddsPct(pickP)}` : '');
+  const pickColor = !pk || live ? C.accentInk : winner == pk[0] ? C.pos : C.neg;
   // A finished week shows its recap line; otherwise the preview, labelled with the day it was
   // written so its projections don't read as a mistake next to the live numbers.
   const recap = !live && (season.booth?.[wk] || []).find(([m]) => m == A.m || m == B.m);
@@ -201,7 +211,7 @@ function matchupOf(season, st, wk, aSlug, bSlug, rosters) {
   const preDay = preAt ? new Date(preAt).toLocaleDateString('en-US', { weekday: 'short', timeZone: 'America/Chicago' }) : '';
   const boothLabel = !booth ? '' : recap ? 'The Booth' : (snf ? 'Booth · Post-SNF' : 'Booth preview') + (preDay && !snf ? ' · ' + preDay : '');
   const asOf = live && season.live.asOf ? new Date(season.live.asOf).toLocaleString('en-US', { weekday: 'short', hour: 'numeric', minute: '2-digit', timeZone: 'America/Chicago' }).replace(',', '') : '';
-  return { wk, live, a, b, chip, booth, boothLabel, asOf };
+  return { wk, live, a, b, chip, pick, pickColor, booth, boothLabel, asOf };
 }
 
 function matchupCard(M) {
@@ -223,8 +233,9 @@ function matchupCard(M) {
       M.live ? h('div', { width: 170, justifyContent: 'flex-end' }, 'NOW') : null,
       h('div', { width: 300, justifyContent: 'flex-end' }, M.live ? 'PROJ' : 'FINAL')),
     h('div', { flexDirection: 'column', marginTop: 8 }, row(M.a), row(M.b)),
-    h('div', { marginTop: 18, borderTop: `2px solid ${C.line}`, paddingTop: 18 },
-      h('div', { fontFamily: F.mono, fontSize: 26, fontWeight: 600, color: C.ink, padding: '8px 16px', borderRadius: 10, background: C.surface2, border: `2px solid ${C.line}` }, M.chip)),
+    h('div', { marginTop: 18, borderTop: `2px solid ${C.line}`, paddingTop: 18, gap: 14 },
+      h('div', { fontFamily: F.mono, fontSize: 26, fontWeight: 600, color: C.ink, padding: '8px 16px', borderRadius: 10, background: C.surface2, border: `2px solid ${C.line}` }, M.chip),
+      M.pick ? h('div', { fontFamily: F.mono, fontSize: 26, fontWeight: 600, color: M.pickColor, padding: '8px 16px', borderRadius: 10, border: `2px solid ${M.pickColor}` }, M.pick) : null),
     // The Booth's line on this matchup, labelled ("Booth preview · Wed"), up to two lines.
     M.booth ? h('div', { flexDirection: 'column', marginTop: 12 },
       h('div', { fontFamily: F.mono, fontSize: 17, fontWeight: 600, letterSpacing: 3, color: C.accentInk }, M.boothLabel.toUpperCase()),
@@ -250,8 +261,8 @@ async function matchupRoute(url, request, m) {
   const name = m[0], e = escapeHtml;
   const title = `${M.a.m} vs ${M.b.m} · Week ${wk}${M.live ? ' · live' : ' · final'} · 9FEAMG`;
   const score = s => M.live ? `${s.m} ${s.now.toFixed(2)} now, ${s.score.toFixed(2)} projected` : `${s.m} ${s.score.toFixed(2)}`;
-  const desc = `${score(M.a)}; ${score(M.b)}. ${M.chip}.` + [M.a, M.b].filter(s => s.alert).map(s => ` ⚠ ${s.m}: ${s.alert}.`).join('') + (M.booth ? ` ${M.boothLabel}: ${M.booth}` : '');
-  const img = new URL(`/api/section?name=${name}&img=1&v=${hash(JSON.stringify([M.a.now, M.a.score, M.b.now, M.b.score, M.asOf, M.a.alert, M.b.alert, M.boothLabel, M.booth]))}`, url.origin).href;
+  const desc = `${score(M.a)}; ${score(M.b)}. ${M.chip}.` + (M.pick ? ` ${M.pick}.` : '') +[M.a, M.b].filter(s => s.alert).map(s => ` ⚠ ${s.m}: ${s.alert}.`).join('') + (M.booth ? ` ${M.boothLabel}: ${M.booth}` : '');
+  const img = new URL(`/api/section?name=${name}&img=1&v=${hash(JSON.stringify([M.a.now, M.a.score, M.b.now, M.b.score, M.asOf, M.a.alert, M.b.alert, M.chip, M.pick, M.boothLabel, M.booth]))}`, url.origin).href;
   return new Response(`<!doctype html><html><head><meta charset="utf-8">
 <title>${e(title)}</title>
 <meta name="description" content="${e(desc)}">
