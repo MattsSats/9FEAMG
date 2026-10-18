@@ -268,16 +268,33 @@ export function playoffOdds(season, { through, live = true, sims = 20000, shrink
 // Each side is its points so far plus the rest of Yahoo's projection; the league's weekly spread
 // (weeklySpread) shrinks with the share of the projection still to play, so a finished side counts
 // as certain. Before kickoff it's projection against projection. Same model as the live week in
-// playoffOdds.
-export function matchupOdds(season) {
+// playoffOdds. With the rosters file, a starter tagged Q or D whose game hasn't started counts at
+// INJ_PLAY of his projection (he may sit), and that play/sit coin flip adds p(1−p)·proj² of
+// variance to his side; O and IR are already 0 in Yahoo's projection.
+export const INJ_PLAY = { Q: 0.85, D: 0.35 };
+export function matchupOdds(season, rosters = null, now = Date.now()) {
   const L = season.live, wk = L?.week, NF = Math.max(0, ...season.managers.map(x => (season.scores[x.m] || []).length));
   if (!L?.scores || !season.schedule?.[wk]) return null;
   const sd = weeklySpread(season, NF);
   // Normal CDF through erf (Abramowitz and Stegun 7.1.26).
   const erf = x => { const t = 1 / (1 + 0.3275911 * Math.abs(x)), y = 1 - (((((1.061405429 * t - 1.453152027) * t) + 1.421413741) * t - 0.284496736) * t + 0.254829592) * t * Math.exp(-x * x); return x < 0 ? -y : y; };
-  const side = m => { const [now, proj] = L.scores[m] || [0, 0]; return { proj: proj || now || 0, left: proj > 0 ? Math.max(0, proj - (now || 0)) / proj : 0 }; };
+  const pts = L.playerPoints || {}, playing = new Set(L.inProgress || []);
+  // Q/D starters still to play: { cut: expected points lost, v: variance added }.
+  const injOf = m => {
+    let cut = 0, v = 0;
+    for (const p of rosters?.teams?.find(t => t.name == m)?.players || []) {
+      const q = INJ_PLAY[String(p.inj || '').toUpperCase()];
+      if (p.slot != 'starter' || q == null || !(p.proj > 0) || pts[p.name] != null || playing.has(p.name)) continue;
+      const k = kickoffAt(season, wk, nflGameOf(season, p.nfl, wk) || 'Sun 12:00 PM');
+      if (k && now >= k.getTime()) continue;
+      cut += (1 - q) * p.proj; v += q * (1 - q) * p.proj * p.proj;
+    }
+    return { cut, v };
+  };
+  const side = m => { const [pnow, proj] = L.scores[m] || [0, 0], I = injOf(m);
+    return { proj: (proj || pnow || 0) - I.cut, left: proj > 0 ? Math.max(0, proj - (pnow || 0)) / proj : 0, iv: I.v }; };
   return season.schedule[wk].map(([a, b]) => {
-    const A = side(a), B = side(b), v = sd * sd * (A.left + B.left), d = A.proj - B.proj;
+    const A = side(a), B = side(b), v = sd * sd * (A.left + B.left) + A.iv + B.iv, d = A.proj - B.proj;
     return { a, b, pa: v > 0 ? 0.5 * (1 + erf(d / Math.sqrt(2 * v))) : d > 0 ? 1 : d < 0 ? 0 : 0.5 };
   });
 }

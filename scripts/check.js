@@ -60,7 +60,7 @@ const out = [];
 const ST = [...st.rows].sort(byStandings);
 out.push('Standings: ' + ST.map((r, i) => `${i + 1}. ${r.m} ${r.w}–${r.l}`).join(', '));
 // Win odds for the live week's matchups (Post-SNF lines quote these), and the Booth's picks.
-const MO = matchupOdds(S);
+const MO = matchupOdds(S, rosters);
 if (MO) out.push(`Win odds, Week ${LW}: ` + MO.map(o => `${o.a} ${oddsPct(o.pa)}–${oddsPct(1 - o.pa)} ${o.b}`).join(', '));
 for (const [w, picks] of Object.entries(S.boothPicks || {})) (picks || []).forEach((p, i) => {
   const pair = S.schedule[w]?.[i];

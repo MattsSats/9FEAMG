@@ -43,8 +43,11 @@ const MY_TEAM = (() => { try { const m = localStorage.getItem('9feamg-req-mgr');
 // "Scores as of Thu 10:19 PM" (Central).
 const asOfLabel = iso => { const d = new Date(iso); return isNaN(d) ? '' : 'Scores as of ' + d.toLocaleString('en-US', { weekday: 'short', hour: 'numeric', minute: '2-digit', timeZone: 'America/Chicago' }).replace(',', ''); };
 const PAIRS = D ? D.schedule : {};
-// Win odds for the live week's matchups (matchupOdds in api/_shared.js), by "a|b".
-const WIN = D ? Object.fromEntries((matchupOdds(D) || []).map(o => [o.a + '|' + o.b, o.pa])) : {};
+// Win odds for the live week's matchups (matchupOdds in api/_shared.js), by "a|b". Q and D starters
+// count once the rosters file has loaded (winOf(rosters)); until then it's Yahoo's totals alone.
+const winMap = r => D ? Object.fromEntries((matchupOdds(D, r) || []).map(o => [o.a + '|' + o.b, o.pa])) : {};
+let WIN = [undefined, null];
+const winOf = r => { if (WIN[0] !== r) WIN = [r, winMap(r)]; return WIN[1]; };
 // The Booth's pick for a matchup: [pick, win % when picked] (boothPicks[week], schedule order).
 const pickOf = (wk, pair) => { const i = (PAIRS[wk] || []).findIndex(p => p[0] == pair[0] && p[1] == pair[1]); return i < 0 ? null : D?.boothPicks?.[wk]?.[i] || null; };
 const PROJ = Object.fromEntries(MGR.map(m => [m, LIVE?.scores?.[m]?.[1] ?? 0]));
@@ -568,7 +571,7 @@ class Component extends DCLogic {
     // Lineup alerts, one line per manager: "Pablo: Tetairoa McMillan is on a bye".
     const alerts = [a, b].flatMap(m => { const l = this.lineupAlerts(m, wk); return l.length ? [`${m}: ${l.join('; ')}`] : []; });
     // Win odds for the live week, and the Booth's pick (graded once the week is final).
-    const pa = live ? WIN[a + '|' + b] : undefined, fav = pa == null ? null : pa >= 0.5 ? a : b, fp = pa == null ? 0 : Math.max(pa, 1 - pa);
+    const pa = live ? winOf(this.state.rosters)[a + '|' + b] : undefined, fav = pa == null ? null : pa >= 0.5 ? a : b, fp = pa == null ? 0 : Math.max(pa, 1 - pa);
     const pk = pickOf(wk, pair), done = wk <= NF, winner = done ? (A.raw > B.raw ? a : B.raw > A.raw ? b : null) : null;
     return { a: A, b: B, live, alerts: alerts.map(t => ({ t })), hasAlerts: alerts.length > 0,
       hasPick: !!pk, pickText: pk ? `Booth: ${pk[0]}` + (done ? (winner == pk[0] ? ' ✓' : ' ✗') : '') : '',
