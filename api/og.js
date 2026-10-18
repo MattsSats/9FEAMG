@@ -55,6 +55,8 @@ export default {
           h('div', { fontFamily: display, fontSize: 52, fontWeight: 900, lineHeight: 1 }, d.odds ? `PARLAY ${d.odds}` : d.status == 'OPEN' ? 'LINES TBD' : d.status),
           !d.odds && d.status != 'OPEN' ? h('div', { fontFamily: mono, fontSize: 24, fontWeight: 600, color: C.muted }, 'odds not recorded') : null,
           d.payout ? h('div', { fontFamily: mono, fontSize: 24, fontWeight: 600, color: C.muted }, `$10 ${d.status == 'CASHED' ? 'paid' : d.status == 'BUSTED' ? 'would have paid' : 'pays'} $${d.payout}` + (d.chance ? ` · ~${d.chance} to hit` : '')) : null),
+          // "Fair +707 · book edge 13%" under the price, when every leg has the other side's price.
+          d.fair ? h('div', { fontFamily: mono, fontSize: 20, fontWeight: 600, color: C.muted }, `Fair ${d.fair.odds} · book edge ${d.fair.edge}`) : null,
           // Who's on it: "On it", or "Cashed with" / "Busted with" once it settles.
           d.with.length ? h('div', { fontFamily: mono, fontSize: 20, fontWeight: 600, letterSpacing: 1, color: C.accentInk }, `${d.status == 'CASHED' ? 'CASHED WITH' : d.status == 'BUSTED' ? 'BUSTED WITH' : 'ON IT'}: ${d.with.join(', ')}`) : null),
         h('div', { alignItems: 'flex-end', gap: 4 },

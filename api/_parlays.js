@@ -4,7 +4,7 @@
 // math are the site's own, from api/_shared.js.
 import vm from 'node:vm';
 import { readData } from './_yahoo.js';
-import { kickoffAt, ticketSlug, onTicket, toAmerican, hitChance, pct, parlayState, mergeYahoo } from './_shared.js';
+import { kickoffAt, ticketSlug, onTicket, toAmerican, hitChance, pct, parlayState, parlayFair, mergeYahoo } from './_shared.js';
 
 // data/season.js alone, without the Yahoo sync (api/league.js only needs the NFL schedule).
 export async function loadSeasonFile(origin) {
@@ -42,7 +42,7 @@ export function findParlay(season, slug) {
 
 // Everything the preview needs about one parlay.
 export function describe(week, p, taps = [], passes = []) {
-  const { status, priced, dec } = parlayState(p), chance = hitChance(p);
+  const { status, priced, dec } = parlayState(p), chance = hitChance(p), f = parlayFair(p);
   const title = p.title ?? `${p.owner}’s parlay`;
   // Joint tickets name both owners; a single owner is already in the "Andy's parlay" line.
   const who = p.owners ? p.owners.join(' + ') : null;
@@ -52,11 +52,13 @@ export function describe(week, p, taps = [], passes = []) {
     chance: status == 'OPEN' && chance != null ? pct(chance) : null,
     odds: priced ? toAmerican(dec) : null,
     payout: priced ? (10 * dec).toFixed(2) : null,
+    // The fair (no-vig) price and the book's edge, when every leg has the other side's price.
+    fair: f ? { odds: toAmerican(f.dec), edge: Math.round(f.edge * 100) + '%' } : null,
     legs: p.legs.map(l => ({ text: l.text, odds: l.sgp ? 'SGP ' + l.sgp : l.odds ? String(l.odds).replace('-', '−') : '', status: l.status || 'open' })),
     // Managers on the ticket; the owner tapping their own ticket means they placed it.
     with: onIt(p, taps, passes).map(m => (p.owners || [p.owner]).includes(m) ? `${m} (placed)` : m),
     // Changes whenever odds or results change, so chat apps fetch a fresh image.
-    version: `${p.odds}|${p.sgps}|${onIt(p, taps, passes)}|` + p.legs.map(l => `${l.odds}:${l.status}`).join('|')
+    version: `${p.odds}|${p.sgps}|${f ? toAmerican(f.dec) : ''}|${onIt(p, taps, passes)}|` + p.legs.map(l => `${l.odds}:${l.status}`).join('|')
   };
 }
 
