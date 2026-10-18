@@ -3,7 +3,7 @@
 // for the Wire line and lineup alerts. Exits 1 if anything is wrong. Usage: node scripts/check.js
 import { readFileSync } from 'node:fs';
 import vm from 'node:vm';
-import { seasonStats, byStandings, kickoffAt, nflKey, lineupIssues, wireOf, pointsOf, ticketSlug, parlayState, toAmerican, playoffOdds, oddsPct, matchupOdds, boothPickRecord } from '../api/_shared.js';
+import { seasonStats, byStandings, kickoffAt, nflKey, lineupIssues, wireOf, pointsOf, ticketSlug, parlayState, parlayFair, impliedProb, toAmerican, playoffOdds, oddsPct, matchupOdds, boothPickRecord } from '../api/_shared.js';
 
 const read = p => readFileSync(new URL('../' + p, import.meta.url), 'utf8');
 const box = { window: {} }; vm.runInNewContext(read('data/season.js'), box);
@@ -41,9 +41,13 @@ for (const [w, list] of Object.entries(S.parlays || {})) {
       if (!kickoffAt(S, +w, l.game)) bad.push(`${ticketSlug(w, p)}: leg "${l.text}" has no readable kickoff ("${l.game}").`);
       else if (S.nfl?.[w] && !S.nfl[w].games.some(g => matchupKey(g) == matchupKey(l.game)) && / · /.test(l.game)) warn.push(`${ticketSlug(w, p)}: "${l.game}" isn't in nfl[${w}].`);
       if (!['open', 'hit', 'miss', 'push', undefined].includes(l.status)) bad.push(`${ticketSlug(w, p)}: leg "${l.text}" has status "${l.status}".`);
+      if (l.fair != null && !(typeof l.fair == 'number' && l.fair > 0 && l.fair < 1)) bad.push(`${ticketSlug(w, p)}: leg "${l.text}" has fair ${l.fair} (a chance between 0 and 1).`);
+      if (l.vs != null && impliedProb(l.vs) == null) bad.push(`${ticketSlug(w, p)}: leg "${l.text}" has an unreadable vs price "${l.vs}".`);
     }
     const ps = parlayState(p);
     if (!ps.priced) warn.push(`${ticketSlug(w, p)} isn't fully priced.`);
+    const fr = parlayFair(p);
+    if (fr && !(fr.edge > 0 && fr.edge < 0.5)) warn.push(`${ticketSlug(w, p)}: book edge ${Math.round(fr.edge * 100)}% looks wrong; check the vs prices.`);
     if (p.request && !p.requestAt) warn.push(`${ticketSlug(w, p)} was built for ${p.request}'s request but has no requestAt.`);
   }
 }
@@ -77,7 +81,7 @@ if (LW) for (const t of rosters.teams) {
   const bits = [...bye.map(p => p.name + ' on bye'), ...o.map(p => p.name + ' Out'), ...(empty.length ? [empty.length + ' empty'] : [])];
   if (bits.length) out.push(`Alert, ${t.name}: ${bits.join(', ')}`);
 }
-for (const p of S.parlays?.[LW] || []) { const s = parlayState(p); out.push(`Ticket ${ticketSlug(LW, p)}: ${s.status}${s.priced ? ' ' + toAmerican(s.dec) : ''}`); }
+for (const p of S.parlays?.[LW] || []) { const s = parlayState(p); const f = parlayFair(p); out.push(`Ticket ${ticketSlug(LW, p)}: ${s.status}${s.priced ? ' ' + toAmerican(s.dec) : ''}${f ? ` (fair ${toAmerican(f.dec)}, book edge ${(f.edge * 100).toFixed(1)}%)` : ''}`); }
 
 console.log(out.join('\n'));
 if (warn.length) console.log('\n' + warn.map(x => '! ' + x).join('\n'));

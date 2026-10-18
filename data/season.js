@@ -286,6 +286,12 @@ window.SEASON = {
   //                 real lines. Once every leg has odds, the combined parlay
   //                 odds and $10 payout calculate themselves.
   //   legs[].status 'open', 'hit' or 'miss'. Any miss = BUSTED, all hit = CASHED.
+  //   legs[].vs     optional: the other side's price at the same book and time ('-112' for
+  //                 Raiders +5.5 against Bills -5.5 at '-108'). With it the card shows the fair
+  //                 (no-vig) price and the book's edge: "Parlay +603 · fair +707 · book edge 13%".
+  //   legs[].fair   optional instead of vs: the leg's no-vig chance (0.4957). The fair price
+  //                 shows only when every priced leg has one; anytime TDs usually can't (the
+  //                 book only offers Yes), and book-priced or same-game tickets never do.
   //   placedBy      managers who actually bet it (a real slip). The ledger counts only
   //                 placed and tailed tickets, plus "I'm on it" taps on the site.
   //   tailers       managers riding along; tailing your own opponent shows HEDGE.
@@ -481,11 +487,12 @@ window.SEASON = {
         // picked players, team bias off). The noon games had kicked off, so the legs come from the late
         // games: three favorites at near-even prices in three different games. The Packers leg is Matt's
         // own team (he starts Love, Watson and Lloyd). Ticket ≈ +600.
-        // Odds: DraftKings via The Odds API, Sun Oct 18, 12:15 PM CT.
+        // Odds: DraftKings via The Odds API, Sun Oct 18, 12:15 PM CT. Other sides (vs), same pull:
+        // Raiders +5.5 -112, Chargers +7.5 -115, Cowboys ML -105.
         legs: [
-          { text: 'Bills spread (-5.5) at Raiders', type: 'spread', team: 'Buf', line: -5.5, teams: ['Buf', 'LV'], game: 'Sun 3:25 PM · BUF @ LV', odds: '-108', status: 'open' },
-          { text: 'Chiefs spread (-7.5) vs Chargers', type: 'spread', team: 'KC', line: -7.5, teams: ['LAC', 'KC'], game: 'Sun 3:25 PM · LAC @ KC', odds: '-105', status: 'open' },
-          { text: 'Packers moneyline vs Cowboys', type: 'ml', team: 'GB', teams: ['Dal', 'GB'], game: 'Sun 7:20 PM · DAL @ GB', odds: '-115', status: 'open' }
+          { text: 'Bills spread (-5.5) at Raiders', type: 'spread', team: 'Buf', line: -5.5, teams: ['Buf', 'LV'], game: 'Sun 3:25 PM · BUF @ LV', odds: '-108', vs: '-112', status: 'open' },
+          { text: 'Chiefs spread (-7.5) vs Chargers', type: 'spread', team: 'KC', line: -7.5, teams: ['LAC', 'KC'], game: 'Sun 3:25 PM · LAC @ KC', odds: '-105', vs: '-115', status: 'open' },
+          { text: 'Packers moneyline vs Cowboys', type: 'ml', team: 'GB', teams: ['Dal', 'GB'], game: 'Sun 7:20 PM · DAL @ GB', odds: '-115', vs: '-105', status: 'open' }
         ]
       },
       {

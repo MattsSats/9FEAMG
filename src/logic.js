@@ -759,7 +759,7 @@ class Component extends DCLogic {
     const nextNote = NEXT && wk == NEXT.week ? NEXT.note : 'Add this week to the schedule in data/season.js.';
     // Booth parlays for the selected week (data/season.js -> parlays[week]).
     const parlays = (D.parlays?.[wk] || []).map((p, i) => {
-      const { status, dec, priced } = parlayState(p), chance = hitChance(p);
+      const { status, dec, priced } = parlayState(p), chance = hitChance(p), fair = parlayFair(p);
       const vs = p.vs ?? opp(p.owner, wk), shot = 'parlay-' + i;
       // Stable link name from the parlay's id, title or owner: 'w4-the-truce'.
       const anchor = ticketSlug(wk, p);
@@ -808,7 +808,8 @@ class Component extends DCLogic {
         stampColor: status == 'CASHED' ? 'var(--pos)' : 'var(--neg)',
         statusBg: status == 'CASHED' ? 'var(--pos)' : status == 'BUSTED' ? 'var(--neg)' : 'var(--surface2)',
         statusFg: status == 'OPEN' ? 'var(--muted)' : 'var(--onStatus)',
-        oddsLabel: (priced ? 'Parlay ' + toAmerican(dec) : 'Lines TBD') + (status == 'OPEN' && chance != null ? ` · ~${pct(chance)} to hit${p.legs.some(l => l.status == 'hit') ? ' now' : ''}` : ''),
+        // "Parlay +603 · fair +707 · book edge 13%" when every leg has the other side's price.
+        oddsLabel: (priced ? 'Parlay ' + toAmerican(dec) : 'Lines TBD') + (fair ? ` · fair ${toAmerican(fair.dec)} · book edge ${Math.round(fair.edge * 100)}%` : '') + (status == 'OPEN' && chance != null ? ` · ~${pct(chance)} to hit${p.legs.some(l => l.status == 'hit') ? ' now' : ''}` : ''),
         by: (p.owners ? p.owners.join(' & ') : p.owner) + '’s Parlay',
         // e.g. "2.20 × 1.87 × 1.67 = ×6.86 · hits about 1 in 7 (15%)"
         oddsMath: toDecimal(p.odds) ? (new Set(p.legs.map(l => l.game)).size == 1 ? 'Same-game parlay · book price ' : 'Book price for the whole ticket ') + String(p.odds).replace('-', '−') : priced ? (() => {

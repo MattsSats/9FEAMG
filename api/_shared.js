@@ -126,6 +126,29 @@ export function hitChance(p) {
   }
   return prob;
 }
+// A leg's no-vig chance: `fair` as given (a probability), or worked out from `vs`, the other
+// side's price, by taking the book's cut out proportionally: p = imp(a) / (imp(a) + imp(b)).
+export function fairProb(l) {
+  if (typeof l.fair == 'number') return l.fair > 0 && l.fair < 1 ? l.fair : null;
+  const a = impliedProb(l.odds), b = impliedProb(l.vs);
+  return a != null && b != null ? a / (a + b) : null;
+}
+// A ticket's fair (no-vig) price and the book's edge on it: fair decimal = 1 / Πp, edge = 1 − dec × Πp.
+// Null unless every priced leg has a fair value (anytime TDs usually don't: DraftKings only offers
+// Yes), and for book-priced tickets and same-game groups, which have no other side to compare.
+export function parlayFair(p) {
+  if (toDecimal(p.odds) || p.legs.some(l => l.sgp)) return null;
+  const { priced, dec } = parlayState(p);
+  if (!priced) return null;
+  let prob = 1;
+  for (const l of p.legs) {
+    if (l.status == 'push') continue;
+    const f = fairProb(l);
+    if (f == null) return null;
+    prob *= f;
+  }
+  return { dec: 1 / prob, prob, edge: 1 - dec * prob };
+}
 // Everyone on a ticket (placedBy, tailers, "I'm on it" taps), minus anyone who said they didn't bet it.
 export const onTicket = (p, taps = [], passes = []) => [...new Set([...(p.placedBy || []), ...(p.tailers || []), ...taps])].filter(m => !passes.includes(m));
 
