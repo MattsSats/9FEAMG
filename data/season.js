@@ -69,29 +69,29 @@ window.SEASON = {
   // The week in progress. Set to null between weeks.
   live: {
     week: 6,
-    status: 'Live · London: HOU 17, JAX 14 at halftime · noon games next',
+    status: 'Live · London: HOU 31, JAX 21 in the 4th · noon games next',
     // When these numbers were pulled from Yahoo (Central); shows as "Scores as of Thu 10:19 PM".
-    asOf: '2026-10-18T10:18:00-05:00',
+    asOf: '2026-10-18T11:09:00-05:00',
     // [current points, projected final]
-    // Yahoo as of Sun Oct 18, 10:18 AM CT (Week 6 matchup pages).
+    // Yahoo as of Sun Oct 18, 11:09 AM CT (Week 6 matchup pages).
     scores: {
-      Matt: [0.00, 120.25], Jerger: [1.00, 106.14],
-      Tristan: [18.00, 123.89], Pablo: [4.80, 99.98],
-      Tony: [27.40, 119.62], DLin: [13.10, 103.57],
-      Kurt: [12.00, 115.67], Colin: [5.20, 107.36],
-      'Mr. G': [21.60, 98.06], Andy: [4.40, 100.55]
+      Matt: [0.00, 120.14], Jerger: [-1.00, 104.97],
+      Tristan: [21.10, 123.98], Pablo: [7.30, 101.71],
+      Tony: [27.40, 118.57], DLin: [13.10, 104.67],
+      Kurt: [12.00, 116.33], Colin: [5.20, 108.08],
+      'Mr. G': [24.50, 89.36], Andy: [4.40, 100.62]
     },
     // Points so far for every player whose game has started (starters and bench).
     // Players listed in inProgress are still playing; the rest are final.
     playerPoints: {
-      'Jaxon Smith-Njigba': 19.40, 'Jason Myers': 8.00, 'Bhayshul Tuten': 18.00, 'Jaylen Waddle': 4.40,
-      'Trevor Lawrence': 14.34, 'Broncos': 12.00, 'Courtland Sutton': 2.90, 'Jaguars': 1.00,
-      'J.K. Dobbins': 12.10, 'Woody Marks': 2.00, 'Nico Collins': 4.70, 'Parker Washington': 6.90,
-      "Ka'imi Fairbairn": 5.00, 'Seahawks': 3.00, 'Emanuel Wilson': 5.20, 'Marvin Harrison Jr.': 1.90,
-      'RJ Harvey': 13.10, 'Dalton Schultz': 1.80, 'Texans': 3.00, 'C.J. Stroud': 14.40
+      'Jaxon Smith-Njigba': 19.40, 'Jason Myers': 8.00, 'Bhayshul Tuten': 21.10, 'Jaylen Waddle': 4.40,
+      'Trevor Lawrence': 21.86, 'Broncos': 12.00, 'Courtland Sutton': 2.90, 'Jaguars': -1.00,
+      'J.K. Dobbins': 12.10, 'Woody Marks': 2.90, 'Nico Collins': 4.70, 'Parker Washington': 6.90,
+      "Ka'imi Fairbairn": 7.00, 'Seahawks': 3.00, 'Emanuel Wilson': 5.20, 'Marvin Harrison Jr.': 4.90,
+      'RJ Harvey': 13.10, 'Dalton Schultz': 5.30, 'Texans': 2.00, 'C.J. Stroud': 22.18
     },
     inProgress: ['Bhayshul Tuten', 'Trevor Lawrence', 'Jaguars', 'Woody Marks', 'Nico Collins', 'Parker Washington', "Ka'imi Fairbairn", 'Marvin Harrison Jr.', 'Dalton Schultz', 'Texans', 'C.J. Stroud'],
-    sheetNote: 'Yahoo as of Sun 10:18 AM CT. Orange = points so far; the rest are projections.'
+    sheetNote: 'Yahoo as of Sun 11:09 AM CT. Orange = points so far; the rest are projections.'
   },
 
   // The NFL week: every game ('Sun 12:00 PM · CHI @ GB', kickoff Central, same form as parlay legs)
