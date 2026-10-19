@@ -69,11 +69,11 @@ window.SEASON = {
   // The week in progress. Set to null between weeks.
   live: {
     week: 6,
-    status: 'Live · Sunday afternoon final · Sunday night DAL @ GB · Monday WAS @ SF',
+    status: 'Live · Sunday afternoon final · Sunday night DAL @ GB kicking off · Monday WAS @ SF',
     // When these numbers were pulled from Yahoo (Central); shows as "Scores as of Thu 10:19 PM".
-    asOf: '2026-10-18T19:11:00-05:00',
+    asOf: '2026-10-18T19:21:00-05:00',
     // [current points, projected final]
-    // Yahoo as of Sun Oct 18, 7:11 PM CT (Week 6 matchup pages).
+    // Yahoo as of Sun Oct 18, 7:21 PM CT (Week 6 matchup pages).
     scores: {
       Matt: [49.80, 114.72], Jerger: [101.84, 128.25],
       Tristan: [76.02, 89.39], Pablo: [66.50, 66.50],
@@ -113,7 +113,7 @@ window.SEASON = {
       'Kyle Pitts Sr.': 20.50
     },
     inProgress: [],
-    sheetNote: 'Yahoo as of Sun 7:11 PM CT. Orange = points so far; the rest are projections.'
+    sheetNote: 'Yahoo as of Sun 7:21 PM CT. Orange = points so far; the rest are projections.'
   },
 
   // The NFL week: every game ('Sun 12:00 PM · CHI @ GB', kickoff Central, same form as parlay legs)
