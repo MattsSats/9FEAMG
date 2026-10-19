@@ -25,7 +25,7 @@ window.SEASON = {
     { m: 'Tristan', init: 'T_', hue: 250 },
     { m: 'Andy', init: 'AN', hue: 150 },
     { m: 'Matt', init: 'MA', hue: 305 },
-    { m: 'Kurt', init: 'KH', hue: 95 },
+    { m: 'Kurt', init: 'KU', hue: 95 },
     { m: 'Jerger', init: 'JJ', hue: 205 },
     { m: 'Mr. G', init: 'MG', hue: 0 },
     { m: 'Colin', init: 'CG', hue: 125 },
