@@ -69,51 +69,51 @@ window.SEASON = {
   // The week in progress. Set to null between weeks.
   live: {
     week: 6,
-    status: 'Live · noon games final · 3:05 and 3:25 games in the 2nd · Sunday night DAL @ GB',
+    status: 'Live · Sunday afternoon final · Sunday night DAL @ GB · Monday WAS @ SF',
     // When these numbers were pulled from Yahoo (Central); shows as "Scores as of Thu 10:19 PM".
-    asOf: '2026-10-18T16:10:00-05:00',
+    asOf: '2026-10-18T19:11:00-05:00',
     // [current points, projected final]
-    // Yahoo as of Sun Oct 18, 4:10 PM CT (Week 6 matchup pages).
+    // Yahoo as of Sun Oct 18, 7:11 PM CT (Week 6 matchup pages).
     scores: {
-      Matt: [43.70, 120.81], Jerger: [72.34, 114.63],
-      Tristan: [59.44, 94.61], Pablo: [58.10, 68.76],
-      Tony: [69.90, 111.77], DLin: [58.12, 76.53],
-      Kurt: [71.80, 125.83], Colin: [29.24, 74.57],
-      'Mr. G': [90.90, 90.90], Andy: [90.36, 116.12]
+      Matt: [49.80, 114.72], Jerger: [101.84, 128.25],
+      Tristan: [76.02, 89.39], Pablo: [66.50, 66.50],
+      Tony: [82.60, 107.64], DLin: [61.82, 74.14],
+      Kurt: [87.20, 127.48], Colin: [61.58, 61.58],
+      'Mr. G': [90.90, 90.90], Andy: [107.72, 122.70]
     },
-    yahooWin: { Tony: 92, Tristan: 86, Andy: 96, Matt: 57, Kurt: 96, Jerger: 43, 'Mr. G': 4, Colin: 4, DLin: 8, Pablo: 14 },
+    yahooWin: { Tony: 94, Tristan: 96, Andy: 99, Matt: 33, Kurt: 99, Jerger: 67, 'Mr. G': 1, Colin: 1, DLin: 6, Pablo: 4 },
     // Points so far for every player whose game has started (starters and bench).
     // Players listed in inProgress are still playing; the rest are final.
     playerPoints: {
-      'Josh Allen': 5.60, 'Bucky Irving': 5.90, 'Dameon Pierce': 13.00, 'Jaxon Smith-Njigba': 19.40,
-      'Carnell Tate': 16.00, 'Jason Myers': 8.00, 'Colts': 2.00, 'Omarion Hampton': 0.80,
-      'Dalton Kincaid': 3.60, 'Matthew Stafford': 6.88, 'Jacoby Brissett': 3.44, 'Bijan Robinson': 6.30,
-      'Ashton Jeanty': 9.70, 'A.J. Brown': 4.20, 'Pat Freiermuth': 2.10, 'Bhayshul Tuten': 22.70,
-      'Blake Grupe': 4.00, 'Chiefs': 7.00, 'Rome Odunze': 5.40, 'Ladd McConkey': 2.20,
-      'Kirk Cousins': 2.16, "D'Andre Swift": 21.00, 'Drake London': 10.20, 'Devaughn Vele': 5.70,
+      'Josh Allen': 18.30, 'Bucky Irving': 5.90, 'Dameon Pierce': 13.00, 'Jaxon Smith-Njigba': 19.40,
+      'Carnell Tate': 16.00, 'Jason Myers': 8.00, 'Colts': 2.00, 'Omarion Hampton': 5.90,
+      'Dalton Kincaid': 7.30, 'Matthew Stafford': 16.88, 'Jacoby Brissett': 7.92, 'Bijan Robinson': 6.30,
+      'Ashton Jeanty': 13.80, 'A.J. Brown': 4.20, 'Pat Freiermuth': 2.10, 'Bhayshul Tuten': 22.70,
+      'Blake Grupe': 4.00, 'Chiefs': 15.00, 'Rome Odunze': 5.40, 'Ladd McConkey': 2.20,
+      'Kirk Cousins': 19.52, "D'Andre Swift": 21.00, 'Drake London': 10.20, 'Devaughn Vele': 5.70,
       'Isaiah Likely': 20.90, 'Jaylen Waddle': 4.40, 'Chase McLaughlin': 17.00, 'Ravens': 9.00,
-      'Tre Tucker': 3.10, 'Trevor Lawrence': 28.34, 'Rams': 9.00, 'Chuba Hubbard': 18.60,
-      'Garrett Wilson': 6.40, 'Trey McBride': 5.70, 'Cameron Dicker': 3.00, 'Steelers': 10.00,
-      'Josh Downs': 6.70, 'Chris Godwin Jr.': 5.70, 'Xavier Worthy': 7.10, 'DeVonta Smith': 17.00,
-      'Kenneth Walker III': 11.50, 'Jaylen Warren': 8.80, 'Zay Flowers': 9.70, 'Colston Loveland': 15.50,
+      'Tre Tucker': 24.20, 'Trevor Lawrence': 28.34, 'Rams': 3.00, 'Chuba Hubbard': 18.60,
+      'Garrett Wilson': 6.40, 'Trey McBride': 8.80, 'Cameron Dicker': 6.00, 'Steelers': 10.00,
+      'Josh Downs': 6.70, 'Chris Godwin Jr.': 5.70, 'Xavier Worthy': 10.80, 'DeVonta Smith': 17.00,
+      'Kenneth Walker III': 26.90, 'Jaylen Warren': 8.80, 'Zay Flowers': 9.70, 'Colston Loveland': 15.50,
       'Emeka Egbuka': 14.30, 'Broncos': 12.00, 'Courtland Sutton': 2.90, 'Bryce Young': 19.84,
-      'James Cook III': 4.30, 'Braelon Allen': 11.40, 'Chris Olave': 12.30, 'Malik Nabers': 22.50,
-      'Matt Gay': 1.00, 'Jaguars': 1.00, 'J.K. Dobbins': 12.10, 'Travis Kelce': 0.00,
-      'Jalen Coker': 12.70, 'Blake Corum': 11.30, 'Drake Maye': 23.80, 'Rhamondre Stevenson': 3.60,
+      'James Cook III': 22.80, 'Braelon Allen': 11.40, 'Chris Olave': 12.30, 'Malik Nabers': 22.50,
+      'Matt Gay': 12.00, 'Jaguars': 1.00, 'J.K. Dobbins': 12.10, 'Travis Kelce': 7.30,
+      'Jalen Coker': 12.70, 'Blake Corum': 13.00, 'Drake Maye': 23.80, 'Rhamondre Stevenson': 3.60,
       'Woody Marks': 9.10, 'Nico Collins': 9.40, 'Parker Washington': 8.40, 'Dallas Goedert': 9.10,
       'Luther Burden III': 13.50, "Ka'imi Fairbairn": 11.00, 'Seahawks': 3.00, 'DK Metcalf': 14.80,
-      'Tyler Shough': 26.96, 'Patrick Mahomes': 3.24, 'Kyren Williams': 2.30, 'Emanuel Wilson': 5.20,
-      'Davante Adams': 1.20, 'Denzel Boston': 2.00, 'Brock Bowers': 0.00, 'Tyler Allgeier': 0.30,
+      'Tyler Shough': 26.96, 'Patrick Mahomes': 11.48, 'Kyren Williams': 8.20, 'Emanuel Wilson': 5.20,
+      'Davante Adams': 5.40, 'Denzel Boston': 2.00, 'Brock Bowers': 9.00, 'Tyler Allgeier': 5.30,
       'Spencer Shrader': 9.00, 'Patriots': 6.00, 'Marvin Harrison Jr.': 4.90, 'Aaron Rodgers': 17.02,
-      'Jonathan Taylor': 20.10, 'Cam Skattebo': 0.00, 'Michael Wilson': 1.50, 'Harold Fannin Jr.': 1.40,
+      'Jonathan Taylor': 20.10, 'Cam Skattebo': 0.00, 'Michael Wilson': 5.20, 'Harold Fannin Jr.': 1.40,
       'RJ Harvey': 13.10, 'Tyler Loop': 4.00, 'Giants': 1.00, 'Kenny Gainwell': 2.90,
       'Rico Dowdle': 6.40, 'Caleb Williams': 16.50, 'Derrick Henry': 4.50, 'Tony Pollard': 7.60,
-      'Puka Nacua': 2.60, 'Tetairoa McMillan': 11.60, 'Dalton Schultz': 5.30, 'Juwan Johnson': 0.00,
-      'Cairo Santos': 9.00, 'Texans': 1.00, 'C.J. Stroud': 23.98, 'Quentin Johnston': 0.00,
+      'Puka Nacua': 11.00, 'Tetairoa McMillan': 11.60, 'Dalton Schultz': 5.30, 'Juwan Johnson': 0.00,
+      'Cairo Santos': 9.00, 'Texans': 1.00, 'C.J. Stroud': 23.98, 'Quentin Johnston': 6.20,
       'Kyle Pitts Sr.': 20.50
     },
-    inProgress: ['Josh Allen', 'Omarion Hampton', 'Dalton Kincaid', 'Matthew Stafford', 'Jacoby Brissett', 'Ashton Jeanty', 'Blake Grupe', 'Chiefs', 'Ladd McConkey', 'Kirk Cousins', 'Tre Tucker', 'Rams', 'Trey McBride', 'Cameron Dicker', 'Xavier Worthy', 'Kenneth Walker III', 'James Cook III', 'Matt Gay', 'Travis Kelce', 'Blake Corum', 'Patrick Mahomes', 'Kyren Williams', 'Davante Adams', 'Brock Bowers', 'Tyler Allgeier', 'Michael Wilson', 'Puka Nacua', 'Quentin Johnston'],
-    sheetNote: 'Yahoo as of Sun 4:10 PM CT. Orange = points so far; the rest are projections.'
+    inProgress: [],
+    sheetNote: 'Yahoo as of Sun 7:11 PM CT. Orange = points so far; the rest are projections.'
   },
 
   // The NFL week: every game ('Sun 12:00 PM · CHI @ GB', kickoff Central, same form as parlay legs)
@@ -496,10 +496,10 @@ window.SEASON = {
         // Odds: DraftKings via The Odds API, Sun Oct 18, 1:16 AM CT. Ticket ≈ +19,700. Ladders (1+, 2+, 3+ TDs, for
         // the fair estimate): 2+ and 3+ from the 1:16 AM pull, 1+ from the 1:24 AM pull.
         legs: [
-          { text: 'Kyren Williams 2+ TDs', player: 'Kyren Williams', type: 'td', count: 2, game: 'Sun 3:05 PM · ARI @ LAR', odds: '+285', ladder: ['-190', '+285', '+1100'], status: 'open' },
-          { text: 'Kenneth Walker III 2+ TDs', player: 'Kenneth Walker III', type: 'td', count: 2, game: 'Sun 3:25 PM · LAC @ KC', odds: '+330', ladder: ['-170', '+330', '+1500'], status: 'open' },
+          { text: 'Kyren Williams 2+ TDs', player: 'Kyren Williams', type: 'td', count: 2, game: 'Sun 3:05 PM · ARI @ LAR', odds: '+285', ladder: ['-190', '+285', '+1100'], result: 'No TD (10-50 rush, 3-17 rec)', status: 'miss' },
+          { text: 'Kenneth Walker III 2+ TDs', player: 'Kenneth Walker III', type: 'td', count: 2, game: 'Sun 3:25 PM · LAC @ KC', odds: '+330', ladder: ['-170', '+330', '+1500'], result: '2 rush TDs (19-128 rush, 2-11 rec)', status: 'hit' },
           { text: 'Jonathan Taylor 2+ TDs', player: 'Jonathan Taylor', type: 'td', count: 2, game: 'Sun 12:00 PM · TEN @ IND', odds: '+185', ladder: ['-290', '+185', '+750'], result: '1 rush TD (21-94 rush, 2-57 rec)', status: 'miss' },
-          { text: 'James Cook 2+ TDs', player: 'James Cook III', type: 'td', count: 2, game: 'Sun 3:25 PM · BUF @ LV', odds: '+320', ladder: ['-170', '+320', '+1400'], status: 'open' }
+          { text: 'James Cook 2+ TDs', player: 'James Cook III', type: 'td', count: 2, game: 'Sun 3:25 PM · BUF @ LV', odds: '+320', ladder: ['-170', '+320', '+1400'], result: '1 rush TD (22-95 rush, 3-58 rec)', status: 'miss' }
         ]
       },
       {
@@ -511,8 +511,8 @@ window.SEASON = {
         // Odds: DraftKings via The Odds API, Sun Oct 18, 12:15 PM CT. Other sides (vs), same pull:
         // Raiders +5.5 -112, Chargers +7.5 -115, Cowboys ML -105.
         legs: [
-          { text: 'Bills spread (-5.5) at Raiders', type: 'spread', team: 'Buf', line: -5.5, teams: ['Buf', 'LV'], game: 'Sun 3:25 PM · BUF @ LV', odds: '-108', vs: '-112', status: 'open' },
-          { text: 'Chiefs spread (-7.5) vs Chargers', type: 'spread', team: 'KC', line: -7.5, teams: ['LAC', 'KC'], game: 'Sun 3:25 PM · LAC @ KC', odds: '-105', vs: '-115', status: 'open' },
+          { text: 'Bills spread (-5.5) at Raiders', type: 'spread', team: 'Buf', line: -5.5, teams: ['Buf', 'LV'], game: 'Sun 3:25 PM · BUF @ LV', odds: '-108', vs: '-112', result: 'Final 33–30 · won by 3, needed 6', status: 'miss' },
+          { text: 'Chiefs spread (-7.5) vs Chargers', type: 'spread', team: 'KC', line: -7.5, teams: ['LAC', 'KC'], game: 'Sun 3:25 PM · LAC @ KC', odds: '-105', vs: '-115', result: 'Final 22–6 · won by 16', status: 'hit' },
           { text: 'Packers moneyline vs Cowboys', type: 'ml', team: 'GB', teams: ['Dal', 'GB'], game: 'Sun 7:20 PM · DAL @ GB', odds: '-115', vs: '-105', status: 'open' }
         ]
       },
@@ -526,9 +526,9 @@ window.SEASON = {
         legs: [
           { text: 'Jonathan Taylor anytime TD', player: 'Jonathan Taylor', type: 'td', count: 1, game: 'Sun 12:00 PM · TEN @ IND', odds: '-290', ladder: ['-290', '+185', '+750'], result: '1 rush TD (21-94 rush, 2-57 rec)', status: 'hit' },
           { text: 'Rome Odunze anytime TD', player: 'Rome Odunze', type: 'td', count: 1, game: 'Sun 12:00 PM · CHI @ ATL', odds: '+150', result: 'No TD (3-39 rec)', status: 'miss' },
-          { text: 'Kyren Williams anytime TD', player: 'Kyren Williams', type: 'td', count: 1, game: 'Sun 3:05 PM · ARI @ LAR', odds: '-190', ladder: ['-190', '+285', '+1100'], status: 'open' },
-          { text: 'Kenneth Walker III anytime TD', player: 'Kenneth Walker III', type: 'td', count: 1, game: 'Sun 3:25 PM · LAC @ KC', odds: '-170', ladder: ['-170', '+330', '+1500'], status: 'open' },
-          { text: 'James Cook anytime TD', player: 'James Cook III', type: 'td', count: 1, game: 'Sun 3:25 PM · BUF @ LV', odds: '-170', ladder: ['-170', '+320', '+1400'], status: 'open' }
+          { text: 'Kyren Williams anytime TD', player: 'Kyren Williams', type: 'td', count: 1, game: 'Sun 3:05 PM · ARI @ LAR', odds: '-190', ladder: ['-190', '+285', '+1100'], result: 'No TD (10-50 rush, 3-17 rec)', status: 'miss' },
+          { text: 'Kenneth Walker III anytime TD', player: 'Kenneth Walker III', type: 'td', count: 1, game: 'Sun 3:25 PM · LAC @ KC', odds: '-170', ladder: ['-170', '+330', '+1500'], result: '2 rush TDs (19-128 rush, 2-11 rec)', status: 'hit' },
+          { text: 'James Cook anytime TD', player: 'James Cook III', type: 'td', count: 1, game: 'Sun 3:25 PM · BUF @ LV', odds: '-170', ladder: ['-170', '+320', '+1400'], result: '1 rush TD (22-95 rush, 3-58 rec)', status: 'hit' }
         ]
       }
     ]
