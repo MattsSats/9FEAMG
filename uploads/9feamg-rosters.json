@@ -1,10 +1,10 @@
 {
-  "asOf": "2026-10-18T21:24:00-05:00",
+  "asOf": "2026-10-18T23:01:00-05:00",
   "source": "Signed-in Yahoo Fantasy league 935526 team roster pages (full reconcile)",
   "week": 6,
   "baseline": "yahoo-live",
   "baselineAvailable": true,
-  "baselineNote": "Rosters from Yahoo's Week 6 matchup pages (read in the built-in browser), with every player's Yahoo projection (proj) and injury tag (inj) as of Sun Oct 18, 9:24 PM CT.",
+  "baselineNote": "Rosters from Yahoo's Week 6 matchup pages (read in the built-in browser), with every player's Yahoo projection (proj) and injury tag (inj) as of Sun Oct 18, 11:01 PM CT.",
   "teams": [
     {
       "id": "1",
@@ -162,7 +162,7 @@
           "pos": "WR",
           "slot": "starter",
           "nfl": "SF",
-          "proj": 13.37,
+          "proj": 13.42,
           "inj": "Q"
         },
         {
@@ -249,7 +249,7 @@
           "pos": "WR",
           "slot": "IR",
           "nfl": "LAC",
-          "proj": 0,
+          "proj": 8.15,
           "inj": "Q"
         },
         {
@@ -497,7 +497,7 @@
           "pos": "WR",
           "slot": "bench",
           "nfl": "Was",
-          "proj": 8.79,
+          "proj": 8.81,
           "inj": "Q"
         },
         {
@@ -680,7 +680,7 @@
           "pos": "TE",
           "slot": "starter",
           "nfl": "SF",
-          "proj": 12.31
+          "proj": 12.36
         },
         {
           "name": "Carnell Tate",
@@ -884,7 +884,7 @@
           "pos": "RB",
           "slot": "starter",
           "nfl": "SF",
-          "proj": 18.28
+          "proj": 18.33
         },
         {
           "name": "Chuba Hubbard",
@@ -976,7 +976,7 @@
           "pos": "QB",
           "slot": "bench",
           "nfl": "Was",
-          "proj": 18.95
+          "proj": 18.97
         },
         {
           "name": "DeVonta Smith",
@@ -1121,7 +1121,7 @@
           "pos": "QB",
           "slot": "starter",
           "nfl": "SF",
-          "proj": 21.17
+          "proj": 21.26
         },
         {
           "name": "Kenneth Walker III",
@@ -1149,7 +1149,7 @@
           "pos": "WR",
           "slot": "starter",
           "nfl": "Was",
-          "proj": 10.16
+          "proj": 10.17
         },
         {
           "name": "Colston Loveland",
@@ -1170,7 +1170,7 @@
           "pos": "K",
           "slot": "starter",
           "nfl": "SF",
-          "proj": 8.95
+          "proj": 8.96
         },
         {
           "name": "Broncos",
