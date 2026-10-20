@@ -220,6 +220,13 @@ window.SEASON = {
       ['Jerger', 'Jerger beat Mr. G by 2.56 because Mr. G started Jeremiyah Love (2.20) over Stevenson (16.00). Jerger has won the season’s two closest games, and both came gift-wrapped.', '2026-10-13T18:19-05:00'],
       ['DLin', 'DLin was projected to beat Colin and lost by 40.58 with 92.62, the week’s lowest, as Higgins and Fannin combined for 4.10. The projections lied, and DLin believed them.', '2026-10-13T18:19-05:00'],
       ['Pablo', 'Take Gibbs’ 35.20 out of Andy’s week-best 148.44 and Andy still beats Pablo by 0.20. The gibbing was optional.', '2026-10-13T18:19-05:00']
+    ],
+    6: [
+      ['Jerger', 'The Booth said Jerger’s streak was living on credit. Jerger beat Matt 119.54–106.14, the projected loser, for four straight. The Booth would like to settle up.', '2026-10-19T23:50-05:00'],
+      ['Pablo', 'Pablo lost to Tristan by 20.42 while Pitts scored 20.50 on the bench and Juwan Johnson started for 0.00. That swap wins it by 0.08.', '2026-10-19T23:50-05:00'],
+      ['Tony', 'DLin got 0.00 from Skattebo, and Tony won by 45.28 to go 5–1. Tony’s luck is still +1.44, but the fraud watch is running out of evidence.', '2026-10-19T23:50-05:00'],
+      ['Colin', 'Colin made a league-high 31 adds and posted the season’s lowest score, 61.58, as Kurt won by 51.18. Average Sports Enthusiast, above-average Sunday.', '2026-10-19T23:50-05:00'],
+      ['Andy', 'Andy put up the week’s top score, 119.72, with Lawrence’s 28.34 on the bench, and handed Mr. G a fifth straight loss. It’s gibbing time, even with Gibbs on bye.', '2026-10-19T23:50-05:00']
     ]
   },
   // The day each week's previews were written; each line's own time (third field) wins when it has one.
@@ -542,20 +549,32 @@ window.SEASON = {
       Kurt: 'Down three while going 23–22 against the whole league. Kurt is 1–4 anyway. The numbers and the standings disagree, and the standings are winning.',
       DLin: 'Down one after the week’s low score, 92.62. 14–31 against the field and still 2–3. The Toilet Bowl King is overachieving.',
       'Mr. G': 'Still last, and opponents have now put 636.32 on Mr. G, 56.32 more than anyone else has allowed. Mr. G is the league’s favorite opponent.'
+    },
+    6: {
+      Andy: 'Still first, with the week’s top score (119.72) and the best all-play record in the league, 38–16. Gibbs was on bye. Nobody noticed.',
+      Tony: 'Up two to 2nd and first in the standings at 5–1. Still the fewest points against (518.24) and the best luck, +1.44. The schedule sends its regards.',
+      Tristan: 'Down one after 86.92, 7th of the week, and a 20.42 win anyway. Tristan’s luck is now exactly 0.00, and the bench left just 5.40.',
+      Jerger: 'Up one on four straight wins, the latest over Matt and the projections by 13.40, with the week’s second-best score, 119.54. The streak finally brought receipts.',
+      Matt: 'Up one despite the loss. 333.06 points left on the bench this season, the most in the league. There is no 2nd best, and 7th is where that gets you.',
+      Kurt: 'Up two after a 51.18 win over Colin, and into the last playoff spot at 2–4. Still the league’s best lineup efficiency, 95.2%. The schedule finally blinked.',
+      Colin: 'Down four, the week’s biggest drop, after 61.58, the season’s lowest score. 0–9 against the field this week, and 31 adds and counting.',
+      Pablo: 'Down one after losing to Tristan by 20.42 with Pitts’ 20.50 on the bench. 19–35 against the field and the league’s worst lineup efficiency, 80.9%.',
+      'Mr. G': 'Up one without winning, which says more about DLin. Five straight losses, and 756.04 points allowed, 86.64 more than anyone.',
+      DLin: 'Down one to last after 72.12 and a 45.28 loss to Tony. 16–38 against the field. The Toilet Bowl King has found the throne.'
     }
   },
 
   // One-liner on each team page.
   roasts: {
-    Tony: 'First at 4–1 with the fewest points against (446.12) and the league’s best luck, +1.22. Power rankings still have Tony 4th.',
-    Tristan: 'Most points in the league (609.26) and 33–12 against the whole field, yet 3rd after two straight losses. The season Tristan declared over is going fine.',
-    Andy: '4–1, first in the power rankings, and the top score of Week 5 at 148.44. It’s gibbing time, and it has been for three straight weeks.',
-    Matt: '6th at 2–3, holding the last playoff spot, with 111.18 points left on the bench. Daniels’ 32.26 in Week 5 was the most expensive of them.',
-    Kurt: '1–4 with the 5th-most points, the league’s best lineup efficiency (94.3%) and its worst luck (−1.56). Average Sports Enthusiast, below-average schedule.',
-    Jerger: 'Three straight wins, two of them by a combined 4.00, and a 21–24 record against the whole league. #1 Y! Fan, and Yahoo’s schedule is returning the favor.',
-    'Mr. G': 'Last at 1–4, with 636.32 points allowed, 56.32 more than anyone else. Definitely not a Boomer, definitely the opponent everyone wants.',
-    Colin: '29 adds, the least waiver money left, and 121.34 points on the bench, the most in the league. C Lambs Biggest Hater is 3–2 anyway.',
-    DLin: 'The fewest points in the league (490.20) and a 14–31 record against the whole field, but 2–3, level with 6th place. The Toilet Bowl King wins ugly.',
-    Pablo: 'The only team with luck at exactly 0.00, and 7th at 2–3, a tiebreaker out of the last playoff spot. He was #1 for one week, in Week 4 (133.78).'
+    Tony: 'First at 5–1 with the fewest points against (518.24) and the league’s best luck, +1.44. 11 Shots In, and opponents keep missing.',
+    Tristan: '4–2, the fewest bench points in the league (189.30), and luck at exactly 0.00. The season Tristan declared over is right on schedule.',
+    Andy: '5–1, first in the power rankings, and the week’s top score with Gibbs on bye. It’s gibbing time, even when Gibbs isn’t.',
+    Matt: '7th at 2–4 with 333.06 points on the bench, the most in the league, and luck tied for worst at −1.22. There is no 2nd best, just 7th.',
+    Kurt: '2–4 with the league’s best lineup efficiency (95.2%) and luck tied for worst at −1.22. Average Sports Enthusiast, above-average lineups.',
+    Jerger: 'Four straight wins and 4–2, with a 29–25 record against the field. #1 Y! Fan, and Yahoo’s projections had Jerger losing Week 6.',
+    'Mr. G': '1–5 with 756.04 points allowed, 86.64 more than anyone. Definitely not a Boomer, definitely everyone’s favorite opponent.',
+    Colin: '31 adds, the most in the league by 9, and the season’s lowest score in Week 6, 61.58. C Lambs Biggest Hater, and Week 6 hated back.',
+    DLin: 'Last in the power rankings, 16–38 against the field, and 2–4 anyway. The Toilet Bowl King is defending the title on schedule.',
+    Pablo: '8th at 2–4, 19–35 against the field and the league’s worst lineup efficiency, 80.9%. He was #1. Week 1 was a long time ago.'
   }
 };
