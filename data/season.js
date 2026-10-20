@@ -575,6 +575,6 @@ window.SEASON = {
     'Mr. G': '1–5 with 756.04 points allowed, 86.64 more than anyone. Definitely not a Boomer, definitely everyone’s favorite opponent.',
     Colin: '31 adds, the most in the league by 9, and the season’s lowest score in Week 6, 61.58. C Lambs Biggest Hater, and Week 6 hated back.',
     DLin: 'Last in the power rankings, 16–38 against the field, and 2–4 anyway. The Toilet Bowl King is defending the title on schedule.',
-    Pablo: '8th at 2–4, 19–35 against the field and the league’s worst lineup efficiency, 80.9%. He was #1. Week 1 was a long time ago.'
+    Pablo: '8th at 2–4, 19–35 against the field and the league’s worst lineup efficiency, 80.9%. He was #1, for one week: Week 4’s top score, 133.78.'
   }
 };
