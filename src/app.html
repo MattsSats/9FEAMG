@@ -643,7 +643,7 @@ button{font-family:inherit;color:inherit}
   <sc-for list="{{ weekChips }}" as="w" hint-placeholder-count="5">
     <button sc-camel-on-click="{{ w.pick }}" data-on="{{ w.on }}" class="wchip" style="flex:1 0 48px;min-height:48px;border-radius:10px;border:1px solid {{ w.border }};background:{{ w.bg }};color:{{ w.fg }};cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:4px 0">
       <span style="font-family:'Big Shoulders Display';font-weight:800;font-size:20px;line-height:1">{{ w.label }}</span>
-      <span class="wsub" style="font-family:'JetBrains Mono';font-size:9px;letter-spacing:.1em;font-weight:600;opacity:.85;display:flex;align-items:center;gap:3px"><sc-if value="{{ w.live }}" hint-placeholder-val="{{ false }}"><svg class="hi play" style="--hi-a:currentColor" width="11" height="11" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle class="a-rip" cx="24" cy="24" r="11" style="stroke:var(--hi-a)"></circle><circle class="a-rip a-rip2" cx="24" cy="24" r="11" style="stroke:var(--hi-a)"></circle><circle class="a-rip a-rip3" cx="24" cy="24" r="11" style="stroke:var(--hi-a)"></circle><circle class="a-dot" cx="24" cy="24" r="6" stroke="none" style="fill:var(--hi-a)"></circle></svg></sc-if>{{ w.sub }}</span>
+      <span class="wsub" style="font-family:'JetBrains Mono';font-size:10px;letter-spacing:.1em;font-weight:600;opacity:.85;display:flex;align-items:center;gap:3px"><sc-if value="{{ w.live }}" hint-placeholder-val="{{ false }}"><svg class="hi play" style="--hi-a:currentColor" width="11" height="11" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle class="a-rip" cx="24" cy="24" r="11" style="stroke:var(--hi-a)"></circle><circle class="a-rip a-rip2" cx="24" cy="24" r="11" style="stroke:var(--hi-a)"></circle><circle class="a-rip a-rip3" cx="24" cy="24" r="11" style="stroke:var(--hi-a)"></circle><circle class="a-dot" cx="24" cy="24" r="6" stroke="none" style="fill:var(--hi-a)"></circle></svg></sc-if>{{ w.sub }}</span>
     </button>
   </sc-for>
 </div>
@@ -665,11 +665,11 @@ button{font-family:inherit;color:inherit}
         <div style="padding:8px 0;border-top:1px solid var(--line)">
           <!-- One row per matchup: crest, name and score on each side. -->
           <div style="display:grid;grid-template-columns:minmax(0,1fr) auto 8px auto minmax(0,1fr);align-items:center;column-gap:7px">
-            <span style="display:flex;align-items:center;gap:6px;min-width:0"><div class="crest" style="width:20px;height:20px;background:{{ r.a.color }};color:var(--onAccent);display:flex;align-items:center;justify-content:center;font-family:'Big Shoulders Display';font-weight:800;font-size:9px;flex:none"><span class="ini" data-i="{{ r.a.init }}">{{ r.a.init }}</span></div><span style="font-size:14px;font-weight:{{ r.a.weight }};color:{{ r.a.fg }};white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ r.a.m }}</span></span>
+            <span style="display:flex;align-items:center;gap:6px;min-width:0"><div class="crest" style="width:20px;height:20px;background:{{ r.a.color }};color:var(--onAccent);display:flex;align-items:center;justify-content:center;font-family:'Big Shoulders Display';font-weight:800;font-size:10px;flex:none"><span class="ini" data-i="{{ r.a.init }}">{{ r.a.init }}</span></div><span style="font-size:14px;font-weight:{{ r.a.weight }};color:{{ r.a.fg }};white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ r.a.m }}</span></span>
             <span style="font-family:'Big Shoulders Display';font-weight:900;font-size:21px;line-height:1;color:{{ r.a.fg }}">{{ r.a.score }}</span>
             <span style="color:var(--muted);text-align:center">–</span>
             <span style="font-family:'Big Shoulders Display';font-weight:900;font-size:21px;line-height:1;color:{{ r.b.fg }}">{{ r.b.score }}</span>
-            <span style="display:flex;align-items:center;justify-content:flex-end;gap:6px;min-width:0"><span style="font-size:14px;font-weight:{{ r.b.weight }};color:{{ r.b.fg }};white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ r.b.m }}</span><div class="crest" style="width:20px;height:20px;background:{{ r.b.color }};color:var(--onAccent);display:flex;align-items:center;justify-content:center;font-family:'Big Shoulders Display';font-weight:800;font-size:9px;flex:none"><span class="ini" data-i="{{ r.b.init }}">{{ r.b.init }}</span></div></span>
+            <span style="display:flex;align-items:center;justify-content:flex-end;gap:6px;min-width:0"><span style="font-size:14px;font-weight:{{ r.b.weight }};color:{{ r.b.fg }};white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ r.b.m }}</span><div class="crest" style="width:20px;height:20px;background:{{ r.b.color }};color:var(--onAccent);display:flex;align-items:center;justify-content:center;font-family:'Big Shoulders Display';font-weight:800;font-size:10px;flex:none"><span class="ini" data-i="{{ r.b.init }}">{{ r.b.init }}</span></div></span>
           </div>
           <sc-if value="{{ r.hasBooth }}" hint-placeholder-val="{{ true }}">
             <div style="margin-top:4px;font-size:13.5px;line-height:1.33;text-wrap:pretty">{{ r.booth }}</div>
@@ -766,12 +766,12 @@ button{font-family:inherit;color:inherit}
         <sc-for list="{{ booth }}" as="b" hint-placeholder-count="3">
           <div style="padding:12px 0;border-top:1px solid var(--line)">
             <!-- Each line is about its matchup: both crests and "Matt vs Kurt". -->
-            <div style="display:flex;align-items:center;gap:6px">
+            <div style="display:flex;flex-wrap:wrap;align-items:center;gap:4px 6px">
               <sc-for list="{{ b.crests }}" as="c" hint-placeholder-count="2">
-                <div class="crest" style="width:24px;height:24px;background:{{ c.color }};color:var(--onAccent);display:flex;align-items:center;justify-content:center;font-family:'Big Shoulders Display';font-weight:800;font-size:10px;flex:none"><span class="ini" data-i="{{ c.init }}">{{ c.init }}</span></div>
+                <div class="crest" style="width:28px;height:28px;background:{{ c.color }};color:var(--onAccent);display:flex;align-items:center;justify-content:center;font-family:'Big Shoulders Display';font-weight:800;font-size:12px;flex:none"><span class="ini" data-i="{{ c.init }}">{{ c.init }}</span></div>
               </sc-for>
-              <span style="font-family:'JetBrains Mono';font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-left:2px">{{ b.matchup }}</span>
-              <span style="margin-left:auto;font-family:'JetBrains Mono';font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--accentInk)">{{ b.label }}</span>
+              <span style="font-family:'JetBrains Mono';font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-left:2px;white-space:nowrap">{{ b.matchup }}</span>
+              <span style="margin-left:auto;font-family:'JetBrains Mono';font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--accentInk);white-space:nowrap">{{ b.label }}</span>
             </div>
             <div style="min-width:0;margin-top:6px">
               <div style="font-size:15px;line-height:1.4;text-wrap:pretty">{{ b.text }}</div>
@@ -808,7 +808,7 @@ button{font-family:inherit;color:inherit}
         <sc-if value="{{ reqForm.mgrCollapsed }}" hint-placeholder-val="{{ false }}">
           <div style="display:flex;align-items:center;gap:8px;margin-top:14px">
             <span style="font-family:'JetBrains Mono';font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)">Asking as</span>
-            <span class="crest" style="width:22px;height:22px;background:{{ reqForm.me.color }};color:var(--onAccent);display:flex;align-items:center;justify-content:center;font-family:'Big Shoulders Display';font-weight:800;font-size:9px"><span class="ini" data-i="{{ reqForm.me.init }}">{{ reqForm.me.init }}</span></span>
+            <span class="crest" style="width:22px;height:22px;background:{{ reqForm.me.color }};color:var(--onAccent);display:flex;align-items:center;justify-content:center;font-family:'Big Shoulders Display';font-weight:800;font-size:10px"><span class="ini" data-i="{{ reqForm.me.init }}">{{ reqForm.me.init }}</span></span>
             <b style="font-size:14px">{{ reqForm.me.m }}</b>
             <button sc-camel-on-click="{{ reqForm.changeMgr }}" style="margin-left:auto;min-height:32px;padding:0 12px;border:1px solid var(--line);border-radius:999px;background:transparent;color:var(--muted);font-size:13px;cursor:pointer">Change</button>
           </div>
@@ -937,7 +937,7 @@ button{font-family:inherit;color:inherit}
             <sc-if value="{{ pr.hasWith }}" hint-placeholder-val="{{ false }}">
               <span style="font-family:'JetBrains Mono';font-size:11px;color:var(--muted)">{{ pr.withLabel }}</span>
               <sc-for list="{{ pr.withList }}" as="tl" hint-placeholder-count="1">
-                <span style="display:inline-flex;align-items:center;gap:5px;font-size:13px;font-weight:600"><span class="crest" style="width:20px;height:20px;background:{{ tl.color }};color:var(--onAccent);display:flex;align-items:center;justify-content:center;font-family:'Big Shoulders Display';font-weight:800;font-size:9px;flex:none"><span class="ini" data-i="{{ tl.init }}">{{ tl.init }}</span></span>{{ tl.m }}<sc-if value="{{ tl.hasTag }}" hint-placeholder-val="{{ false }}"><span style="font-family:'JetBrains Mono';font-size:9px;font-weight:700;letter-spacing:.1em;padding:3px 6px;border-radius:5px;background:var(--accent);color:var(--onAccent)">{{ tl.tag }}</span></sc-if></span>
+                <span style="display:inline-flex;align-items:center;gap:5px;font-size:13px;font-weight:600"><span class="crest" style="width:20px;height:20px;background:{{ tl.color }};color:var(--onAccent);display:flex;align-items:center;justify-content:center;font-family:'Big Shoulders Display';font-weight:800;font-size:10px;flex:none"><span class="ini" data-i="{{ tl.init }}">{{ tl.init }}</span></span>{{ tl.m }}<sc-if value="{{ tl.hasTag }}" hint-placeholder-val="{{ false }}"><span style="font-family:'JetBrains Mono';font-size:10px;font-weight:700;letter-spacing:.1em;padding:3px 6px;border-radius:5px;background:var(--accent);color:var(--onAccent)">{{ tl.tag }}</span></sc-if></span>
               </sc-for>
             </sc-if>
             <sc-if value="{{ pr.hasPassed }}" hint-placeholder-val="{{ false }}">
@@ -982,7 +982,7 @@ button{font-family:inherit;color:inherit}
             <div class="shot-tight" style="display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:10px;align-items:center;padding:11px 0;border-bottom:1px solid var(--line)">
               <div style="min-width:0">
                 <div style="font-size:15px;font-weight:600;line-height:1.3">{{ lg.text }}</div>
-                <div style="display:flex;flex-wrap:wrap;align-items:center;gap:4px 8px;margin-top:4px;font-family:'JetBrains Mono';font-size:10px;color:var(--muted)">
+                <div style="display:flex;flex-wrap:wrap;align-items:center;gap:4px 8px;margin-top:4px;font-family:'JetBrains Mono';font-size:11px;color:var(--muted)">
                   <sc-if value="{{ lg.hasOwner }}" hint-placeholder-val="{{ true }}"><span class="{{ lg.ownerCls }}" style="display:inline-flex;align-items:center;gap:5px;color:var(--ink)"><span style="width:7px;height:7px;border-radius:50%;background:{{ lg.ownerColor }}"></span>{{ lg.owner }}</span></sc-if>
                   <span>{{ lg.meta }}</span>
                 </div>
@@ -1196,7 +1196,7 @@ button{font-family:inherit;color:inherit}
       <span style="font-family:'JetBrains Mono';font-size:14px;font-weight:700;line-height:1;white-space:nowrap;color:{{ p.moveColor }}">{{ p.move }}</span>
       <div style="display:flex;align-items:center;gap:10px;min-width:0">
         <div class="crest" style="width:40px;height:40px;background:{{ p.color }};color:var(--onAccent);display:flex;align-items:center;justify-content:center;font-family:'Big Shoulders Display';font-weight:800;font-size:16px;flex:none"><span class="ini" data-i="{{ p.init }}">{{ p.init }}</span></div>
-        <div style="min-width:0"><div style="display:flex;align-items:baseline;gap:8px;flex-wrap:wrap"><span style="font-weight:600;font-size:15px">{{ p.m }}</span><span class="no-shot" style="font-family:'JetBrains Mono';font-size:10px;color:var(--muted);white-space:nowrap">{{ p.wl }} · luck <span style="color:{{ p.luckColor }};font-weight:600">{{ p.luck }}</span></span></div><sc-if value="{{ p.hasNote }}" hint-placeholder-val="{{ false }}"><div style="font-size:13px;line-height:1.35;margin-top:3px;text-wrap:pretty">{{ p.note }}</div></sc-if></div>
+        <div style="min-width:0"><div style="display:flex;align-items:baseline;gap:8px;flex-wrap:wrap"><span style="font-weight:600;font-size:15px">{{ p.m }}</span><span class="no-shot" style="font-family:'JetBrains Mono';font-size:11px;color:var(--muted);white-space:nowrap">{{ p.wl }} · luck <span style="color:{{ p.luckColor }};font-weight:600">{{ p.luck }}</span></span></div><sc-if value="{{ p.hasNote }}" hint-placeholder-val="{{ false }}"><div style="font-size:13px;line-height:1.35;margin-top:3px;text-wrap:pretty">{{ p.note }}</div></sc-if></div>
       </div>
       <span style="text-align:right;font-family:'JetBrains Mono';font-size:13px;font-weight:600">{{ p.score }}</span>
     </div>
@@ -1216,21 +1216,21 @@ button{font-family:inherit;color:inherit}
   </div>
   <div style="margin-top:12px;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:14px 14px 10px">
     <div style="position:relative;height:{{ plotH }}px;margin:0 4px 0 22px;border-left:1px solid var(--line);border-bottom:1px solid var(--line)">
-      <span style="position:absolute;left:-22px;top:0;font-family:'JetBrains Mono';font-size:9px;color:var(--muted)">{{ paMax }}</span>
-      <span style="position:absolute;left:-22px;bottom:0;font-family:'JetBrains Mono';font-size:9px;color:var(--muted)">{{ paMin }}</span>
+      <span style="position:absolute;left:-22px;top:0;font-family:'JetBrains Mono';font-size:10px;color:var(--muted)">{{ paMax }}</span>
+      <span style="position:absolute;left:-22px;bottom:0;font-family:'JetBrains Mono';font-size:10px;color:var(--muted)">{{ paMin }}</span>
       <div style="position:absolute;left:{{ scatterMidX }};top:0;bottom:0;border-left:1px dashed var(--line)"></div>
       <div style="position:absolute;top:{{ scatterMidY }};left:0;right:0;border-top:1px dashed var(--line)"></div>
       <!-- Corners: points for (good/bad) against points against (schedule). Luck is the ring. -->
-      <span style="position:absolute;right:6px;top:6px;font-family:'JetBrains Mono';font-size:9px;letter-spacing:.08em;color:var(--muted);text-align:right">GOOD, TOUGH SCHEDULE</span>
-      <span style="position:absolute;right:6px;bottom:6px;font-family:'JetBrains Mono';font-size:9px;letter-spacing:.08em;color:var(--muted);text-align:right">GOOD, EASY SCHEDULE</span>
-      <span style="position:absolute;left:6px;top:6px;font-family:'JetBrains Mono';font-size:9px;letter-spacing:.08em;color:var(--muted)">BAD, TOUGH SCHEDULE</span>
-      <span style="position:absolute;left:6px;bottom:6px;font-family:'JetBrains Mono';font-size:9px;letter-spacing:.08em;color:var(--muted)">BAD, EASY SCHEDULE</span>
+      <span style="position:absolute;right:6px;top:6px;font-family:'JetBrains Mono';font-size:10px;letter-spacing:.08em;color:var(--muted);text-align:right;max-width:44%;line-height:1.2">GOOD, TOUGH SCHEDULE</span>
+      <span style="position:absolute;right:6px;bottom:6px;font-family:'JetBrains Mono';font-size:10px;letter-spacing:.08em;color:var(--muted);text-align:right;max-width:44%;line-height:1.2">GOOD, EASY SCHEDULE</span>
+      <span style="position:absolute;left:6px;top:6px;font-family:'JetBrains Mono';font-size:10px;letter-spacing:.08em;color:var(--muted);max-width:44%;line-height:1.2">BAD, TOUGH SCHEDULE</span>
+      <span style="position:absolute;left:6px;bottom:6px;font-family:'JetBrains Mono';font-size:10px;letter-spacing:.08em;color:var(--muted);max-width:44%;line-height:1.2">BAD, EASY SCHEDULE</span>
       <sc-for list="{{ scatter }}" as="d" hint-placeholder-count="10">
-        <button sc-camel-on-click="{{ d.pick }}" aria-label="{{ d.label }}" style="position:absolute;left:{{ d.x }};top:{{ d.y }};transform:translate(-50%,-50%);width:30px;height:30px;border-radius:50%;border:3px solid {{ d.luckColor }};box-shadow:0 0 0 2px {{ d.ring }};background:{{ d.color }};color:var(--onAccent);font-family:'Big Shoulders Display';font-weight:800;font-size:11px;cursor:pointer;opacity:{{ d.op }};padding:0;display:flex;align-items:center;justify-content:center;z-index:{{ d.z }}">{{ d.init }}<span style="position:absolute;top:100%;left:50%;transform:translateX(-50%);margin-top:1px;font-family:'JetBrains Mono';font-size:8px;font-weight:700;line-height:1;white-space:nowrap;color:{{ d.luckColor }}">{{ d.luck }}</span></button>
+        <button sc-camel-on-click="{{ d.pick }}" aria-label="{{ d.label }}" style="position:absolute;left:{{ d.x }};top:{{ d.y }};transform:translate(-50%,-50%);width:30px;height:30px;border-radius:50%;border:3px solid {{ d.luckColor }};box-shadow:0 0 0 2px {{ d.ring }};background:{{ d.color }};color:var(--onAccent);font-family:'Big Shoulders Display';font-weight:800;font-size:11px;cursor:pointer;opacity:{{ d.op }};padding:0;display:flex;align-items:center;justify-content:center;z-index:{{ d.z }}">{{ d.init }}<span style="position:absolute;top:100%;left:50%;transform:translateX(-50%);margin-top:2px;font-family:'JetBrains Mono';font-size:10px;font-weight:700;line-height:1;white-space:nowrap;color:{{ d.luckColor }}">{{ d.luck }}</span></button>
       </sc-for>
-      <span style="position:absolute;left:-22px;top:50%;transform:translateY(-50%) rotate(-90deg);font-family:'JetBrains Mono';font-size:9px;color:var(--muted);letter-spacing:.08em;white-space:nowrap">PA ↑</span>
+      <span style="position:absolute;left:-22px;top:50%;transform:translateY(-50%) rotate(-90deg);font-family:'JetBrains Mono';font-size:10px;color:var(--muted);letter-spacing:.08em;white-space:nowrap">PA ↑</span>
     </div>
-    <div style="display:flex;justify-content:space-between;margin:6px 4px 0 22px;font-family:'JetBrains Mono';font-size:9px;color:var(--muted)"><span>{{ pfMin }}</span><span>PF →</span><span>{{ pfMax }}</span></div>
+    <div style="display:flex;justify-content:space-between;margin:6px 4px 0 22px;font-family:'JetBrains Mono';font-size:10px;color:var(--muted)"><span>{{ pfMin }}</span><span>PF →</span><span>{{ pfMax }}</span></div>
   </div>
   <div class="shot-footer"><b>9FEAMG</b><span>{{ shotNotePfpa }}</span></div>
 </div>
@@ -1378,7 +1378,7 @@ button{font-family:inherit;color:inherit}
         <span style="font-family:'Big Shoulders Display';font-weight:800;font-size:18px;color:var(--muted)">W{{ g.w }}</span>
         <div style="min-width:0">
           <div style="display:flex;align-items:center;gap:6px;font-weight:600;font-size:15px"><span style="font-size:13px;color:var(--muted);font-weight:400">vs</span><span style="width:8px;height:8px;border-radius:50%;background:{{ g.color }}"></span>{{ g.opp }}</div>
-          <div style="font-family:'JetBrains Mono';font-size:10px;color:var(--muted);margin-top:2px">{{ g.sub }}</div>
+          <div style="font-family:'JetBrains Mono';font-size:11px;color:var(--muted);margin-top:2px">{{ g.sub }}</div>
         </div>
         <span style="font-family:'JetBrains Mono';font-size:13px;font-weight:600">{{ g.score }}</span>
         <span style="width:26px;height:26px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-family:'Big Shoulders Display';font-weight:800;font-size:15px;background:{{ g.rbg }};color:{{ g.rfg }}">{{ g.r }}</span>
@@ -1435,7 +1435,7 @@ button{font-family:inherit;color:inherit}
     <sc-for list="{{ team.starters }}" as="pl" hint-placeholder-count="9">
       <div style="display:grid;grid-template-columns:44px minmax(0,1fr) auto;gap:10px;align-items:center;padding:11px 14px;border-bottom:1px solid var(--line)">
         <span style="font-family:'JetBrains Mono';font-size:10px;font-weight:600;color:var(--accentInk);letter-spacing:.06em">{{ pl.slot }}</span>
-        <div><div style="font-weight:600;font-size:15px">{{ pl.name }}</div><div style="font-family:'JetBrains Mono';font-size:10px;color:var(--muted);margin-top:1px">{{ pl.meta }}</div></div>
+        <div><div style="font-weight:600;font-size:15px">{{ pl.name }}</div><div style="font-family:'JetBrains Mono';font-size:11px;color:var(--muted);margin-top:1px">{{ pl.meta }}</div></div>
         <span style="font-family:'Big Shoulders Display';font-weight:800;font-size:20px;color:{{ pl.ptsColor }}">{{ pl.pts }}</span>
       </div>
     </sc-for>
@@ -1443,7 +1443,7 @@ button{font-family:inherit;color:inherit}
     <sc-for list="{{ team.bench }}" as="pl" hint-placeholder-count="6">
       <div style="display:grid;grid-template-columns:44px minmax(0,1fr) auto;gap:10px;align-items:center;padding:8px 14px">
         <span style="font-family:'JetBrains Mono';font-size:10px;color:var(--muted)">{{ pl.slot }}</span>
-        <div style="font-size:14px;color:var(--muted)">{{ pl.name }} <span style="font-family:'JetBrains Mono';font-size:10px">{{ pl.meta }}</span></div>
+        <div style="font-size:14px;color:var(--muted)">{{ pl.name }} <span style="font-family:'JetBrains Mono';font-size:11px">{{ pl.meta }}</span></div>
         <span style="font-family:'JetBrains Mono';font-size:12px;color:var(--muted)">{{ pl.pts }}</span>
       </div>
     </sc-for>
@@ -1640,7 +1640,7 @@ button{font-family:inherit;color:inherit}
         </div>
       </div>
       <div style="padding:6px 16px 0">
-        <div style="display:grid;grid-template-columns:minmax(0,1fr) 44px 40px 44px minmax(0,1fr);gap:6px;padding:8px 0 2px;font-family:'JetBrains Mono';font-size:9px;letter-spacing:.08em;color:var(--muted)"><span></span><span style="text-align:right">{{ sheet.ptsLabel }}</span><span></span><span>{{ sheet.ptsLabel }}</span><span></span></div>
+        <div style="display:grid;grid-template-columns:minmax(0,1fr) 44px 40px 44px minmax(0,1fr);gap:6px;padding:8px 0 2px;font-family:'JetBrains Mono';font-size:10px;letter-spacing:.08em;color:var(--muted)"><span></span><span style="text-align:right">{{ sheet.ptsLabel }}</span><span></span><span>{{ sheet.ptsLabel }}</span><span></span></div>
         <sc-for list="{{ sheet.rows }}" as="r" hint-placeholder-count="9">
           <div style="display:grid;grid-template-columns:minmax(0,1fr) 44px 40px 44px minmax(0,1fr);gap:6px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)">
             <div style="min-width:0"><div style="font-weight:600;font-size:14px;line-height:1.2">{{ r.a.name }}</div><div style="font-family:'JetBrains Mono';font-size:10px;color:var(--muted);margin-top:2px">{{ r.a.meta }}</div></div>
