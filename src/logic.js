@@ -123,6 +123,13 @@ function rec(m, upto) { let w = 0, l = 0; for (let i = 1; i <= upto; i++) { if (
 // setMaxPF once the box scores load.
 const ST = D ? seasonStats(D, null).rows.sort(byStandings) : [];
 const power = n => powerRanks(D, n);
+// The worked example for xW: in the latest final week, the best score that still lost its matchup.
+function xwWeek() {
+  if (!NF) return '';
+  const wk = NF, by = [...MGR].filter(m => opp(m, wk)).sort((a, b) => SC[b][wk - 1] - SC[a][wk - 1]);
+  const m = by.find(x => !won(x, wk)) || by[0], o = opp(m, wk), b = allPlay(m, wk).w, n = MGR.length - 1, sc = SC[m][wk - 1].toFixed(2);
+  return `Week ${wk}: ${m} scored ${sc} and ${won(m, wk) ? 'beat' : 'lost to'} ${o}. But ${sc} beat ${b} of the other ${n} teams, so ${m} still earned ${b}/${n} = ${(b / n).toFixed(2)} xW that week. Add up every week and you get each team’s season xW below: the wins your scores earned, no matter who you played.`;
+}
 function allPlay(m, wk) { const s = SC[m][wk - 1]; const w = MGR.filter(o => o != m && SC[o][wk - 1] < s).length; return { w, l: MGR.length - 1 - w, rank: MGR.length - w }; }
 
 
@@ -1145,14 +1152,20 @@ class Component extends DCLogic {
     const scatter = ST.map((x, i) => ({ init: INIT[x.m], color: col(x.m), x: plotPos(pts[i].x), y: plotPos(pts[i].y), op: dim(x.m), ring: hl == x.m ? 'var(--ink)' : 'transparent', z: hl == x.m ? 5 : 1, pick: pickHl(x.m),
       luck: sgn(x.luck), luckColor: luckCol(x.luck), label: `${x.m}: PF ${f1(x.pf)}, PA ${f1(x.pa)}, luck ${sgn(x.luck)}` }));
     const maxL = Math.max(0.01, ...ST.map(x => Math.abs(x.luck)));
-    // Each row also shows its real wins and xW, so the luck number reads as plain subtraction.
-    const luckBars = [...ST].sort((a, b) => b.luck - a.luck).map(x => ({ m: x.m, v: sgn(x.luck), wx: `${x.w} W · ${x.xw.toFixed(2)} xW`, pos: x.luck > 0 ? (x.luck / maxL * 100) + '%' : '0%', neg: x.luck < 0 ? (-x.luck / maxL * 100) + '%' : '0%', color: x.luck > 0 ? 'var(--pos)' : x.luck < 0 ? 'var(--neg)' : 'var(--muted)', op: dim(x.m), pick: pickHl(x.m) }));
+    const luckBars = [...ST].sort((a, b) => b.luck - a.luck).map(x => ({ m: x.m, v: sgn(x.luck), pos: x.luck > 0 ? (x.luck / maxL * 100) + '%' : '0%', neg: x.luck < 0 ? (-x.luck / maxL * 100) + '%' : '0%', color: x.luck > 0 ? 'var(--pos)' : x.luck < 0 ? 'var(--neg)' : 'var(--muted)', op: dim(x.m), pick: pickHl(x.m) }));
+    // Expected wins: a hollow dot at each team's xW and a solid one at its real wins, on a 0 to NF scale.
+    // The line between them is the luck, colored like the Luck chart.
+    const xwAt = v => (NF ? v / NF * 100 : 0).toFixed(1) + '%';
+    const xwBars = [...ST].sort((a, b) => b.xw - a.xw || b.w - a.w).map(x => ({ m: x.m, xw: x.xw.toFixed(2), w: x.w, op: dim(x.m), pick: pickHl(x.m),
+      xAt: xwAt(x.xw), wAt: xwAt(x.w), lo: xwAt(Math.min(x.xw, x.w)), span: (NF ? Math.abs(x.w - x.xw) / NF * 100 : 0).toFixed(1) + '%', lineColor: luckCol(x.luck),
+      label: `${x.m}: ${x.xw.toFixed(2)} expected wins, ${x.w} real` }));
+    const xwTicks = Array.from({ length: NF + 1 }, (_, i) => ({ n: i, at: xwAt(i) }));
     const topMax = Math.max(...ST.map(x => x.max ?? x.pf));
     const benchBars = !maxOk ? [] : [...ST].sort((a, b) => (b.max - b.pf) - (a.max - a.pf)).map(x => ({ m: x.m, pf: (x.pf / topMax * 100) + '%', bench: ((x.max - x.pf) / topMax * 100) + '%', v: f1(x.max - x.pf), color: 'var(--muted)', op: dim(x.m), pick: pickHl(x.m) }));
 
     return {
       ok: true, dataError: false,
-      scatter, plotH, scatterMidX: sx(avg(pfs)), scatterMidY: sy(avg(pas)), pfMin: x0, pfMax: x1, paMin: y0, paMax: y1, luckBars, benchBars, hlHint: hl ? hl + ' · tap again to clear' : 'Tap a team',
+      scatter, plotH, scatterMidX: sx(avg(pfs)), scatterMidY: sy(avg(pas)), pfMin: x0, pfMax: x1, paMin: y0, paMax: y1, luckBars, xwBars, xwTicks, benchBars, hlHint: hl ? hl + ' · tap again to clear' : 'Tap a team',
       themeLabel, toggleTheme,
       draftIconCls: S.tab == 'Draft' ? 'hi play inv' : 'hi', goHome: e => this.goHome(e), openDraft: () => { this.setState({ tab: 'Draft' }); window.scrollTo(0, 0); },
       draftBtnBg: S.tab == 'Draft' ? 'var(--accent)' : 'var(--surface)', draftBtnFg: S.tab == 'Draft' ? 'var(--onAccent)' : 'var(--ink)', draftBtnBorder: S.tab == 'Draft' ? 'var(--accent)' : 'var(--line)',
@@ -1213,9 +1226,9 @@ class Component extends DCLogic {
       shareHero: e => this.share('hero', e), shareStandings: e => this.share('standings', e), shareTeam: e => this.share('team', e),
       shareLabel: { hero: S.sharing == 'hero' ? '…' : 'Image', standings: S.sharing == 'standings' ? '…' : 'Image', team: S.sharing == 'team' ? '…' : 'Image' },
       hasRecap, recap, recapTitle: `Week ${wk} · ${isFinal ? 'Final' : LIVE_STARTED ? 'Live' : 'Preview'}`, recapBar: isFinal ? 'Week recap · scores + Booth' : LIVE_STARTED ? 'Live week · scores + Booth' : 'Week preview · projections + Booth', shareRecap: e => this.share('recap', e), recapLabel: S.sharing == 'recap' ? '…' : 'Image',
-      // "What's this?" opens a short explainer in place, with the luckiest team as the worked example.
-      howTo: () => this.setState({ xwHelp: !this.state.xwHelp }), xwHelp: !!S.xwHelp, xwHelpLabel: S.xwHelp ? 'Hide' : 'What’s this?',
-      xwExample: (x => x ? `${x.m}: ${x.w} real ${x.w == 1 ? 'win' : 'wins'} − ${x.xw.toFixed(2)} xW = ${sgn(x.luck)} luck.` : '')([...ST].sort((a, b) => b.luck - a.luck)[0]),
+      // "What's this?" opens the explainer under the Expected wins chart: one real week, worked through.
+      howTo: () => { const open = !this.state.xwHelp; this.setState({ xwHelp: open }); if (open) setTimeout(() => document.getElementById('xw')?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 0); },
+      xwHelp: !!S.xwHelp, xwHelpLabel: S.xwHelp ? 'Hide' : 'What’s this?', xwExample: xwWeek(),
       powerRows, hasPower: powerRows.length > 0, powerSub: `Through week ${NF}`, sharePower: e => this.share('power', e), powerLabel: S.sharing == 'power' ? '…' : 'Image',
       linkPower: e => this.shareLink(location.origin + '/#power', '9FEAMG · Power rankings', e), shotPower: `Power rankings · through week ${NF}`,
       // Season charts: a link to the chart and an image of it.
