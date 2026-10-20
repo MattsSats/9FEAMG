@@ -1254,11 +1254,12 @@ button{font-family:inherit;color:inherit}
   <div class="shot-footer"><b>9FEAMG</b><span>{{ shotNoteLuck }}</span></div>
 </div>
 
-<div id="xw" style="padding:30px 20px 0;scroll-margin-top:64px">
+<div id="xw" data-shot="xw" style="padding:30px 20px 0;scroll-margin-top:64px">
   <div class="sec-head">
     <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:26px;text-transform:uppercase">Expected wins</div>
+    <span class="sec-btns no-shot"><button class="share-btn" sc-camel-on-click="{{ menuXw }}" aria-label="Share the expected wins chart">Share</button></span>
     <div class="sec-cap"><span style="display:inline-block;width:9px;height:9px;border-radius:50%;border:2px solid var(--ink);box-sizing:border-box;vertical-align:-1px"></span> xW · <span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:var(--ink);vertical-align:-1px"></span> real wins · <button class="no-shot" sc-camel-on-click="{{ howTo }}" aria-expanded="{{ xwHelp }}" style="min-height:32px;padding:0;border:0;background:transparent;font:inherit;color:var(--accentInk);text-decoration:underline;cursor:pointer">{{ xwHelpLabel }}</button></div>
-    <sc-if value="{{ xwHelp }}" hint-placeholder-val="{{ false }}"><div style="grid-column:1/-1;margin-top:8px;padding:10px 12px;border-radius:10px;background:var(--surface2);font-size:13px;line-height:1.45;color:var(--ink);text-wrap:pretty">{{ xwExample }}</div></sc-if>
+    <sc-if value="{{ xwHelp }}" hint-placeholder-val="{{ false }}"><div class="no-shot" style="grid-column:1/-1;margin-top:8px;padding:10px 12px;border-radius:10px;background:var(--surface2);font-size:13px;line-height:1.45;color:var(--ink);text-wrap:pretty">{{ xwExample }}</div></sc-if>
   </div>
   <div style="display:flex;flex-direction:column;gap:6px;margin-top:12px">
     <sc-for list="{{ xwBars }}" as="xb" hint-placeholder-count="10">
@@ -1279,6 +1280,7 @@ button{font-family:inherit;color:inherit}
       <span style="text-align:right">xW</span>
     </div>
   </div>
+  <div class="shot-footer"><b>9FEAMG</b><span>{{ shotNoteXw }}</span></div>
 </div>
 </div>
 

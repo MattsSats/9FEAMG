@@ -369,8 +369,8 @@ class Component extends DCLogic {
     if (h == '#wire' || h == '#wire-season' || h == '#draft') { this.setState({ tab: h == '#draft' ? 'Draft' : 'Wire', ...(h == '#draft' ? {} : { wire: h == '#wire-season' ? 'Season' : 'This week' }), sheet: null }); window.scrollTo(0, 0); return; }
     if (wk) { this.setState({ tab: 'Gameday', week: +wk[1], sheet: null }); window.scrollTo(0, 0); return; }
     if (h == '#season') { this.setState({ tab: 'Season', sheet: null }); window.scrollTo(0, 0); return; }
-    // Season sections: #power, #pfpa, #luck, #bench open the Season tab scrolled to that section.
-    if (['#power', '#odds', '#pfpa', '#luck', '#bench'].includes(h)) { this.setState({ tab: 'Season', sheet: null }); setTimeout(() => document.getElementById(h.slice(1))?.scrollIntoView({ block: 'start' }), 350); return; }
+    // Season sections: #power, #pfpa, #luck, #xw, #bench open the Season tab scrolled to that section.
+    if (['#power', '#odds', '#pfpa', '#luck', '#xw', '#bench'].includes(h)) { this.setState({ tab: 'Season', sheet: null }); setTimeout(() => document.getElementById(h.slice(1))?.scrollIntoView({ block: 'start' }), 350); return; }
     if (h == '#ledger') { this.setState({ tab: 'Gameday', week: HOME_WK, sheet: null }); setTimeout(() => document.getElementById('ledger')?.scrollIntoView({ block: 'start' }), 350); return; }
     if (h == '#booth') { this.setState({ tab: 'Gameday', week: BOOTH_WK, sheet: null }); setTimeout(() => document.getElementById('booth')?.scrollIntoView({ block: 'start' }), 350); return; }
     if (tm) { const t = MGR.find(x => teamSlug(x) == tm[1]); if (t) { this.setState({ tab: 'Teams', team: t, sheet: null }); window.scrollTo(0, 0); } return; }
@@ -486,7 +486,7 @@ class Component extends DCLogic {
       : S.tab == 'Wire' ? (S.wire == 'Season' ? '#wire-season' : '#wire') : S.tab == 'Draft' ? '#draft' : null;
     if (want == null || h == want) return;
     if (S.tab == 'Gameday' && (h == '#w' + S.week || h.startsWith('#w' + S.week + '-') || h == '#ledger' || (h == '#booth' && S.week == BOOTH_WK))) return;
-    if (S.tab == 'Season' && ['#power', '#odds', '#pfpa', '#luck', '#bench'].includes(h)) return;
+    if (S.tab == 'Season' && ['#power', '#odds', '#pfpa', '#luck', '#xw', '#bench'].includes(h)) return;
     if (!want && !h) return;
     history.pushState(null, '', want || location.pathname + location.search);
   }
@@ -1221,7 +1221,7 @@ class Component extends DCLogic {
       boothShotLabel: `The Booth · Week ${wk} · ${boothSet[0]}`,
       menuBooth: this.shareMenu('The Booth · Week ' + wk, e => this.shareLink(location.origin + '/s/booth', '9FEAMG · The Booth', e), e => this.share('booth', e)),
       menuLedger: this.shareMenu('Parlay ledger', e => this.shareLink(location.origin + '/s/ledger', '9FEAMG · Parlay ledger', e), e => this.share('ledger', e)),
-      ...Object.fromEntries([['Pfpa', 'pfpa', 'Points for vs against'], ['Luck', 'luck', 'Luck'], ['Bench', 'bench', 'Points left on bench']].map(([k, id, title]) =>
+      ...Object.fromEntries([['Pfpa', 'pfpa', 'Points for vs against'], ['Luck', 'luck', 'Luck'], ['Xw', 'xw', 'Expected wins'], ['Bench', 'bench', 'Points left on bench']].map(([k, id, title]) =>
         ['menu' + k, this.shareMenu(title, e => this.shareLink(location.origin + '/s/' + id, '9FEAMG · ' + title, e), e => this.share(id, e))])),
       shareHero: e => this.share('hero', e), shareStandings: e => this.share('standings', e), shareTeam: e => this.share('team', e),
       shareLabel: { hero: S.sharing == 'hero' ? '…' : 'Image', standings: S.sharing == 'standings' ? '…' : 'Image', team: S.sharing == 'team' ? '…' : 'Image' },
@@ -1232,7 +1232,7 @@ class Component extends DCLogic {
       powerRows, hasPower: powerRows.length > 0, powerSub: `Through week ${NF}`, sharePower: e => this.share('power', e), powerLabel: S.sharing == 'power' ? '…' : 'Image',
       linkPower: e => this.shareLink(location.origin + '/#power', '9FEAMG · Power rankings', e), shotPower: `Power rankings · through week ${NF}`,
       // Season charts: a link to the chart and an image of it.
-      ...Object.fromEntries([['Pfpa', 'pfpa', 'Points for vs against'], ['Luck', 'luck', 'Luck'], ['Bench', 'bench', 'Points left on bench']].flatMap(([k, id, title]) => [
+      ...Object.fromEntries([['Pfpa', 'pfpa', 'Points for vs against'], ['Luck', 'luck', 'Luck'], ['Xw', 'xw', 'Expected wins'], ['Bench', 'bench', 'Points left on bench']].flatMap(([k, id, title]) => [
         // Links go through /s/<chart> so chats show a preview image of the chart (api/section.js).
         ['link' + k, e => this.shareLink(location.origin + '/s/' + id, '9FEAMG · ' + title, e)], ['shot' + k, e => this.share(id, e)],
         ['shotLabel' + k, S.sharing == id ? '…' : 'Image'], ['shotNote' + k, `${title} · through week ${NF}`]])),
