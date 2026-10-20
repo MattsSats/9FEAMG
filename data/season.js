@@ -54,16 +54,16 @@ window.SEASON = {
 
   // Final scores (Yahoo, two decimals), one per completed week.
   scores: {
-    Tony: [123.06, 154.52, 95.42, 90.82, 142.40],
-    Tristan: [144.36, 104.10, 121.64, 125.88, 113.28],
-    Andy: [139.34, 75.96, 127.98, 96.38, 148.44],
-    Matt: [107.86, 105.64, 114.48, 92.08, 136.68],
-    Kurt: [100.60, 89.36, 135.88, 112.22, 116.54],
-    Jerger: [124.06, 92.60, 102.14, 113.66, 112.32],
-    'Mr. G': [135.22, 84.42, 75.06, 93.84, 109.76],
-    Colin: [65.66, 100.08, 124.14, 129.92, 133.20],
-    DLin: [99.82, 100.56, 82.52, 114.68, 92.62],
-    Pablo: [112.66, 70.92, 86.38, 133.78, 113.04]
+    Tony: [123.06, 154.52, 95.42, 90.82, 142.40, 117.40],
+    Tristan: [144.36, 104.10, 121.64, 125.88, 113.28, 86.92],
+    Andy: [139.34, 75.96, 127.98, 96.38, 148.44, 119.72],
+    Matt: [107.86, 105.64, 114.48, 92.08, 136.68, 106.14],
+    Kurt: [100.60, 89.36, 135.88, 112.22, 116.54, 112.76],
+    Jerger: [124.06, 92.60, 102.14, 113.66, 112.32, 119.54],
+    'Mr. G': [135.22, 84.42, 75.06, 93.84, 109.76, 90.90],
+    Colin: [65.66, 100.08, 124.14, 129.92, 133.20, 61.58],
+    DLin: [99.82, 100.56, 82.52, 114.68, 92.62, 72.12],
+    Pablo: [112.66, 70.92, 86.38, 133.78, 113.04, 66.50]
   },
 
   // The week in progress. Set to null between weeks.
@@ -171,6 +171,15 @@ window.SEASON = {
         'Sun 7:20 PM · DAL @ GB', 'Mon 7:15 PM · WAS @ SF'
       ],
       byes: ['CIN', 'DET', 'MIA', 'MIN']
+    },
+    7: {
+      games: [
+        'Thu 7:15 PM · NE @ CHI', 'Sun 8:30 AM · PIT @ NO', 'Sun 12:00 PM · SF @ ATL', 'Sun 12:00 PM · CLE @ TEN',
+        'Sun 12:00 PM · IND @ MIN', 'Sun 12:00 PM · MIA @ NYJ', 'Sun 12:00 PM · TB @ CAR', 'Sun 12:00 PM · CIN @ BAL',
+        'Sun 12:00 PM · NYG @ HOU', 'Sun 3:05 PM · DEN @ ARI', 'Sun 3:25 PM · GB @ DET', 'Sun 3:25 PM · LAR @ LV',
+        'Sun 7:20 PM · KC @ SEA', 'Mon 7:15 PM · DAL @ PHI'
+      ],
+      byes: ['BUF', 'JAX', 'LAC', 'WAS']
     }
   },
 
@@ -180,9 +189,9 @@ window.SEASON = {
 
   // Shown on the week after the live one.
   next: {
-    week: 7,
-    dates: 'Oct 22–26',
-    note: 'Week 7 matchups post once Week 6 goes final.'
+    week: 8,
+    dates: 'Oct 29–Nov 2',
+    note: 'Week 8 matchups post once Week 7 goes final.'
   },
 
   // Player projections for the live week, used when the roster file has none.
