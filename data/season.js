@@ -553,9 +553,9 @@ window.SEASON = {
     6: {
       Andy: 'Still first, with the week’s top score (119.72) and the best all-play record in the league, 38–16. Gibbs was on bye. Nobody noticed.',
       Tony: 'Up two to 2nd and first in the standings at 5–1. Still the fewest points against (518.24) and the best luck, +1.44. The schedule sends its regards.',
-      Tristan: 'Down one after 86.92, 7th of the week, and a 20.42 win anyway. Tristan’s luck is now exactly 0.00, and the bench left just 5.40.',
+      Tristan: 'Down one after 86.92, 7th of the week, and a 20.42 win anyway. Tristan’s luck is now exactly 0.00, and the bench scored just 5.40.',
       Jerger: 'Up one on four straight wins, the latest over Matt and the projections by 13.40, with the week’s second-best score, 119.54. The streak finally brought receipts.',
-      Matt: 'Up one despite the loss. 333.06 points left on the bench this season, the most in the league. There is no 2nd best, and 7th is where that gets you.',
+      Matt: 'Up one despite the loss, and tied with Kurt for the worst luck in the league at −1.22. There is no 2nd best, and 7th is where that gets you.',
       Kurt: 'Up two after a 51.18 win over Colin, and into the last playoff spot at 2–4. Still the league’s best lineup efficiency, 95.2%. The schedule finally blinked.',
       Colin: 'Down four, the week’s biggest drop, after 61.58, the season’s lowest score. 0–9 against the field this week, and 31 adds and counting.',
       Pablo: 'Down one after losing to Tristan by 20.42 with Pitts’ 20.50 on the bench. 19–35 against the field and the league’s worst lineup efficiency, 80.9%.',
@@ -567,9 +567,9 @@ window.SEASON = {
   // One-liner on each team page.
   roasts: {
     Tony: 'First at 5–1 with the fewest points against (518.24) and the league’s best luck, +1.44. 11 Shots In, and opponents keep missing.',
-    Tristan: '4–2, the fewest bench points in the league (189.30), and luck at exactly 0.00. The season Tristan declared over is right on schedule.',
+    Tristan: '4–2, the league’s second-best lineup efficiency (93.0%), and luck at exactly 0.00. The season Tristan declared over is right on schedule.',
     Andy: '5–1, first in the power rankings, and the week’s top score with Gibbs on bye. It’s gibbing time, even when Gibbs isn’t.',
-    Matt: '7th at 2–4 with 333.06 points on the bench, the most in the league, and luck tied for worst at −1.22. There is no 2nd best, just 7th.',
+    Matt: '7th at 2–4, with 121.28 points left on the bench and luck tied for worst at −1.22. There is no 2nd best, just 7th.',
     Kurt: '2–4 with the league’s best lineup efficiency (95.2%) and luck tied for worst at −1.22. Average Sports Enthusiast, above-average lineups.',
     Jerger: 'Four straight wins and 4–2, with a 29–25 record against the field. #1 Y! Fan, and Yahoo’s projections had Jerger losing Week 6.',
     'Mr. G': '1–5 with 756.04 points allowed, 86.64 more than anyone. Definitely not a Boomer, definitely everyone’s favorite opponent.',
