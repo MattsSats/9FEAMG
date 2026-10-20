@@ -1101,7 +1101,8 @@ button{font-family:inherit;color:inherit}
   <div class="sec-head">
     <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:26px;text-transform:uppercase">Standings</div>
     <span class="sec-btns no-shot"><button class="share-btn" sc-camel-on-click="{{ menuStandings }}" aria-label="Share the standings">Share</button></span>
-    <div class="sec-cap">Luck = W − xW · <button class="no-shot" sc-camel-on-click="{{ howTo }}" style="min-height:32px;padding:0;border:0;background:transparent;font:inherit;color:var(--accentInk);text-decoration:underline;cursor:pointer">What’s this?</button></div>
+    <div class="sec-cap">Luck = W − xW · <button class="no-shot" sc-camel-on-click="{{ howTo }}" aria-expanded="{{ xwHelp }}" style="min-height:32px;padding:0;border:0;background:transparent;font:inherit;color:var(--accentInk);text-decoration:underline;cursor:pointer">{{ xwHelpLabel }}</button></div>
+    <sc-if value="{{ xwHelp }}" hint-placeholder-val="{{ false }}"><div class="no-shot" style="grid-column:1/-1;margin-top:8px;padding:10px 12px;border-radius:10px;background:var(--surface2);font-size:13px;line-height:1.45;color:var(--ink)"><b>xW (expected wins)</b>: each week your score is ranked against all 9 other teams. Beating 7 of 9 earns 0.78 xW, no matter who you actually played. <b>Luck</b> is real wins minus xW. {{ xwExample }}</div></sc-if>
   </div>
   <div style="display:grid;grid-template-columns:22px minmax(0,1fr) 40px 52px 52px 48px;gap:8px;padding:14px 0 8px;font-family:'JetBrains Mono';font-size:10px;letter-spacing:.08em;color:var(--muted);border-bottom:1px solid var(--line)">
     <span>#</span><span>MANAGER</span><span style="text-align:right">W–L</span><span style="text-align:right">PF</span><span style="text-align:right">MAX PF</span><span style="text-align:right">LUCK</span>
@@ -1238,15 +1239,17 @@ button{font-family:inherit;color:inherit}
   <div class="sec-head">
     <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:26px;text-transform:uppercase;display:flex;align-items:center;gap:8px"><svg class="hi play" width="26" height="26" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><g class="a-dice vb"><rect x="8" y="8" width="32" height="32" rx="7"></rect><circle cx="16" cy="16" r="2.6" stroke="none" style="fill:var(--hi-a)"></circle><circle cx="32" cy="16" r="2.6" stroke="none" style="fill:var(--hi-a)"></circle><circle cx="24" cy="24" r="2.6" stroke="none" style="fill:var(--hi-a)"></circle><circle cx="16" cy="32" r="2.6" stroke="none" style="fill:var(--hi-a)"></circle><circle cx="32" cy="32" r="2.6" stroke="none" style="fill:var(--hi-a)"></circle></g></svg>Luck</div>
     <span class="sec-btns no-shot"><button class="share-btn" sc-camel-on-click="{{ menuLuck }}" aria-label="Share the luck chart">Share</button></span>
-    <div class="sec-cap">W − xW · <button class="no-shot" sc-camel-on-click="{{ howTo }}" style="min-height:32px;padding:0;border:0;background:transparent;font:inherit;color:var(--accentInk);text-decoration:underline;cursor:pointer">What’s this?</button></div>
+    <div class="sec-cap">Real wins minus expected wins (xW) · <button class="no-shot" sc-camel-on-click="{{ howTo }}" aria-expanded="{{ xwHelp }}" style="min-height:32px;padding:0;border:0;background:transparent;font:inherit;color:var(--accentInk);text-decoration:underline;cursor:pointer">{{ xwHelpLabel }}</button></div>
+    <sc-if value="{{ xwHelp }}" hint-placeholder-val="{{ false }}"><div class="no-shot" style="grid-column:1/-1;margin-top:8px;padding:10px 12px;border-radius:10px;background:var(--surface2);font-size:13px;line-height:1.45;color:var(--ink)"><b>xW (expected wins)</b>: each week your score is ranked against all 9 other teams. Beating 7 of 9 earns 0.78 xW, no matter who you actually played. <b>Luck</b> is real wins minus xW. {{ xwExample }}</div></sc-if>
   </div>
   <div style="display:flex;flex-direction:column;gap:6px;margin-top:12px">
     <sc-for list="{{ luckBars }}" as="lb" hint-placeholder-count="10">
-      <div sc-camel-on-click="{{ lb.pick }}" class="hov" tabindex="0" role="button" style="display:grid;grid-template-columns:60px minmax(0,1fr) minmax(0,1fr) 44px;align-items:center;gap:0;cursor:pointer;opacity:{{ lb.op }}">
+      <div sc-camel-on-click="{{ lb.pick }}" class="hov" tabindex="0" role="button" style="display:grid;grid-template-columns:60px minmax(0,1fr) minmax(0,1fr) 44px 92px;align-items:center;gap:0;cursor:pointer;opacity:{{ lb.op }}">
         <span style="font-size:13px;font-weight:600">{{ lb.m }}</span>
         <div style="height:18px;display:flex;justify-content:flex-end;border-right:1px solid var(--muted)"><div style="width:{{ lb.neg }};background:var(--neg);border-radius:4px 0 0 4px"></div></div>
         <div style="height:18px;display:flex"><div style="width:{{ lb.pos }};background:var(--pos);border-radius:0 4px 4px 0"></div></div>
         <span style="font-family:'JetBrains Mono';font-size:12px;font-weight:600;text-align:right;color:{{ lb.color }}">{{ lb.v }}</span>
+        <span style="font-family:'JetBrains Mono';font-size:11px;text-align:right;color:var(--muted);white-space:nowrap">{{ lb.wx }}</span>
       </div>
     </sc-for>
   </div>
@@ -1256,8 +1259,8 @@ button{font-family:inherit;color:inherit}
 <div id="howto" class="sg-hr" style="scroll-margin-top:120px;margin:30px 20px 0;padding:18px;background:var(--surface);border:1px solid var(--line);border-radius:16px">
   <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:22px;text-transform:uppercase">How to read this</div>
   <div style="display:flex;flex-direction:column;gap:14px;margin-top:14px">
-    <div><div style="font-family:'JetBrains Mono';font-size:11px;font-weight:600;color:var(--accentInk);letter-spacing:.06em">xW · EXPECTED WINS</div><div style="font-size:14px;line-height:1.45;margin-top:4px;color:var(--muted);text-wrap:pretty">Each week every score is ranked against the whole league. Beating 7 of 9 teams earns 0.78 xW, no matter who you actually played.</div></div>
-    <div><div style="font-family:'JetBrains Mono';font-size:11px;font-weight:600;color:var(--accentInk);letter-spacing:.06em">LUCK</div><div style="font-size:14px;line-height:1.45;margin-top:4px;color:var(--muted)">Real wins minus xW. Positive means your schedule has been kind.</div></div>
+    <div><div style="font-family:'JetBrains Mono';font-size:11px;font-weight:600;color:var(--accentInk);letter-spacing:.06em">xW · EXPECTED WINS</div><div style="font-size:14px;line-height:1.45;margin-top:4px;color:var(--muted);text-wrap:pretty">Each week every score is ranked against the whole league. Beating 7 of 9 teams earns 0.78 xW, no matter who you actually played. Add up the weeks and that’s your season xW: the record your scores earned.</div></div>
+    <div><div style="font-family:'JetBrains Mono';font-size:11px;font-weight:600;color:var(--accentInk);letter-spacing:.06em">LUCK</div><div style="font-size:14px;line-height:1.45;margin-top:4px;color:var(--muted)">Real wins minus xW. Positive means your schedule has been kind, negative means you’ve been robbed. {{ xwExample }}</div></div>
     <div><div style="font-family:'JetBrains Mono';font-size:11px;font-weight:600;color:var(--accentInk);letter-spacing:.06em">MAX PF</div><div style="font-size:14px;line-height:1.45;margin-top:4px;color:var(--muted)">The best legal lineup from your roster each week, bench included.</div></div>
     <div><div style="font-family:'JetBrains Mono';font-size:11px;font-weight:600;color:var(--accentInk);letter-spacing:.06em">BENCH POINTS</div><div style="font-size:14px;line-height:1.45;margin-top:4px;color:var(--muted)">Best possible lineup minus what you actually scored. Points you left sitting.</div></div>
   </div>

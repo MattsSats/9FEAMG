@@ -1145,7 +1145,8 @@ class Component extends DCLogic {
     const scatter = ST.map((x, i) => ({ init: INIT[x.m], color: col(x.m), x: plotPos(pts[i].x), y: plotPos(pts[i].y), op: dim(x.m), ring: hl == x.m ? 'var(--ink)' : 'transparent', z: hl == x.m ? 5 : 1, pick: pickHl(x.m),
       luck: sgn(x.luck), luckColor: luckCol(x.luck), label: `${x.m}: PF ${f1(x.pf)}, PA ${f1(x.pa)}, luck ${sgn(x.luck)}` }));
     const maxL = Math.max(0.01, ...ST.map(x => Math.abs(x.luck)));
-    const luckBars = [...ST].sort((a, b) => b.luck - a.luck).map(x => ({ m: x.m, v: sgn(x.luck), pos: x.luck > 0 ? (x.luck / maxL * 100) + '%' : '0%', neg: x.luck < 0 ? (-x.luck / maxL * 100) + '%' : '0%', color: x.luck > 0 ? 'var(--pos)' : x.luck < 0 ? 'var(--neg)' : 'var(--muted)', op: dim(x.m), pick: pickHl(x.m) }));
+    // Each row also shows its real wins and xW, so the luck number reads as plain subtraction.
+    const luckBars = [...ST].sort((a, b) => b.luck - a.luck).map(x => ({ m: x.m, v: sgn(x.luck), wx: `${x.w} W · ${x.xw.toFixed(2)} xW`, pos: x.luck > 0 ? (x.luck / maxL * 100) + '%' : '0%', neg: x.luck < 0 ? (-x.luck / maxL * 100) + '%' : '0%', color: x.luck > 0 ? 'var(--pos)' : x.luck < 0 ? 'var(--neg)' : 'var(--muted)', op: dim(x.m), pick: pickHl(x.m) }));
     const topMax = Math.max(...ST.map(x => x.max ?? x.pf));
     const benchBars = !maxOk ? [] : [...ST].sort((a, b) => (b.max - b.pf) - (a.max - a.pf)).map(x => ({ m: x.m, pf: (x.pf / topMax * 100) + '%', bench: ((x.max - x.pf) / topMax * 100) + '%', v: f1(x.max - x.pf), color: 'var(--muted)', op: dim(x.m), pick: pickHl(x.m) }));
 
@@ -1212,7 +1213,9 @@ class Component extends DCLogic {
       shareHero: e => this.share('hero', e), shareStandings: e => this.share('standings', e), shareTeam: e => this.share('team', e),
       shareLabel: { hero: S.sharing == 'hero' ? '…' : 'Image', standings: S.sharing == 'standings' ? '…' : 'Image', team: S.sharing == 'team' ? '…' : 'Image' },
       hasRecap, recap, recapTitle: `Week ${wk} · ${isFinal ? 'Final' : LIVE_STARTED ? 'Live' : 'Preview'}`, recapBar: isFinal ? 'Week recap · scores + Booth' : LIVE_STARTED ? 'Live week · scores + Booth' : 'Week preview · projections + Booth', shareRecap: e => this.share('recap', e), recapLabel: S.sharing == 'recap' ? '…' : 'Image',
-      howTo: () => document.getElementById('howto')?.scrollIntoView({ behavior: 'smooth', block: 'start' }),
+      // "What's this?" opens a short explainer in place, with the luckiest team as the worked example.
+      howTo: () => this.setState({ xwHelp: !this.state.xwHelp }), xwHelp: !!S.xwHelp, xwHelpLabel: S.xwHelp ? 'Hide' : 'What’s this?',
+      xwExample: (x => x ? `${x.m}: ${x.w} real ${x.w == 1 ? 'win' : 'wins'} − ${x.xw.toFixed(2)} xW = ${sgn(x.luck)} luck.` : '')([...ST].sort((a, b) => b.luck - a.luck)[0]),
       powerRows, hasPower: powerRows.length > 0, powerSub: `Through week ${NF}`, sharePower: e => this.share('power', e), powerLabel: S.sharing == 'power' ? '…' : 'Image',
       linkPower: e => this.shareLink(location.origin + '/#power', '9FEAMG · Power rankings', e), shotPower: `Power rankings · through week ${NF}`,
       // Season charts: a link to the chart and an image of it.
