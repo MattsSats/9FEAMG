@@ -516,7 +516,7 @@ button{font-family:inherit;color:inherit}
    its square box with room for the point. Initials sit a touch high, in the
    shield's wide part, which reads as centered. */
 .crest{border-radius:0!important;-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' view%42ox='0 0 48 48'%3E%3Cpath d='M24 2.5 L42.5 8 V22.5 C42.5 34 34.5 41.5 24 46 C13.5 41.5 5.5 34 5.5 22.5 V8 Z'/%3E%3C/svg%3E") center/100% 100% no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' view%42ox='0 0 48 48'%3E%3Cpath d='M24 2.5 L42.5 8 V22.5 C42.5 34 34.5 41.5 24 46 C13.5 41.5 5.5 34 5.5 22.5 V8 Z'/%3E%3C/svg%3E") center/100% 100% no-repeat}
-@media (max-width:520px){.pw-row{grid-template-columns:24px 30px minmax(0,1fr) 40px!important;gap:6px!important}.pw-row[data-tri="1"]{grid-template-columns:24px 30px minmax(0,1fr) 44px 38px!important}.pw-row .crest{width:32px!important;height:32px!important;font-size:13px!important}}
+@media (max-width:520px){.pw-row{grid-template-columns:24px 30px minmax(0,1fr) 40px!important;gap:6px!important}.pw-row[data-tri="1"]{grid-template-columns:24px 30px minmax(0,1fr) 50px 38px!important}.pw-row .crest{width:32px!important;height:32px!important;font-size:13px!important}}
 .crest .ini{display:block;line-height:1;transform:translateY(-4%);font-size:.88em}
 /* Tab bar icons: still until a tab is picked, then play once. */
 .tab{position:relative}
@@ -1210,7 +1210,7 @@ button{font-family:inherit;color:inherit}
   </div>
   <div class="no-shot" style="font-family:'JetBrains Mono';font-size:11px;color:var(--muted);margin-top:8px;line-height:1.5;text-wrap:pretty">{{ powerSub }} · Score: half how you’d do against every team each week (all-play), a quarter record, a quarter the last two weeks</div>
   <div class="pw-row" data-tri="{{ triFlag }}" style="display:grid;grid-template-columns:{{ powerCols }};gap:8px;padding:14px 0 8px;font-family:'JetBrains Mono';font-size:11px;letter-spacing:.08em;color:var(--muted);border-bottom:1px solid var(--line)">
-    <span>#</span><span></span><span>MANAGER</span><sc-if value="{{ hasTri }}" hint-placeholder-val="{{ false }}"><span style="text-align:center">TRI</span></sc-if><span style="text-align:right">SCORE</span>
+    <span>#</span><span></span><span>MANAGER</span><sc-if value="{{ hasTri }}" hint-placeholder-val="{{ false }}"><span style="text-align:center">TRIST</span></sc-if><span style="text-align:right">SCORE</span>
   </div>
   <sc-for list="{{ powerRows }}" as="p" hint-placeholder-count="10">
     <div sc-camel-on-click="{{ p.open }}" class="hov shot-tight pw-row" data-tri="{{ triFlag }}" tabindex="0" role="button" style="display:grid;grid-template-columns:{{ powerCols }};gap:8px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line);cursor:pointer">
