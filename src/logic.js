@@ -779,7 +779,7 @@ class Component extends DCLogic {
     const xStarter = () => [`Week ${LW} preview`, '', ...xFacts.flatMap((f, i) => [`${f.a} (${f.recA}) vs ${f.b} (${f.recB})`, `\t•\t${[f.proj ? 'Projected ' + f.proj : '', f.fav ? f.fav + ' ' + f.fp + '% to win on 9feamg' : '', f.stA ? streakText(f.a, f.stA) + ', ' + streakText(f.b, f.stB) : ''].filter(Boolean).join('. ')}. Experts pick ${EP[LW]?.[i] || '___'}.`, ''])].join('\n');
     const xEditInfo = !xEdit ? null : { title: `Your Week ${LW} picks`, lock: xFirst ? `Locks at kickoff, ${kickLabel(xFirst)}` : '', last: lastLog('pick'), rows: xEditRows,
       copy: () => this.copyText(xStarter(), 'Preview starter copied. Paste it in the chat and write over it.') };
-    const pundits = { show: pickRows.length > 0 || xEdit, booth: `${PICKS.w}–${PICKS.l}`, experts: `${XPICKS.w}–${XPICKS.l}`, wkLabel: `Week ${pickWk || ''}`, rows: pickRows, hasRows: pickRows.length > 0, edit: xEditInfo || {}, hasEdit: xEdit };
+    const pundits = { show: pickRows.length > 0 || xEdit, booth: `${PICKS.w}–${PICKS.l}`, experts: `${XPICKS.w}–${XPICKS.l}`, wkLabel: !pickWk ? '' : pickWk == LW ? `This week · Week ${pickWk}` : pickWk == LW - 1 ? `Last week · Week ${pickWk} · final` : `Week ${pickWk} · final`, rows: pickRows, hasRows: pickRows.length > 0, edit: xEditInfo || {}, hasEdit: xEdit };
     // What an empty set says: when its lines go up (the live week), or that the week didn't have any.
     const boothEmpty = wk != LW ? `No ${boothSet[0] == 'Post-SNF' ? 'Post-SNF' : boothSet[0].toLowerCase()} lines for Week ${wk}.`
       : boothSet[0] == 'Preview' ? (LIVE_STARTED ? `No preview lines for Week ${wk}.` : `Week ${wk} previews go up before Thursday’s kickoff.`)
