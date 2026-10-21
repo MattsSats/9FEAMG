@@ -2,7 +2,7 @@
 // by whoever has that team picked (Matt, Oct 20, 2026: honor system plus a change log, like taps).
 //   GET  -> { picks: { [week]: [name per matchup, schedule order] }, ranks: { [week]: [10 names] }, log: [entry] }.
 //        Public. The site lays these over data/season.js (expertPicks, tristanRanks), week by week.
-//   POST { manager: 'Jerger', week, i, pick } -> sets the pick for matchup i of the live week. Open until
+//   POST { manager: 'Jerger', week, i, pick } -> sets the pick for matchup i of the live week (pick: null clears it). Open until
 //        the week's first kickoff (punditOpen in api/_shared.js), like the Booth's own picks.
 //   POST { manager: 'Tristan', week, order } -> sets the rankings for the last final week (all ten
 //        managers once each). Open until the next week's first kickoff.
@@ -47,7 +47,7 @@ export default {
     if (kind == 'picks') {
       const i = +b.i, pair = season.schedule?.[week]?.[i];
       if (!Number.isInteger(i) || !pair) return json({ error: 'That matchup isn’t on the schedule.' }, 400);
-      if (!pair.includes(b.pick)) return json({ error: `Pick ${pair[0]} or ${pair[1]}.` }, 400);
+      if (b.pick !== null && !pair.includes(b.pick)) return json({ error: `Pick ${pair[0]} or ${pair[1]}.` }, 400);
       entry = { m: manager, a: 'pick', w: week, i, v: b.pick };
     } else {
       const all = season.managers.map(x => x.m), order = Array.isArray(b.order) ? b.order : [];

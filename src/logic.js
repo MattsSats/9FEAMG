@@ -756,12 +756,13 @@ class Component extends DCLogic {
     });
     // Jerger, with Jerger picked in Pick team: tap a winner in each live-week matchup until the first kickoff.
     const kickLabel = t => new Date(t).toLocaleString('en-US', { weekday: 'short', hour: 'numeric', minute: '2-digit', timeZone: 'America/Chicago' }).replace(',', '');
-    const lastLog = a => { const e = (PAPI.log || []).filter(x => x.a == a).slice(-1)[0]; return e ? `Last change ${kickLabel(e.at)}${a == 'pick' ? `: ${e.v}` : ''}` : ''; };
+    const lastLog = a => { const e = (PAPI.log || []).filter(x => x.a == a).slice(-1)[0]; return e ? `Last change ${kickLabel(e.at)}${a == 'pick' ? `: ${e.v ?? 'cleared a pick'}` : ''}` : ''; };
     const xEdit = !!LW && S.reqMgr == 'Jerger' && punditOpen(D, 'picks', LW);
     const xFirst = LW ? weekFirstKick(D, LW) : null;
     const xEditRows = !xEdit ? [] : (D.schedule[LW] || []).map(([a, b], i) => {
       const cur = EP[LW]?.[i], side = m => ({ m, init: INIT[m], color: col(m), on: String(cur == m), bg: cur == m ? 'var(--ink)' : 'transparent', fg: cur == m ? 'var(--bg)' : 'var(--ink)',
-        pick: () => { if (cur != m) { this.setState({ pundits: { ...PAPI, picks: { ...(PAPI.picks || {}), [LW]: (EP[LW] || D.schedule[LW].map(() => null)).map((x, j) => j == i ? m : x) } } }); this.savePundit({ manager: 'Jerger', week: LW, i, pick: m }); } } });
+        // Tapping the pick he already has clears it (Matt, Oct 20, 2026), until the lock.
+        pick: () => { const v = cur == m ? null : m; this.setState({ pundits: { ...PAPI, picks: { ...(PAPI.picks || {}), [LW]: (EP[LW] || D.schedule[LW].map(() => null)).map((x, j) => j == i ? v : x) } } }); this.savePundit({ manager: 'Jerger', week: LW, i, pick: v }); } });
       return { a: side(a), b: side(b) };
     });
     // Prep for the preview: each side's record and streak, Yahoo's projections, the site's win odds and the

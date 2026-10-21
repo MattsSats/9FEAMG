@@ -792,7 +792,7 @@ button{font-family:inherit;color:inherit}
           <sc-if value="{{ pundits.hasEdit }}" hint-placeholder-val="{{ false }}">
             <div style="margin-top:10px;border:1.5px dashed var(--line);border-radius:14px;padding:12px">
               <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap"><b style="font-size:15px">{{ pundits.edit.title }}</b><span style="font-family:'JetBrains Mono';font-size:11px;color:var(--muted)">{{ pundits.edit.lock }}</span></div>
-              <div style="font-size:12.5px;color:var(--muted);margin-top:2px">Tap who wins each matchup. It saves as you tap.</div>
+              <div style="font-size:12.5px;color:var(--muted);margin-top:2px">Tap who wins each matchup. It saves as you tap; tap your pick again to clear it.</div>
               <sc-for list="{{ pundits.edit.rows }}" as="e" hint-placeholder-count="5">
                 <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:8px">
                   <button aria-pressed="{{ e.a.on }}" sc-camel-on-click="{{ e.a.pick }}" style="display:flex;align-items:center;gap:6px;min-height:40px;padding:0 10px;border:1px solid var(--line);border-radius:999px;background:{{ e.a.bg }};color:{{ e.a.fg }};font-weight:600;font-size:14px;cursor:pointer"><span class="crest" style="width:22px;height:22px;background:{{ e.a.color }};color:var(--onAccent);display:flex;align-items:center;justify-content:center;font-family:'Big Shoulders Display';font-weight:800;font-size:9px;flex:none"><span class="ini" data-i="{{ e.a.init }}">{{ e.a.init }}</span></span>{{ e.a.m }}</button>
