@@ -175,7 +175,7 @@ class Component extends DCLogic {
   state = { tab: this.props.startTab ?? 'Gameday', week: HOME_WK, theme: null, sheet: null, team: MY_TEAM || MGR[0], wire: 'This week', draftMode: 'By round', draftRound: 1, draftTeam: MGR[0], rosters: null, draft: null, tx: null, loaded: false,
     // Parlay request form: who's asking is remembered on this device.
     reqMgr: MY_TEAM, teamSheet: null, reqOpen: false, shareSheet: null, newScores: false, compact: false,
-    req: { risk: 1, legs: 'any', players: [], playerLegs: {}, game: '', bias: false, sending: false }, tails: {}, passes: {}, tlog: {}, tailsDone: {}, tailBusy: null, reqs: null };
+    req: { risk: 1, legs: 'any', players: [], playerLegs: {}, game: '', bias: false, sending: false }, tails: {}, passes: {}, tlog: {}, tailsDone: {}, tailBusy: null, reqs: null, pundits: null, triEdit: null, punditBusy: false };
   componentDidMount() {
     // Keyboard: Enter or Space activates clickable rows (role="button"); Escape closes the lineup sheet.
     document.addEventListener('keydown', e => {
@@ -194,6 +194,7 @@ class Component extends DCLogic {
     // with plain listeners; everything else on the form is a tap.
     if (LW) this.loadRequests();
     this.loadTails();
+    this.loadPundits();
     // Taps keep coming in while the page is open: re-read the live week's every 2 minutes
     // (and on coming back to the tab), so the cards and Latest taps stay current.
     if (LW) {
@@ -336,6 +337,25 @@ class Component extends DCLogic {
     } catch (err) {
       this.setState({ tailBusy: null });
       this.toast(err.message || 'Couldn’t save that. Try again.');
+    }
+  }
+  // Jerger's picks and Tristan's rankings set on the site (/api/pundits), laid over data/season.js.
+  loadPundits() {
+    fetch('/api/pundits', { cache: 'no-store' }).then(r => r.ok ? r.json() : null).then(d => d && this.setState({ pundits: d })).catch(() => {});
+  }
+  async savePundit(body, okMsg) {
+    if (this.state.punditBusy) return;
+    this.setState({ punditBusy: true });
+    try {
+      const r = await fetch('/api/pundits', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) });
+      const d = await r.json().catch(() => ({}));
+      if (!r.ok) throw new Error(d.error || 'Couldn’t save that. Try again.');
+      this.setState({ pundits: d, punditBusy: false, ...(body.order ? { triEdit: null } : {}) });
+      if (okMsg) this.toast(okMsg);
+    } catch (err) {
+      this.setState({ punditBusy: false });
+      this.toast(err.message || 'Couldn’t save that. Try again.');
+      this.loadPundits();
     }
   }
   async sendRequest(cancel) {
@@ -706,18 +726,37 @@ class Component extends DCLogic {
     const cardOrder = hasWeek ? [hero, ...matchups].map(x => x.a.m) : [];
     const slotOf = b => { const i = cardOrder.findIndex(m => b.crests.some(c => c.m == m)); return i < 0 ? 99 : i; };
     boothLines.sort((x, y) => slotOf(x) - slotOf(y));
-    const boothWaiting = boothOn && !boothLines.length, PICKS = boothPickRecord(D), XPICKS = expertPickRecord(D);
+    // Jerger's picks and Tristan's rankings: what's been set on the site (/api/pundits) over data/season.js.
+    const PAPI = S.pundits || {}, EP = { ...(D.expertPicks || {}), ...(PAPI.picks || {}) };
+    const boothWaiting = boothOn && !boothLines.length, PICKS = boothPickRecord(D), XPICKS = pickRecord(D, EP);
     // Picks this season: the Booth against Jerger's experts (expertPicks), both graded once a week is final.
     // The table shows the week on screen when it has graded picks, otherwise the latest graded week.
     const pickWks = [...new Set([...PICKS.graded, ...XPICKS.graded].map(g => g.wk))].sort((a, b) => a - b);
-    const pickWk = pickWks.includes(wk) ? wk : pickWks[pickWks.length - 1];
+    // The live week shows its picks (not graded yet) once either side has one in.
+    const livePicks = !!LW && LW > NF && !!((D.boothPicks?.[LW] || []).length || (EP[LW] || []).some(Boolean));
+    const pickWk = wk == LW && livePicks ? LW : pickWks.includes(wk) ? wk : pickWks.length ? pickWks[pickWks.length - 1] : livePicks ? LW : null;
     const pickMark = g => !g ? { pick: '—', mark: '', markColor: 'var(--muted)' } : { pick: g.pick, mark: !g.winner ? 'push' : g.hit ? '✓' : '✗', markColor: !g.winner ? 'var(--muted)' : g.hit ? 'var(--pos)' : 'var(--neg)' };
     const pickRows = !pickWk ? [] : (D.schedule[pickWk] || []).map(([a, b], i) => {
+      if (pickWk > NF) {
+        const plain = p => ({ pick: p || '—', mark: '', markColor: 'var(--muted)' });
+        return { won: a, init: INIT[a], color: col(a), vs: 'vs ' + b, beat: 'not played yet', booth: plain(D.boothPicks?.[pickWk]?.[i]?.[0]), experts: plain(EP[pickWk]?.[i]) };
+      }
       const sa = D.scores[a]?.[pickWk - 1], sb = D.scores[b]?.[pickWk - 1], won = sa >= sb ? a : b, lost = won == a ? b : a;
       const bg = PICKS.graded.find(g => g.wk == pickWk && g.i == i), xg = XPICKS.graded.find(g => g.wk == pickWk && g.i == i);
-      return { won, init: INIT[won], color: col(won), lost, beat: `${f2(Math.max(sa, sb))}–${f2(Math.min(sa, sb))}`, booth: pickMark(bg), experts: pickMark(xg) };
+      return { won, init: INIT[won], color: col(won), vs: 'over ' + lost, beat: `${f2(Math.max(sa, sb))}–${f2(Math.min(sa, sb))}`, booth: pickMark(bg), experts: pickMark(xg) };
     });
-    const pundits = { show: pickRows.length > 0, booth: `${PICKS.w}–${PICKS.l}`, experts: `${XPICKS.w}–${XPICKS.l}`, wkLabel: `Week ${pickWk || ''}`, rows: pickRows };
+    // Jerger, with Jerger picked in Pick team: tap a winner in each live-week matchup until the first kickoff.
+    const kickLabel = t => new Date(t).toLocaleString('en-US', { weekday: 'short', hour: 'numeric', minute: '2-digit', timeZone: 'America/Chicago' }).replace(',', '');
+    const lastLog = a => { const e = (PAPI.log || []).filter(x => x.a == a).slice(-1)[0]; return e ? `Last change ${kickLabel(e.at)}${a == 'pick' ? `: ${e.v}` : ''}` : ''; };
+    const xEdit = !!LW && S.reqMgr == 'Jerger' && punditOpen(D, 'picks', LW);
+    const xFirst = LW ? weekFirstKick(D, LW) : null;
+    const xEditRows = !xEdit ? [] : (D.schedule[LW] || []).map(([a, b], i) => {
+      const cur = EP[LW]?.[i], side = m => ({ m, init: INIT[m], color: col(m), on: String(cur == m), bg: cur == m ? 'var(--ink)' : 'transparent', fg: cur == m ? 'var(--bg)' : 'var(--ink)',
+        pick: () => { if (cur != m) { this.setState({ pundits: { ...PAPI, picks: { ...(PAPI.picks || {}), [LW]: (EP[LW] || D.schedule[LW].map(() => null)).map((x, j) => j == i ? m : x) } } }); this.savePundit({ manager: 'Jerger', week: LW, i, pick: m }); } } });
+      return { a: side(a), b: side(b) };
+    });
+    const xEditInfo = !xEdit ? null : { title: `Your Week ${LW} picks`, lock: xFirst ? `Locks at kickoff, ${kickLabel(xFirst)}` : '', last: lastLog('pick'), rows: xEditRows };
+    const pundits = { show: pickRows.length > 0 || xEdit, booth: `${PICKS.w}–${PICKS.l}`, experts: `${XPICKS.w}–${XPICKS.l}`, wkLabel: `Week ${pickWk || ''}`, rows: pickRows, hasRows: pickRows.length > 0, edit: xEditInfo || {}, hasEdit: xEdit };
     // What an empty set says: when its lines go up (the live week), or that the week didn't have any.
     const boothEmpty = wk != LW ? `No ${boothSet[0] == 'Post-SNF' ? 'Post-SNF' : boothSet[0].toLowerCase()} lines for Week ${wk}.`
       : boothSet[0] == 'Preview' ? (LIVE_STARTED ? `No preview lines for Week ${wk}.` : `Week ${wk} previews go up before Thursday’s kickoff.`)
@@ -962,7 +1001,21 @@ class Component extends DCLogic {
     // Power rankings, with movement since the week before.
     const prevRank = NF > 1 ? Object.fromEntries(power(NF - 1).map((r, i) => [r.m, i + 1])) : {};
     // Tristan's own power rankings for the same week (tristanRanks), when he's posted them.
-    const triRank = D.tristanRanks?.[NF] ? Object.fromEntries(D.tristanRanks[NF].map((m, i) => [m, i + 1])) : null;
+    const TR = { ...(D.tristanRanks || {}), ...(S.pundits?.ranks || {}) };
+    const triRank = TR[NF] ? Object.fromEntries(TR[NF].map((m, i) => [m, i + 1])) : null;
+    // Tristan, with Tristan picked in Pick team: reorder the ten and save, until next week's first kickoff.
+    const triCan = NF > 0 && S.reqMgr == 'Tristan' && punditOpen(D, 'ranks', NF);
+    const triOrder = S.triEdit;
+    const triMove = (i, d) => { const o = [...triOrder], j = i + d; if (j < 0 || j >= o.length) return; [o[i], o[j]] = [o[j], o[i]]; this.setState({ triEdit: o }); };
+    const triEditor = !triCan ? { show: false } : {
+      show: true, open: !!triOrder, label: TR[NF] ? `Edit your Week ${NF} rankings` : `Post your Week ${NF} rankings`,
+      start: () => this.setState({ triEdit: TR[NF] ? [...TR[NF]] : power(NF).map(r => r.m) }),
+      cancel: () => this.setState({ triEdit: null }),
+      save: () => this.savePundit({ manager: 'Tristan', week: NF, order: triOrder }, 'Rankings saved. TRIST shows them now.'),
+      saveLabel: S.punditBusy ? 'Saving…' : 'Save rankings',
+      lock: (k => k ? `Open until kickoff, ${new Date(k).toLocaleString('en-US', { weekday: 'short', hour: 'numeric', minute: '2-digit', timeZone: 'America/Chicago' }).replace(',', '')}` : '')(weekFirstKick(D, NF + 1)),
+      rows: (triOrder || []).map((m, i) => ({ rank: i + 1, m, init: INIT[m], color: col(m), up: () => triMove(i, -1), down: () => triMove(i, 1), upOp: i == 0 ? '.3' : '1', downOp: i == triOrder.length - 1 ? '.3' : '1' }))
+    };
     const powerCols = triRank ? '30px 44px minmax(0,1fr) 54px 48px' : '30px 44px minmax(0,1fr) 48px';
     const powerRows = NF ? power(NF).map((r, i) => {
       const mv = prevRank[r.m] ? prevRank[r.m] - (i + 1) : 0;
@@ -1245,7 +1298,7 @@ class Component extends DCLogic {
       // "What's this?" opens the explainer under the Expected wins chart: one real week, worked through.
       howTo: () => { const open = !this.state.xwHelp; this.setState({ xwHelp: open }); if (open) setTimeout(() => document.getElementById('xw')?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 0); },
       xwHelp: !!S.xwHelp, xwHelpLabel: S.xwHelp ? 'Hide' : 'What’s this?', xwExample: xwWeek(),
-      powerRows, hasPower: powerRows.length > 0, powerCols, hasTri: !!triRank, triFlag: triRank ? '1' : '0', powerSub: `Through week ${NF}` + (triRank ? ' · TRIST = Tristan’s own rankings (▲ Tristan has them higher, ▼ lower)' : ''), sharePower: e => this.share('power', e), powerLabel: S.sharing == 'power' ? '…' : 'Image',
+      powerRows, hasPower: powerRows.length > 0, powerCols, hasTri: !!triRank, triEditor, hasTriEditor: triEditor.show, triEditing: !!triEditor.open, triNotEditing: triEditor.show && !triEditor.open, triFlag: triRank ? '1' : '0', powerSub: `Through week ${NF}` + (triRank ? ' · TRIST = Tristan’s own rankings (▲ Tristan has them higher, ▼ lower)' : ''), sharePower: e => this.share('power', e), powerLabel: S.sharing == 'power' ? '…' : 'Image',
       linkPower: e => this.shareLink(location.origin + '/#power', '9FEAMG · Power rankings', e), shotPower: `Power rankings · through week ${NF}`,
       // Season charts: a link to the chart and an image of it.
       ...Object.fromEntries([['Pfpa', 'pfpa', 'Points for vs against'], ['Luck', 'luck', 'Luck'], ['Xw', 'xw', 'Expected wins'], ['Bench', 'bench', 'Points left on bench']].flatMap(([k, id, title]) => [

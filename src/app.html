@@ -789,17 +789,32 @@ button{font-family:inherit;color:inherit}
             <div style="background:var(--surface2);border-radius:12px;padding:10px 12px"><div style="font-family:'JetBrains Mono';font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)">The Booth</div><div style="font-family:'Big Shoulders Display';font-weight:900;font-size:30px;line-height:1.05">{{ pundits.booth }}</div></div>
             <div style="background:var(--surface2);border-radius:12px;padding:10px 12px"><div style="font-family:'JetBrains Mono';font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)">Jerger’s experts</div><div style="font-family:'Big Shoulders Display';font-weight:900;font-size:30px;line-height:1.05">{{ pundits.experts }}</div></div>
           </div>
+          <sc-if value="{{ pundits.hasEdit }}" hint-placeholder-val="{{ false }}">
+            <div style="margin-top:10px;border:1.5px dashed var(--line);border-radius:14px;padding:12px">
+              <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap"><b style="font-size:15px">{{ pundits.edit.title }}</b><span style="font-family:'JetBrains Mono';font-size:11px;color:var(--muted)">{{ pundits.edit.lock }}</span></div>
+              <div style="font-size:12.5px;color:var(--muted);margin-top:2px">Tap who wins each matchup. It saves as you tap.</div>
+              <sc-for list="{{ pundits.edit.rows }}" as="e" hint-placeholder-count="5">
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:8px">
+                  <button aria-pressed="{{ e.a.on }}" sc-camel-on-click="{{ e.a.pick }}" style="display:flex;align-items:center;gap:6px;min-height:40px;padding:0 10px;border:1px solid var(--line);border-radius:999px;background:{{ e.a.bg }};color:{{ e.a.fg }};font-weight:600;font-size:14px;cursor:pointer"><span class="crest" style="width:22px;height:22px;background:{{ e.a.color }};color:var(--onAccent);display:flex;align-items:center;justify-content:center;font-family:'Big Shoulders Display';font-weight:800;font-size:9px;flex:none"><span class="ini" data-i="{{ e.a.init }}">{{ e.a.init }}</span></span>{{ e.a.m }}</button>
+                  <button aria-pressed="{{ e.b.on }}" sc-camel-on-click="{{ e.b.pick }}" style="display:flex;align-items:center;gap:6px;min-height:40px;padding:0 10px;border:1px solid var(--line);border-radius:999px;background:{{ e.b.bg }};color:{{ e.b.fg }};font-weight:600;font-size:14px;cursor:pointer"><span class="crest" style="width:22px;height:22px;background:{{ e.b.color }};color:var(--onAccent);display:flex;align-items:center;justify-content:center;font-family:'Big Shoulders Display';font-weight:800;font-size:9px;flex:none"><span class="ini" data-i="{{ e.b.init }}">{{ e.b.init }}</span></span>{{ e.b.m }}</button>
+                </div>
+              </sc-for>
+              <div style="font-family:'JetBrains Mono';font-size:11px;color:var(--muted);margin-top:8px">{{ pundits.edit.last }}</div>
+            </div>
+          </sc-if>
+          <sc-if value="{{ pundits.hasRows }}" hint-placeholder-val="{{ true }}">
           <div style="display:grid;grid-template-columns:minmax(0,1fr) 66px 66px;gap:8px;padding:12px 0 6px;font-family:'JetBrains Mono';font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)"><span>{{ pundits.wkLabel }}</span><span>Booth</span><span>Experts</span></div>
           <sc-for list="{{ pundits.rows }}" as="r" hint-placeholder-count="5">
             <div style="display:grid;grid-template-columns:minmax(0,1fr) 66px 66px;gap:8px;align-items:center;padding:8px 0;border-top:1px solid var(--line)">
               <div style="display:flex;align-items:center;gap:8px;min-width:0">
                 <div class="crest" style="width:26px;height:26px;background:{{ r.color }};color:var(--onAccent);display:flex;align-items:center;justify-content:center;font-family:'Big Shoulders Display';font-weight:800;font-size:11px;flex:none"><span class="ini" data-i="{{ r.init }}">{{ r.init }}</span></div>
-                <div style="min-width:0"><div style="font-weight:600;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ r.won }} <span style="font-weight:500;color:var(--muted)">over {{ r.lost }}</span></div><div style="font-family:'JetBrains Mono';font-size:11px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ r.beat }}</div></div>
+                <div style="min-width:0"><div style="font-weight:600;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ r.won }} <span style="font-weight:500;color:var(--muted)">{{ r.vs }}</span></div><div style="font-family:'JetBrains Mono';font-size:11px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ r.beat }}</div></div>
               </div>
               <span style="font-size:13px;font-weight:600;white-space:nowrap">{{ r.booth.pick }} <b style="color:{{ r.booth.markColor }}">{{ r.booth.mark }}</b></span>
               <span style="font-size:13px;font-weight:600;white-space:nowrap">{{ r.experts.pick }} <b style="color:{{ r.experts.markColor }}">{{ r.experts.mark }}</b></span>
             </div>
           </sc-for>
+          </sc-if>
         </div>
       </sc-if>
       <div class="shot-footer" style="padding:4px 0 14px"><b>9FEAMG</b><span>{{ boothShotLabel }}</span></div>
@@ -1209,6 +1224,28 @@ button{font-family:inherit;color:inherit}
     <span class="sec-btns no-shot"><button class="share-btn" sc-camel-on-click="{{ menuPower }}" aria-label="Share the power rankings">Share</button></span>
   </div>
   <div class="no-shot" style="font-family:'JetBrains Mono';font-size:11px;color:var(--muted);margin-top:8px;line-height:1.5;text-wrap:pretty">{{ powerSub }} · Score: half how you’d do against every team each week (all-play), 25% record, 25% the last two weeks</div>
+  <sc-if value="{{ triNotEditing }}" hint-placeholder-val="{{ false }}">
+    <button class="no-shot" sc-camel-on-click="{{ triEditor.start }}" style="margin-top:12px;min-height:40px;padding:0 16px;border:0;border-radius:999px;background:var(--accent);color:var(--onAccent);font-weight:700;font-size:14px;cursor:pointer">{{ triEditor.label }}</button>
+  </sc-if>
+  <sc-if value="{{ triEditing }}" hint-placeholder-val="{{ false }}">
+    <div class="no-shot" style="margin-top:12px;border:1.5px dashed var(--line);border-radius:14px;padding:12px">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap"><b style="font-size:15px">{{ triEditor.label }}</b><span style="font-family:'JetBrains Mono';font-size:11px;color:var(--muted)">{{ triEditor.lock }}</span></div>
+      <div style="font-size:12.5px;color:var(--muted);margin-top:2px">Move each team up or down, then save. Only the order is saved.</div>
+      <sc-for list="{{ triEditor.rows }}" as="t" hint-placeholder-count="10">
+        <div style="display:grid;grid-template-columns:24px 26px minmax(0,1fr) 40px 40px;gap:6px;align-items:center;padding:5px 0;border-bottom:1px solid var(--line)">
+          <span style="font-family:'Big Shoulders Display';font-weight:900;font-size:20px">{{ t.rank }}</span>
+          <span class="crest" style="width:24px;height:24px;background:{{ t.color }};color:var(--onAccent);display:flex;align-items:center;justify-content:center;font-family:'Big Shoulders Display';font-weight:800;font-size:10px"><span class="ini" data-i="{{ t.init }}">{{ t.init }}</span></span>
+          <span style="font-weight:600;font-size:14px">{{ t.m }}</span>
+          <button aria-label="Move up" sc-camel-on-click="{{ t.up }}" style="min-height:34px;border:1px solid var(--line);border-radius:8px;background:transparent;color:var(--ink);cursor:pointer;opacity:{{ t.upOp }}">▲</button>
+          <button aria-label="Move down" sc-camel-on-click="{{ t.down }}" style="min-height:34px;border:1px solid var(--line);border-radius:8px;background:transparent;color:var(--ink);cursor:pointer;opacity:{{ t.downOp }}">▼</button>
+        </div>
+      </sc-for>
+      <div style="display:flex;gap:8px;margin-top:10px">
+        <button sc-camel-on-click="{{ triEditor.save }}" style="flex:1;min-height:42px;border:0;border-radius:999px;background:var(--accent);color:var(--onAccent);font-weight:700;font-size:14px;cursor:pointer">{{ triEditor.saveLabel }}</button>
+        <button sc-camel-on-click="{{ triEditor.cancel }}" style="min-height:42px;padding:0 16px;border:1px solid var(--line);border-radius:999px;background:transparent;color:var(--muted);font-size:14px;cursor:pointer">Cancel</button>
+      </div>
+    </div>
+  </sc-if>
   <div class="pw-row" data-tri="{{ triFlag }}" style="display:grid;grid-template-columns:{{ powerCols }};gap:8px;padding:14px 0 8px;font-family:'JetBrains Mono';font-size:11px;letter-spacing:.08em;color:var(--muted);border-bottom:1px solid var(--line)">
     <span>#</span><span></span><span>MANAGER</span><sc-if value="{{ hasTri }}" hint-placeholder-val="{{ false }}"><span style="text-align:center">TRIST</span></sc-if><span style="text-align:right">SCORE</span>
   </div>

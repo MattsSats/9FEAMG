@@ -314,6 +314,21 @@ export function pickRecord(season, byWeek) {
   }
   return { graded, w: graded.filter(g => g.hit).length, l: graded.filter(g => g.winner && !g.hit).length };
 }
+// The week's first kickoff (ms), from nfl[week].games; null if the week's games aren't on file.
+export function weekFirstKick(season, w) {
+  const t = (season.nfl?.[w]?.games || []).map(g => kickoffAt(season, w, g)).filter(Boolean).map(Number);
+  return t.length ? Math.min(...t) : null;
+}
+// Jerger's picks and Tristan's rankings can be set on the site (api/pundits.js, Matt, Oct 20, 2026):
+// picks for the live week until its first kickoff (like the Booth's), rankings for the last final week
+// until the next week's first kickoff. The site and the server both ask this, so they always agree.
+export function punditOpen(season, kind, w, now = Date.now()) {
+  const NF = Math.max(0, ...season.managers.map(x => (season.scores[x.m] || []).length));
+  const k = kind == 'picks' ? (w == season.live?.week ? weekFirstKick(season, w) : -1) : kind == 'ranks' ? (w == NF ? weekFirstKick(season, w + 1) : -1) : -1;
+  return k == null || (k > 0 && now < k);
+}
+// Who may set which: Jerger posts the experts' picks, Tristan the rankings.
+export const PUNDIT_OF = { picks: 'Jerger', ranks: 'Tristan' };
 // The Booth's picks: boothPicks[week] holds [pick, win % when picked] per matchup in schedule order.
 export const boothPickRecord = season => pickRecord(season, season.boothPicks);
 // Jerger's preview picks ("the experts"): expertPicks[week] holds a name per matchup (Matt, Oct 20, 2026).
