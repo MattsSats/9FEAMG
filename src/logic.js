@@ -963,7 +963,7 @@ class Component extends DCLogic {
     const prevRank = NF > 1 ? Object.fromEntries(power(NF - 1).map((r, i) => [r.m, i + 1])) : {};
     // Tristan's own power rankings for the same week (tristanRanks), when he's posted them.
     const triRank = D.tristanRanks?.[NF] ? Object.fromEntries(D.tristanRanks[NF].map((m, i) => [m, i + 1])) : null;
-    const powerCols = triRank ? '30px 34px minmax(0,1fr) 54px 48px' : '30px 34px minmax(0,1fr) 48px';
+    const powerCols = triRank ? '30px minmax(0,1fr) 54px 48px' : '30px minmax(0,1fr) 48px';
     const powerRows = NF ? power(NF).map((r, i) => {
       const mv = prevRank[r.m] ? prevRank[r.m] - (i + 1) : 0;
       const tr = triRank?.[r.m], td = tr ? (i + 1) - tr : 0;
