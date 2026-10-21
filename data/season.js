@@ -237,6 +237,16 @@ window.SEASON = {
   boothPicks: {
     6: [['Matt', 60], ['Tristan', 62], ['Tony', 68], ['Colin', 69], ['Mr. G', 62]]
   },
+  // Jerger's weekly preview picks ("the experts"): one name per matchup in schedule order, graded
+  // like the Booth's (Matt, Oct 20, 2026; Jerger agreed). Only the pick goes here; the write-up stays private.
+  expertPicks: {
+    6: ['Matt', 'Pablo', 'Tony', 'Kurt', 'Mr. G']
+  },
+  // Tristan's weekly power rankings, 1 to 10 (Matt, Oct 20, 2026; Tristan agreed). Rank order only; the
+  // Season tab shows it beside the site's own power rankings for the same week.
+  tristanRanks: {
+    6: ['Tony', 'Kurt', 'Andy', 'Jerger', 'Matt', 'Colin', 'Pablo', 'DLin', 'Mr. G', 'Tristan']
+  },
   // Post-SNF lines, one per matchup in the same order: written Sunday after the night game, with
   // what each matchup still needs on Monday. [manager, line, written at].
   boothSnf: {

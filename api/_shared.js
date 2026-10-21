@@ -298,21 +298,26 @@ export function matchupOdds(season, rosters = null, now = Date.now()) {
     return { a, b, pa: v > 0 ? 0.5 * (1 + erf(d / Math.sqrt(2 * v))) : d > 0 ? 1 : d < 0 ? 0 : 0.5 };
   });
 }
-// The Booth's picks: boothPicks[week] holds [pick, win % when picked] per matchup in schedule order.
-// A pick is graded once its week is final. Returns { graded: [{ wk, i, pick, pct, winner, hit }], w, l }.
-export function boothPickRecord(season) {
+// Picks graded once their week is final. byWeek[week] holds one pick per matchup in schedule order,
+// either a name or [name, win % when picked]. Returns { graded: [{ wk, i, pick, pct, winner, hit }], w, l }.
+export function pickRecord(season, byWeek) {
   const NF = Math.max(0, ...season.managers.map(x => (season.scores[x.m] || []).length)), graded = [];
-  for (const [w, picks] of Object.entries(season.boothPicks || {})) {
+  for (const [w, picks] of Object.entries(byWeek || {})) {
     if (+w > NF) continue;
     (picks || []).forEach((p, i) => {
       const pair = season.schedule?.[w]?.[i]; if (!p || !pair) return;
+      const [pick, pct] = Array.isArray(p) ? p : [p, null];
       const [a, b] = pair, sa = season.scores[a][w - 1], sb = season.scores[b][w - 1];
       const winner = sa > sb ? a : sb > sa ? b : null;
-      graded.push({ wk: +w, i, pick: p[0], pct: p[1], winner, hit: winner == p[0] });
+      graded.push({ wk: +w, i, pick, pct, winner, hit: winner == pick });
     });
   }
   return { graded, w: graded.filter(g => g.hit).length, l: graded.filter(g => g.winner && !g.hit).length };
 }
+// The Booth's picks: boothPicks[week] holds [pick, win % when picked] per matchup in schedule order.
+export const boothPickRecord = season => pickRecord(season, season.boothPicks);
+// Jerger's preview picks ("the experts"): expertPicks[week] holds a name per matchup (Matt, Oct 20, 2026).
+export const expertPickRecord = season => pickRecord(season, season.expertPicks);
 export const oddsPct = (x, done) => done ? (x >= 0.5 ? 'In' : 'Out') : x >= 0.995 ? '>99%' : x < 0.005 ? '<1%' : Math.round(x * 100) + '%';
 // Power rankings through week n, 0–100: half season all-play win %, a quarter actual win %,
 // a quarter all-play win % over the last two weeks (form). Ties go to PF.

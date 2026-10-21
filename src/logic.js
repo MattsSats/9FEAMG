@@ -706,7 +706,18 @@ class Component extends DCLogic {
     const cardOrder = hasWeek ? [hero, ...matchups].map(x => x.a.m) : [];
     const slotOf = b => { const i = cardOrder.findIndex(m => b.crests.some(c => c.m == m)); return i < 0 ? 99 : i; };
     boothLines.sort((x, y) => slotOf(x) - slotOf(y));
-    const boothWaiting = boothOn && !boothLines.length, PICKS = boothPickRecord(D);
+    const boothWaiting = boothOn && !boothLines.length, PICKS = boothPickRecord(D), XPICKS = expertPickRecord(D);
+    // Picks this season: the Booth against Jerger's experts (expertPicks), both graded once a week is final.
+    // The table shows the week on screen when it has graded picks, otherwise the latest graded week.
+    const pickWks = [...new Set([...PICKS.graded, ...XPICKS.graded].map(g => g.wk))].sort((a, b) => a - b);
+    const pickWk = pickWks.includes(wk) ? wk : pickWks[pickWks.length - 1];
+    const pickMark = g => !g ? { pick: '—', mark: '', markColor: 'var(--muted)' } : { pick: g.pick, mark: !g.winner ? 'push' : g.hit ? '✓' : '✗', markColor: !g.winner ? 'var(--muted)' : g.hit ? 'var(--pos)' : 'var(--neg)' };
+    const pickRows = !pickWk ? [] : (D.schedule[pickWk] || []).map(([a, b], i) => {
+      const sa = D.scores[a]?.[pickWk - 1], sb = D.scores[b]?.[pickWk - 1], won = sa >= sb ? a : b, lost = won == a ? b : a;
+      const bg = PICKS.graded.find(g => g.wk == pickWk && g.i == i), xg = XPICKS.graded.find(g => g.wk == pickWk && g.i == i);
+      return { won, init: INIT[won], color: col(won), lost, beat: `${f2(Math.max(sa, sb))}–${f2(Math.min(sa, sb))}`, booth: pickMark(bg), experts: pickMark(xg) };
+    });
+    const pundits = { show: pickRows.length > 0, booth: `${PICKS.w}–${PICKS.l}`, experts: `${XPICKS.w}–${XPICKS.l}`, wkLabel: `Week ${pickWk || ''}`, rows: pickRows };
     // What an empty set says: when its lines go up (the live week), or that the week didn't have any.
     const boothEmpty = wk != LW ? `No ${boothSet[0] == 'Post-SNF' ? 'Post-SNF' : boothSet[0].toLowerCase()} lines for Week ${wk}.`
       : boothSet[0] == 'Preview' ? (LIVE_STARTED ? `No preview lines for Week ${wk}.` : `Week ${wk} previews go up before Thursday’s kickoff.`)
@@ -950,12 +961,17 @@ class Component extends DCLogic {
     const P = D.playoffTeams;
     // Power rankings, with movement since the week before.
     const prevRank = NF > 1 ? Object.fromEntries(power(NF - 1).map((r, i) => [r.m, i + 1])) : {};
+    // Tristan's own power rankings for the same week (tristanRanks), when he's posted them.
+    const triRank = D.tristanRanks?.[NF] ? Object.fromEntries(D.tristanRanks[NF].map((m, i) => [m, i + 1])) : null;
+    const powerCols = triRank ? '30px 34px minmax(0,1fr) 54px 48px' : '30px 34px minmax(0,1fr) 48px';
     const powerRows = NF ? power(NF).map((r, i) => {
       const mv = prevRank[r.m] ? prevRank[r.m] - (i + 1) : 0;
+      const tr = triRank?.[r.m], td = tr ? (i + 1) - tr : 0;
       // One-liner per team for the latest rankings (data/season.js -> powerNotes[week]), from the writer.
       const note = boothOn ? D.powerNotes?.[NF]?.[r.m] || '' : '';
       return { rank: i + 1, m: r.m, init: INIT[r.m], color: col(r.m), score: f1(r.score), wl: r.wl, ...(l => ({ luck: sgn(l), luckColor: l > 0 ? 'var(--pos)' : l < 0 ? 'var(--neg)' : 'var(--muted)' }))(ST.find(s => s.m == r.m).luck), note, hasNote: !!note,
         move: mv > 0 ? '▲' + mv : mv < 0 ? '▼' + -mv : '–', moveColor: mv > 0 ? 'var(--pos)' : mv < 0 ? 'var(--neg)' : 'var(--muted)',
+        tri: tr || '–', triGap: !tr || !td ? '' : td > 0 ? '▲' + td : '▼' + -td, triColor: td > 0 ? 'var(--pos)' : td < 0 ? 'var(--neg)' : 'var(--muted)',
         open: () => { this.setState({ tab: 'Teams', team: r.m }); window.scrollTo(0, 0); } };
     }) : [];
     const standings = ST.map((s, i) => ({ rank: i + 1, m: s.m, rowBg: s.m == S.reqMgr ? 'var(--surface2)' : 'transparent', rowEdge: s.m == S.reqMgr ? col(s.m) : 'transparent', you: s.m == S.reqMgr,
@@ -1215,7 +1231,7 @@ class Component extends DCLogic {
       menuWire: this.shareMenu(seasonMode ? 'Wire · season' : 'Wire · Week ' + wireWk, e => this.shareLink(location.origin + (seasonMode ? '/s/wire-season' : '/s/wire-week'), seasonMode ? '9FEAMG · Wire · season' : '9FEAMG · Wire · Week ' + wireWk, e), e => this.share('wire', e)),
       shotWire: seasonMode ? 'Wire · season' : 'Wire · Week ' + wireWk,
       // The Booth: an image of each matchup's newest line (earlier stages stay off the image).
-      boothNote: (boothWaiting ? boothEmpty : BOOTH_NOTE[boothSet[0]] || '') + (PICKS.w + PICKS.l ? ` The Booth’s picks: ${PICKS.w}–${PICKS.l} this season.` : ''), hasBoothSets: true,
+      boothNote: (boothWaiting ? boothEmpty : BOOTH_NOTE[boothSet[0]] || '') + (PICKS.w + PICKS.l && !pundits.show ? ` The Booth’s picks: ${PICKS.w}–${PICKS.l} this season.` : ''), hasBoothSets: true, pundits, hasPundits: pundits.show,
       boothSets: boothAll.map(([label, l]) => ({ label, on: String(label == boothSet[0]), bg: label == boothSet[0] ? 'var(--ink)' : 'transparent', fg: label == boothSet[0] ? 'var(--bg)' : 'var(--muted)', op: l.length || label == boothSet[0] ? 1 : 0.45,
         pick: () => this.setState({ boothSet: { ...this.state.boothSet, [wk]: label } }) })),
       boothShotLabel: `The Booth · Week ${wk} · ${boothSet[0]}`,
@@ -1229,7 +1245,7 @@ class Component extends DCLogic {
       // "What's this?" opens the explainer under the Expected wins chart: one real week, worked through.
       howTo: () => { const open = !this.state.xwHelp; this.setState({ xwHelp: open }); if (open) setTimeout(() => document.getElementById('xw')?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 0); },
       xwHelp: !!S.xwHelp, xwHelpLabel: S.xwHelp ? 'Hide' : 'What’s this?', xwExample: xwWeek(),
-      powerRows, hasPower: powerRows.length > 0, powerSub: `Through week ${NF}`, sharePower: e => this.share('power', e), powerLabel: S.sharing == 'power' ? '…' : 'Image',
+      powerRows, hasPower: powerRows.length > 0, powerCols, hasTri: !!triRank, triFlag: triRank ? '1' : '0', powerSub: `Through week ${NF}` + (triRank ? ' · TRI = Tristan’s own rankings (▲ Tristan has them higher, ▼ lower)' : ''), sharePower: e => this.share('power', e), powerLabel: S.sharing == 'power' ? '…' : 'Image',
       linkPower: e => this.shareLink(location.origin + '/#power', '9FEAMG · Power rankings', e), shotPower: `Power rankings · through week ${NF}`,
       // Season charts: a link to the chart and an image of it.
       ...Object.fromEntries([['Pfpa', 'pfpa', 'Points for vs against'], ['Luck', 'luck', 'Luck'], ['Xw', 'xw', 'Expected wins'], ['Bench', 'bench', 'Points left on bench']].flatMap(([k, id, title]) => [

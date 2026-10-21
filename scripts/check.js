@@ -3,7 +3,7 @@
 // for the Wire line and lineup alerts. Exits 1 if anything is wrong. Usage: node scripts/check.js
 import { readFileSync } from 'node:fs';
 import vm from 'node:vm';
-import { seasonStats, byStandings, kickoffAt, nflKey, lineupIssues, wireOf, pointsOf, ticketSlug, parlayState, parlayFair, impliedProb, toAmerican, playoffOdds, oddsPct, matchupOdds, boothPickRecord } from '../api/_shared.js';
+import { seasonStats, byStandings, kickoffAt, nflKey, lineupIssues, wireOf, pointsOf, ticketSlug, parlayState, parlayFair, impliedProb, toAmerican, playoffOdds, oddsPct, matchupOdds, boothPickRecord, expertPickRecord } from '../api/_shared.js';
 
 const read = p => readFileSync(new URL('../' + p, import.meta.url), 'utf8');
 const box = { window: {} }; vm.runInNewContext(read('data/season.js'), box);
@@ -70,6 +70,17 @@ for (const [w, picks] of Object.entries(S.boothPicks || {})) (picks || []).forEa
 });
 { const R = boothPickRecord(S), open = Object.entries(S.boothPicks || {}).filter(([w]) => +w > NF).flatMap(([w, p]) => p.map(x => `W${w} ${x[0]} ${x[1]}%`));
   if (R.graded.length || open.length) out.push(`Booth picks: ${R.w}–${R.l} graded${open.length ? ' · open: ' + open.join(', ') : ''}`); }
+// Jerger's expert picks (a name per matchup) and Tristan's power rankings (all ten managers, once each).
+for (const [w, picks] of Object.entries(S.expertPicks || {})) (picks || []).forEach((p, i) => {
+  const pair = S.schedule[w]?.[i];
+  if (!pair) bad.push(`expertPicks[${w}][${i}]: Week ${w} has no matchup ${i + 1}.`);
+  else if (!pair.includes(p)) bad.push(`expertPicks[${w}][${i}] picks ${p}, who isn't in ${pair.join(' vs ')}.`);
+});
+{ const R = expertPickRecord(S); if (R.graded.length) out.push(`Jerger's experts: ${R.w}–${R.l} graded`); }
+for (const [w, order] of Object.entries(S.tristanRanks || {})) {
+  const all = S.managers.map(x => x.m);
+  if ((order || []).length != all.length || all.some(m => !order.includes(m))) bad.push(`tristanRanks[${w}] must list all ${all.length} managers once each.`);
+}
 // Playoff odds as the site shows them (to check odds quoted in Booth lines against).
 const OD = playoffOdds(S);
 if (!OD) warn.push(`No playoff odds: the schedule needs every week through ${S.regularSeasonWeeks}.`);
