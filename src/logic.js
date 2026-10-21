@@ -1085,7 +1085,8 @@ class Component extends DCLogic {
       .concat(restLabel ? [{ t: restLabel, cls: 'heat-rest', fg: 'inherit' }] : []);
     const heatColsM = `64px repeat(${lastShown},minmax(40px,1fr))` + (restLabel ? ' 40px' : ''), heatColsD = `64px repeat(${total},minmax(44px,1fr))`;
     const heatMinM = (64 + lastShown * 44 + (restLabel ? 44 : 0)) + 'px', heatMinD = (64 + total * 48) + 'px';
-    const heat = MGR.map(m => ({ m, cells: weeksAll.map(w => {
+    // A highlighted team (tap a row here or in the charts below) greys out the other rows, like the charts.
+    const heat = MGR.map(m => ({ m, op: S.hl && S.hl != m ? .3 : 1, pick: () => this.setState({ hl: S.hl == m ? null : m }), cells: weeksAll.map(w => {
       if (w <= NF) { const v = SC[m][w - 1], t = (v - lo) / (hi - lo || 1), k = Math.min(5, Math.floor(t * 5) + 1);
         return { v: f1(v), r: won(m, w) ? 'W' : 'L', bg: `var(--heat${k})`, fg: 'var(--ink)', bs: 'solid', bc: 'transparent', op: 1, cls: '', live: false }; }
       if (w == LW) return { v: LIVE_STARTED ? f1(LIVE.scores?.[m]?.[0] ?? 0) : '—', r: '', bg: 'transparent', fg: 'var(--ink)', bs: 'dashed', bc: 'var(--accent)', op: 1, cls: 'heat-live', live: true };

@@ -1377,7 +1377,7 @@ button{font-family:inherit;color:inherit}
   </div>
   <div style="display:flex;flex-direction:column;gap:4px">
     <sc-for list="{{ heat }}" as="h" hint-placeholder-count="10">
-      <div class="heat-grid" style="align-items:center">
+      <div class="heat-grid hov" sc-camel-on-click="{{ h.pick }}" tabindex="0" role="button" style="align-items:center;cursor:pointer;opacity:{{ h.op }};transition:opacity .15s">
         <span style="font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ h.m }}</span>
         <sc-for list="{{ h.cells }}" as="c" hint-placeholder-count="3">
           <div class="heat-cell {{ c.cls }}" style="background:{{ c.bg }};border:1px {{ c.bs }} {{ c.bc }};color:{{ c.fg }};opacity:{{ c.op }}">{{ c.v }}<span style="font-size:9px;opacity:.75">{{ c.r }}</span><sc-if value="{{ c.live }}" hint-placeholder-val="{{ false }}"><span style="font-size:8px;font-weight:700;letter-spacing:.08em;padding:2px 4px;border-radius:4px;background:var(--accent);color:var(--onAccent)">LIVE</span></sc-if></div>
