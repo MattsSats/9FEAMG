@@ -404,6 +404,15 @@ class Component extends DCLogic {
       el.classList.remove('flash'); void el.offsetWidth; el.classList.add('flash');
     }, 350);
   }
+  // Copies text (a pundit's starter) to the clipboard, with the old textarea fallback.
+  async copyText(text, msg) {
+    try { await navigator.clipboard.writeText(text); }
+    catch {
+      const t = document.createElement('textarea'); t.value = text; t.style.cssText = 'position:fixed;opacity:0';
+      document.body.appendChild(t); t.select(); document.execCommand('copy'); t.remove();
+    }
+    this.toast(msg || 'Copied.');
+  }
   // Shares a link through the phone's share sheet where there is one, otherwise copies it.
   async shareLink(url, title, e) {
     e?.stopPropagation?.();
@@ -755,7 +764,20 @@ class Component extends DCLogic {
         pick: () => { if (cur != m) { this.setState({ pundits: { ...PAPI, picks: { ...(PAPI.picks || {}), [LW]: (EP[LW] || D.schedule[LW].map(() => null)).map((x, j) => j == i ? m : x) } } }); this.savePundit({ manager: 'Jerger', week: LW, i, pick: m }); } } });
       return { a: side(a), b: side(b) };
     });
-    const xEditInfo = !xEdit ? null : { title: `Your Week ${LW} picks`, lock: xFirst ? `Locks at kickoff, ${kickLabel(xFirst)}` : '', last: lastLog('pick'), rows: xEditRows };
+    // Prep for the preview: each side's record and streak, Yahoo's projections, the site's win odds and the
+    // Booth's pick if it's in, plus a starter Jerger can copy into the group chat and write over.
+    const recOf = m => { const s = ST.find(x => x.m == m); return s ? s.w + '-' + s.l : ''; };
+    const streakOf = m => { let k = 0, t = null; for (let w = NF; w >= 1; w--) { const p = (PAIRS[w] || []).find(x => x.includes(m)); if (!p) continue; const o = p[0] == m ? p[1] : p[0], r = SC[m][w - 1] > SC[o][w - 1] ? 'W' : 'L'; if (t && r != t) break; t = r; k++; } return t ? t + k : ''; };
+    const streakText = (m, st) => { const n = +st.slice(1), won = st[0] == 'W'; return n == 1 ? `${m} ${won ? 'won' : 'lost'} last week` : `${m} has ${won ? 'won' : 'lost'} ${n} straight`; };
+    const xFacts = !xEdit ? [] : (D.schedule[LW] || []).map(([a, b], i) => {
+      const pa = winOf(S.rosters)[a + '|' + b], [na, pra] = LIVE?.scores?.[a] || [], [nb, prb] = LIVE?.scores?.[b] || [], bp = D.boothPicks?.[LW]?.[i];
+      const fav = pa == null ? null : pa >= 0.5 ? a : b, fp = pa == null ? null : Math.round(Math.max(pa, 1 - pa) * 100);
+      return { a, b, recA: recOf(a), recB: recOf(b), stA: streakOf(a), stB: streakOf(b), proj: pra && prb ? `${f2(pra)}–${f2(prb)}` : '', fav, fp, booth: bp ? bp[0] : null };
+    });
+    xEditRows.forEach((r, i) => { const f = xFacts[i]; r.facts = [`${f.a} ${f.recA} (${f.stA}) · ${f.b} ${f.recB} (${f.stB})`, f.proj ? `proj ${f.proj}` : '', f.fav ? `${f.fav} ${f.fp}% to win` : '', f.booth ? `Booth: ${f.booth}` : ''].filter(Boolean).join(' · '); });
+    const xStarter = () => [`Week ${LW} preview`, '', ...xFacts.flatMap((f, i) => [`${f.a} (${f.recA}) vs ${f.b} (${f.recB})`, `\t•\t${[f.proj ? 'Projected ' + f.proj : '', f.fav ? f.fav + ' ' + f.fp + '% to win on 9feamg' : '', f.stA ? streakText(f.a, f.stA) + ', ' + streakText(f.b, f.stB) : ''].filter(Boolean).join('. ')}. Experts pick ${EP[LW]?.[i] || '___'}.`, ''])].join('\n');
+    const xEditInfo = !xEdit ? null : { title: `Your Week ${LW} picks`, lock: xFirst ? `Locks at kickoff, ${kickLabel(xFirst)}` : '', last: lastLog('pick'), rows: xEditRows,
+      copy: () => this.copyText(xStarter(), 'Preview starter copied. Paste it in the chat and write over it.') };
     const pundits = { show: pickRows.length > 0 || xEdit, booth: `${PICKS.w}–${PICKS.l}`, experts: `${XPICKS.w}–${XPICKS.l}`, wkLabel: `Week ${pickWk || ''}`, rows: pickRows, hasRows: pickRows.length > 0, edit: xEditInfo || {}, hasEdit: xEdit };
     // What an empty set says: when its lines go up (the live week), or that the week didn't have any.
     const boothEmpty = wk != LW ? `No ${boothSet[0] == 'Post-SNF' ? 'Post-SNF' : boothSet[0].toLowerCase()} lines for Week ${wk}.`
@@ -1006,6 +1028,11 @@ class Component extends DCLogic {
     // Tristan, with Tristan picked in Pick team: reorder the ten and save, until next week's first kickoff.
     const triCan = NF > 0 && S.reqMgr == 'Tristan' && punditOpen(D, 'ranks', NF);
     const triOrder = S.triEdit;
+    // Prep for Tristan's write-ups: the site's rank, record, luck and the week's score with its rank.
+    const siteRank = NF ? Object.fromEntries(power(NF).map((r, i) => [r.m, i + 1])) : {};
+    const weekRank = m => 1 + MGR.filter(x => SC[x][NF - 1] > SC[m][NF - 1]).length;
+    const ordinal = n => n + (n % 10 == 1 && n != 11 ? 'st' : n % 10 == 2 && n != 12 ? 'nd' : n % 10 == 3 && n != 13 ? 'rd' : 'th');
+    const triFacts = !triCan ? {} : Object.fromEntries(MGR.map(m => { const s = ST.find(x => x.m == m) || {}; return [m, `site #${siteRank[m]} · ${s.w}-${s.l} · Wk ${NF} ${f2(SC[m][NF - 1])} (${ordinal(weekRank(m))}) · luck ${sgn(s.luck)}`]; }));
     const triMove = (i, d) => { const o = [...triOrder], j = i + d; if (j < 0 || j >= o.length) return; [o[i], o[j]] = [o[j], o[i]]; this.setState({ triEdit: o }); };
     const triEditor = !triCan ? { show: false } : {
       show: true, open: !!triOrder, label: TR[NF] ? `Edit your Week ${NF} rankings` : `Post your Week ${NF} rankings`,
@@ -1014,7 +1041,8 @@ class Component extends DCLogic {
       save: () => this.savePundit({ manager: 'Tristan', week: NF, order: triOrder }, 'Rankings saved. TRIST shows them now.'),
       saveLabel: S.punditBusy ? 'Saving…' : 'Save rankings',
       lock: (k => k ? `Open until kickoff, ${new Date(k).toLocaleString('en-US', { weekday: 'short', hour: 'numeric', minute: '2-digit', timeZone: 'America/Chicago' }).replace(',', '')}` : '')(weekFirstKick(D, NF + 1)),
-      rows: (triOrder || []).map((m, i) => ({ rank: i + 1, m, init: INIT[m], color: col(m), up: () => triMove(i, -1), down: () => triMove(i, 1), upOp: i == 0 ? '.3' : '1', downOp: i == triOrder.length - 1 ? '.3' : '1' }))
+      rows: (triOrder || []).map((m, i) => ({ rank: i + 1, m, init: INIT[m], color: col(m), facts: triFacts[m], up: () => triMove(i, -1), down: () => triMove(i, 1), upOp: i == 0 ? '.3' : '1', downOp: i == triOrder.length - 1 ? '.3' : '1' })),
+      copy: () => this.copyText([`Week ${NF} power rankings`, '', ...(triOrder || []).map((m, i) => `${i + 1}. ${m} (${(ST.find(x => x.m == m) || {}).w}-${(ST.find(x => x.m == m) || {}).l}) - `)].join('\n'), 'Rankings starter copied, in your order. Paste it in the chat and write over it.')
     };
     const powerCols = triRank ? '30px 44px minmax(0,1fr) 54px 48px' : '30px 44px minmax(0,1fr) 48px';
     const powerRows = NF ? power(NF).map((r, i) => {

@@ -797,8 +797,10 @@ button{font-family:inherit;color:inherit}
                 <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:8px">
                   <button aria-pressed="{{ e.a.on }}" sc-camel-on-click="{{ e.a.pick }}" style="display:flex;align-items:center;gap:6px;min-height:40px;padding:0 10px;border:1px solid var(--line);border-radius:999px;background:{{ e.a.bg }};color:{{ e.a.fg }};font-weight:600;font-size:14px;cursor:pointer"><span class="crest" style="width:22px;height:22px;background:{{ e.a.color }};color:var(--onAccent);display:flex;align-items:center;justify-content:center;font-family:'Big Shoulders Display';font-weight:800;font-size:9px;flex:none"><span class="ini" data-i="{{ e.a.init }}">{{ e.a.init }}</span></span>{{ e.a.m }}</button>
                   <button aria-pressed="{{ e.b.on }}" sc-camel-on-click="{{ e.b.pick }}" style="display:flex;align-items:center;gap:6px;min-height:40px;padding:0 10px;border:1px solid var(--line);border-radius:999px;background:{{ e.b.bg }};color:{{ e.b.fg }};font-weight:600;font-size:14px;cursor:pointer"><span class="crest" style="width:22px;height:22px;background:{{ e.b.color }};color:var(--onAccent);display:flex;align-items:center;justify-content:center;font-family:'Big Shoulders Display';font-weight:800;font-size:9px;flex:none"><span class="ini" data-i="{{ e.b.init }}">{{ e.b.init }}</span></span>{{ e.b.m }}</button>
+                  <div style="grid-column:1 / -1;font-family:'JetBrains Mono';font-size:11px;line-height:1.4;color:var(--muted)">{{ e.facts }}</div>
                 </div>
               </sc-for>
+              <button sc-camel-on-click="{{ pundits.edit.copy }}" style="margin-top:10px;width:100%;min-height:40px;border:1px solid var(--line);border-radius:999px;background:transparent;color:var(--ink);font-weight:600;font-size:14px;cursor:pointer">Copy a preview starter for the chat</button>
               <div style="font-family:'JetBrains Mono';font-size:11px;color:var(--muted);margin-top:8px">{{ pundits.edit.last }}</div>
             </div>
           </sc-if>
@@ -1235,7 +1237,7 @@ button{font-family:inherit;color:inherit}
         <div style="display:grid;grid-template-columns:24px 26px minmax(0,1fr) 40px 40px;gap:6px;align-items:center;padding:5px 0;border-bottom:1px solid var(--line)">
           <span style="font-family:'Big Shoulders Display';font-weight:900;font-size:20px">{{ t.rank }}</span>
           <span class="crest" style="width:24px;height:24px;background:{{ t.color }};color:var(--onAccent);display:flex;align-items:center;justify-content:center;font-family:'Big Shoulders Display';font-weight:800;font-size:10px"><span class="ini" data-i="{{ t.init }}">{{ t.init }}</span></span>
-          <span style="font-weight:600;font-size:14px">{{ t.m }}</span>
+          <span style="min-width:0"><span style="font-weight:600;font-size:14px">{{ t.m }}</span><span style="display:block;font-family:'JetBrains Mono';font-size:11px;line-height:1.35;color:var(--muted)">{{ t.facts }}</span></span>
           <button aria-label="Move up" sc-camel-on-click="{{ t.up }}" style="min-height:34px;border:1px solid var(--line);border-radius:8px;background:transparent;color:var(--ink);cursor:pointer;opacity:{{ t.upOp }}">▲</button>
           <button aria-label="Move down" sc-camel-on-click="{{ t.down }}" style="min-height:34px;border:1px solid var(--line);border-radius:8px;background:transparent;color:var(--ink);cursor:pointer;opacity:{{ t.downOp }}">▼</button>
         </div>
@@ -1244,6 +1246,7 @@ button{font-family:inherit;color:inherit}
         <button sc-camel-on-click="{{ triEditor.save }}" style="flex:1;min-height:42px;border:0;border-radius:999px;background:var(--accent);color:var(--onAccent);font-weight:700;font-size:14px;cursor:pointer">{{ triEditor.saveLabel }}</button>
         <button sc-camel-on-click="{{ triEditor.cancel }}" style="min-height:42px;padding:0 16px;border:1px solid var(--line);border-radius:999px;background:transparent;color:var(--muted);font-size:14px;cursor:pointer">Cancel</button>
       </div>
+      <button sc-camel-on-click="{{ triEditor.copy }}" style="margin-top:8px;width:100%;min-height:40px;border:1px solid var(--line);border-radius:999px;background:transparent;color:var(--ink);font-weight:600;font-size:14px;cursor:pointer">Copy a rankings starter for the chat</button>
     </div>
   </sc-if>
   <div class="pw-row" data-tri="{{ triFlag }}" style="display:grid;grid-template-columns:{{ powerCols }};gap:8px;padding:14px 0 8px;font-family:'JetBrains Mono';font-size:11px;letter-spacing:.08em;color:var(--muted);border-bottom:1px solid var(--line)">
