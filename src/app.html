@@ -516,7 +516,7 @@ button{font-family:inherit;color:inherit}
    its square box with room for the point. Initials sit a touch high, in the
    shield's wide part, which reads as centered. */
 .crest{border-radius:0!important;-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' view%42ox='0 0 48 48'%3E%3Cpath d='M24 2.5 L42.5 8 V22.5 C42.5 34 34.5 41.5 24 46 C13.5 41.5 5.5 34 5.5 22.5 V8 Z'/%3E%3C/svg%3E") center/100% 100% no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' view%42ox='0 0 48 48'%3E%3Cpath d='M24 2.5 L42.5 8 V22.5 C42.5 34 34.5 41.5 24 46 C13.5 41.5 5.5 34 5.5 22.5 V8 Z'/%3E%3C/svg%3E") center/100% 100% no-repeat}
-@media (max-width:520px){.pw-row{grid-template-columns:24px minmax(0,1fr) 40px!important;gap:6px!important}.pw-row[data-tri="1"]{grid-template-columns:24px minmax(0,1fr) 50px 38px!important}.pw-row .crest{width:32px!important;height:32px!important;font-size:13px!important}}
+@media (max-width:520px){.pw-row{grid-template-columns:24px minmax(0,1fr) 40px!important;gap:6px!important}.pw-row[data-tri="1"]{grid-template-columns:24px minmax(0,1fr) 50px 38px!important}.pw-row .crest{width:32px!important;height:32px!important;font-size:13px!important}.pw-note{padding-left:42px!important}}
 .crest .ini{display:block;line-height:1;transform:translateY(-4%);font-size:.88em}
 /* Tab bar icons: still until a tab is picked, then play once. */
 .tab{position:relative}
@@ -1213,7 +1213,7 @@ button{font-family:inherit;color:inherit}
     <span>#</span><span>MANAGER</span><sc-if value="{{ hasTri }}" hint-placeholder-val="{{ false }}"><span style="text-align:center">TRIST</span></sc-if><span style="text-align:right">SCORE</span>
   </div>
   <sc-for list="{{ powerRows }}" as="p" hint-placeholder-count="10">
-    <div sc-camel-on-click="{{ p.open }}" class="hov shot-tight pw-row" data-tri="{{ triFlag }}" tabindex="0" role="button" style="display:grid;grid-template-columns:{{ powerCols }};gap:8px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line);cursor:pointer">
+    <div sc-camel-on-click="{{ p.open }}" class="hov shot-tight pw-row" data-tri="{{ triFlag }}" tabindex="0" role="button" style="display:grid;grid-template-columns:{{ powerCols }};gap:6px 8px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line);cursor:pointer">
       <span style="font-family:'Big Shoulders Display';font-weight:900;font-size:28px;line-height:1;color:var(--ink)">{{ p.rank }}</span>
       <div style="display:flex;align-items:center;gap:10px;min-width:0">
         <!-- Movement since last week sits on top of the crest. -->
@@ -1221,10 +1221,12 @@ button{font-family:inherit;color:inherit}
           <span style="font-family:'JetBrains Mono';font-size:12px;font-weight:700;line-height:1;white-space:nowrap;color:{{ p.moveColor }}">{{ p.move }}</span>
           <div class="crest" style="width:40px;height:40px;background:{{ p.color }};color:var(--onAccent);display:flex;align-items:center;justify-content:center;font-family:'Big Shoulders Display';font-weight:800;font-size:16px;flex:none"><span class="ini" data-i="{{ p.init }}">{{ p.init }}</span></div>
         </div>
-        <div style="min-width:0"><div style="display:flex;align-items:baseline;gap:8px;flex-wrap:wrap"><span style="font-weight:600;font-size:15px">{{ p.m }}</span><span class="no-shot" style="font-family:'JetBrains Mono';font-size:11px;color:var(--muted);white-space:nowrap">{{ p.wl }} · luck <span style="color:{{ p.luckColor }};font-weight:600">{{ p.luck }}</span></span></div><sc-if value="{{ p.hasNote }}" hint-placeholder-val="{{ false }}"><div style="font-size:13px;line-height:1.35;margin-top:3px;text-wrap:pretty">{{ p.note }}</div></sc-if></div>
+        <div style="min-width:0"><div style="display:flex;align-items:baseline;gap:8px;flex-wrap:wrap"><span style="font-weight:600;font-size:15px">{{ p.m }}</span><span class="no-shot" style="font-family:'JetBrains Mono';font-size:11px;color:var(--muted);white-space:nowrap">{{ p.wl }} · luck <span style="color:{{ p.luckColor }};font-weight:600">{{ p.luck }}</span></span></div></div>
       </div>
       <sc-if value="{{ hasTri }}" hint-placeholder-val="{{ false }}"><span style="text-align:center;font-family:'JetBrains Mono';font-size:13px;font-weight:600;white-space:nowrap">{{ p.tri }} <span style="font-size:11px;color:{{ p.triColor }}">{{ p.triGap }}</span></span></sc-if>
       <span style="text-align:right;font-family:'JetBrains Mono';font-size:13px;font-weight:600">{{ p.score }}</span>
+      <!-- The writer's note runs under the whole row (name to the score's edge), not just the name column. -->
+      <sc-if value="{{ p.hasNote }}" hint-placeholder-val="{{ false }}"><div class="pw-note" style="grid-column:2 / -1;padding-left:50px;font-size:13px;line-height:1.35;text-wrap:pretty">{{ p.note }}</div></sc-if>
     </div>
   </sc-for>
   <div class="shot-footer"><b>9FEAMG</b><span>{{ shotPower }}</span></div>
