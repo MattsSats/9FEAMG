@@ -1,5 +1,41 @@
 [
   {
+    "when": "Oct 21, 8:15 pm",
+    "yahooTeam": "There is no 2nd best",
+    "manager": "Matt",
+    "action": "add",
+    "player": "Jake Bates",
+    "nfl": "Det",
+    "pos": "K",
+    "faab": null,
+    "via": "Free Agency",
+    "notes": "Yahoo facts Wed Oct 21, 8:16 PM CT"
+  },
+  {
+    "when": "Oct 21, 8:15 pm",
+    "yahooTeam": "There is no 2nd best",
+    "manager": "Matt",
+    "action": "drop",
+    "player": "Cameron Dicker",
+    "nfl": "LAC",
+    "pos": "K",
+    "faab": null,
+    "via": "Waivers",
+    "notes": "Yahoo facts Wed Oct 21, 8:16 PM CT"
+  },
+  {
+    "when": "Oct 21, 8:14 pm",
+    "yahooTeam": "There is no 2nd best",
+    "manager": "Matt",
+    "action": "drop",
+    "player": "MarShawn Lloyd",
+    "nfl": "GB",
+    "pos": "RB",
+    "faab": null,
+    "via": "Waivers",
+    "notes": "Yahoo facts Wed Oct 21, 8:16 PM CT"
+  },
+  {
     "when": "Oct 21, 1:02 pm",
     "yahooTeam": "Vade retro Satana",
     "manager": "Colin",

@@ -1,10 +1,10 @@
 {
-  "asOf": "2026-10-21T19:43:00-05:00",
+  "asOf": "2026-10-21T20:16:00-05:00",
   "source": "Signed-in Yahoo Fantasy league 935526 team roster pages (full reconcile)",
   "week": 7,
   "baseline": "yahoo-live",
   "baselineAvailable": true,
-  "baselineNote": "Rosters from Yahoo's Week 7 matchup pages (read in the built-in browser), with every player's Yahoo projection (proj) and injury tag (inj) as of Wed Oct 21, 7:43 PM CT.",
+  "baselineNote": "Rosters from Yahoo's Week 7 matchup pages (read in the built-in browser), with every player's Yahoo projection (proj) and injury tag (inj) as of Wed Oct 21, 8:16 PM CT.",
   "teams": [
     {
       "id": "1",
@@ -923,11 +923,11 @@
           "proj": 13.15
         },
         {
-          "name": "Cameron Dicker",
+          "name": "Jake Bates",
           "pos": "K",
           "slot": "starter",
-          "nfl": "LAC",
-          "proj": 0
+          "nfl": "Det",
+          "proj": 8.61
         },
         {
           "name": "Steelers",
@@ -935,13 +935,6 @@
           "slot": "starter",
           "nfl": "Pit",
           "proj": 6.47
-        },
-        {
-          "name": "MarShawn Lloyd",
-          "pos": "RB",
-          "slot": "bench",
-          "nfl": "GB",
-          "proj": 4.08
         },
         {
           "name": "Josh Downs",
@@ -982,7 +975,7 @@
         {
           "name": "DeVonta Smith",
           "pos": "WR",
-          "slot": "IR",
+          "slot": "bench",
           "nfl": "Phi",
           "proj": 12.86
         }
