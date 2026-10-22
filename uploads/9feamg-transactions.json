@@ -1,5 +1,29 @@
 [
   {
+    "when": "Oct 22, 11:31 am",
+    "yahooTeam": "Toilet Bowl King",
+    "manager": "DLin",
+    "action": "add",
+    "player": "Panthers",
+    "nfl": "Car",
+    "pos": "DEF",
+    "faab": null,
+    "via": "Free Agency",
+    "notes": "Yahoo facts Thu Oct 22, 6:10 PM CT"
+  },
+  {
+    "when": "Oct 22, 11:31 am",
+    "yahooTeam": "Toilet Bowl King",
+    "manager": "DLin",
+    "action": "drop",
+    "player": "Giants",
+    "nfl": "NYG",
+    "pos": "DEF",
+    "faab": null,
+    "via": "Waivers",
+    "notes": "Yahoo facts Thu Oct 22, 6:10 PM CT"
+  },
+  {
     "when": "Oct 21, 8:15 pm",
     "yahooTeam": "There is no 2nd best",
     "manager": "Matt",
