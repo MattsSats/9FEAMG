@@ -271,6 +271,7 @@ export function playoffOdds(season, { through, live = true, sims = 20000, shrink
 // playoffOdds. With the rosters file, a starter tagged Q or D whose game hasn't started counts at
 // INJ_PLAY of his projection (he may sit), and that play/sit coin flip adds p(1−p)·proj² of
 // variance to his side; O and IR are already 0 in Yahoo's projection.
+// A dead slot (bye, Out, empty) counts as filled at waiver level; see fillOf.
 export const INJ_PLAY = { Q: 0.85, D: 0.35 };
 export function matchupOdds(season, rosters = null, now = Date.now()) {
   const L = season.live, wk = L?.week, NF = Math.max(0, ...season.managers.map(x => (season.scores[x.m] || []).length));
@@ -291,8 +292,19 @@ export function matchupOdds(season, rosters = null, now = Date.now()) {
     }
     return { cut, v };
   };
+  // Managers almost never leave a slot dead (Matt, Oct 21, 2026): while lineupIssues still flags it, a
+  // starter on bye or Out, or an empty slot, counts as filled at waiver level, the lowest projection any
+  // other team starts at that position.
+  const T = rosters?.teams || [], FLEXP = ['RB', 'WR', 'TE', 'WRT'];
+  const waiver = (m, pos) => Math.min(...T.filter(t => t.name != m).flatMap(t => t.players)
+    .filter(p => p.slot == 'starter' && p.proj > 0 && (pos == 'WRT' ? FLEXP.includes(p.pos) : p.pos == pos)).map(p => p.proj), Infinity);
+  const fillOf = m => {
+    const t = T.find(t => t.name == m); if (!t) return 0;
+    const { bye, out, empty } = lineupIssues(season, t.players.filter(p => p.slot == 'starter'), wk, pts, now), w = pos => { const v = waiver(m, pos); return isFinite(v) ? v : 0; };
+    return [...bye, ...out].reduce((s, p) => s + Math.max(0, w(p.pos) - (p.proj || 0)), 0) + empty.reduce((s, k) => s + w(k), 0);
+  };
   const side = m => { const [pnow, proj] = L.scores[m] || [0, 0], I = injOf(m);
-    return { proj: (proj || pnow || 0) - I.cut, left: proj > 0 ? Math.max(0, proj - (pnow || 0)) / proj : 0, iv: I.v }; };
+    return { proj: (proj || pnow || 0) - I.cut + fillOf(m), left: proj > 0 ? Math.max(0, proj - (pnow || 0)) / proj : 0, iv: I.v }; };
   return season.schedule[wk].map(([a, b]) => {
     const A = side(a), B = side(b), v = sd * sd * (A.left + B.left) + A.iv + B.iv, d = A.proj - B.proj;
     return { a, b, pa: v > 0 ? 0.5 * (1 + erf(d / Math.sqrt(2 * v))) : d > 0 ? 1 : d < 0 ? 0 : 0.5 };

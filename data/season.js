@@ -236,7 +236,7 @@ window.SEASON = {
   // final and keeps the season record.
   boothPicks: {
     6: [['Matt', 60], ['Tristan', 62], ['Tony', 68], ['Colin', 69], ['Mr. G', 62]],
-    7: [['Mr. G', 58], ['Andy', 62], ['Colin', 51], ['Tony', 52], ['Pablo', 66]]
+    7: [['Matt', 51], ['Andy', 62], ['Colin', 51], ['Tony', 52], ['Pablo', 66]]
   },
   // Jerger's weekly preview picks ("the experts"): one name per matchup in schedule order, graded
   // like the Booth's (Matt, Oct 20, 2026; Jerger agreed). Only the pick goes here; the write-up stays private.
@@ -263,7 +263,7 @@ window.SEASON = {
     // Week 7: the Booth's lines (written by Claude at Matt's request, Wed Oct 21, before TNF) from Yahoo's
     // Wed 7:43 PM projections, check.js's win odds and the season math through Week 6.
     7: [
-      ['Matt', 'Matt is projected to beat Mr. G 115.15–114.54 and is still a 42% underdog: three questionable starters and Dicker on bye in the kicker slot. There is no 2nd best, and no kicker.', '2026-10-21T19:55-05:00'],
+      ['Matt', 'Mr. G has allowed 756.04 points, 86.64 more than anyone, and Matt leads the league with 333.06 points left on the bench. Opponents bring their best to Mr. G; Matt keeps his on the bench.', '2026-10-21T19:55-05:00'],
       ['Tristan', 'Andy has beaten all nine teams two weeks running and is projected 120.23–112.22. Tristan’s luck is exactly 0.00, so whatever happens this week, Tristan earned it.', '2026-10-21T19:55-05:00'],
       ['Colin', 'Colin framed this one as Gandalf vs. the Balrog and renamed the team Vade retro Satana. The reigning champ is on a four-game streak, and Colin is projected 107.03–102.97. Hold the bridge.', '2026-10-21T19:55-05:00'],
       ['Tony', 'Tony insists luck isn’t real, from the league’s best luck at +1.44. Kurt sits at −1.22 and is projected to lose 113.57–109.47 anyway. Easy to doubt luck when you have it.', '2026-10-21T19:55-05:00'],
