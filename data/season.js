@@ -69,27 +69,28 @@ window.SEASON = {
   // The week in progress. Set to null between weeks.
   live: {
     week: 7,
-    status: 'Live · Thursday night NE @ CHI in the 1st · Sunday next',
+    status: 'Live · Thursday final (CHI 30, NE 24) · Sunday next',
     // When these numbers were pulled from Yahoo (Central); shows as "Scores as of Thu 10:19 PM".
-    asOf: '2026-10-22T19:39:00-05:00',
+    asOf: '2026-10-22T22:50:00-05:00',
     // [current points, projected final]
-    // Yahoo as of Thu Oct 22, 7:39 PM CT (Week 7 matchup pages).
+    // Yahoo as of Thu Oct 22, 10:50 PM CT (Week 7 matchup pages).
     scores: {
-      Matt: [0.00, 123.97], 'Mr. G': [1.32, 113.59],
-      Tristan: [0.00, 108.01], Andy: [1.10, 115.64],
+      Matt: [0.00, 123.97], 'Mr. G': [28.44, 123.07],
+      Tristan: [15.20, 104.97], Andy: [20.80, 116.40],
       Jerger: [0.00, 102.74], Colin: [0.00, 106.18],
-      Tony: [0.00, 114.16], Kurt: [0.00, 111.22],
-      DLin: [0.00, 98.82], Pablo: [5.04, 114.47]
+      Tony: [0.00, 114.15], Kurt: [16.40, 120.17],
+      DLin: [0.00, 98.82], Pablo: [37.12, 122.71]
     },
-    yahooWin: { Tony: 53, Tristan: 43, Andy: 57, Matt: 58, Kurt: 47, Jerger: 47, 'Mr. G': 42, Colin: 53, DLin: 36, Pablo: 64 },
+    yahooWin: { Tony: 45, Tristan: 39, Andy: 61, Matt: 51, Kurt: 55, Jerger: 47, 'Mr. G': 49, Colin: 53, DLin: 29, Pablo: 71 },
     // Points so far for every player whose game has started (starters and bench).
     // Players listed in inProgress are still playing; the rest are final.
     playerPoints: {
-      'A.J. Brown': 0.00, "D'Andre Swift": 1.10, 'Colston Loveland': 0.00, 'Drake Maye': 1.32,
-      'Luther Burden III': 3.10, 'Rhamondre Stevenson': 2.50, 'Caleb Williams': 1.04, 'Cairo Santos': 4.00
+      'A.J. Brown': 6.30, 'Rome Odunze': 8.90, 'DeMario Douglas': 3.80, "D'Andre Swift": 17.00,
+      'Colston Loveland': 16.40, 'Drake Maye': 28.44, 'Luther Burden III': 21.70, 'Rhamondre Stevenson': 20.00,
+      'Kyle Monangai': 0.00, 'Caleb Williams': 22.12, 'Cairo Santos': 15.00
     },
-    inProgress: ['A.J. Brown', "D'Andre Swift", 'Colston Loveland', 'Drake Maye', 'Luther Burden III', 'Rhamondre Stevenson', 'Caleb Williams', 'Cairo Santos'],
-    sheetNote: 'Yahoo as of Thu 7:39 PM CT. Orange = points so far; the rest are projections.'
+    inProgress: [],
+    sheetNote: 'Yahoo as of Thu 10:50 PM CT. Orange = points so far; the rest are projections.'
   },
 
   // The NFL week: every game ('Sun 12:00 PM · CHI @ GB', kickoff Central, same form as parlay legs)

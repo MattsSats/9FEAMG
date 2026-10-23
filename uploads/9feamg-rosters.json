@@ -1,10 +1,10 @@
 {
-  "asOf": "2026-10-22T19:39:00-05:00",
+  "asOf": "2026-10-22T22:50:00-05:00",
   "source": "Signed-in Yahoo Fantasy league 935526 team roster pages (full reconcile)",
   "week": 7,
   "baseline": "yahoo-live",
   "baselineAvailable": true,
-  "baselineNote": "Rosters from Yahoo's Week 7 matchup pages (read in the built-in browser), with every player's Yahoo projection (proj) and injury tag (inj) as of Thu Oct 22, 7:39 PM CT.",
+  "baselineNote": "Rosters from Yahoo's Week 7 matchup pages (read in the built-in browser), with every player's Yahoo projection (proj) and injury tag (inj) as of Thu Oct 22, 10:50 PM CT.",
   "teams": [
     {
       "id": "1",
@@ -543,12 +543,11 @@
           "proj": 17.21
         },
         {
-          "name": "Breece Hall",
+          "name": "Tony Pollard",
           "pos": "RB",
           "slot": "starter",
-          "nfl": "NYJ",
-          "proj": 12.4,
-          "inj": "Q"
+          "nfl": "Ten",
+          "proj": 11.2
         },
         {
           "name": "Puka Nacua",
@@ -566,19 +565,18 @@
           "proj": 12.36
         },
         {
-          "name": "Dalton Schultz",
-          "pos": "TE",
-          "slot": "starter",
-          "nfl": "Hou",
-          "proj": 6.55,
-          "inj": "Q"
-        },
-        {
           "name": "Juwan Johnson",
-          "pos": "WRT",
+          "pos": "TE",
           "slot": "starter",
           "nfl": "NO",
           "proj": 8.06
+        },
+        {
+          "name": "Malik Washington",
+          "pos": "WRT",
+          "slot": "starter",
+          "nfl": "Mia",
+          "proj": 8.09
         },
         {
           "name": "Cairo Santos",
@@ -595,11 +593,20 @@
           "proj": 8.61
         },
         {
-          "name": "Tony Pollard",
+          "name": "Breece Hall",
           "pos": "RB",
           "slot": "bench",
-          "nfl": "Ten",
-          "proj": 11.2
+          "nfl": "NYJ",
+          "proj": 12.4,
+          "inj": "Q"
+        },
+        {
+          "name": "Dalton Schultz",
+          "pos": "TE",
+          "slot": "bench",
+          "nfl": "Hou",
+          "proj": 6.55,
+          "inj": "Q"
         },
         {
           "name": "C.J. Stroud",
@@ -607,13 +614,6 @@
           "slot": "bench",
           "nfl": "Hou",
           "proj": 19.86
-        },
-        {
-          "name": "Malik Washington",
-          "pos": "WR",
-          "slot": "bench",
-          "nfl": "Mia",
-          "proj": 8.09
         },
         {
           "name": "Quentin Johnston",
@@ -680,7 +680,7 @@
           "pos": "WR",
           "slot": "starter",
           "nfl": "Sea",
-          "proj": 19.01
+          "proj": 19
         },
         {
           "name": "George Kittle",
