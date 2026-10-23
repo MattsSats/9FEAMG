@@ -1263,7 +1263,13 @@ class Component extends DCLogic {
     // arrived (api/_shared.js pointSources), the same split as the Teams tab. Most wire-built first.
     const SRC = S.loaded && S.box && S.draft ? pointSources(D, S.box, S.draft, tx).filter(r => r.total > 0) : [];
     const pctOf = (v, t) => (r => r == 0 && v > 0 ? '<1' : r == 100 && v < t ? '>99' : String(r))(Math.round(v / t * 100));
-    const srcBars = SRC.map(r => ({ m: r.m, op: dim(r.m), pick: pickHl(r.m), v: pctOf(r.wire, r.total) + '%',
+    // Tapping a bar (the highlight) opens that team's split under it: the totals, its best wire adds and
+    // its best draft picks by started points.
+    const srcTop = (m, how, n) => ACQ.filter(a => a.m == m && how.includes(a.how) && a.started > 0).sort((a, b) => b.started - a.started).slice(0, n)
+      .map(a => ({ player: a.player, tag: howTag(a) + ' · ' + a.pos, pts: f2(a.started), starts: a.starts + (a.starts == 1 ? ' start' : ' starts') }));
+    const srcBars = SRC.map(r => ({ m: r.m, op: dim(r.m), pick: pickHl(r.m), v: pctOf(r.wire, r.total) + '%', open: hl == r.m,
+      totals: [['Draft', r.draft, 'var(--ink)'], ['Wire', r.wire, 'var(--accent)'], ['Trades', r.trade, 'var(--muted)']].filter(([, v], i) => v > 0 || i < 2).map(([k, v, c]) => ({ k, v: f2(v), c })),
+      wireTop: srcTop(r.m, ['add', 'trade'], 3), draftTop: srcTop(r.m, ['draft'], 2), hasWire: r.wire + r.trade > 0,
       d: (r.draft / r.total * 100) + '%', w: (r.wire / r.total * 100) + '%', t: (r.trade / r.total * 100) + '%',
       label: `${r.m}: ${f1(r.wire)} of ${f1(r.total)} started points from the wire, ${f1(r.draft)} from the draft` + (r.trade ? `, ${f1(r.trade)} from trades` : '') }));
     const srcTrades = SRC.some(r => r.trade > 0);
@@ -1272,7 +1278,7 @@ class Component extends DCLogic {
 
     return {
       ok: true, dataError: false,
-      scatter, plotH, scatterMidX: sx(avg(pfs)), scatterMidY: sy(avg(pas)), pfMin: x0, pfMax: x1, paMin: y0, paMax: y1, luckBars, xwBars, xwTicks, benchBars, srcBars, srcTrades, srcSub: 'Share of started points · through week ' + Object.keys(S.box?.weeks || {}).length + ' · wire % on the right', hlHint: hl ? hl + ' · tap again to clear' : 'Tap a team',
+      scatter, plotH, scatterMidX: sx(avg(pfs)), scatterMidY: sy(avg(pas)), pfMin: x0, pfMax: x1, paMin: y0, paMax: y1, luckBars, xwBars, xwTicks, benchBars, srcBars, srcTrades, srcSub: 'Share of started points · through week ' + Object.keys(S.box?.weeks || {}).length + ' · wire % on the right · tap a team for details', hlHint: hl ? hl + ' · tap again to clear' : 'Tap a team',
       themeLabel, toggleTheme,
       draftIconCls: S.tab == 'Draft' ? 'hi play inv' : 'hi', goHome: e => this.goHome(e), openDraft: () => { this.setState({ tab: 'Draft' }); window.scrollTo(0, 0); },
       draftBtnBg: S.tab == 'Draft' ? 'var(--accent)' : 'var(--surface)', draftBtnFg: S.tab == 'Draft' ? 'var(--onAccent)' : 'var(--ink)', draftBtnBorder: S.tab == 'Draft' ? 'var(--accent)' : 'var(--line)',
