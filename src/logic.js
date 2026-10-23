@@ -389,8 +389,8 @@ class Component extends DCLogic {
     if (h == '#wire' || h == '#wire-season' || h == '#draft') { this.setState({ tab: h == '#draft' ? 'Draft' : 'Wire', ...(h == '#draft' ? {} : { wire: h == '#wire-season' ? 'Season' : 'This week' }), sheet: null }); window.scrollTo(0, 0); return; }
     if (wk) { this.setState({ tab: 'Gameday', week: +wk[1], sheet: null }); window.scrollTo(0, 0); return; }
     if (h == '#season') { this.setState({ tab: 'Season', sheet: null }); window.scrollTo(0, 0); return; }
-    // Season sections: #power, #pfpa, #luck, #xw, #bench open the Season tab scrolled to that section.
-    if (['#power', '#odds', '#pfpa', '#luck', '#xw', '#bench'].includes(h)) { this.setState({ tab: 'Season', sheet: null }); setTimeout(() => document.getElementById(h.slice(1))?.scrollIntoView({ block: 'start' }), 350); return; }
+    // Season sections: #power, #pfpa, #luck, #xw, #bench, #src open the Season tab scrolled to that section.
+    if (['#power', '#odds', '#pfpa', '#luck', '#xw', '#bench', '#src'].includes(h)) { this.setState({ tab: 'Season', sheet: null }); setTimeout(() => document.getElementById(h.slice(1))?.scrollIntoView({ block: 'start' }), 350); return; }
     if (h == '#ledger') { this.setState({ tab: 'Gameday', week: HOME_WK, sheet: null }); setTimeout(() => document.getElementById('ledger')?.scrollIntoView({ block: 'start' }), 350); return; }
     if (h == '#booth') { this.setState({ tab: 'Gameday', week: BOOTH_WK, sheet: null }); setTimeout(() => document.getElementById('booth')?.scrollIntoView({ block: 'start' }), 350); return; }
     if (tm) { const t = MGR.find(x => teamSlug(x) == tm[1]); if (t) { this.setState({ tab: 'Teams', team: t, sheet: null }); window.scrollTo(0, 0); } return; }
@@ -515,7 +515,7 @@ class Component extends DCLogic {
       : S.tab == 'Wire' ? (S.wire == 'Season' ? '#wire-season' : '#wire') : S.tab == 'Draft' ? '#draft' : null;
     if (want == null || h == want) return;
     if (S.tab == 'Gameday' && (h == '#w' + S.week || h.startsWith('#w' + S.week + '-') || h == '#ledger' || (h == '#booth' && S.week == BOOTH_WK))) return;
-    if (S.tab == 'Season' && ['#power', '#odds', '#pfpa', '#luck', '#xw', '#bench'].includes(h)) return;
+    if (S.tab == 'Season' && ['#power', '#odds', '#pfpa', '#luck', '#xw', '#bench', '#src'].includes(h)) return;
     if (!want && !h) return;
     history.pushState(null, '', want || location.pathname + location.search);
   }
@@ -1259,12 +1259,20 @@ class Component extends DCLogic {
       xAt: xwAt(x.xw), wAt: xwAt(x.w), lo: xwAt(Math.min(x.xw, x.w)), span: (NF ? Math.abs(x.w - x.xw) / NF * 100 : 0).toFixed(1) + '%', lineColor: luckCol(x.luck),
       label: `${x.m}: ${x.xw.toFixed(2)} expected wins, ${x.w} real` }));
     const xwTicks = Array.from({ length: NF + 1 }, (_, i) => ({ n: i, at: xwAt(i) }));
+    // Where the points come from, league-wide: each team's started points split by how the players
+    // arrived (api/_shared.js pointSources), the same split as the Teams tab. Most wire-built first.
+    const SRC = S.loaded && S.box && S.draft ? pointSources(D, S.box, S.draft, tx).filter(r => r.total > 0) : [];
+    const pctOf = (v, t) => (r => r == 0 && v > 0 ? '<1' : r == 100 && v < t ? '>99' : String(r))(Math.round(v / t * 100));
+    const srcBars = SRC.map(r => ({ m: r.m, op: dim(r.m), pick: pickHl(r.m), v: pctOf(r.wire, r.total) + '%',
+      d: (r.draft / r.total * 100) + '%', w: (r.wire / r.total * 100) + '%', t: (r.trade / r.total * 100) + '%',
+      label: `${r.m}: ${f1(r.wire)} of ${f1(r.total)} started points from the wire, ${f1(r.draft)} from the draft` + (r.trade ? `, ${f1(r.trade)} from trades` : '') }));
+    const srcTrades = SRC.some(r => r.trade > 0);
     const topMax = Math.max(...ST.map(x => x.max ?? x.pf));
     const benchBars = !maxOk ? [] : [...ST].sort((a, b) => (b.max - b.pf) - (a.max - a.pf)).map(x => ({ m: x.m, pf: (x.pf / topMax * 100) + '%', bench: ((x.max - x.pf) / topMax * 100) + '%', v: f1(x.max - x.pf), color: 'var(--muted)', op: dim(x.m), pick: pickHl(x.m) }));
 
     return {
       ok: true, dataError: false,
-      scatter, plotH, scatterMidX: sx(avg(pfs)), scatterMidY: sy(avg(pas)), pfMin: x0, pfMax: x1, paMin: y0, paMax: y1, luckBars, xwBars, xwTicks, benchBars, hlHint: hl ? hl + ' · tap again to clear' : 'Tap a team',
+      scatter, plotH, scatterMidX: sx(avg(pfs)), scatterMidY: sy(avg(pas)), pfMin: x0, pfMax: x1, paMin: y0, paMax: y1, luckBars, xwBars, xwTicks, benchBars, srcBars, srcTrades, srcSub: 'Share of started points · through week ' + Object.keys(S.box?.weeks || {}).length + ' · wire % on the right', hlHint: hl ? hl + ' · tap again to clear' : 'Tap a team',
       themeLabel, toggleTheme,
       draftIconCls: S.tab == 'Draft' ? 'hi play inv' : 'hi', goHome: e => this.goHome(e), openDraft: () => { this.setState({ tab: 'Draft' }); window.scrollTo(0, 0); },
       draftBtnBg: S.tab == 'Draft' ? 'var(--accent)' : 'var(--surface)', draftBtnFg: S.tab == 'Draft' ? 'var(--onAccent)' : 'var(--ink)', draftBtnBorder: S.tab == 'Draft' ? 'var(--accent)' : 'var(--line)',
@@ -1320,7 +1328,7 @@ class Component extends DCLogic {
       boothShotLabel: `The Booth · Week ${wk} · ${boothSet[0]}`,
       menuBooth: this.shareMenu('The Booth · Week ' + wk, e => this.shareLink(location.origin + '/s/booth', '9FEAMG · The Booth', e), e => this.share('booth', e)),
       menuLedger: this.shareMenu('Parlay ledger', e => this.shareLink(location.origin + '/s/ledger', '9FEAMG · Parlay ledger', e), e => this.share('ledger', e)),
-      ...Object.fromEntries([['Pfpa', 'pfpa', 'Points for vs against'], ['Luck', 'luck', 'Luck'], ['Xw', 'xw', 'Expected wins'], ['Bench', 'bench', 'Points left on bench']].map(([k, id, title]) =>
+      ...Object.fromEntries([['Pfpa', 'pfpa', 'Points for vs against'], ['Luck', 'luck', 'Luck'], ['Xw', 'xw', 'Expected wins'], ['Bench', 'bench', 'Points left on bench'], ['Src', 'src', 'Where the points come from']].map(([k, id, title]) =>
         ['menu' + k, this.shareMenu(title, e => this.shareLink(location.origin + '/s/' + id, '9FEAMG · ' + title, e), e => this.share(id, e))])),
       shareHero: e => this.share('hero', e), shareStandings: e => this.share('standings', e), shareTeam: e => this.share('team', e),
       shareLabel: { hero: S.sharing == 'hero' ? '…' : 'Image', standings: S.sharing == 'standings' ? '…' : 'Image', team: S.sharing == 'team' ? '…' : 'Image' },
@@ -1331,7 +1339,7 @@ class Component extends DCLogic {
       powerRows, hasPower: powerRows.length > 0, powerCols, hasTri: !!triRank, triEditor, hasTriEditor: triEditor.show, triEditing: !!triEditor.open, triNotEditing: triEditor.show && !triEditor.open, triFlag: triRank ? '1' : '0', powerSub: `Through week ${NF}` + (triRank ? ' · TRIST = Tristan’s own rankings (▲ Tristan has them higher, ▼ lower)' : ''), sharePower: e => this.share('power', e), powerLabel: S.sharing == 'power' ? '…' : 'Image',
       linkPower: e => this.shareLink(location.origin + '/#power', '9FEAMG · Power rankings', e), shotPower: `Power rankings · through week ${NF}`,
       // Season charts: a link to the chart and an image of it.
-      ...Object.fromEntries([['Pfpa', 'pfpa', 'Points for vs against'], ['Luck', 'luck', 'Luck'], ['Xw', 'xw', 'Expected wins'], ['Bench', 'bench', 'Points left on bench']].flatMap(([k, id, title]) => [
+      ...Object.fromEntries([['Pfpa', 'pfpa', 'Points for vs against'], ['Luck', 'luck', 'Luck'], ['Xw', 'xw', 'Expected wins'], ['Bench', 'bench', 'Points left on bench'], ['Src', 'src', 'Where the points come from']].flatMap(([k, id, title]) => [
         // Links go through /s/<chart> so chats show a preview image of the chart (api/section.js).
         ['link' + k, e => this.shareLink(location.origin + '/s/' + id, '9FEAMG · ' + title, e)], ['shot' + k, e => this.share(id, e)],
         ['shotLabel' + k, S.sharing == id ? '…' : 'Image'], ['shotNote' + k, `${title} · through week ${NF}`]])),

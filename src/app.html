@@ -461,7 +461,7 @@ button{font-family:inherit;color:inherit}
 @media (max-width:899px){
   .season-grid{display:flex;flex-direction:column}
   .season-grid>.sg-c1,.season-grid>.sg-c2,.season-grid>.sg-c3{display:contents}
-  .sg-st{order:1}.sg-od{order:1}.sg-pw{order:2}.sg-ch{order:3}.sg-lk{order:4}.sg-bn{order:5}.sg-hs{order:6}.sg-hr{order:7}
+  .sg-st{order:1}.sg-od{order:1}.sg-pw{order:2}.sg-ch{order:3}.sg-lk{order:4}.sg-bn{order:5}.sg-src{order:5}.sg-hs{order:6}.sg-hr{order:7}
 }
 /* Weekly scores grid: phones (weeks so far + one "rest" cell) and desktop (all 14 weeks). */
 .heat-grid{display:grid;grid-template-columns:var(--heat-m);gap:4px}
@@ -1215,6 +1215,33 @@ button{font-family:inherit;color:inherit}
     <span style="display:flex;align-items:center;gap:6px"><span style="width:10px;height:10px;border-radius:2px;background:repeating-linear-gradient(135deg,var(--accent) 0 3px,transparent 3px 6px)"></span>Left on bench</span>
   </div>
   <div class="shot-footer"><b>9FEAMG</b><span>{{ shotNoteBench }}</span></div>
+</div>
+<!-- Where the points come from, every team: started points by how the players arrived (draft, wire, trades). -->
+<div id="src" data-shot="src" class="sg-src" style="padding:30px 20px 0;scroll-margin-top:64px">
+  <div class="sec-head">
+    <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:26px;text-transform:uppercase">Where the points come from</div>
+    <span class="sec-btns no-shot"><button class="share-btn" sc-camel-on-click="{{ menuSrc }}" aria-label="Share the where the points come from chart">Share</button></span>
+    <div class="sec-cap">{{ srcSub }}</div>
+  </div>
+  <div style="display:flex;flex-direction:column;gap:8px;margin-top:12px">
+    <sc-for list="{{ srcBars }}" as="sb" hint-placeholder-count="10">
+      <div sc-camel-on-click="{{ sb.pick }}" class="hov" tabindex="0" role="button" aria-label="{{ sb.label }}" style="display:grid;grid-template-columns:60px minmax(0,1fr) 44px;gap:10px;align-items:center;cursor:pointer;opacity:{{ sb.op }}">
+        <span style="font-size:13px;font-weight:600">{{ sb.m }}</span>
+        <div style="height:18px;display:flex;gap:2px;border-radius:4px;overflow:hidden">
+          <div style="width:{{ sb.d }};background:var(--ink)"></div>
+          <div style="width:{{ sb.w }};background:var(--accent)"></div>
+          <div style="width:{{ sb.t }};background:var(--muted)"></div>
+        </div>
+        <span style="font-family:'JetBrains Mono';font-size:12px;font-weight:600;text-align:right;color:var(--accentInk)">{{ sb.v }}</span>
+      </div>
+    </sc-for>
+  </div>
+  <div style="display:flex;gap:16px;margin-top:10px;font-family:'JetBrains Mono';font-size:11px;color:var(--muted)">
+    <span style="display:flex;align-items:center;gap:6px"><span style="width:10px;height:10px;border-radius:2px;background:var(--ink)"></span>Draft</span>
+    <span style="display:flex;align-items:center;gap:6px"><span style="width:10px;height:10px;border-radius:2px;background:var(--accent)"></span>Wire</span>
+    <sc-if value="{{ srcTrades }}" hint-placeholder-val="{{ true }}"><span style="display:flex;align-items:center;gap:6px"><span style="width:10px;height:10px;border-radius:2px;background:var(--muted)"></span>Trades</span></sc-if>
+  </div>
+  <div class="shot-footer"><b>9FEAMG</b><span>{{ shotNoteSrc }}</span></div>
 </div>
 </div>
 

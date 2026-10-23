@@ -9,11 +9,11 @@ import { loadSeason, escapeHtml, hash, anchorFor, describe } from './_parlays.js
 import { readJson } from './_yahoo.js';
 import { seasonStats, loadBox, powerRanks } from './_stats.js';
 import { loadTx, wireOf } from './_wire.js';
-import { lineupIssues, playoffOdds, oddsPct, matchupOdds } from './_shared.js';
+import { lineupIssues, playoffOdds, oddsPct, matchupOdds, pointSources } from './_shared.js';
 import { C, F, h, fonts, mgrColor } from './_ogkit.js';
 
 const BOTS = /bot|crawl|spider|facebookexternalhit|facebot|twitterbot|slackbot|discordbot|whatsapp|telegram|linkedin|embedly|skype|iframely|preview/i;
-const CHARTS = { luck: 'Luck', xw: 'Expected wins', bench: 'Points left on bench', pfpa: 'Points for vs against', ledger: 'Parlay ledger' };
+const CHARTS = { luck: 'Luck', xw: 'Expected wins', src: 'Where the points come from', bench: 'Points left on bench', pfpa: 'Points for vs against', ledger: 'Parlay ledger' };
 const f1 = n => n.toFixed(1), f2 = n => n.toFixed(2);
 const money = n => (n < 0 ? '−' : n > 0 ? '+' : '') + '$' + Math.abs(n).toFixed(2);
 const moneyCol = n => n > 0 ? C.pos : n < 0 ? C.neg : C.muted;
@@ -70,6 +70,7 @@ function summary(name, st, L) {
   const r = st.rows;
   if (name == 'luck') { const s = [...r].sort((a, b) => b.luck - a.luck); return `Luckiest: ${s[0].m} ${sgn(s[0].luck)}. Unluckiest: ${s.at(-1).m} ${sgn(s.at(-1).luck)}. Luck = real wins minus expected wins.`; }
   if (name == 'xw') { const s = [...r].sort((a, b) => b.xw - a.xw); return `Most expected wins: ${s[0].m} ${s[0].xw.toFixed(2)} (${s[0].w} real). Fewest: ${s.at(-1).m} ${s.at(-1).xw.toFixed(2)} (${s.at(-1).w} real). xW counts every team you outscored each week.`; }
+  if (name == 'src') { const s = st.src || [], p = x => Math.round(x.wirePct * 100) + '%'; return s.length ? `Most built off the wire: ${s[0].m}, ${p(s[0])} of started points. Most from the draft: ${s.at(-1).m}, ${p(s.at(-1))} from the wire.` : ''; }
   if (name == 'bench') { const s = [...r].sort((a, b) => (b.max - b.pf) - (a.max - a.pf)); return `Most left on the bench: ${s[0].m}, ${f1(s[0].max - s[0].pf)}. Least: ${s.at(-1).m}, ${f1(s.at(-1).max - s.at(-1).pf)}.`; }
   const pf = [...r].sort((a, b) => b.pf - a.pf)[0], pa = [...r].sort((a, b) => b.pa - a.pa)[0];
   return `Most points for: ${pf.m}, ${f1(pf.pf)}. Most points against: ${pa.m}, ${f1(pa.pa)}.`;
@@ -79,7 +80,8 @@ function summary(name, st, L) {
 const header = (title, note, NF, kicker = 'SEASON') => h('div', { justifyContent: 'space-between', alignItems: 'flex-end' },
   h('div', { flexDirection: 'column' },
     h('div', { fontFamily: F.mono, fontSize: 22, fontWeight: 600, letterSpacing: 4, color: C.accentInk }, `${kicker} · THROUGH WEEK ${NF}`),
-    h('div', { fontFamily: F.display, fontSize: 76, fontWeight: 900, lineHeight: 1, marginTop: 10, textTransform: 'uppercase', color: C.ink }, title)),
+  // A long title (Where the points come from) drops a size so the legend still fits beside it.
+    h('div', { fontFamily: F.display, fontSize: title.length > 22 ? 60 : 76, fontWeight: 900, lineHeight: 1, marginTop: 10, textTransform: 'uppercase', color: C.ink }, title)),
   note);
 
 const nameCell = m => h('div', { width: 150, fontFamily: F.sans, fontSize: 25, fontWeight: 600, color: C.ink }, m);
@@ -106,6 +108,17 @@ function xwChart(st) {
       h('div', { position: 'absolute', left: at(r.xw), top: 3, width: 20, height: 20, marginLeft: -10, borderRadius: 999, border: `4px solid ${C.ink}`, background: C.bg }),
       h('div', { position: 'absolute', left: at(r.w), top: 4, width: 18, height: 18, marginLeft: -9, borderRadius: 999, background: C.ink })),
     h('div', { width: 120, justifyContent: 'flex-end', fontFamily: F.mono, fontSize: 24, fontWeight: 600, color: C.ink }, r.xw.toFixed(2)))));
+}
+
+// Where the points come from: each team's started points, draft (ink), wire (accent) and trades (muted).
+function srcChart(st) {
+  return h('div', { flexDirection: 'column', gap: 7, marginTop: 22 }, (st.src || []).map(r => h('div', { alignItems: 'center', height: 32 },
+    nameCell(r.m),
+    h('div', { flex: 1, height: 26, gap: 3, borderRadius: 6, overflow: 'hidden' },
+      h('div', { width: `${r.draft / r.total * 100}%`, height: '100%', background: C.ink }),
+      h('div', { width: `${r.wire / r.total * 100}%`, height: '100%', background: C.accent }),
+      r.trade ? h('div', { width: `${r.trade / r.total * 100}%`, height: '100%', background: C.muted }) : null),
+    h('div', { width: 120, justifyContent: 'flex-end', fontFamily: F.mono, fontSize: 24, fontWeight: 600, color: C.accentInk }, Math.round(r.wirePct * 100) + '%'))));
 }
 
 function benchChart(st) {
@@ -155,11 +168,15 @@ async function image(name, st, L, LW) {
     : name == 'xw' ? h('div', { gap: 22, fontFamily: F.mono, fontSize: 20, fontWeight: 600, color: C.muted, marginBottom: 8 },
       h('div', { alignItems: 'center', gap: 8 }, h('div', { width: 18, height: 18, borderRadius: 999, border: `4px solid ${C.ink}` }), 'xW'),
       h('div', { alignItems: 'center', gap: 8 }, h('div', { width: 18, height: 18, borderRadius: 999, background: C.ink }), 'Real wins'))
+    : name == 'src' ? h('div', { gap: 22, fontFamily: F.mono, fontSize: 20, fontWeight: 600, color: C.muted, marginBottom: 8 },
+      h('div', { alignItems: 'center', gap: 8 }, h('div', { width: 18, height: 18, borderRadius: 4, background: C.ink }), 'Draft'),
+      h('div', { alignItems: 'center', gap: 8 }, h('div', { width: 18, height: 18, borderRadius: 4, background: C.accent }), 'Wire'),
+      (st.src || []).some(r => r.trade) ? h('div', { alignItems: 'center', gap: 8 }, h('div', { width: 18, height: 18, borderRadius: 4, background: C.muted }), 'Trades') : null)
     : name == 'bench' ? h('div', { gap: 22, fontFamily: F.mono, fontSize: 20, fontWeight: 600, color: C.muted, marginBottom: 8 },
       h('div', { alignItems: 'center', gap: 8 }, h('div', { width: 18, height: 18, borderRadius: 4, background: C.muted }), 'Scored'),
       h('div', { alignItems: 'center', gap: 8 }, h('div', { width: 18, height: 18, borderRadius: 4, background: C.accent }), 'Left on bench'))
     : h('div', { flexDirection: 'column', alignItems: 'flex-end', fontFamily: F.mono, fontSize: 20, fontWeight: 600, color: C.muted, marginBottom: 6 }, h('div', {}, 'Ring = luck (W − xW)'), h('div', {}, 'Dashed lines: league average'));
-  const body = name == 'ledger' ? ledgerCard(L, st) : name == 'luck' ? luckChart(st) : name == 'xw' ? xwChart(st) : name == 'bench' ? benchChart(st) : pfpaChart(st);
+  const body = name == 'ledger' ? ledgerCard(L, st) : name == 'luck' ? luckChart(st) : name == 'xw' ? xwChart(st) : name == 'src' ? srcChart(st) : name == 'bench' ? benchChart(st) : pfpaChart(st);
   const card = h('div', { width: '100%', height: '100%', flexDirection: 'column', background: C.bg, padding: '40px 64px 0', position: 'relative' },
     name == 'ledger' ? header(CHARTS[name], note, LW, 'PARLAYS') : header(CHARTS[name], note, st.NF), body,
     h('div', { position: 'absolute', right: 64, top: 40, alignItems: 'flex-end', gap: 4 },
@@ -562,15 +579,18 @@ export default {
     let st, L = null, LW;
     try {
       const season = await loadSeason(url.origin);
-      st = seasonStats(season, await loadBox(url.origin));
+      const box = await loadBox(url.origin);
+      st = seasonStats(season, box);
+      // The draft and the transactions say how each player arrived.
+      if (name == 'src') { const [draft, tx] = await Promise.all([fetch(new URL('/uploads/9feamg-draft-rosters.json', url.origin)).then(r => r.ok ? r.json() : null).catch(() => null), loadTx(url.origin)]); st.src = draft ? pointSources(season, box, draft, tx).filter(r => r.total > 0) : []; }
       LW = season.live?.week ?? st.NF;
       if (name == 'ledger') L = await ledgerOf(season);
     } catch { return Response.redirect(new URL('/og.png', url.origin).href, 302); }
-    if (name == 'bench' && !st.maxOk) return isImg ? Response.redirect(new URL('/og.png', url.origin).href, 302) : Response.redirect(new URL('/#bench', url.origin).href, 302);
+    if ((name == 'bench' && !st.maxOk) || (name == 'src' && !st.src.length)) return isImg ? Response.redirect(new URL('/og.png', url.origin).href, 302) : Response.redirect(new URL('/#bench', url.origin).href, 302);
     if (isImg) return image(name, st, L, LW);
 
     const title = `${CHARTS[name]} · through week ${name == 'ledger' ? LW : st.NF} · 9FEAMG`, desc = summary(name, st, L), e = escapeHtml;
-    const v = hash(JSON.stringify(name == 'ledger' ? L : st.rows.map(r => [r.pf, r.pa, r.luck, r.max, r.xw, r.w])));
+    const v = hash(JSON.stringify(name == 'ledger' ? L : [st.rows.map(r => [r.pf, r.pa, r.luck, r.max, r.xw, r.w]), st.src]));
     const img = new URL(`/api/section?name=${name}&img=1&v=${v}`, url.origin).href;
     return new Response(`<!doctype html><html><head><meta charset="utf-8">
 <title>${e(title)}</title>
