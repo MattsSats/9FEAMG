@@ -1132,8 +1132,9 @@ class Component extends DCLogic {
       return { w, opp: o, color: col(o), sub: ord(ap.rank) + ' of ' + MGR.length + ' · all-play ' + ap.w + '–' + ap.l, score: f2(SC[tm][w - 1]) + '–' + f2(SC[o][w - 1]), r: win ? 'W' : 'L', rbg: win ? 'var(--accent)' : 'var(--surface2)', rfg: win ? 'var(--onAccent)' : 'var(--muted)', open: () => this.setState({ sheet: { a: tm, b: o, wk: w } }) };
     });
     const teamAcq = ACQ.filter(a => a.m == tm && a.weeks > 0).sort((a, b) => b.started - a.started || b.bench - a.bench);
-    const srcTotal = teamAcq.reduce((t, a) => t + a.started, 0), srcOf = h => teamAcq.filter(a => h.includes(a.how)).reduce((t, a) => t + a.started, 0);
-    const srcParts = [['Draft', ['draft'], 'var(--ink)'], ['Wire', ['add'], 'var(--accent)'], ['Trades', ['trade'], 'var(--muted)']]
+    const srcTotal = teamAcq.reduce((t, a) => t + a.started, 0), srcOf = ok => teamAcq.filter(ok).reduce((t, a) => t + a.started, 0);
+    // Streams: kickers and defenses added (api/_shared.js isStream), split from the real pickups.
+    const srcParts = [['Draft', a => a.how == 'draft', 'var(--ink)'], ['Wire', a => a.how == 'add' && !isStream(a), 'var(--accent)'], ['Streams (K/DEF)', isStream, 'repeating-linear-gradient(135deg,var(--accent) 0 3px,var(--surface2) 3px 6px)'], ['Trades', a => a.how == 'trade', 'var(--muted)']]
       .map(([label, h, color]) => ({ label, pts: srcOf(h), color })).filter(x => x.pts > 0)
       // A sliver that rounds to 0% (or the rest to 100%) reads <1% (>99%), since it isn't nothing.
       .map(x => ({ ...x, w: (x.pts / srcTotal * 100) + '%', text: x.label + ' ' + (r => r == 0 ? '<1' : r == 100 && x.pts < srcTotal ? '>99' : r)(Math.round(x.pts / srcTotal * 100)) + '%' }));
@@ -1263,22 +1264,23 @@ class Component extends DCLogic {
     // arrived (api/_shared.js pointSources), the same split as the Teams tab. Most wire-built first.
     const SRC = S.loaded && S.box && S.draft ? pointSources(D, S.box, S.draft, tx).filter(r => r.total > 0) : [];
     const pctOf = (v, t) => (r => r == 0 && v > 0 ? '<1' : r == 100 && v < t ? '>99' : String(r))(Math.round(v / t * 100));
-    // Tapping a bar (the highlight) opens that team's split under it: the totals, its best wire adds and
-    // its best draft picks by started points.
-    const srcTop = (m, how, n) => ACQ.filter(a => a.m == m && how.includes(a.how) && a.started > 0).sort((a, b) => b.started - a.started).slice(0, n)
+    // Tapping a bar (the highlight) opens that team's split under it: the totals, its best pickups (streamed
+    // kickers and defenses left out; they get their own line) and its best draft picks by started points.
+    const srcTop = (m, ok, n) => ACQ.filter(a => a.m == m && ok(a) && a.started > 0).sort((a, b) => b.started - a.started).slice(0, n)
       .map(a => ({ player: a.player, tag: howTag(a) + ' · ' + a.pos, pts: f2(a.started), starts: a.starts + (a.starts == 1 ? ' start' : ' starts') }));
     const srcBars = SRC.map(r => ({ m: r.m, op: dim(r.m), pick: pickHl(r.m), v: pctOf(r.wire, r.total) + '%', open: hl == r.m,
-      totals: [['Draft', r.draft, 'var(--ink)'], ['Wire', r.wire, 'var(--accent)'], ['Trades', r.trade, 'var(--muted)']].filter(([, v], i) => v > 0 || i < 2).map(([k, v, c]) => ({ k, v: f2(v), c })),
-      wireTop: srcTop(r.m, ['add', 'trade'], 3), draftTop: srcTop(r.m, ['draft'], 2), hasWire: r.wire + r.trade > 0,
-      d: (r.draft / r.total * 100) + '%', w: (r.wire / r.total * 100) + '%', t: (r.trade / r.total * 100) + '%',
-      label: `${r.m}: ${f1(r.wire)} of ${f1(r.total)} started points from the wire, ${f1(r.draft)} from the draft` + (r.trade ? `, ${f1(r.trade)} from trades` : '') }));
+      totals: [['Draft', r.draft, 'var(--ink)'], ['Wire', r.wire, 'var(--accent)'], ['Streams', r.stream, 'repeating-linear-gradient(135deg,var(--accent) 0 3px,var(--surface2) 3px 6px)'], ['Trades', r.trade, 'var(--muted)']].filter(([, v], i) => v > 0 || i < 2).map(([k, v, c]) => ({ k, v: f2(v), c })),
+      wireTop: srcTop(r.m, a => (a.how == 'add' && !isStream(a)) || a.how == 'trade', 3), draftTop: srcTop(r.m, a => a.how == 'draft', 2), hasWire: r.wire + r.trade > 0,
+      streamNote: (s => s.length ? `Streamed K/DEF: ${s.length} ${s.length == 1 ? 'add' : 'adds'}, ${s.reduce((t, a) => t + a.starts, 0)} starts, ${f2(r.stream)} pts` : '')(ACQ.filter(a => a.m == r.m && isStream(a) && a.starts > 0)),
+      d: (r.draft / r.total * 100) + '%', w: (r.wire / r.total * 100) + '%', s: (r.stream / r.total * 100) + '%', t: (r.trade / r.total * 100) + '%',
+      label: `${r.m}: ${f1(r.wire)} of ${f1(r.total)} started points from the wire, ${f1(r.stream)} from streamed kickers and defenses, ${f1(r.draft)} from the draft` + (r.trade ? `, ${f1(r.trade)} from trades` : '') }));
     const srcTrades = SRC.some(r => r.trade > 0);
     const topMax = Math.max(...ST.map(x => x.max ?? x.pf));
     const benchBars = !maxOk ? [] : [...ST].sort((a, b) => (b.max - b.pf) - (a.max - a.pf)).map(x => ({ m: x.m, pf: (x.pf / topMax * 100) + '%', bench: ((x.max - x.pf) / topMax * 100) + '%', v: f1(x.max - x.pf), color: 'var(--muted)', op: dim(x.m), pick: pickHl(x.m) }));
 
     return {
       ok: true, dataError: false,
-      scatter, plotH, scatterMidX: sx(avg(pfs)), scatterMidY: sy(avg(pas)), pfMin: x0, pfMax: x1, paMin: y0, paMax: y1, luckBars, xwBars, xwTicks, benchBars, srcBars, srcTrades, srcSub: 'Share of started points · through week ' + Object.keys(S.box?.weeks || {}).length + ' · wire % on the right · tap a team for details', hlHint: hl ? hl + ' · tap again to clear' : 'Tap a team',
+      scatter, plotH, scatterMidX: sx(avg(pfs)), scatterMidY: sy(avg(pas)), pfMin: x0, pfMax: x1, paMin: y0, paMax: y1, luckBars, xwBars, xwTicks, benchBars, srcBars, srcTrades, srcSub: 'Share of started points · through week ' + Object.keys(S.box?.weeks || {}).length + ' · wire % (not counting K/DEF streams) on the right · tap a team for details', hlHint: hl ? hl + ' · tap again to clear' : 'Tap a team',
       themeLabel, toggleTheme,
       draftIconCls: S.tab == 'Draft' ? 'hi play inv' : 'hi', goHome: e => this.goHome(e), openDraft: () => { this.setState({ tab: 'Draft' }); window.scrollTo(0, 0); },
       draftBtnBg: S.tab == 'Draft' ? 'var(--accent)' : 'var(--surface)', draftBtnFg: S.tab == 'Draft' ? 'var(--onAccent)' : 'var(--ink)', draftBtnBorder: S.tab == 'Draft' ? 'var(--accent)' : 'var(--line)',

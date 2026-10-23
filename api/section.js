@@ -70,7 +70,7 @@ function summary(name, st, L) {
   const r = st.rows;
   if (name == 'luck') { const s = [...r].sort((a, b) => b.luck - a.luck); return `Luckiest: ${s[0].m} ${sgn(s[0].luck)}. Unluckiest: ${s.at(-1).m} ${sgn(s.at(-1).luck)}. Luck = real wins minus expected wins.`; }
   if (name == 'xw') { const s = [...r].sort((a, b) => b.xw - a.xw); return `Most expected wins: ${s[0].m} ${s[0].xw.toFixed(2)} (${s[0].w} real). Fewest: ${s.at(-1).m} ${s.at(-1).xw.toFixed(2)} (${s.at(-1).w} real). xW counts every team you outscored each week.`; }
-  if (name == 'src') { const s = st.src || [], p = x => Math.round(x.wirePct * 100) + '%'; return s.length ? `Most built off the wire: ${s[0].m}, ${p(s[0])} of started points. Most from the draft: ${s.at(-1).m}, ${p(s.at(-1))} from the wire.` : ''; }
+  if (name == 'src') { const s = st.src || [], p = x => Math.round(x.wirePct * 100) + '%'; return s.length ? `Most built off the wire (not counting K/DEF streams): ${s[0].m}, ${p(s[0])} of started points. Most from the draft: ${s.at(-1).m}, ${p(s.at(-1))} from the wire.` : ''; }
   if (name == 'bench') { const s = [...r].sort((a, b) => (b.max - b.pf) - (a.max - a.pf)); return `Most left on the bench: ${s[0].m}, ${f1(s[0].max - s[0].pf)}. Least: ${s.at(-1).m}, ${f1(s.at(-1).max - s.at(-1).pf)}.`; }
   const pf = [...r].sort((a, b) => b.pf - a.pf)[0], pa = [...r].sort((a, b) => b.pa - a.pa)[0];
   return `Most points for: ${pf.m}, ${f1(pf.pf)}. Most points against: ${pa.m}, ${f1(pa.pa)}.`;
@@ -81,7 +81,7 @@ const header = (title, note, NF, kicker = 'SEASON') => h('div', { justifyContent
   h('div', { flexDirection: 'column' },
     h('div', { fontFamily: F.mono, fontSize: 22, fontWeight: 600, letterSpacing: 4, color: C.accentInk }, `${kicker} · THROUGH WEEK ${NF}`),
   // A long title (Where the points come from) drops a size so the legend still fits beside it.
-    h('div', { fontFamily: F.display, fontSize: title.length > 22 ? 60 : 76, fontWeight: 900, lineHeight: 1, marginTop: 10, textTransform: 'uppercase', color: C.ink }, title)),
+    h('div', { fontFamily: F.display, fontSize: title.length > 22 ? 56 : 76, fontWeight: 900, lineHeight: 1, marginTop: 10, textTransform: 'uppercase', color: C.ink }, title)),
   note);
 
 const nameCell = m => h('div', { width: 150, fontFamily: F.sans, fontSize: 25, fontWeight: 600, color: C.ink }, m);
@@ -117,6 +117,7 @@ function srcChart(st) {
     h('div', { flex: 1, height: 26, gap: 3, borderRadius: 6, overflow: 'hidden' },
       h('div', { width: `${r.draft / r.total * 100}%`, height: '100%', background: C.ink }),
       h('div', { width: `${r.wire / r.total * 100}%`, height: '100%', background: C.accent }),
+      r.stream ? h('div', { width: `${r.stream / r.total * 100}%`, height: '100%', backgroundImage: `repeating-linear-gradient(135deg, ${C.accent} 0px, ${C.accent} 6px, ${C.surface2} 6px, ${C.surface2} 12px)` }) : null,
       r.trade ? h('div', { width: `${r.trade / r.total * 100}%`, height: '100%', background: C.muted }) : null),
     h('div', { width: 120, justifyContent: 'flex-end', fontFamily: F.mono, fontSize: 24, fontWeight: 600, color: C.accentInk }, Math.round(r.wirePct * 100) + '%'))));
 }
@@ -168,9 +169,10 @@ async function image(name, st, L, LW) {
     : name == 'xw' ? h('div', { gap: 22, fontFamily: F.mono, fontSize: 20, fontWeight: 600, color: C.muted, marginBottom: 8 },
       h('div', { alignItems: 'center', gap: 8 }, h('div', { width: 18, height: 18, borderRadius: 999, border: `4px solid ${C.ink}` }), 'xW'),
       h('div', { alignItems: 'center', gap: 8 }, h('div', { width: 18, height: 18, borderRadius: 999, background: C.ink }), 'Real wins'))
-    : name == 'src' ? h('div', { gap: 22, fontFamily: F.mono, fontSize: 20, fontWeight: 600, color: C.muted, marginBottom: 8 },
+    : name == 'src' ? h('div', { gap: 14, fontFamily: F.mono, fontSize: 17, fontWeight: 600, color: C.muted, marginBottom: 8 },
       h('div', { alignItems: 'center', gap: 8 }, h('div', { width: 18, height: 18, borderRadius: 4, background: C.ink }), 'Draft'),
       h('div', { alignItems: 'center', gap: 8 }, h('div', { width: 18, height: 18, borderRadius: 4, background: C.accent }), 'Wire'),
+      h('div', { alignItems: 'center', gap: 8 }, h('div', { width: 18, height: 18, borderRadius: 4, backgroundImage: `repeating-linear-gradient(135deg, ${C.accent} 0px, ${C.accent} 4px, ${C.surface2} 4px, ${C.surface2} 8px)` }), 'K/DEF'),
       (st.src || []).some(r => r.trade) ? h('div', { alignItems: 'center', gap: 8 }, h('div', { width: 18, height: 18, borderRadius: 4, background: C.muted }), 'Trades') : null)
     : name == 'bench' ? h('div', { gap: 22, fontFamily: F.mono, fontSize: 20, fontWeight: 600, color: C.muted, marginBottom: 8 },
       h('div', { alignItems: 'center', gap: 8 }, h('div', { width: 18, height: 18, borderRadius: 4, background: C.muted }), 'Scored'),

@@ -1230,6 +1230,7 @@ button{font-family:inherit;color:inherit}
         <div style="height:18px;display:flex;gap:2px;border-radius:4px;overflow:hidden">
           <div style="width:{{ sb.d }};background:var(--ink)"></div>
           <div style="width:{{ sb.w }};background:var(--accent)"></div>
+          <div style="width:{{ sb.s }};background:repeating-linear-gradient(135deg,var(--accent) 0 3px,var(--surface2) 3px 6px)"></div>
           <div style="width:{{ sb.t }};background:var(--muted)"></div>
         </div>
         <span style="font-family:'JetBrains Mono';font-size:12px;font-weight:600;text-align:right;color:var(--accentInk)">{{ sb.v }}</span>
@@ -1245,6 +1246,7 @@ button{font-family:inherit;color:inherit}
               <div style="display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:baseline;margin-top:4px"><span style="min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"><b style="font-weight:600">{{ p.player }}</b> <span style="font-family:'JetBrains Mono';font-size:11px;color:var(--muted)">{{ p.tag }} · {{ p.starts }}</span></span><span style="font-family:'JetBrains Mono';font-size:12px;font-weight:600">{{ p.pts }}</span></div>
             </sc-for>
           </sc-if>
+          <div style="margin-top:6px;font-family:'JetBrains Mono';font-size:11px;color:var(--muted)">{{ sb.streamNote }}</div>
           <div style="margin-top:8px;font-family:'JetBrains Mono';font-size:11px;letter-spacing:.08em;color:var(--muted)">BEST DRAFT PICKS</div>
           <sc-for list="{{ sb.draftTop }}" as="p" hint-placeholder-count="2">
             <div style="display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:baseline;margin-top:4px"><span style="min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"><b style="font-weight:600">{{ p.player }}</b> <span style="font-family:'JetBrains Mono';font-size:11px;color:var(--muted)">{{ p.tag }} · {{ p.starts }}</span></span><span style="font-family:'JetBrains Mono';font-size:12px;font-weight:600">{{ p.pts }}</span></div>
@@ -1256,6 +1258,7 @@ button{font-family:inherit;color:inherit}
   <div style="display:flex;gap:16px;margin-top:10px;font-family:'JetBrains Mono';font-size:11px;color:var(--muted)">
     <span style="display:flex;align-items:center;gap:6px"><span style="width:10px;height:10px;border-radius:2px;background:var(--ink)"></span>Draft</span>
     <span style="display:flex;align-items:center;gap:6px"><span style="width:10px;height:10px;border-radius:2px;background:var(--accent)"></span>Wire</span>
+    <span style="display:flex;align-items:center;gap:6px"><span style="width:10px;height:10px;border-radius:2px;background:repeating-linear-gradient(135deg,var(--accent) 0 3px,var(--surface2) 3px 6px)"></span>Streams (K/DEF)</span>
     <sc-if value="{{ srcTrades }}" hint-placeholder-val="{{ true }}"><span style="display:flex;align-items:center;gap:6px"><span style="width:10px;height:10px;border-radius:2px;background:var(--muted)"></span>Trades</span></sc-if>
   </div>
   <div class="shot-footer"><b>9FEAMG</b><span>{{ shotNoteSrc }}</span></div>

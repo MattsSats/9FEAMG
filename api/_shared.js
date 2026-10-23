@@ -432,13 +432,15 @@ export function acquisitionsOf(season, box, draft, tx) {
   return all;
 }
 // Where each team's started points came from (acquisitionsOf): draft picks, adds off waivers or free
-// agency, and trades. Most wire-built team first.
+// agency, streams (a kicker or defense added, usually a week at a time; Matt, Oct 22, 2026) and trades.
+// wirePct leaves streams out, so it measures real pickups. Most wire-built team first.
+export const isStream = a => a.how == 'add' && ['K', 'DEF'].includes(a.pos);
 export function pointSources(season, box, draft, tx) {
   const A = acquisitionsOf(season, box, draft, tx);
   return season.managers.map(x => x.m).map(m => {
-    const sum = how => A.filter(a => a.m == m && a.how == how).reduce((t, a) => t + a.started, 0);
-    const r = { m, draft: sum('draft'), wire: sum('add'), trade: sum('trade') };
-    r.total = r.draft + r.wire + r.trade; r.wirePct = r.total ? r.wire / r.total : 0;
+    const sum = ok => A.filter(a => a.m == m && ok(a)).reduce((t, a) => t + a.started, 0);
+    const r = { m, draft: sum(a => a.how == 'draft'), wire: sum(a => a.how == 'add' && !isStream(a)), stream: sum(isStream), trade: sum(a => a.how == 'trade') };
+    r.total = r.draft + r.wire + r.stream + r.trade; r.wirePct = r.total ? r.wire / r.total : 0;
     return r;
   }).sort((a, b) => b.wirePct - a.wirePct || b.wire - a.wire);
 }
