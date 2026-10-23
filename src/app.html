@@ -1240,6 +1240,13 @@ button{font-family:inherit;color:inherit}
           <div style="display:flex;flex-wrap:wrap;gap:4px 14px;font-family:'JetBrains Mono';font-size:11px;color:var(--muted)">
             <sc-for list="{{ sb.totals }}" as="st" hint-placeholder-count="2"><span style="display:flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:2px;background:{{ st.c }}"></span>{{ st.k }} <b style="color:var(--ink)">{{ st.v }}</b></span></sc-for>
           </div>
+          <div style="margin-top:8px;font-family:'JetBrains Mono';font-size:11px;letter-spacing:.08em;color:var(--muted)">BY POSITION</div>
+          <div style="display:flex;height:8px;gap:2px;border-radius:3px;overflow:hidden;margin-top:4px">
+            <sc-for list="{{ sb.pos }}" as="ps" hint-placeholder-count="5"><div style="width:{{ ps.w }};background:var(--ink);opacity:{{ ps.op }}"></div></sc-for>
+          </div>
+          <div style="display:flex;flex-wrap:wrap;gap:2px 12px;margin-top:5px;font-family:'JetBrains Mono';font-size:11px;color:var(--ink)">
+            <sc-for list="{{ sb.pos }}" as="ps" hint-placeholder-count="5"><span style="display:flex;align-items:center;gap:5px"><span style="width:8px;height:8px;border-radius:2px;background:var(--ink);opacity:{{ ps.op }}"></span>{{ ps.text }}</span></sc-for>
+          </div>
           <sc-if value="{{ sb.hasWire }}" hint-placeholder-val="{{ true }}">
             <div style="margin-top:8px;font-family:'JetBrains Mono';font-size:11px;letter-spacing:.08em;color:var(--accentInk)">BEST PICKUPS</div>
             <sc-for list="{{ sb.wireTop }}" as="p" hint-placeholder-count="3">

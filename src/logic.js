@@ -1268,7 +1268,12 @@ class Component extends DCLogic {
     // kickers and defenses left out; they get their own line) and its best draft picks by started points.
     const srcTop = (m, ok, n) => ACQ.filter(a => a.m == m && ok(a) && a.started > 0).sort((a, b) => b.started - a.started).slice(0, n)
       .map(a => ({ player: a.player, tag: howTag(a) + ' · ' + a.pos, pts: f2(a.started), starts: a.starts + (a.starts == 1 ? ' start' : ' starts') }));
-    const srcBars = SRC.map(r => ({ m: r.m, op: dim(r.m), pick: pickHl(r.m), v: pctOf(r.wire, r.total) + '%', open: hl == r.m,
+    // The panel's position strip: the same started points by position, however the player arrived. One color
+    // in five shades, so it doesn't compete with the draft and wire colors above.
+    const POS_GROUPS = [['QB', ['QB'], 1], ['RB', ['RB'], .72], ['WR', ['WR'], .5], ['TE', ['TE'], .32], ['K/DEF', ['K', 'DEF'], .16]];
+    const posSplit = r => POS_GROUPS.map(([k, ps, op]) => ({ k, op, v: ACQ.filter(a => a.m == r.m && ps.includes(a.pos)).reduce((t, a) => t + a.started, 0) }))
+      .filter(x => x.v > 0).map(x => ({ ...x, w: (x.v / r.total * 100) + '%', text: x.k + ' ' + pctOf(x.v, r.total) + '%' }));
+    const srcBars = SRC.map(r => ({ m: r.m, op: dim(r.m), pick: pickHl(r.m), v: pctOf(r.wire, r.total) + '%', open: hl == r.m, pos: hl == r.m ? posSplit(r) : [],
       totals: [['Draft', r.draft, 'var(--ink)'], ['Wire', r.wire, 'var(--accent)'], ['Streams', r.stream, 'repeating-linear-gradient(135deg,var(--accent) 0 3px,var(--surface2) 3px 6px)'], ['Trades', r.trade, 'var(--muted)']].filter(([, v], i) => v > 0 || i < 2).map(([k, v, c]) => ({ k, v: f2(v), c })),
       wireTop: srcTop(r.m, a => (a.how == 'add' && !isStream(a)) || a.how == 'trade', 3), draftTop: srcTop(r.m, a => a.how == 'draft', 2), hasWire: r.wire + r.trade > 0,
       streamNote: (s => s.length ? `Streamed K/DEF: ${s.length} ${s.length == 1 ? 'add' : 'adds'}, ${s.reduce((t, a) => t + a.starts, 0)} starts, ${f2(r.stream)} pts` : '')(ACQ.filter(a => a.m == r.m && isStream(a) && a.starts > 0)),
