@@ -709,8 +709,10 @@ class Component extends DCLogic {
     // Thursday), Post-SNF (Sunday, after the night game) and the Recap (after Monday night).
     // Buttons pick the set (newest by default); a sentence under the heading says when it was
     // written, and each line's tag says the day ("PREVIEW · WED", "POST-SNF · SUN 11:06 PM").
-    // All three buttons show every week; a set with no lines yet is dimmed and says when they go up.
-    const boothAll = [['Preview', D.boothPreview?.[wk] || []], ['Post-SNF', D.boothSnf?.[wk] || []], ['Recap', D.booth?.[wk] || []]];
+    // Preview and Recap buttons show every week; a set with no lines yet is dimmed and says when they go up.
+    // Post-SNF is optional, so its button only shows for a week that has those lines (Matt, Oct 25, 2026).
+    const boothAll = [['Preview', D.boothPreview?.[wk] || []], ['Post-SNF', D.boothSnf?.[wk] || []], ['Recap', D.booth?.[wk] || []]]
+      .filter(([label, l]) => label != 'Post-SNF' || l.length);
     const boothSets = boothAll.filter(([, l]) => l.length);
     const boothSet = boothAll.find(([label]) => label == S.boothSet?.[wk]) || boothSets.at(-1) || boothAll[0];
     const BOOTH_NOTE = { Preview: 'Written before Thursday’s kickoff. Numbers are from then.', 'Post-SNF': isFinal ? 'Written after Sunday night, before Monday night’s game.' : 'Written after Sunday night. Monday night is still to play.', Recap: 'Final.' };
