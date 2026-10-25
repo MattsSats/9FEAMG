@@ -1,10 +1,10 @@
 {
-  "asOf": "2026-10-25T11:01:00-05:00",
+  "asOf": "2026-10-25T11:09:00-05:00",
   "source": "Signed-in Yahoo Fantasy league 935526 team roster pages (full reconcile)",
   "week": 7,
   "baseline": "yahoo-live",
   "baselineAvailable": true,
-  "baselineNote": "Rosters from Yahoo's Week 7 matchup pages (read in the built-in browser), with every player's Yahoo projection (proj) and injury tag (inj) as of Sun Oct 25, 11:01 AM CT.",
+  "baselineNote": "Rosters from Yahoo's Week 7 matchup pages (read in the built-in browser), with every player's Yahoo projection (proj) and injury tag (inj) as of Sun Oct 25, 11:09 AM CT.",
   "teams": [
     {
       "id": "1",
