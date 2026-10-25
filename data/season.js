@@ -69,30 +69,30 @@ window.SEASON = {
   // The week in progress. Set to null between weeks.
   live: {
     week: 7,
-    status: 'Live · London game in the 4th (PIT 16, NO 10) · noon games next',
+    status: 'Live · London final (PIT 16, NO 10) · noon games next',
     // When these numbers were pulled from Yahoo (Central); shows as "Scores as of Thu 10:19 PM".
-    asOf: '2026-10-25T11:09:00-05:00',
+    asOf: '2026-10-25T11:43:00-05:00',
     // [current points, projected final]
-    // Yahoo as of Sun Oct 25, 11:09 AM CT (Week 7 matchup pages).
+    // Yahoo as of Sun Oct 25, 11:43 AM CT (Week 7 matchup pages).
     scores: {
-      Matt: [7.00, 126.63], 'Mr. G': [35.04, 119.43],
-      Tristan: [15.20, 106.58], Andy: [20.80, 113.64],
-      Jerger: [6.70, 103.62], Colin: [4.30, 105.52],
-      Tony: [0.00, 115.53], Kurt: [30.80, 122.23],
-      DLin: [0.00, 99.00], Pablo: [38.32, 119.11]
+      Matt: [8.00, 128.24], 'Mr. G': [35.04, 118.11],
+      Tristan: [15.20, 106.56], Andy: [20.80, 113.60],
+      Jerger: [8.60, 104.03], Colin: [4.30, 104.77],
+      Tony: [0.00, 115.54], Kurt: [31.60, 121.36],
+      DLin: [0.00, 99.07], Pablo: [38.32, 118.67]
     },
-    yahooWin: { Tony: 44, Tristan: 43, Andy: 57, Matt: 56, Kurt: 56, Jerger: 48, 'Mr. G': 44, Colin: 52, DLin: 32, Pablo: 68 },
+    yahooWin: { Tony: 45, Tristan: 43, Andy: 57, Matt: 59, Kurt: 55, Jerger: 49, 'Mr. G': 41, Colin: 51, DLin: 32, Pablo: 68 },
     // Points so far for every player whose game has started (starters and bench).
     // Players listed in inProgress are still playing; the rest are final.
     playerPoints: {
       'A.J. Brown': 6.30, 'Rome Odunze': 8.90, 'Germie Bernard': 4.20, 'DeMario Douglas': 3.80,
-      "D'Andre Swift": 17.00, 'Steelers': 7.00, 'Jaylen Warren': 14.40, 'Colston Loveland': 16.40,
-      'Chris Olave': 6.70, 'Drake Maye': 28.44, 'DK Metcalf': 6.60, 'Luther Burden III': 21.70,
-      'Rhamondre Stevenson': 20.00, 'Tyler Shough': 14.26, 'Kendre Miller': 4.30, 'Aaron Rodgers': 12.24,
-      'Rico Dowdle': 8.10, 'Caleb Williams': 22.12, 'Juwan Johnson': 1.20, 'Cairo Santos': 15.00
+      "D'Andre Swift": 17.00, 'Steelers': 8.00, 'Jaylen Warren': 15.20, 'Colston Loveland': 16.40,
+      'Chris Olave': 8.60, 'Drake Maye': 28.44, 'DK Metcalf': 6.60, 'Luther Burden III': 21.70,
+      'Rhamondre Stevenson': 20.00, 'Tyler Shough': 14.82, 'Kendre Miller': 4.30, 'Aaron Rodgers': 13.08,
+      'Rico Dowdle': 11.60, 'Caleb Williams': 22.12, 'Juwan Johnson': 1.20, 'Cairo Santos': 15.00
     },
-    inProgress: ['Germie Bernard', 'Steelers', 'Jaylen Warren', 'Chris Olave', 'DK Metcalf', 'Tyler Shough', 'Kendre Miller', 'Aaron Rodgers', 'Rico Dowdle', 'Juwan Johnson'],
-    sheetNote: 'Yahoo as of Sun 11:09 AM CT. Orange = points so far; the rest are projections.'
+    inProgress: [],
+    sheetNote: 'Yahoo as of Sun 11:43 AM CT. Orange = points so far; the rest are projections.'
   },
 
   // The NFL week: every game ('Sun 12:00 PM · CHI @ GB', kickoff Central, same form as parlay legs)
