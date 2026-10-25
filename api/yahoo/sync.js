@@ -10,7 +10,16 @@ import { accessToken, writeAuth, readData, writeData, yahoo, merge, list, num, t
 
 async function findLeague(token, auth) {
   if (auth.league_key) return auth.league_key;
-  const fc = await yahoo('users;use_login=1/games;game_keys=nfl/leagues', token);
+  // "My leagues" needs the user's profile; when Yahoo refuses it, read the league by its id directly
+  // (nfl.l.<id> is this season's league).
+  let fc;
+  try { fc = await yahoo('users;use_login=1/games;game_keys=nfl/leagues', token); }
+  catch (e) {
+    if (!/Yahoo 40[13]/.test(e.message)) throw e;
+    const lg = merge((await yahoo(`league/nfl.l.${process.env.YAHOO_LEAGUE_ID || '935526'}`, token)).league);
+    if (!lg.league_key) throw e;
+    return lg.league_key;
+  }
   const user = merge(list(fc.users, 'user')[0]);
   const leagues = list(user.games, 'game').flatMap(g => list(merge(g).leagues, 'league').map(l => merge(l)));
   const want = process.env.YAHOO_LEAGUE_ID;

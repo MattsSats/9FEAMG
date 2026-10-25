@@ -71,8 +71,10 @@ export const keyForm = (title, action, button, note = '') => new Response(
 export const isCron = req => !!process.env.CRON_SECRET && same(req.headers.get('authorization') || '', 'Bearer ' + process.env.CRON_SECRET.trim());
 
 // ---- OAuth ----
+// The scope asks for Fantasy Sports read access by name (fspt-r) instead of leaving it to the app's settings
+// (Oct 25, 2026: an approved app still got "not authorized" without it). YAHOO_SCOPE overrides it.
 export const authorizeUrl = (origin, state) => AUTH_URL + '?' + new URLSearchParams({
-  client_id: process.env.YAHOO_CLIENT_ID, redirect_uri: redirectUri(origin), response_type: 'code', state
+  client_id: process.env.YAHOO_CLIENT_ID, redirect_uri: redirectUri(origin), response_type: 'code', state, scope: process.env.YAHOO_SCOPE || 'fspt-r'
 });
 
 async function tokenRequest(params) {
