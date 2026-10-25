@@ -1,10 +1,10 @@
 {
-  "asOf": "2026-10-25T16:10:00-05:00",
+  "asOf": "2026-10-25T18:58:00-05:00",
   "source": "Signed-in Yahoo Fantasy league 935526 team roster pages (full reconcile)",
   "week": 7,
   "baseline": "yahoo-live",
   "baselineAvailable": true,
-  "baselineNote": "Rosters from Yahoo's Week 7 matchup pages (read in the built-in browser), with every player's Yahoo projection (proj) and injury tag (inj) as of Sun Oct 25, 4:10 PM CT.",
+  "baselineNote": "Rosters from Yahoo's Week 7 matchup pages (read in the built-in browser), with every player's Yahoo projection (proj) and injury tag (inj) as of Sun Oct 25, 6:58 PM CT.",
   "teams": [
     {
       "id": "1",
@@ -81,7 +81,8 @@
           "pos": "WR",
           "slot": "bench",
           "nfl": "Den",
-          "proj": 10.91
+          "proj": 10.91,
+          "inj": "Q"
         },
         {
           "name": "Tre Tucker",
@@ -265,7 +266,7 @@
       "id": "3",
       "path": "/live/team/3",
       "name": "Colin",
-      "team": "Vade retro Satana",
+      "team": "C LAMBS BIGGEST HATER",
       "yahooUrlId": "5",
       "players": [
         {
@@ -344,7 +345,7 @@
           "pos": "RB",
           "slot": "bench",
           "nfl": "Sea",
-          "proj": 9.76
+          "proj": 9.79
         },
         {
           "name": "Kyle Monangai",
@@ -469,7 +470,8 @@
           "pos": "RB",
           "slot": "bench",
           "nfl": "NYG",
-          "proj": 6.96
+          "proj": 6.96,
+          "inj": "Q"
         },
         {
           "name": "Aaron Rodgers",
@@ -679,7 +681,7 @@
           "pos": "WR",
           "slot": "starter",
           "nfl": "Sea",
-          "proj": 19.32
+          "proj": 19.39
         },
         {
           "name": "George Kittle",
@@ -815,7 +817,7 @@
           "pos": "DEF",
           "slot": "starter",
           "nfl": "Sea",
-          "proj": 6.63
+          "proj": 6.64
         },
         {
           "name": "Dallas Goedert",
@@ -930,7 +932,7 @@
           "pos": "K",
           "slot": "starter",
           "nfl": "Det",
-          "proj": 8.8
+          "proj": 8.83
         },
         {
           "name": "Steelers",
@@ -965,7 +967,7 @@
           "pos": "WR",
           "slot": "bench",
           "nfl": "KC",
-          "proj": 10.09
+          "proj": 10.12
         },
         {
           "name": "Jayden Daniels",
@@ -1045,7 +1047,7 @@
           "pos": "K",
           "slot": "starter",
           "nfl": "LV",
-          "proj": 8.48
+          "proj": 8.47
         },
         {
           "name": "Vikings",
@@ -1066,7 +1068,7 @@
           "pos": "TE",
           "slot": "bench",
           "nfl": "KC",
-          "proj": 9.85
+          "proj": 9.87
         },
         {
           "name": "Jameson Williams",
@@ -1094,7 +1096,7 @@
           "pos": "QB",
           "slot": "bench",
           "nfl": "KC",
-          "proj": 16.32
+          "proj": 16.4
         },
         {
           "name": "David Montgomery",
@@ -1125,7 +1127,7 @@
           "pos": "RB",
           "slot": "starter",
           "nfl": "KC",
-          "proj": 17.33
+          "proj": 17.37
         },
         {
           "name": "Jaylen Warren",
