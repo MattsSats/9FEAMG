@@ -71,17 +71,17 @@ window.SEASON = {
     week: 7,
     status: 'Live · Thursday final (CHI 30, NE 24) · Sunday next',
     // When these numbers were pulled from Yahoo (Central); shows as "Scores as of Thu 10:19 PM".
-    asOf: '2026-10-22T22:50:00-05:00',
+    asOf: '2026-10-25T03:30:00-05:00',
     // [current points, projected final]
-    // Yahoo as of Thu Oct 22, 10:50 PM CT (Week 7 matchup pages).
+    // Yahoo as of Sun Oct 25, 3:30 AM CT (Week 7 matchup pages).
     scores: {
-      Matt: [0.00, 123.97], 'Mr. G': [28.44, 123.07],
-      Tristan: [15.20, 104.97], Andy: [20.80, 116.40],
-      Jerger: [0.00, 102.74], Colin: [0.00, 106.18],
-      Tony: [0.00, 114.15], Kurt: [16.40, 120.17],
-      DLin: [0.00, 98.82], Pablo: [37.12, 122.71]
+      Matt: [0.00, 125.63], 'Mr. G': [28.44, 123.62],
+      Tristan: [15.20, 106.69], Andy: [20.80, 113.69],
+      Jerger: [0.00, 102.52], Colin: [0.00, 107.74],
+      Tony: [0.00, 114.97], Kurt: [16.40, 120.53],
+      DLin: [0.00, 98.84], Pablo: [37.12, 122.55]
     },
-    yahooWin: { Tony: 45, Tristan: 39, Andy: 61, Matt: 51, Kurt: 55, Jerger: 47, 'Mr. G': 49, Colin: 53, DLin: 29, Pablo: 71 },
+    yahooWin: { Tony: 45, Tristan: 43, Andy: 57, Matt: 52, Kurt: 55, Jerger: 45, 'Mr. G': 48, Colin: 55, DLin: 29, Pablo: 71 },
     // Points so far for every player whose game has started (starters and bench).
     // Players listed in inProgress are still playing; the rest are final.
     playerPoints: {
@@ -90,7 +90,7 @@ window.SEASON = {
       'Kyle Monangai': 0.00, 'Caleb Williams': 22.12, 'Cairo Santos': 15.00
     },
     inProgress: [],
-    sheetNote: 'Yahoo as of Thu 10:50 PM CT. Orange = points so far; the rest are projections.'
+    sheetNote: 'Yahoo as of Sun 3:30 AM CT. Orange = points so far; the rest are projections.'
   },
 
   // The NFL week: every game ('Sun 12:00 PM · CHI @ GB', kickoff Central, same form as parlay legs)

@@ -1,5 +1,65 @@
 [
   {
+    "when": "Oct 24, 11:07 am",
+    "yahooTeam": "Squirtle Squad",
+    "manager": "Tristan",
+    "action": "add",
+    "player": "Rams",
+    "nfl": "LAR",
+    "pos": "DEF",
+    "faab": null,
+    "via": "Free Agency",
+    "notes": "Yahoo facts Sun Oct 25, 3:30 AM CT"
+  },
+  {
+    "when": "Oct 24, 2:50 am",
+    "yahooTeam": "#1 Y! Fan",
+    "manager": "Jerger",
+    "action": "add",
+    "player": "Patrick Mahomes",
+    "nfl": "KC",
+    "pos": "QB",
+    "faab": "$0",
+    "via": "Waivers",
+    "notes": "Yahoo facts Sun Oct 25, 3:30 AM CT"
+  },
+  {
+    "when": "Oct 23, 6:15 pm",
+    "yahooTeam": "it's gibbing time",
+    "manager": "Andy",
+    "action": "add",
+    "player": "J.J. McCarthy",
+    "nfl": "NYG",
+    "pos": "QB",
+    "faab": null,
+    "via": "Free Agency",
+    "notes": "Yahoo facts Sun Oct 25, 3:30 AM CT"
+  },
+  {
+    "when": "Oct 23, 6:15 pm",
+    "yahooTeam": "it's gibbing time",
+    "manager": "Andy",
+    "action": "drop",
+    "player": "Bo Nix",
+    "nfl": "Den",
+    "pos": "QB",
+    "faab": null,
+    "via": "Waivers",
+    "notes": "Yahoo facts Sun Oct 25, 3:30 AM CT"
+  },
+  {
+    "when": "Oct 23, 12:59 pm",
+    "yahooTeam": "Definitely not a Boomer",
+    "manager": "Mr. G",
+    "action": "add",
+    "player": "Tyler Higbee",
+    "nfl": "LAR",
+    "pos": "TE",
+    "faab": null,
+    "via": "Free Agency",
+    "notes": "Yahoo facts Sun Oct 25, 3:30 AM CT"
+  },
+  {
     "when": "Oct 22, 11:31 am",
     "yahooTeam": "Toilet Bowl King",
     "manager": "DLin",
