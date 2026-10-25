@@ -69,30 +69,52 @@ window.SEASON = {
   // The week in progress. Set to null between weeks.
   live: {
     week: 7,
-    status: 'Live · London final (PIT 16, NO 10) · noon games next',
+    status: 'Live · noon games final · 3:05 and 3:25 games in the 2nd · Sunday night KC @ SEA',
     // When these numbers were pulled from Yahoo (Central); shows as "Scores as of Thu 10:19 PM".
-    asOf: '2026-10-25T11:43:00-05:00',
+    asOf: '2026-10-25T16:03:00-05:00',
     // [current points, projected final]
-    // Yahoo as of Sun Oct 25, 11:43 AM CT (Week 7 matchup pages).
+    // Yahoo as of Sun Oct 25, 4:03 PM CT (Week 7 matchup pages).
     scores: {
-      Matt: [8.00, 128.24], 'Mr. G': [35.04, 118.11],
-      Tristan: [15.20, 106.56], Andy: [20.80, 113.60],
-      Jerger: [8.60, 104.03], Colin: [4.30, 104.77],
-      Tony: [0.00, 115.54], Kurt: [31.60, 121.36],
-      DLin: [0.00, 99.07], Pablo: [38.32, 118.67]
+      Matt: [57.08, 99.10], 'Mr. G': [71.84, 97.08],
+      Tristan: [58.90, 85.43], Andy: [64.18, 96.61],
+      Jerger: [73.82, 109.28], Colin: [66.68, 90.84],
+      Tony: [79.72, 123.65], Kurt: [81.62, 110.70],
+      DLin: [63.42, 103.34], Pablo: [97.52, 112.87]
     },
-    yahooWin: { Tony: 45, Tristan: 43, Andy: 57, Matt: 59, Kurt: 55, Jerger: 49, 'Mr. G': 41, Colin: 51, DLin: 32, Pablo: 68 },
+    yahooWin: { Tony: 66, Tristan: 34, Andy: 66, Matt: 53, Kurt: 34, Jerger: 77, 'Mr. G': 47, Colin: 23, DLin: 35, Pablo: 65 },
     // Points so far for every player whose game has started (starters and bench).
     // Players listed in inProgress are still playing; the rest are final.
     playerPoints: {
-      'A.J. Brown': 6.30, 'Rome Odunze': 8.90, 'Germie Bernard': 4.20, 'DeMario Douglas': 3.80,
-      "D'Andre Swift": 17.00, 'Steelers': 8.00, 'Jaylen Warren': 15.20, 'Colston Loveland': 16.40,
-      'Chris Olave': 8.60, 'Drake Maye': 28.44, 'DK Metcalf': 6.60, 'Luther Burden III': 21.70,
-      'Rhamondre Stevenson': 20.00, 'Tyler Shough': 14.82, 'Kendre Miller': 4.30, 'Aaron Rodgers': 13.08,
-      'Rico Dowdle': 11.60, 'Caleb Williams': 22.12, 'Juwan Johnson': 1.20, 'Cairo Santos': 15.00
+      'Matthew Stafford': 5.52, 'Bucky Irving': 23.50, 'Ollie Gordon II': 16.80, 'Matthew Golden': 3.70,
+      'George Kittle': 10.80, 'Carnell Tate': 7.40, 'Will Reichard': 13.00, '49ers': -1.00,
+      'Kyler Murray': 13.90, 'Bijan Robinson': 14.70, 'Ashton Jeanty': 3.10, 'A.J. Brown': 6.30,
+      'Rome Odunze': 8.90, 'Josh Jacobs': 2.00, 'Evan McPherson': 5.00, 'Browns': 5.00,
+      'Germie Bernard': 4.20, 'Aaron Jones Sr.': 3.10, 'Jordan Mason': 6.80, 'Rams': 7.00,
+      'J.J. McCarthy': 10.18, 'Jahmyr Gibbs': 1.90, 'Drake London': 16.10, 'DeMario Douglas': 3.80,
+      'Isaiah Likely': 2.20, "D'Andre Swift": 17.00, 'Chase McLaughlin': 12.00, 'Jets': 1.00,
+      'Jaylen Waddle': 2.70, 'Tre Tucker': 0.00, 'Omar Cooper Jr.': 20.00, 'Bengals': 10.00,
+      'Jordan Love': 8.88, 'Christian McCaffrey': 19.00, 'Chuba Hubbard': 8.00, 'Christian Watson': 1.20,
+      'Justin Jefferson': 6.40, 'Trey McBride': 1.00, 'Garrett Wilson': 3.60, 'Jake Bates': 1.00,
+      'Steelers': 8.00, 'Josh Downs': 2.80, 'Quinshon Judkins': 22.90, 'Chris Godwin Jr.': 4.70,
+      'Brock Purdy': 14.02, 'Jaylen Warren': 15.20, 'Zay Flowers': 23.70, 'Jordan Addison': 3.30,
+      'Colston Loveland': 16.40, 'Eddy Pineiro': 2.00, 'Broncos': 7.00, 'Courtland Sutton': 2.50,
+      'Bryce Young': 7.42, 'Braelon Allen': 16.40, 'J.K. Dobbins': 2.00, 'Chris Olave': 8.60,
+      'Malik Nabers': 14.60, 'Tucker Kraft': 11.80, 'Matt Gay': 3.00, 'Vikings': 10.00,
+      'Jameson Williams': 11.00, 'Jalen Coker': 1.40, 'Blake Corum': 2.70, 'Drake Maye': 28.44,
+      'Woody Marks': 8.60, 'Chase Brown': 7.80, 'Nico Collins': 1.60, 'Amon-Ra St. Brown': 7.80,
+      'DK Metcalf': 6.60, "Ka'imi Fairbairn": 11.00, 'Luther Burden III': 21.70, 'Rhamondre Stevenson': 20.00,
+      'T.J. Hockenson': 11.50, 'Tyler Shough': 14.82, 'Joe Burrow': 28.88, 'Kendre Miller': 4.30,
+      "Ja'Marr Chase": 14.70, 'Keenan Allen': 4.60, 'Brock Bowers': 0.00, 'Denzel Boston': 4.20,
+      'Spencer Shrader': 5.00, 'Titans': 5.00, 'Marvin Harrison Jr.': 7.10, 'Jared Goff': 8.32,
+      'Jonathan Taylor': 18.00, 'RJ Harvey': 0.20, 'Tee Higgins': 23.80, 'Harold Fannin Jr.': 10.10,
+      'Tyler Loop': 7.00, 'Panthers': -4.00, 'Cam Skattebo': 18.60, 'Aaron Rodgers': 13.08,
+      'Kenny Gainwell': 8.80, 'Rico Dowdle': 11.60, 'Caleb Williams': 22.12, 'Derrick Henry': 5.40,
+      'Tony Pollard': 35.00, 'Puka Nacua': 4.80, 'Tetairoa McMillan': 6.00, 'Juwan Johnson': 1.20,
+      'Malik Washington': 5.00, 'Cairo Santos': 15.00, 'Texans': 3.00, 'Dalton Schultz': 7.00,
+      'C.J. Stroud': 16.52, 'Kyle Pitts Sr.': 10.70
     },
-    inProgress: [],
-    sheetNote: 'Yahoo as of Sun 11:43 AM CT. Orange = points so far; the rest are projections.'
+    inProgress: ['Matthew Stafford', 'Matthew Golden', 'Ashton Jeanty', 'Josh Jacobs', 'Rams', 'Jahmyr Gibbs', 'Jaylen Waddle', 'Tre Tucker', 'Jordan Love', 'Christian Watson', 'Trey McBride', 'Jake Bates', 'Broncos', 'Courtland Sutton', 'J.K. Dobbins', 'Tucker Kraft', 'Matt Gay', 'Jameson Williams', 'Blake Corum', 'Amon-Ra St. Brown', 'Brock Bowers', 'Jared Goff', 'RJ Harvey', 'Puka Nacua'],
+    sheetNote: 'Yahoo as of Sun 4:03 PM CT. Orange = points so far; the rest are projections.'
   },
 
   // The NFL week: every game ('Sun 12:00 PM · CHI @ GB', kickoff Central, same form as parlay legs)
