@@ -71,9 +71,9 @@ window.SEASON = {
     week: 7,
     status: 'Live · Sunday final (SEA 20, KC 3) · Monday DAL @ PHI',
     // When these numbers were pulled from Yahoo (Central); shows as "Scores as of Thu 10:19 PM".
-    asOf: '2026-10-25T22:38:00-05:00',
+    asOf: '2026-10-25T22:49:00-05:00',
     // [current points, projected final]
-    // Yahoo as of Sun Oct 25, 10:38 PM CT (Week 7 matchup pages).
+    // Yahoo as of Sun Oct 25, 10:49 PM CT (Week 7 matchup pages).
     scores: {
       Matt: [102.26, 102.26], 'Mr. G': [96.14, 96.14],
       Tristan: [91.30, 91.30], Andy: [77.08, 92.09],
@@ -120,7 +120,7 @@ window.SEASON = {
       'Breece Hall': 0.00, 'Dalton Schultz': 7.00, 'C.J. Stroud': 16.52, 'Kyle Pitts Sr.': 10.70
     },
     inProgress: [],
-    sheetNote: 'Yahoo as of Sun 10:38 PM CT. Orange = points so far; the rest are projections.'
+    sheetNote: 'Yahoo as of Sun 10:49 PM CT. Orange = points so far; the rest are projections.'
   },
 
   // The NFL week: every game ('Sun 12:00 PM · CHI @ GB', kickoff Central, same form as parlay legs)
