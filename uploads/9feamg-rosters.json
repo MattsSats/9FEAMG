@@ -1,10 +1,10 @@
 {
-  "asOf": "2026-10-25T18:58:00-05:00",
+  "asOf": "2026-10-25T22:38:00-05:00",
   "source": "Signed-in Yahoo Fantasy league 935526 team roster pages (full reconcile)",
   "week": 7,
   "baseline": "yahoo-live",
   "baselineAvailable": true,
-  "baselineNote": "Rosters from Yahoo's Week 7 matchup pages (read in the built-in browser), with every player's Yahoo projection (proj) and injury tag (inj) as of Sun Oct 25, 6:58 PM CT.",
+  "baselineNote": "Rosters from Yahoo's Week 7 matchup pages (read in the built-in browser), with every player's Yahoo projection (proj) and injury tag (inj) as of Sun Oct 25, 10:38 PM CT.",
   "teams": [
     {
       "id": "1",
@@ -345,7 +345,7 @@
           "pos": "RB",
           "slot": "bench",
           "nfl": "Sea",
-          "proj": 9.79
+          "proj": 9.8
         },
         {
           "name": "Kyle Monangai",
@@ -681,7 +681,7 @@
           "pos": "WR",
           "slot": "starter",
           "nfl": "Sea",
-          "proj": 19.39
+          "proj": 19.42
         },
         {
           "name": "George Kittle",
@@ -817,7 +817,7 @@
           "pos": "DEF",
           "slot": "starter",
           "nfl": "Sea",
-          "proj": 6.64
+          "proj": 6.3
         },
         {
           "name": "Dallas Goedert",
@@ -967,7 +967,7 @@
           "pos": "WR",
           "slot": "bench",
           "nfl": "KC",
-          "proj": 10.12
+          "proj": 10.13
         },
         {
           "name": "Jayden Daniels",
@@ -1068,7 +1068,7 @@
           "pos": "TE",
           "slot": "bench",
           "nfl": "KC",
-          "proj": 9.87
+          "proj": 9.89
         },
         {
           "name": "Jameson Williams",
@@ -1096,7 +1096,7 @@
           "pos": "QB",
           "slot": "bench",
           "nfl": "KC",
-          "proj": 16.4
+          "proj": 16.44
         },
         {
           "name": "David Montgomery",
@@ -1127,7 +1127,7 @@
           "pos": "RB",
           "slot": "starter",
           "nfl": "KC",
-          "proj": 17.37
+          "proj": 17.39
         },
         {
           "name": "Jaylen Warren",
