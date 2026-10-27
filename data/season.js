@@ -598,6 +598,19 @@ window.SEASON = {
       Pablo: 'Down one after losing to Tristan by 20.42 with Pitts’ 20.50 on the bench. 19–35 against the field and the league’s worst lineup efficiency, 80.9%.',
       'Mr. G': 'Up one without winning, which says more about DLin. Five straight losses, and 756.04 points allowed, 86.64 more than anyone.',
       DLin: 'Down one to last after 72.12 and a 45.28 loss to Tony. 16–38 against the field. The Toilet Bowl King has found the throne.'
+    },
+    // Week 7: written by Claude at Matt's request (Mon Oct 26), graded by three reviewers and revised.
+    7: {
+      Tony: 'Up one to first after 122.70 beat all nine teams, and 16–2 against the field over two weeks. 11 Shots In, and this week every one went in.',
+      Andy: 'Down one despite a fifth straight win, because 98.58 beat only three teams. Winning ugly counts; it just doesn’t count here.',
+      Jerger: 'Five straight wins, up one, and 15–3 against the field over two weeks. The experts went on strike; the team did not.',
+      Matt: 'Up one to 4th with a losing record, 3–4. The rankings believe in Matt more than the standings do, which is convenient, since Matt built the rankings.',
+      Kurt: 'Kurt lost to the week’s top score, fell to 2–5 with the league’s worst luck (−1.67), and still moved up to 5th. Kurt sets the lineup right; the schedule sets the result.',
+      Tristan: 'Down three, the week’s biggest drop, after 91.30 beat nobody. 3–15 against the field over two weeks. Squirtle Squad has stopped evolving.',
+      Pablo: 'Pablo rode Pollard’s 35.00, the top score on any roster, to 110.52 and up one spot. 7th here, 7th in the standings: for once the numbers and the record agree.',
+      DLin: 'Up two off the bottom after the week’s closest loss, 2.30. DLin’s 108.22 beat six teams, just not the one on the schedule.',
+      Colin: 'Down two after 94.08 beat one team; 1–17 against the field over two weeks, the league’s worst. Rebuilt 34 times, and no 100 since Week 5.',
+      'Mr. G': 'Last again after a sixth straight loss, this one by 6.12 with Maye’s 28.44, the week’s second-best QB score. None of this is Maye’s fault.'
     }
   },
 
