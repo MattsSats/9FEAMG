@@ -236,6 +236,14 @@ window.SEASON = {
       ['Tony', 'DLin got 0.00 from Skattebo, and Tony won by 45.28 to go 5–1. Tony’s luck is still +1.44, but the fraud watch is running out of evidence.', '2026-10-19T23:50-05:00'],
       ['Colin', 'Colin made a league-high 31 adds and posted the season’s lowest score, 61.58, as Kurt won by 51.18. Average Sports Enthusiast, above-average Sunday.', '2026-10-19T23:50-05:00'],
       ['Andy', 'Andy put up the week’s top score, 119.72, with Lawrence’s 28.34 on the bench, and handed Mr. G a fifth straight loss. It’s gibbing time, even with Gibbs on bye.', '2026-10-19T23:50-05:00']
+    ],
+    // Week 7: written by Claude at Matt's request (Mon Oct 26, after MNF), graded by three reviewers and revised.
+    7: [
+      ['Mr. G', 'Mr. G lost to Matt by 6.12 with Burden’s 21.70 on the bench and passed Matt for the league lead in bench points, 392.48. Mr. G now leads in points allowed and points ignored.', '2026-10-26T22:59-05:00'],
+      ['Andy', 'Andy beat Tristan by 7.28 with Omar Cooper Jr.’s 20.00 on the bench and Douglas starting for 3.80. Tristan’s 91.30 was the week’s lowest, so Andy’s lineup was more of a suggestion.', '2026-10-26T22:59-05:00'],
+      ['Colin', 'The Booth picked Colin to hold the bridge. Colin needed CeeDee under 6.96 on Monday night, CeeDee scored 21.90, and Jerger won by 14.94. The hate is earned.', '2026-10-26T22:59-05:00'],
+      ['Tony', 'Tony put up the week’s top score, 122.70, with three byes and an Out on the bench, and beat Kurt by 22.28. Tony says luck isn’t real; this week Tony didn’t need any.', '2026-10-26T22:59-05:00'],
+      ['DLin', 'DLin started Skattebo for 6.10 and then 0.00, benched Skattebo this week for 18.60, and lost to Pablo by 2.30. The timing is impeccable.', '2026-10-26T22:59-05:00']
     ]
   },
   // The day each week's previews were written; each line's own time (third field) wins when it has one.
