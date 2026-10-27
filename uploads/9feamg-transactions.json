@@ -1,5 +1,77 @@
 [
   {
+    "when": "Oct 27, 9:26 am",
+    "yahooTeam": "C Lambs Biggest Hater",
+    "manager": "Colin",
+    "action": "drop",
+    "player": "Titans",
+    "nfl": "Ten",
+    "pos": "DEF",
+    "faab": null,
+    "via": "Waivers",
+    "notes": "Yahoo facts Tue Oct 27, 10:14 AM CT"
+  },
+  {
+    "when": "Oct 27, 9:26 am",
+    "yahooTeam": "C Lambs Biggest Hater",
+    "manager": "Colin",
+    "action": "drop",
+    "player": "Kendre Miller",
+    "nfl": "NO",
+    "pos": "RB",
+    "faab": null,
+    "via": "Waivers",
+    "notes": "Yahoo facts Tue Oct 27, 10:14 AM CT"
+  },
+  {
+    "when": "Oct 27, 7:41 am",
+    "yahooTeam": "#1 Y! Fan",
+    "manager": "Jerger",
+    "action": "drop",
+    "player": "Patrick Mahomes",
+    "nfl": "KC",
+    "pos": "QB",
+    "faab": null,
+    "via": "Waivers",
+    "notes": "Yahoo facts Tue Oct 27, 10:14 AM CT"
+  },
+  {
+    "when": "Oct 27, 7:19 am",
+    "yahooTeam": "Squirtle Squad",
+    "manager": "Tristan",
+    "action": "drop",
+    "player": "Browns",
+    "nfl": "Cle",
+    "pos": "DEF",
+    "faab": null,
+    "via": "Waivers",
+    "notes": "Yahoo facts Tue Oct 27, 10:14 AM CT"
+  },
+  {
+    "when": "Oct 27, 5:21 am",
+    "yahooTeam": "it's gibbing time",
+    "manager": "Andy",
+    "action": "drop",
+    "player": "Jets",
+    "nfl": "NYJ",
+    "pos": "DEF",
+    "faab": null,
+    "via": "Waivers",
+    "notes": "Yahoo facts Tue Oct 27, 10:14 AM CT"
+  },
+  {
+    "when": "Oct 27, 5:20 am",
+    "yahooTeam": "it's gibbing time",
+    "manager": "Andy",
+    "action": "drop",
+    "player": "J.J. McCarthy",
+    "nfl": "NYG",
+    "pos": "QB",
+    "faab": null,
+    "via": "Waivers",
+    "notes": "Yahoo facts Tue Oct 27, 10:14 AM CT"
+  },
+  {
     "when": "Oct 26, 6:24 pm",
     "yahooTeam": "11 Shots In",
     "manager": "Tony",
