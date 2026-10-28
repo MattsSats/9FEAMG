@@ -61,27 +61,15 @@ async function boxScores(token, key, w, teams) {
   return box;
 }
 
-// Temporary (Oct 28, 2026): which Yahoo calls, if any, give per-player projections and injury status.
-// Tries a few roster calls for Matt's team in the current week and keeps, per call, the error or the
-// first player's field names, any field with "proj" in its name, and the status fields. Saved as `probe`.
+// Temporary (Oct 28, 2026): Yahoo's roster calls give no per-player projections (the projection
+// variants all return 400), so this only checks injury status: every rostered player Yahoo tags, with
+// the status fields as Yahoo sends them. Saved as `probe`.
 async function probe(token, key, w) {
-  const base = `team/${key}.t.8/roster;week=${w}/players`;
-  const tries = {
-    stats: `${base}/stats;type=week;week=${w}`,
-    projStatsSub: `${base}/projected_stats;type=week;week=${w}`,
-    statsProjType: `${base}/stats;type=projected_week;week=${w}`,
-    outProj: `${base};out=projected_points`,
-    outProjStats: `${base};out=stats,projected_stats`
-  };
   const out = {};
-  for (const [name, path] of Object.entries(tries)) {
-    try {
-      const fc = await yahoo(path, token);
-      const ps = list(merge(fc.team).roster?.['0']?.players, 'player').map(p => merge(p));
-      const p = ps[0] || {};
-      const proj = Object.fromEntries(Object.entries(p).filter(([k]) => /proj/i.test(k)).map(([k, v]) => [k, JSON.stringify(v).slice(0, 300)]));
-      out[name] = { players: ps.length, name: p.name?.full, keys: Object.keys(p), proj, status: { status: p.status, status_full: p.status_full, injury_note: p.injury_note } };
-    } catch (e) { out[name] = { error: String(e.message).slice(0, 200) }; }
+  for (const id of Object.keys(TEAMS)) {
+    const fc = await yahoo(`team/${key}.t.${id}/roster;week=${w}/players`, token);
+    for (const p of list(merge(fc.team).roster?.['0']?.players, 'player').map(x => merge(x)))
+      if (p.status || p.status_full || p.injury_note) out[p.name?.full] = { team: TEAMS[id], status: p.status, status_full: p.status_full, injury_note: p.injury_note, on_disabled_list: p.on_disabled_list };
   }
   return out;
 }
