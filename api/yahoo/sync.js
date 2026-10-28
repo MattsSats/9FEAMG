@@ -61,6 +61,31 @@ async function boxScores(token, key, w, teams) {
   return box;
 }
 
+// Temporary (Oct 28, 2026): which Yahoo calls, if any, give per-player projections and injury status.
+// Tries a few roster calls for Matt's team in the current week and keeps, per call, the error or the
+// first player's field names, any field with "proj" in its name, and the status fields. Saved as `probe`.
+async function probe(token, key, w) {
+  const base = `team/${key}.t.8/roster;week=${w}/players`;
+  const tries = {
+    stats: `${base}/stats;type=week;week=${w}`,
+    projStatsSub: `${base}/projected_stats;type=week;week=${w}`,
+    statsProjType: `${base}/stats;type=projected_week;week=${w}`,
+    outProj: `${base};out=projected_points`,
+    outProjStats: `${base};out=stats,projected_stats`
+  };
+  const out = {};
+  for (const [name, path] of Object.entries(tries)) {
+    try {
+      const fc = await yahoo(path, token);
+      const ps = list(merge(fc.team).roster?.['0']?.players, 'player').map(p => merge(p));
+      const p = ps[0] || {};
+      const proj = Object.fromEntries(Object.entries(p).filter(([k]) => /proj/i.test(k)).map(([k, v]) => [k, JSON.stringify(v).slice(0, 300)]));
+      out[name] = { players: ps.length, name: p.name?.full, keys: Object.keys(p), proj, status: { status: p.status, status_full: p.status_full, injury_note: p.injury_note } };
+    } catch (e) { out[name] = { error: String(e.message).slice(0, 200) }; }
+  }
+  return out;
+}
+
 export async function sync(origin) {
   const auth = await accessToken(origin), token = auth.access_token;
   const key = await findLeague(token, auth);
@@ -81,6 +106,7 @@ export async function sync(origin) {
     wk.box = old?.box && old.status == 'postevent' && wk === old ? old.box : await boxScores(token, key, w, wk.teams);
   }
   const data = { syncedAt: new Date().toISOString(), league: meta.name, leagueKey: key, season: meta.season, currentWeek: current, weeks };
+  data.probe = await probe(token, key, current).catch(e => ({ error: String(e.message) }));
   await writeData(data);
   return { league: meta.name, currentWeek: current, weeks: Object.keys(weeks).length, boxWeeks: Object.values(weeks).filter(w => w.box).length };
 }
