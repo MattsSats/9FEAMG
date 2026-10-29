@@ -292,16 +292,24 @@ export function matchupOdds(season, rosters = null, now = Date.now()) {
     }
     return { cut, v };
   };
-  // Managers almost never leave a slot dead (Matt, Oct 21, 2026): while lineupIssues still flags it, a
-  // starter on bye or Out, or an empty slot, counts as filled at waiver level, the lowest projection any
-  // other team starts at that position.
-  const T = rosters?.teams || [], FLEXP = ['RB', 'WR', 'TE', 'WRT'];
+  // Managers set their lineups (Matt, Oct 21 and Oct 29, 2026): while lineupIssues still flags it, a
+  // starter on bye or Out, or an empty slot, counts as filled by the team's best bench player who can
+  // still go in (right position, game not started, not on bye or Out; Q and D at INJ_PLAY of his
+  // projection), each used once, fixed slots before the FLEX. With nobody on the bench who fits, it's
+  // waiver level: the lowest projection any other team starts at that position.
+  const T = rosters?.teams || [], FLEXP = ['RB', 'WR', 'TE', 'WRT'], fits = (pos, k) => k == 'WRT' ? FLEXP.includes(pos) : pos == k;
   const waiver = (m, pos) => Math.min(...T.filter(t => t.name != m).flatMap(t => t.players)
-    .filter(p => p.slot == 'starter' && p.proj > 0 && (pos == 'WRT' ? FLEXP.includes(p.pos) : p.pos == pos)).map(p => p.proj), Infinity);
+    .filter(p => p.slot == 'starter' && p.proj > 0 && fits(p.pos, pos)).map(p => p.proj), Infinity);
   const fillOf = m => {
     const t = T.find(t => t.name == m); if (!t) return 0;
     const { bye, out, empty } = lineupIssues(season, t.players.filter(p => p.slot == 'starter'), wk, pts, now), w = pos => { const v = waiver(m, pos); return isFinite(v) ? v : 0; };
-    return [...bye, ...out].reduce((s, p) => s + Math.max(0, w(p.pos) - (p.proj || 0)), 0) + empty.reduce((s, k) => s + w(k), 0);
+    const bench = t.players.filter(p => p.slot == 'bench' && p.proj > 0 && pts[p.name] == null && !playing.has(p.name) && !onByeOf(season, p.nfl, wk)
+      && !['O', 'IR'].includes(String(p.inj || '').toUpperCase()) && !(now >= (kickoffAt(season, wk, nflGameOf(season, p.nfl, wk) || 'Sun 12:00 PM')?.getTime() ?? Infinity)))
+      .map(p => ({ pos: p.pos, v: p.proj * (INJ_PLAY[String(p.inj || '').toUpperCase()] ?? 1) })).sort((a, b) => b.v - a.v);
+    const fill = k => { const i = bench.findIndex(p => fits(p.pos, k)); return i < 0 ? w(k) : bench.splice(i, 1)[0].v; };
+    const dead = [...bye, ...out].map(p => ({ k: p.pos, has: p.proj || 0 })).concat(empty.map(k => ({ k, has: 0 })))
+      .sort((a, b) => (a.k == 'WRT') - (b.k == 'WRT'));
+    return dead.reduce((s, d) => s + Math.max(0, fill(d.k) - d.has), 0);
   };
   const side = m => { const [pnow, proj] = L.scores[m] || [0, 0], I = injOf(m);
     return { proj: (proj || pnow || 0) - I.cut + fillOf(m), left: proj > 0 ? Math.max(0, proj - (pnow || 0)) / proj : 0, iv: I.v }; };
