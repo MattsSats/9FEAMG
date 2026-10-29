@@ -568,6 +568,24 @@ window.SEASON = {
           { text: 'James Cook anytime TD', player: 'James Cook III', type: 'td', count: 1, game: 'Sun 3:25 PM · BUF @ LV', odds: '-170', ladder: ['-170', '+320', '+1400'], result: '1 rush TD (22-95 rush, 3-58 rec)', status: 'hit' }
         ]
       }
+    ],
+    8: [
+      {
+        owner: 'The Booth', init: 'TB', title: 'Lambeau Script',
+        // Built by Claude at Matt's ask (Thu Oct 29, before TNF): the likeliest Packers-win script in one
+        // same-game parlay, low-cut markets only. Asked for spicy (+900 to +1900); DraftKings' same-game price
+        // for these four is +525, 375 short of the floor (Matt:
+        // the closest he could get in the app). Not marked placed.
+        // Ticket odds: DraftKings same-game parlay bet slip (Matt's screenshot), Thu Oct 29, 6:40 PM CT.
+        // Leg prices and vs: DraftKings via The Odds API, Thu Oct 29, 6:33 PM CT (the slip showed Watson at -114).
+        odds: '+525',
+        legs: [
+          { text: 'Packers moneyline vs Panthers', type: 'ml', team: 'GB', teams: ['GB', 'Car'], game: 'Thu 7:15 PM · CAR @ GB', odds: '-185', vs: '+154', status: 'open' },
+          { text: 'Jordan Love over 264.5 passing yards', player: 'Jordan Love', type: 'over', stat: 'Pass Yds', line: 264.5, game: 'Thu 7:15 PM · CAR @ GB', odds: '-111', vs: '-113', status: 'open' },
+          { text: 'Josh Jacobs over 61.5 rushing yards', player: 'Josh Jacobs', type: 'over', stat: 'Rush Yds', line: 61.5, game: 'Thu 7:15 PM · CAR @ GB', odds: '-111', vs: '-113', status: 'open' },
+          { text: 'Christian Watson over 71.5 receiving yards', player: 'Christian Watson', type: 'over', stat: 'Rec Yds', line: 71.5, game: 'Thu 7:15 PM · CAR @ GB', odds: '-113', vs: '-111', status: 'open' }
+        ]
+      }
     ]
   },
 
