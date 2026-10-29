@@ -585,6 +585,21 @@ window.SEASON = {
           { text: 'Josh Jacobs over 61.5 rushing yards', player: 'Josh Jacobs', type: 'over', stat: 'Rush Yds', line: 61.5, game: 'Thu 7:15 PM · CAR @ GB', odds: '-111', vs: '-113', status: 'open' },
           { text: 'Christian Watson over 71.5 receiving yards', player: 'Christian Watson', type: 'over', stat: 'Rec Yds', line: 71.5, game: 'Thu 7:15 PM · CAR @ GB', odds: '-113', vs: '-111', status: 'open' }
         ]
+      }      },
+      {
+        owner: 'The Booth', init: 'TB', title: 'Upset Script',
+        // Built by Claude at Matt's ask (Thu Oct 29, before TNF): Lambeau Script's mirror, a Panthers road win
+        // with a balanced offense, low-cut markets only. Asked for spicy (+900 to +1900); DraftKings' same-game
+        // price for these four is +750, 150 short of the floor. Not marked placed.
+        // Ticket odds: DraftKings same-game parlay bet slip (Matt's screenshot), Thu Oct 29, 6:44 PM CT.
+        // Leg prices and vs: DraftKings via The Odds API, Thu Oct 29, 6:33 PM CT.
+        odds: '+750',
+        legs: [
+          { text: 'Panthers moneyline at Packers', type: 'ml', team: 'Car', teams: ['Car', 'GB'], game: 'Thu 7:15 PM · CAR @ GB', odds: '+154', vs: '-185', status: 'open' },
+          { text: 'Bryce Young over 254.5 passing yards', player: 'Bryce Young', type: 'over', stat: 'Pass Yds', line: 254.5, game: 'Thu 7:15 PM · CAR @ GB', odds: '-111', vs: '-113', status: 'open' },
+          { text: 'Tetairoa McMillan over 72.5 receiving yards', player: 'Tetairoa McMillan', type: 'over', stat: 'Rec Yds', line: 72.5, game: 'Thu 7:15 PM · CAR @ GB', odds: '-110', vs: '-114', status: 'open' },
+          { text: 'Chuba Hubbard over 67.5 rushing yards', player: 'Chuba Hubbard', type: 'over', stat: 'Rush Yds', line: 67.5, game: 'Thu 7:15 PM · CAR @ GB', odds: '-113', vs: '-111', status: 'open' }
+        ]
       }
     ]
   },
