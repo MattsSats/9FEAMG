@@ -225,16 +225,15 @@ function matchupOf(season, st, wk, aSlug, bSlug, rosters) {
     return { ...mg, rec: `${r.w}–${r.l} · ${ord(place(mg.m))}`, now, score: proj, alert: lineupAlert(season, rosters, mg.m, wk) };
   };
   const a = side(A), b = side(B), lead = a.score == b.score ? null : a.score > b.score ? a : b, gap = Math.abs(a.score - b.score);
-  // Like the site's card: live, the gray chip is Yahoo's own win % (live.yahooWin) and the Booth chip carries
-  // the site's own odds for the Booth's pick; a final week grades the pick ✓ or ✗.
-  const yw = live ? season.live.yahooWin : null, yFav = yw && yw[A.m] != null && yw[B.m] != null ? (yw[A.m] >= yw[B.m] ? A.m : B.m) : null;
-  const chip = yFav ? `Yahoo: ${yFav} ${yw[yFav]}% to win`
+  // Like the site's card: live, the gray chip is the site's own win odds (matchupOdds) and the Booth chip
+  // keeps the % its pick was made at; a final week grades the pick ✓ or ✗.
+  const o = live ? (matchupOdds(season, rosters) || []).find(x => [x.a, x.b].includes(A.m)) : null;
+  const pA = o ? (o.a == A.m ? o.pa : 1 - o.pa) : null, fav = pA == null ? null : pA >= 0.5 ? A.m : B.m;
+  const chip = fav ? `Odds: ${fav} ${oddsPct(Math.max(pA, 1 - pA))} to win`
     : lead ? (live ? `${lead.m} +${gap.toFixed(2)} proj` : `${lead.m} won by ${gap.toFixed(2)}`) : live ? 'Even on projection' : 'Tied';
   const pi = (season.schedule[wk] || []).findIndex(p => p.includes(A.m) && p.includes(B.m)), pk = season.boothPicks?.[wk]?.[pi];
-  let pickP = null;
-  if (pk && live) { const o = (matchupOdds(season, rosters) || []).find(x => [x.a, x.b].includes(A.m)); if (o) pickP = o.a == pk[0] ? o.pa : 1 - o.pa; }
   const winner = live || !lead ? null : lead.m;
-  const pick = !pk ? '' : `Booth: ${pk[0]}` + (!live ? (winner == pk[0] ? ' ✓' : ' ✗') : pickP != null ? ` · ${oddsPct(pickP)}` : '');
+  const pick = !pk ? '' : `Booth: ${pk[0]}` + (!live ? (winner == pk[0] ? ' ✓' : ' ✗') : pk[1] != null ? ` · ${pk[1]}%` : '');
   const pickColor = !pk || live ? C.accentInk : winner == pk[0] ? C.pos : C.neg;
   // A finished week shows its recap line; otherwise the preview, labelled with the day it was
   // written so its projections don't read as a mistake next to the live numbers.
