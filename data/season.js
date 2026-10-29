@@ -247,13 +247,14 @@ window.SEASON = {
     ]
   },
   // The day each week's previews were written; each line's own time (third field) wins when it has one.
-  boothPreviewAt: { 5: '2026-10-07', 6: '2026-10-15', 7: '2026-10-21' },
+  boothPreviewAt: { 5: '2026-10-07', 6: '2026-10-15', 7: '2026-10-21', 8: '2026-10-29' },
   // The Booth's picks, made with the previews: [pick, win % when picked], one per matchup in schedule
   // order. The win % is check.js's "Win odds" line before kickoff. The site grades them once the week is
   // final and keeps the season record.
   boothPicks: {
     6: [['Matt', 60], ['Tristan', 62], ['Tony', 68], ['Colin', 69], ['Mr. G', 62]],
-    7: [['Matt', 51], ['Andy', 62], ['Colin', 51], ['Tony', 52], ['Pablo', 66]]
+    7: [['Matt', 51], ['Andy', 62], ['Colin', 51], ['Tony', 52], ['Pablo', 66]],
+    8: [['Matt', 61], ['Mr. G', 52], ['Tony', 65], ['Kurt', 58], ['Andy', 73]]
   },
   // Jerger's weekly preview picks ("the experts"): one name per matchup in schedule order, graded
   // like the Booth's (Matt, Oct 20, 2026; Jerger agreed). Only the pick goes here; the write-up stays private.
@@ -278,6 +279,15 @@ window.SEASON = {
     ]
   },
   boothPreview: {
+    // Week 8: written by Claude at Matt's request (Thu Oct 29, before TNF) from Yahoo's Thu 6:11 PM
+    // projections and check.js's win odds, graded by three reviewers and revised.
+    8: [
+      ['Colin', 'Fifth vs. sixth, both 3–4, and Colin holds the last playoff spot. Colin has made 36 adds to Matt’s 5, and Matt is still projected by 10.48. Effort is overrated.', '2026-10-29T18:25-05:00'],
+      ['Mr. G', 'Mr. G is 1–6 with 858.30 points allowed, 78.38 more than anyone. The Booth picks Mr. G over Tristan this week. Opponents have to run out of good weeks eventually.', '2026-10-29T18:25-05:00'],
+      ['Jerger', 'Jerger brings the belt and a five-game win streak, and Tony is projected to end it, 119.96–105.85. Jerger’s own experts picked Tony. The champ’s staff has jumped ship.', '2026-10-29T18:25-05:00'],
+      ['Pablo', 'Kurt has the league’s worst luck (−1.67) and is projected 115.34–107.37 over Pablo. Pablo still has the full waiver budget in Week 8. He was #1; the budget is still waiting for the comeback.', '2026-10-29T18:25-05:00'],
+      ['DLin', 'DLin, 2–5 and the reigning Toilet Bowl King, draws a 6–1 Andy. Projected 113.08–99.18, Andy. The crown defense is going great.', '2026-10-29T18:25-05:00']
+    ],
     // Week 7: the Booth's lines (written by Claude at Matt's request, Wed Oct 21, before TNF) from Yahoo's
     // Wed 7:43 PM projections, check.js's win odds and the season math through Week 6.
     7: [
