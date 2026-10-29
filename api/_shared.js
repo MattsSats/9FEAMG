@@ -271,8 +271,12 @@ export function playoffOdds(season, { through, live = true, sims = 20000, shrink
 // playoffOdds. With the rosters file, a starter tagged Q or D whose game hasn't started counts at
 // INJ_PLAY of his projection (he may sit), and that play/sit coin flip adds p(1−p)·proj² of
 // variance to his side; O and IR are already 0 in Yahoo's projection.
-// A dead slot (bye, Out, empty) counts as filled at waiver level; see fillOf.
+// A dead slot (bye, Out, empty) counts as filled from the bench; see fillOf. Players with an ESPN
+// projection (scripts/espn-proj.mjs) count at the average of Yahoo's and ESPN's; see projOf.
 export const INJ_PLAY = { Q: 0.85, D: 0.35 };
+// A player's projection for the win odds: Yahoo's and ESPN's averaged when the rosters file has both
+// for the live week (Matt, Oct 29, 2026: one source's projections are noisier than two), else Yahoo's.
+export const projOf = (p, rosters, wk) => p.espn != null && p.proj > 0 && rosters?.espn?.week == wk ? (p.proj + p.espn) / 2 : p.proj;
 export function matchupOdds(season, rosters = null, now = Date.now()) {
   const L = season.live, wk = L?.week, NF = Math.max(0, ...season.managers.map(x => (season.scores[x.m] || []).length));
   if (!L?.scores || !season.schedule?.[wk]) return null;
@@ -280,17 +284,18 @@ export function matchupOdds(season, rosters = null, now = Date.now()) {
   // Normal CDF through erf (Abramowitz and Stegun 7.1.26).
   const erf = x => { const t = 1 / (1 + 0.3275911 * Math.abs(x)), y = 1 - (((((1.061405429 * t - 1.453152027) * t) + 1.421413741) * t - 0.284496736) * t + 0.254829592) * t * Math.exp(-x * x); return x < 0 ? -y : y; };
   const pts = L.playerPoints || {}, playing = new Set(L.inProgress || []);
-  // Q/D starters still to play: { cut: expected points lost, v: variance added }.
+  const proj = p => projOf(p, rosters, wk), started = p => pts[p.name] != null || playing.has(p.name) || now >= (kickoffAt(season, wk, nflGameOf(season, p.nfl, wk) || 'Sun 12:00 PM')?.getTime() ?? Infinity);
+  // Starters still to play: { cut: expected points lost to Q/D tags, v: variance added, espn: what
+  // averaging in ESPN adds to Yahoo's team projection }.
   const injOf = m => {
-    let cut = 0, v = 0;
+    let cut = 0, v = 0, espn = 0;
     for (const p of rosters?.teams?.find(t => t.name == m)?.players || []) {
+      if (p.slot != 'starter' || !(p.proj > 0) || started(p)) continue;
+      espn += proj(p) - p.proj;
       const q = INJ_PLAY[String(p.inj || '').toUpperCase()];
-      if (p.slot != 'starter' || q == null || !(p.proj > 0) || pts[p.name] != null || playing.has(p.name)) continue;
-      const k = kickoffAt(season, wk, nflGameOf(season, p.nfl, wk) || 'Sun 12:00 PM');
-      if (k && now >= k.getTime()) continue;
-      cut += (1 - q) * p.proj; v += q * (1 - q) * p.proj * p.proj;
+      if (q != null) { cut += (1 - q) * proj(p); v += q * (1 - q) * proj(p) * proj(p); }
     }
-    return { cut, v };
+    return { cut, v, espn };
   };
   // Managers set their lineups (Matt, Oct 21 and Oct 29, 2026): while lineupIssues still flags it, a
   // starter on bye or Out, or an empty slot, counts as filled by the team's best bench player who can
@@ -303,16 +308,15 @@ export function matchupOdds(season, rosters = null, now = Date.now()) {
   const fillOf = m => {
     const t = T.find(t => t.name == m); if (!t) return 0;
     const { bye, out, empty } = lineupIssues(season, t.players.filter(p => p.slot == 'starter'), wk, pts, now), w = pos => { const v = waiver(m, pos); return isFinite(v) ? v : 0; };
-    const bench = t.players.filter(p => p.slot == 'bench' && p.proj > 0 && pts[p.name] == null && !playing.has(p.name) && !onByeOf(season, p.nfl, wk)
-      && !['O', 'IR'].includes(String(p.inj || '').toUpperCase()) && !(now >= (kickoffAt(season, wk, nflGameOf(season, p.nfl, wk) || 'Sun 12:00 PM')?.getTime() ?? Infinity)))
-      .map(p => ({ pos: p.pos, v: p.proj * (INJ_PLAY[String(p.inj || '').toUpperCase()] ?? 1) })).sort((a, b) => b.v - a.v);
+    const bench = t.players.filter(p => p.slot == 'bench' && p.proj > 0 && !started(p) && !onByeOf(season, p.nfl, wk) && !['O', 'IR'].includes(String(p.inj || '').toUpperCase()))
+      .map(p => ({ pos: p.pos, v: proj(p) * (INJ_PLAY[String(p.inj || '').toUpperCase()] ?? 1) })).sort((a, b) => b.v - a.v);
     const fill = k => { const i = bench.findIndex(p => fits(p.pos, k)); return i < 0 ? w(k) : bench.splice(i, 1)[0].v; };
-    const dead = [...bye, ...out].map(p => ({ k: p.pos, has: p.proj || 0 })).concat(empty.map(k => ({ k, has: 0 })))
+    const dead = [...bye, ...out].map(p => ({ k: p.pos, has: proj(p) || 0 })).concat(empty.map(k => ({ k, has: 0 })))
       .sort((a, b) => (a.k == 'WRT') - (b.k == 'WRT'));
     return dead.reduce((s, d) => s + Math.max(0, fill(d.k) - d.has), 0);
   };
   const side = m => { const [pnow, proj] = L.scores[m] || [0, 0], I = injOf(m);
-    return { proj: (proj || pnow || 0) - I.cut + fillOf(m), left: proj > 0 ? Math.max(0, proj - (pnow || 0)) / proj : 0, iv: I.v }; };
+    return { proj: (proj || pnow || 0) + I.espn - I.cut + fillOf(m), left: proj > 0 ? Math.max(0, proj - (pnow || 0)) / proj : 0, iv: I.v }; };
   return season.schedule[wk].map(([a, b]) => {
     const A = side(a), B = side(b), v = sd * sd * (A.left + B.left) + A.iv + B.iv, d = A.proj - B.proj;
     return { a, b, pa: v > 0 ? 0.5 * (1 + erf(d / Math.sqrt(2 * v))) : d > 0 ? 1 : d < 0 ? 0 : 0.5 };

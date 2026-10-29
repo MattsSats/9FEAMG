@@ -61,7 +61,8 @@ const ST = [...st.rows].sort(byStandings);
 out.push('Standings: ' + ST.map((r, i) => `${i + 1}. ${r.m} ${r.w}–${r.l}`).join(', '));
 // Win odds for the live week's matchups (Post-SNF lines quote these), and the Booth's picks.
 const MO = matchupOdds(S, rosters);
-if (MO) out.push(`Win odds, Week ${LW}: ` + MO.map(o => `${o.a} ${oddsPct(o.pa)}–${oddsPct(1 - o.pa)} ${o.b}`).join(', '));
+if (MO) out.push(`Win odds, Week ${LW}: ` + MO.map(o => `${o.a} ${oddsPct(o.pa)}–${oddsPct(1 - o.pa)} ${o.b}`).join(', ')
+  + (rosters?.espn?.week == LW ? ` (Yahoo and ESPN projections averaged; ESPN read ${new Date(rosters.espn.asOf).toLocaleString('en-US', { timeZone: 'America/Chicago', weekday: 'short', hour: 'numeric', minute: '2-digit' })})` : ' (Yahoo projections only: run node scripts/espn-proj.mjs)'));
 for (const [w, picks] of Object.entries(S.boothPicks || {})) (picks || []).forEach((p, i) => {
   const pair = S.schedule[w]?.[i];
   if (!pair) bad.push(`boothPicks[${w}][${i}] has no matchup.`);
