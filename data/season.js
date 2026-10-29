@@ -585,7 +585,7 @@ window.SEASON = {
           { text: 'Josh Jacobs over 61.5 rushing yards', player: 'Josh Jacobs', type: 'over', stat: 'Rush Yds', line: 61.5, game: 'Thu 7:15 PM · CAR @ GB', odds: '-111', vs: '-113', status: 'open' },
           { text: 'Christian Watson over 71.5 receiving yards', player: 'Christian Watson', type: 'over', stat: 'Rec Yds', line: 71.5, game: 'Thu 7:15 PM · CAR @ GB', odds: '-113', vs: '-111', status: 'open' }
         ]
-      }      },
+      },
       {
         owner: 'The Booth', init: 'TB', title: 'Upset Script',
         // Built by Claude at Matt's ask (Thu Oct 29, before TNF): Lambeau Script's mirror, a Panthers road win
