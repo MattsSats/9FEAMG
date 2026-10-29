@@ -258,7 +258,8 @@ window.SEASON = {
   // Jerger's weekly preview picks ("the experts"): one name per matchup in schedule order, graded
   // like the Booth's (Matt, Oct 20, 2026; Jerger agreed). Only the pick goes here; the write-up stays private.
   expertPicks: {
-    6: ['Matt', 'Pablo', 'Tony', 'Kurt', 'Mr. G']
+    6: ['Matt', 'Pablo', 'Tony', 'Kurt', 'Mr. G'],
+    8: ['Colin', 'Tristan', 'Tony', 'Kurt', 'Andy']
   },
   // Tristan's weekly power rankings, 1 to 10 (Matt, Oct 20, 2026; Tristan agreed). Rank order only; the
   // Season tab shows it beside the site's own power rankings for the same week.
