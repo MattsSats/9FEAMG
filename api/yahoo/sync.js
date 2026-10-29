@@ -8,7 +8,7 @@
 // because Yahoo's API doesn't give per-player projections.
 import { accessToken, writeAuth, readData, writeData, yahoo, merge, list, num, teamManager, isAdmin, isCron, keyForm, TEAMS } from '../_yahoo.js';
 
-async function findLeague(token, auth) {
+export async function findLeague(token, auth) {
   if (auth.league_key) return auth.league_key;
   // "My leagues" needs the user's profile; when Yahoo refuses it, read the league by its id directly
   // (nfl.l.<id> is this season's league).
@@ -28,8 +28,9 @@ async function findLeague(token, auth) {
   return lg.league_key;
 }
 
-async function scoreboard(token, key, w) {
-  const lg = merge((await yahoo(`league/${key}/scoreboard;week=${w}`, token)).league);
+// w left out: the league's current week (the league meta in the answer says which).
+export async function scoreboard(token, key, w) {
+  const lg = merge((await yahoo(`league/${key}/scoreboard` + (w ? `;week=${w}` : ''), token)).league);
   const sb = lg.scoreboard || {};
   const matchups = list(sb['0']?.matchups, 'matchup');
   const out = { status: 'preevent', matchups: [], teams: {} };
@@ -45,7 +46,7 @@ async function scoreboard(token, key, w) {
   return { out, league: lg };
 }
 
-async function boxScores(token, key, w, teams) {
+export async function boxScores(token, key, w, teams) {
   const box = {};
   await Promise.all(Object.keys(teams).map(async m => {
     const id = Object.keys(TEAMS).find(k => TEAMS[k] == m);

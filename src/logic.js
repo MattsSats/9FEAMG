@@ -1,10 +1,11 @@
 // App logic. build.cjs splices this into src/app.html's x-dc script before bundling.
 // All season numbers come from data/season.js (window.SEASON).
 // Yahoo sync (window.YAHOO from /api/league) fills in the numbers: final scores, schedule,
-// and the live week's scores and player points. Booth lines, captions and parlays stay in season.js.
+// and the live week's scores and player points; during games window.YAHOO_LIVE (/api/live, read
+// from Yahoo about once a minute) goes on top with the same merge, so the newest read wins. Booth lines, captions and parlays stay in season.js.
 // The league math the server also runs (api/_shared.js) is pasted in here by build.cjs:
 /*SHARED*/
-const D = mergeYahoo(window.SEASON, window.YAHOO);
+const D = mergeYahoo(mergeYahoo(window.SEASON, window.YAHOO), window.YAHOO_LIVE);
 const MGR = D ? D.managers.map(x => x.m) : [];
 // Team link slugs: 'Mr. G' → 'mr-g' (#team-mr-g).
 const teamSlug = m => m.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
@@ -256,12 +257,12 @@ class Component extends DCLogic {
     window.addEventListener('popstate', () => this.openHash(true));
   }
   // Game days (any day with a kickoff on the NFL schedule, Saturdays and Christmas included, and
-  // the early hours after; api/_shared.js isGameDay): check season.js and the Yahoo feed every
-  // 3 minutes. New numbers refresh the page in place unless someone is mid-something, in which
+  // the early hours after; api/_shared.js isGameDay): check season.js and the Yahoo feeds every
+  // 2 minutes. New numbers refresh the page in place unless someone is mid-something, in which
   // case a "New scores" button does it.
   pollScores() {
     if (!LW) return;
-    const read = () => Promise.all(['/data/season.js', '/api/league?format=js'].map(u => fetch(u, { cache: 'no-store' }).then(r => r.ok ? r.text() : '').catch(() => ''))).then(a => a.join('\n'));
+    const read = () => Promise.all(['/data/season.js', '/api/league?format=js', '/api/live?format=js'].map(u => fetch(u, { cache: 'no-store' }).then(r => r.ok ? r.text() : '').catch(() => ''))).then(a => a.join('\n'));
     let base = null;
     read().then(t => { base = t; });
     setInterval(async () => {
@@ -270,7 +271,7 @@ class Component extends DCLogic {
       if (!t || t == base) return;
       base = t;
       if (this.isIdle()) this.refreshInPlace(); else this.setState({ newScores: true });
-    }, 180000);
+    }, 120000);
   }
   isIdle() {
     const S = this.state, a = document.activeElement;

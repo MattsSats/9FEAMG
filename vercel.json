@@ -29,6 +29,9 @@
     },
     "api/league.js": {
       "maxDuration": 60
+    },
+    "api/live.js": {
+      "maxDuration": 30
     }
   }
 }
