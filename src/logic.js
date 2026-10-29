@@ -1351,6 +1351,8 @@ class Component extends DCLogic {
       // "What's this?" opens the explainer under the Expected wins chart: one real week, worked through.
       howTo: () => { const open = !this.state.xwHelp; this.setState({ xwHelp: open }); if (open) setTimeout(() => document.getElementById('xw')?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 0); },
       xwHelp: !!S.xwHelp, xwHelpLabel: S.xwHelp ? 'Hide' : 'What’s this?', xwExample: xwWeek(),
+      // "How the odds work" under the live week's matchup cards.
+      hasOddsHelp: wk == LW && !!LIVE, oddsHelp: !!S.oddsHelp, oddsHelpLabel: S.oddsHelp ? 'Hide' : 'How the odds work', oddsHow: () => this.setState({ oddsHelp: !this.state.oddsHelp }),
       powerRows, hasPower: powerRows.length > 0, powerCols, hasTri: !!triRank, triEditor, hasTriEditor: triEditor.show, triEditing: !!triEditor.open, triNotEditing: triEditor.show && !triEditor.open, triFlag: triRank ? '1' : '0', powerSub: `Through week ${NF}` + (triRank ? ' · TRIST = Tristan’s own rankings (▲ Tristan has them higher, ▼ lower)' : ''), sharePower: e => this.share('power', e), powerLabel: S.sharing == 'power' ? '…' : 'Image',
       linkPower: e => this.shareLink(location.origin + '/#power', '9FEAMG · Power rankings', e), shotPower: `Power rankings · through week ${NF}`,
       // Season charts: a link to the chart and an image of it.

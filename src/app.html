@@ -745,6 +745,14 @@ button{font-family:inherit;color:inherit}
         </div>
       </sc-for>
     </div>
+    <!-- How the odds work (Matt, Oct 29, 2026): the live week's Odds and Booth chips, explained. -->
+    <sc-if value="{{ hasOddsHelp }}" hint-placeholder-val="{{ false }}"><div class="no-shot" style="padding:6px 2px 0;font-size:12.5px;color:var(--muted)">
+      <button sc-camel-on-click="{{ oddsHow }}" aria-expanded="{{ oddsHelp }}" style="min-height:32px;padding:0;border:0;background:transparent;font:inherit;color:var(--accentInk);text-decoration:underline;cursor:pointer">{{ oddsHelpLabel }}</button>
+      <sc-if value="{{ oddsHelp }}" hint-placeholder-val="{{ false }}"><div style="margin-top:4px;padding:10px 12px;border-radius:10px;background:var(--surface2);font-size:13px;line-height:1.45;color:var(--ink);text-wrap:pretty">
+        <p style="margin:0 0 8px"><b>Odds</b> are each side’s chance to win right now. They start from Yahoo’s and ESPN’s projections averaged, then adjust: a Q starter counts at 85% of his projection, a D at 35%, and an empty slot or a starter on bye counts as the best bench player who could fill it, since managers set their lineups. How much weekly scores swing in this league sets how sure the odds are, and they firm up as games finish. A 10-point projected edge before kickoff is about 60%.</p>
+        <p style="margin:0"><b>Booth</b> is the Booth’s pick, with the odds when it was made, before Thursday’s kickoff. It doesn’t change after that. After the week it shows ✓ or ✗, and the season record is under the Booth.</p>
+      </div></sc-if>
+    </div></sc-if>
   </div>
 </div>
 
