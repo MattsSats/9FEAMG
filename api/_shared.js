@@ -410,6 +410,22 @@ export function mergeBox(box, Y) {
   for (const [w, Wk] of Object.entries(Y?.weeks || {})) if (Wk.status == 'postevent' && Wk.box && !box?.weeks?.[w]) { box ||= { weeks: {} }; box.weeks ||= {}; box.weeks[w] = Wk.box; }
   return box;
 }
+// Yahoo's live box scores (/api/league, /api/live) on top of the rosters file: when Yahoo was read after
+// the rosters file, each team's starters, bench and IR follow Yahoo's lineup (Oct 29, 2026: Tristan set
+// eight empty slots after the 6:11 PM browser pull, and the odds counted those slots as empty and filled
+// at once). Players keep the file's projection, ESPN number and injury tag; anyone new to the team comes
+// in without them. A team Yahoo didn't send stays as the file has it.
+const BOX_SLOT = { 'W/R/T': 'WRT', BN: null, IR: null };
+export function liveRosters(R, Y) {
+  const Wk = Y?.weeks?.[R?.week];
+  if (!Wk?.box || Wk.status == 'preevent' || !(Date.parse(Y.syncedAt) > Date.parse(R.asOf || 0))) return R;
+  return { ...R, asOf: Y.syncedAt, teams: R.teams.map(t => {
+    const B = Wk.box[t.name]; if (!B) return t;
+    const had = new Map(t.players.map(p => [nameKey(p.name), p]));
+    const put = (r, slot) => ({ ...(had.get(nameKey(r[1])) || { name: r[1], nfl: r[2] }), slot, pos: slot == 'starter' ? (BOX_SLOT[r[0]] || r[0]) : r[3] });
+    return { ...t, players: [...B.starters.filter(r => r[1]).map(r => put(r, 'starter')), ...B.bench.filter(r => r[1]).map(r => put(r, r[0] == 'IR' ? 'IR' : 'bench'))] };
+  }) };
+}
 // A player's fantasy points in a week: live points for the live week, else that week's box score.
 export function pointsOf(season, box, name, w) {
   if (w == season.live?.week) return season.live?.playerPoints?.[name] ?? null;

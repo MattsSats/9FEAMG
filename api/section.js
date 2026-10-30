@@ -6,10 +6,10 @@
 // Numbers come from the live data/season.js and box scores, so the image is always current.
 import { ImageResponse } from '@vercel/og';
 import { loadSeason, escapeHtml, hash, anchorFor, describe } from './_parlays.js';
-import { readJson } from './_yahoo.js';
+import { readJson, readData } from './_yahoo.js';
 import { seasonStats, loadBox, powerRanks } from './_stats.js';
 import { loadTx, wireOf } from './_wire.js';
-import { lineupIssues, playoffOdds, oddsPct, matchupOdds, pointSources } from './_shared.js';
+import { lineupIssues, playoffOdds, oddsPct, matchupOdds, pointSources, liveRosters } from './_shared.js';
 import { C, F, h, fonts, mgrColor } from './_ogkit.js';
 
 const BOTS = /bot|crawl|spider|facebookexternalhit|facebot|twitterbot|slackbot|discordbot|whatsapp|telegram|linkedin|embedly|skype|iframely|preview/i;
@@ -289,6 +289,7 @@ async function matchupRoute(url, request, m) {
     const season = await loadSeason(url.origin);
     let rosters = null;
     try { const r = await fetch(new URL('/uploads/9feamg-rosters.json', url.origin), { cache: 'no-store' }); rosters = r.ok ? await r.json() : null; } catch { /* no alerts then */ }
+    if (rosters) try { rosters = liveRosters(rosters, await readData()); } catch { /* the file's lineups then */ }
     M = matchupOf(season, seasonStats(season, null), wk, m[2], m[3], rosters);
   } catch { return fallback(); }
   if (!M) return isImg ? fallback() : Response.redirect(dest, 302);

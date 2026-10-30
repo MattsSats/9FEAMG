@@ -190,6 +190,8 @@ class Component extends DCLogic {
       .then(([rosters, draft, tx, box]) => {
         // Yahoo fills box-score weeks the uploads file doesn't have.
         box = mergeBox(box, window.YAHOO);
+        // And the live week's lineups, when Yahoo was read after the rosters file.
+        if (rosters) rosters = liveRosters(liveRosters(rosters, window.YAHOO), window.YAHOO_LIVE);
         setMaxPF(box); this.setState({ rosters, draft, tx, box, loaded: true }); });
     // Parlay requests for the live week (api/requests.js). The slider and the game box are read
     // with plain listeners; everything else on the form is a tap.
