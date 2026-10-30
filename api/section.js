@@ -9,7 +9,7 @@ import { loadSeason, escapeHtml, hash, anchorFor, describe } from './_parlays.js
 import { readJson, readData } from './_yahoo.js';
 import { seasonStats, loadBox, powerRanks } from './_stats.js';
 import { loadTx, wireOf } from './_wire.js';
-import { lineupIssues, playoffOdds, oddsPct, matchupOdds, pointSources, liveRosters } from './_shared.js';
+import { lineupIssues, playoffOdds, oddsPct, matchupOdds, pointSources, liveRosters, faabOf } from './_shared.js';
 import { C, F, h, fonts, mgrColor } from './_ogkit.js';
 
 const BOTS = /bot|crawl|spider|facebookexternalhit|facebot|twitterbot|slackbot|discordbot|whatsapp|telegram|linkedin|embedly|skype|iframely|preview/i;
@@ -382,7 +382,7 @@ function powerCard(season, st) {
   return frame(`SEASON · THROUGH WEEK ${st.NF}`, 'Power rankings', '50% all-play · 25% record · 25% recent', h('div', { flexDirection: 'column', marginTop: 14 }, ...now.map(line)));
 }
 
-function teamOf(season, st, slug, tx) {
+function teamOf(season, st, slug, tx, yahoo = null) {
   const mg = season.managers.find(x => slugOf(x.m) == slug); if (!mg) return null;
   const m = mg.m, rows = [...st.rows].sort((a, b) => b.w - a.w || b.pf - a.pf), r = st.rows.find(x => x.m == m);
   const rank = (key, desc = true) => [...st.rows].sort((a, b) => desc ? b[key] - a[key] : a[key] - b[key]).findIndex(x => x.m == m) + 1;
@@ -397,7 +397,7 @@ function teamOf(season, st, slug, tx) {
   const week = !o ? '' : `Week ${LW} vs ${o}: ` + (started ? `${f2(sc[m]?.[0])}–${f2(sc[o]?.[0])} now · ` : '') + `${f2(sc[m]?.[1])}–${f2(sc[o]?.[1])} projected`;
   // The bottom row: Max PF and points left on the bench (when every final week has a box score)
   // and FAAB left (when the transactions file loaded).
-  const spent = tx ? tx.filter(t => t.manager == m && t.action == 'add' && t.faab).reduce((a, t) => a + (parseInt(String(t.faab).replace('$', '')) || 0), 0) : null;
+  const spent = tx ? season.faabBudget - faabOf(season, tx, yahoo)[m].left : null;
   const benchOf = x => x.max - x.pf, benchRank = [...st.rows].sort((a, b) => benchOf(b) - benchOf(a)).findIndex(x => x.m == m) + 1;
   const extras = [
     ...(r.max != null ? [['MAX PF', r.max.toFixed(1), ordinal(rank('max')) + ' in league'], ['BENCH', benchOf(r).toFixed(1), benchRank == st.rows.length ? 'fewest left' : benchRank == 1 ? 'most left' : ordinal(benchRank) + ' most left']] : []),
@@ -505,7 +505,7 @@ async function sectionRoute(url, request, name) {
   }
   let season, st, data = null;
   try { season = await loadSeason(url.origin); st = seasonStats(season, null); } catch { return fallback(); }
-  if (kind == 'team') { const [box, tx] = await Promise.all([loadBox(url.origin).catch(() => null), loadTx(url.origin)]); data = teamOf(season, seasonStats(season, box), team[1], tx); }
+  if (kind == 'team') { const [box, tx, yahoo] = await Promise.all([loadBox(url.origin).catch(() => null), loadTx(url.origin), readData().catch(() => null)]); data = teamOf(season, seasonStats(season, box), team[1], tx, yahoo); }
   if (kind == 'week') data = weekOf(season, st, +wkm[1]);
   if (kind == 'booth') data = boothOf(season);
   if (kind == 'odds') data = oddsOf(season, st);

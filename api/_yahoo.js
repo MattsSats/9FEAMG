@@ -8,6 +8,8 @@ const AUTH_URL = 'https://api.login.yahoo.com/oauth2/request_auth';
 const TOKEN_URL = 'https://api.login.yahoo.com/oauth2/get_token';
 const API = 'https://fantasysports.yahooapis.com/fantasy/v2/';
 const AUTH_PATH = 'yahoo/auth.json', DATA_PATH = 'yahoo/league.json';
+// The last failed sync ({ at, error, from }), for /api/league?format=status.
+export const STATUS_PATH = 'yahoo/status.json';
 
 // Yahoo team id -> manager, as the league names them.
 export const TEAMS = { 1: 'Tristan', 2: 'Jerger', 3: 'Tony', 4: 'Kurt', 5: 'Colin', 6: 'Mr. G', 7: 'Andy', 8: 'Matt', 9: 'DLin', 10: 'Pablo' };
@@ -90,15 +92,27 @@ async function tokenRequest(params) {
 }
 export const exchangeCode = (code, origin) => tokenRequest({ grant_type: 'authorization_code', code, redirect_uri: redirectUri(origin) });
 
-// A working access token, refreshed (and saved) when it's within 5 minutes of expiring.
+// A working access token, refreshed (and saved) when it's within 5 minutes of expiring. The refresh
+// token itself doesn't expire; each refresh saves whatever refresh token Yahoo sends back, with
+// refreshedAt. Two functions can refresh at once (/api/live, /api/league's game-time sync, the cron):
+// the save only lands on the copy it read, so a newer token another one saved is never overwritten,
+// and a refresh that fails because the other one already swapped the token reads it and uses theirs.
+const fresh = a => a?.access_token && a.expires_at > Date.now() + 300000;
 export async function accessToken(origin) {
-  const auth = await readAuth();
+  let auth = await readAuth();
   if (!auth?.refresh_token) throw new Error('Not connected to Yahoo yet. Open /api/yahoo/login and sign in first.');
-  if (auth.access_token && auth.expires_at > Date.now() + 300000) return auth;
-  const t = await tokenRequest({ grant_type: 'refresh_token', refresh_token: auth.refresh_token, redirect_uri: redirectUri(origin) });
-  const next = { ...auth, ...t, refresh_token: t.refresh_token || auth.refresh_token };
-  await writeAuth(next);
-  return next;
+  if (fresh(auth)) return auth;
+  const refresh = a => tokenRequest({ grant_type: 'refresh_token', refresh_token: a.refresh_token, redirect_uri: redirectUri(origin) });
+  let t;
+  try { t = await refresh(auth); }
+  catch (e) {
+    const again = await readAuth();
+    if (fresh(again)) return again;
+    if (!again?.refresh_token || again.refresh_token == auth.refresh_token) throw e;
+    auth = again; t = await refresh(auth);
+  }
+  const next = { ...auth, ...t, refresh_token: t.refresh_token || auth.refresh_token, refreshedAt: new Date().toISOString() };
+  return updateJson(AUTH_PATH, cur => cur && cur.expires_at > next.expires_at ? cur : { ...cur, ...next });
 }
 
 export async function yahoo(path, token) {

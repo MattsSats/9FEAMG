@@ -3,10 +3,15 @@
 // the admin key (POSTed, never in the URL), or send Authorization: Bearer <ADMIN_KEY>.
 // Saved shape:
 // { syncedAt, league, leagueKey, currentWeek, weeks: { [w]: { status, matchups: [[a, b]],
-//   teams: { [m]: { pts, proj } }, box?: { [m]: { total, starters, bench } } } } }
-// Box rows match uploads/9feamg-boxscores.json: [slot, name, nfl, pos, pts, proj]; proj is null
-// because Yahoo's API doesn't give per-player projections.
-import { accessToken, writeAuth, readData, writeData, yahoo, merge, list, num, teamManager, isAdmin, isCron, keyForm, TEAMS } from '../_yahoo.js';
+//   teams: { [m]: { pts, proj } }, box?: { [m]: { total, starters, bench } } } },
+//   managers: { [m]: { team, faab, moves, trades } }, tx: [transactions, newest first] }
+// Box rows match uploads/9feamg-boxscores.json: [slot, name, nfl, pos, pts, proj, inj]; proj is null
+// because Yahoo's API doesn't give per-player projections, and inj is the site's injury tag (Q, D, O,
+// IR, PUP) or null. The current week's box is read even before kickoff, for lineups and injury tags.
+// tx rows are in uploads/9feamg-transactions.json's format plus Yahoo's key and timestamp, and
+// managers holds each team's FAAB left and moves from Yahoo (Matt, Oct 30, 2026: injuries, moves and
+// FAAB come from the API, so nothing needs the Yahoo website sign-in).
+import { accessToken, writeAuth, readData, writeData, writeJson, yahoo, merge, list, num, teamManager, isAdmin, isCron, keyForm, TEAMS, STATUS_PATH } from '../_yahoo.js';
 
 export async function findLeague(token, auth) {
   if (auth.league_key) return auth.league_key;
@@ -46,6 +51,10 @@ export async function scoreboard(token, key, w) {
   return { out, league: lg };
 }
 
+// Yahoo's player status as the site's injury tag; anything else (NA, SUSP, ...) isn't one the site shows.
+export const injTag = s => { const t = String(s || '').toUpperCase(); return ['Q', 'D', 'O'].includes(t) ? t : /^IR/.test(t) ? 'IR' : /^PUP/.test(t) ? 'PUP' : null; };
+const nameOf = x => { const pos = (x.primary_position || x.display_position || '').split(',')[0]; return { pos, name: pos == 'DEF' ? (x.name?.last || x.name?.full) : x.name?.full }; };
+
 export async function boxScores(token, key, w, teams) {
   const box = {};
   await Promise.all(Object.keys(teams).map(async m => {
@@ -53,26 +62,51 @@ export async function boxScores(token, key, w, teams) {
     const fc = await yahoo(`team/${key}.t.${id}/roster;week=${w}/players/stats;type=week;week=${w}`, token);
     const roster = merge(fc.team).roster;
     const rows = list(roster?.['0']?.players, 'player').map(p => {
-      const x = merge(p), sel = merge(x.selected_position).position || 'BN', pos = x.primary_position || x.display_position || '';
-      const name = pos == 'DEF' ? (x.name?.last || x.name?.full) : x.name?.full;
-      return [sel, name, x.editorial_team_abbr || '', pos, num(x.player_points?.total), null];
+      const x = merge(p), sel = merge(x.selected_position).position || 'BN', { pos, name } = nameOf(x);
+      return [sel, name, x.editorial_team_abbr || '', pos, num(x.player_points?.total), null, injTag(x.status)];
     });
     box[m] = { total: teams[m].pts, starters: rows.filter(r => r[0] != 'BN' && r[0] != 'IR'), bench: rows.filter(r => r[0] == 'BN' || r[0] == 'IR') };
   }));
   return box;
 }
 
-// Temporary (Oct 28, 2026): Yahoo's roster calls give no per-player projections (the projection
-// variants all return 400), so this only checks injury status: every rostered player Yahoo tags, with
-// the status fields as Yahoo sends them. Saved as `probe`.
-async function probe(token, key, w) {
+// Each team's name, FAAB left and moves (adds), as Yahoo's standings show them.
+export async function managersOf(token, key) {
   const out = {};
-  for (const id of Object.keys(TEAMS)) {
-    const fc = await yahoo(`team/${key}.t.${id}/roster;week=${w}/players`, token);
-    for (const p of list(merge(fc.team).roster?.['0']?.players, 'player').map(x => merge(x)))
-      if (p.status || p.status_full || p.injury_note) out[p.name?.full] = { team: TEAMS[id], status: p.status, status_full: p.status_full, injury_note: p.injury_note, on_disabled_list: p.on_disabled_list };
+  for (const t of list(merge((await yahoo(`league/${key}/teams`, token)).league).teams, 'team').map(t => merge(t))) {
+    const m = teamManager(t); if (m) out[m] = { team: t.name, faab: t.faab_balance == null ? null : +t.faab_balance, moves: +t.number_of_moves || 0, trades: +t.number_of_trades || 0 };
   }
   return out;
+}
+// "Oct 29, 9:08 am" in Central time, the transactions file's form.
+const CT = new Intl.DateTimeFormat('en-US', { timeZone: 'America/Chicago', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true });
+export const whenOf = ts => CT.format(new Date(ts * 1000)).replace(/\s+/g, ' ').replace(/ (AM|PM)$/, (_, x) => ' ' + x.toLowerCase());
+// The league's completed adds, drops and trades, newest first, one row per player moved, in the
+// transactions file's form: { when, yahooTeam, manager, action, player, nfl, pos, faab, via, notes,
+// key, ts }. Pages of 25 from the newest; it stops at the first move it already has in prev.
+export async function transactions(token, key, mgrs, prev = []) {
+  const have = new Set(prev.map(t => t.key)), rows = [];
+  const team = k => teamManager({ team_key: k });
+  for (let start = 0, done = false; !done && start < 2000; start += 25) {
+    const page = list(merge((await yahoo(`league/${key}/transactions;types=add,drop,trade;start=${start};count=25`, token)).league).transactions, 'transaction');
+    for (const tr of page) {
+      const meta = merge(tr[0]);
+      if (have.has(meta.transaction_key)) { done = true; break; }
+      if (meta.status != 'successful') continue;
+      for (const p of list(merge(tr[1]).players, 'player')) {
+        const x = merge(p[0]), d = merge(p[1]?.transaction_data), { pos, name } = nameOf(x);
+        let r;
+        if (d.type == 'add') r = { manager: team(d.destination_team_key), action: 'add', via: d.source_type == 'waivers' ? 'Waivers' : 'Free Agency', faab: d.source_type == 'waivers' && meta.faab_bid != null ? '$' + meta.faab_bid : null };
+        else if (d.type == 'drop') r = { manager: team(d.source_team_key), action: 'drop', via: d.destination_type == 'freeagents' ? 'Free Agency' : 'Waivers', faab: null };
+        else if (d.type == 'trade') r = { manager: team(d.destination_team_key), action: 'trade', via: 'trade from ' + (d.source_team_name || mgrs[team(d.source_team_key)]?.team || ''), faab: null };
+        if (!r?.manager) continue;
+        rows.push({ when: whenOf(+meta.timestamp), yahooTeam: mgrs[r.manager]?.team || '', manager: r.manager, action: r.action, player: name, nfl: x.editorial_team_abbr || '', pos, faab: r.faab, via: r.via, notes: 'Yahoo API', key: meta.transaction_key, ts: +meta.timestamp });
+      }
+    }
+    if (page.length < 25) done = true;
+  }
+  const fresh = new Set(rows.map(t => t.key));
+  return [...rows, ...prev.filter(t => !fresh.has(t.key))];
 }
 
 export async function sync(origin) {
@@ -91,13 +125,17 @@ export async function sync(origin) {
   }
   for (const [w, wk] of Object.entries(weeks)) {
     const old = prev.leagueKey == key && prev.weeks?.[w];
-    if (wk.status == 'preevent') continue;
+    if (wk.status == 'preevent' && +w != current) continue;
     wk.box = old?.box && old.status == 'postevent' && wk === old ? old.box : await boxScores(token, key, w, wk.teams);
   }
-  const data = { syncedAt: new Date().toISOString(), league: meta.name, leagueKey: key, season: meta.season, currentWeek: current, weeks };
-  data.probe = await probe(token, key, current).catch(e => ({ error: String(e.message) }));
+  // Moves and FAAB never cost the scores: if Yahoo refuses them, the last good copy stays and the
+  // error is saved with it.
+  let managers = prev.managers || null, tx = prev.leagueKey == key ? prev.tx || [] : [], txError = null;
+  try { managers = await managersOf(token, key); tx = await transactions(token, key, managers, tx); }
+  catch (e) { txError = String(e.message || e); }
+  const data = { syncedAt: new Date().toISOString(), league: meta.name, leagueKey: key, season: meta.season, currentWeek: current, weeks, managers, tx, ...(txError ? { txError } : {}) };
   await writeData(data);
-  return { league: meta.name, currentWeek: current, weeks: Object.keys(weeks).length, boxWeeks: Object.values(weeks).filter(w => w.box).length };
+  return { league: meta.name, currentWeek: current, weeks: Object.keys(weeks).length, boxWeeks: Object.values(weeks).filter(w => w.box).length, tx: tx.length };
 }
 
 export default {
@@ -112,6 +150,8 @@ export default {
       const r = await sync(url.origin);
       return Response.json({ ok: true, ...r }, { headers: { 'cache-control': 'no-store' } });
     } catch (e) {
+      // Kept for /api/league?format=status (the daily health check), so a failing token gets noticed.
+      await writeJson(STATUS_PATH, { at: new Date().toISOString(), error: String(e.message || e), from: isCron(request) ? 'cron' : 'admin' }).catch(() => {});
       return Response.json({ ok: false, error: e.message }, { status: 502, headers: { 'cache-control': 'no-store' } });
     }
   }

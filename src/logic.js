@@ -192,6 +192,8 @@ class Component extends DCLogic {
         box = mergeBox(box, window.YAHOO);
         // And the live week's lineups, when Yahoo was read after the rosters file.
         if (rosters) rosters = liveRosters(liveRosters(rosters, window.YAHOO), window.YAHOO_LIVE);
+        // And the moves Yahoo has that the file doesn't yet.
+        if (tx) tx = mergeTx(tx, window.YAHOO);
         setMaxPF(box); this.setState({ rosters, draft, tx, box, loaded: true }); });
     // Parlay requests for the live week (api/requests.js). The slider and the game box are read
     // with plain listeners; everything else on the form is a tap.
@@ -1112,9 +1114,9 @@ class Component extends DCLogic {
 
     // Transactions
     const tx = S.tx || [], txOk = !!S.tx;
-    const adds = {}, spent = {}; MGR.forEach(m => { adds[m] = 0; spent[m] = 0; });
-    tx.forEach(t => { if (t.action == 'add' && t.manager in adds) { adds[t.manager]++; if (t.faab) spent[t.manager] += parseInt(String(t.faab).replace('$', '')) || 0; } });
-    const budget = D.faabBudget;
+    // FAAB left and adds: Yahoo's own numbers when /api/league has them (api/_shared.js faabOf).
+    const budget = D.faabBudget, FA = faabOf(D, tx, window.YAHOO), adds = {}, spent = {};
+    MGR.forEach(m => { adds[m] = FA[m].adds; spent[m] = budget - FA[m].left; });
     // Every draft pick, add and trade with the points it scored for that team in the final weeks
     // (api/_shared.js acquisitionsOf). Wire = adds; the tag says how the player arrived.
     const ACQ = S.loaded && S.box && S.draft ? acquisitionsOf(D, S.box, S.draft, tx) : [];

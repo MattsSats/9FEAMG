@@ -410,21 +410,47 @@ export function mergeBox(box, Y) {
   for (const [w, Wk] of Object.entries(Y?.weeks || {})) if (Wk.status == 'postevent' && Wk.box && !box?.weeks?.[w]) { box ||= { weeks: {} }; box.weeks ||= {}; box.weeks[w] = Wk.box; }
   return box;
 }
-// Yahoo's live box scores (/api/league, /api/live) on top of the rosters file: when Yahoo was read after
-// the rosters file, each team's starters, bench and IR follow Yahoo's lineup (Oct 29, 2026: Tristan set
-// eight empty slots after the 6:11 PM browser pull, and the odds counted those slots as empty and filled
-// at once). Players keep the file's projection, ESPN number and injury tag; anyone new to the team comes
-// in without them. A team Yahoo didn't send stays as the file has it.
+// Yahoo's box scores for the current week (/api/league, /api/live) on top of the rosters file: when
+// Yahoo was read after the rosters file, each team's starters, bench and IR follow Yahoo's lineup (Oct 29,
+// 2026: Tristan set eight empty slots after the 6:11 PM browser pull, and the odds counted those slots as
+// empty and filled at once), and injury tags follow Yahoo's (box rows carry them since Oct 30, 2026).
+// Players keep the file's projection and ESPN number; anyone new to the team comes in without them. A
+// team Yahoo didn't send stays as the file has it.
 const BOX_SLOT = { 'W/R/T': 'WRT', BN: null, IR: null };
 export function liveRosters(R, Y) {
   const Wk = Y?.weeks?.[R?.week];
-  if (!Wk?.box || Wk.status == 'preevent' || !(Date.parse(Y.syncedAt) > Date.parse(R.asOf || 0))) return R;
+  if (!Wk?.box || +Y.currentWeek != +R.week || !(Date.parse(Y.syncedAt) > Date.parse(R.asOf || 0))) return R;
   return { ...R, asOf: Y.syncedAt, teams: R.teams.map(t => {
     const B = Wk.box[t.name]; if (!B) return t;
     const had = new Map(t.players.map(p => [nameKey(p.name), p]));
-    const put = (r, slot) => ({ ...(had.get(nameKey(r[1])) || { name: r[1], nfl: r[2] }), slot, pos: slot == 'starter' ? (BOX_SLOT[r[0]] || r[0]) : r[3] });
+    const put = (r, slot) => { const p = { ...(had.get(nameKey(r[1])) || { name: r[1], nfl: r[2] }), slot, pos: slot == 'starter' ? (BOX_SLOT[r[0]] || r[0]) : r[3] };
+      if (r.length > 6) { if (r[6]) p.inj = r[6]; else delete p.inj; }
+      return p; };
     return { ...t, players: [...B.starters.filter(r => r[1]).map(r => put(r, 'starter')), ...B.bench.filter(r => r[1]).map(r => put(r, r[0] == 'IR' ? 'IR' : 'bench'))] };
   }) };
+}
+// Yahoo's transactions (/api/league's tx, Oct 30, 2026) on top of uploads/9feamg-transactions.json:
+// every Yahoo move the file doesn't have yet, newest first, ahead of the file's. A file row (read from
+// Yahoo's website, so it has no Yahoo key) is the same move when the manager, action and player match
+// and its time is within 36 hours of Yahoo's, so a time zone slip can't count a move twice.
+export function mergeTx(tx, Y) {
+  if (!Y?.tx?.length) return tx;
+  const year = +Y.season || new Date().getFullYear(), left = [...(tx || [])].map(t => ({ t, k: [t.manager, t.action, nameKey(t.player)].join('|'), at: parseCT(t.when, year).getTime() }));
+  const add = Y.tx.filter(y => {
+    const k = [y.manager, y.action, nameKey(y.player)].join('|'), i = left.findIndex(f => f.k == k && Math.abs(f.at - y.ts * 1000) < 36 * 3600e3);
+    if (i < 0) return true;
+    left.splice(i, 1); return false;
+  });
+  return add.length ? [...add, ...(tx || [])] : tx;
+}
+// FAAB left and adds per manager: Yahoo's own numbers when /api/league has them, else counted from
+// the transactions. Returns { [m]: { left, adds } }.
+export function faabOf(season, tx, Y) {
+  const out = {}, budget = season.faabBudget ?? 100;
+  for (const { m } of season.managers) out[m] = { left: budget, adds: 0 };
+  for (const t of tx || []) if (t.action == 'add' && out[t.manager]) { out[t.manager].adds++; out[t.manager].left -= parseInt(String(t.faab || '').replace(/\D/g, '')) || 0; }
+  for (const [m, y] of Object.entries(Y?.managers || {})) if (out[m] && y.faab != null) out[m] = { left: y.faab, adds: y.moves };
+  return out;
 }
 // A player's fantasy points in a week: live points for the live week, else that week's box score.
 export function pointsOf(season, box, name, w) {

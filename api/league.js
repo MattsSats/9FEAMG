@@ -4,8 +4,11 @@
 // sync in the background when the saved one is more than 10 minutes old (at most one every 10
 // minutes, and only once Yahoo is connected). The page that asked gets the saved copy right away;
 // the next load after the sync finishes gets the new numbers.
+// ?format=status is the health check (no tokens in it): when Yahoo was last read, when the token last
+// renewed, how many moves are on file, and the last error from a sync, a game-time refresh or the
+// moves/FAAB read. healthy is false once the last good read is more than 26 hours old.
 import { waitUntil } from '@vercel/functions';
-import { readData, readJson, writeJson } from './_yahoo.js';
+import { readData, readJson, writeJson, readAuth, STATUS_PATH } from './_yahoo.js';
 import { sync } from './yahoo/sync.js';
 import { loadSeasonFile } from './_parlays.js';
 import { isGameTime } from './_shared.js';
@@ -26,7 +29,19 @@ async function refresh(origin) {
   const mark = await readJson(MARK).catch(() => null);
   if (mark?.at && Date.now() - mark.at < FRESH) return;
   await writeJson(MARK, { at: Date.now() });
-  try { await sync(origin); } catch (e) { await writeJson(MARK, { at: Date.now(), error: String(e.message || e) }).catch(() => {}); }
+  try { await sync(origin); } catch (e) {
+    const error = String(e.message || e);
+    await writeJson(MARK, { at: Date.now(), error }).catch(() => {});
+    await writeJson(STATUS_PATH, { at: new Date().toISOString(), error, from: 'game-time refresh' }).catch(() => {});
+  }
+}
+
+async function status(data) {
+  const [auth, last] = await Promise.all([readAuth().catch(() => null), readJson(STATUS_PATH).catch(() => null)]);
+  const ok = !!data?.syncedAt && Date.now() - Date.parse(data.syncedAt) < 26 * 3600e3;
+  return { healthy: ok, syncedAt: data?.syncedAt || null, currentWeek: data?.currentWeek ?? null, connected: !!auth?.refresh_token,
+    tokenRefreshedAt: auth?.refreshedAt || null, moves: data?.tx?.length ?? null, faab: !!data?.managers, txError: data?.txError || null,
+    lastError: last && (!data?.syncedAt || Date.parse(last.at) > Date.parse(data.syncedAt)) ? last : null };
 }
 
 export default {
@@ -35,6 +50,7 @@ export default {
     let data = null;
     try { data = await readData(); } catch { /* not connected yet */ }
     if (data?.syncedAt && Date.now() - Date.parse(data.syncedAt) > FRESH) waitUntil(refresh(url.origin).catch(() => {}));
+    if (url.searchParams.get('format') == 'status') return Response.json(await status(data), { headers: { 'cache-control': 'no-store' } });
     const body = js ? `window.YAHOO=${JSON.stringify(data).replace(/</g, '\\u003c')};` : JSON.stringify(data);
     return new Response(body, {
       headers: {
