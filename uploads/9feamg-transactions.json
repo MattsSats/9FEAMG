@@ -1,5 +1,53 @@
 [
   {
+    "when": "Oct 30, 3:53 pm",
+    "yahooTeam": "11 Shots In",
+    "manager": "Tony",
+    "action": "add",
+    "player": "Raiders",
+    "nfl": "LV",
+    "pos": "DEF",
+    "faab": null,
+    "via": "Free Agency",
+    "notes": "Yahoo API Fri, Oct 30, 5:20 PM CT"
+  },
+  {
+    "when": "Oct 30, 3:09 am",
+    "yahooTeam": "C LAMBS BIGGEST HATER",
+    "manager": "Colin",
+    "action": "add",
+    "player": "Commanders",
+    "nfl": "Was",
+    "pos": "DEF",
+    "faab": null,
+    "via": "Free Agency",
+    "notes": "Yahoo API Fri, Oct 30, 5:20 PM CT"
+  },
+  {
+    "when": "Oct 30, 3:09 am",
+    "yahooTeam": "C LAMBS BIGGEST HATER",
+    "manager": "Colin",
+    "action": "drop",
+    "player": "Browns",
+    "nfl": "Cle",
+    "pos": "DEF",
+    "faab": null,
+    "via": "Waivers",
+    "notes": "Yahoo API Fri, Oct 30, 5:20 PM CT"
+  },
+  {
+    "when": "Oct 30, 2:57 am",
+    "yahooTeam": "C LAMBS BIGGEST HATER",
+    "manager": "Colin",
+    "action": "add",
+    "player": "Browns",
+    "nfl": "Cle",
+    "pos": "DEF",
+    "faab": "$0",
+    "via": "Waivers",
+    "notes": "Yahoo API Fri, Oct 30, 5:20 PM CT"
+  },
+  {
     "when": "Oct 29, 9:08 am",
     "yahooTeam": "Squirtle Squad",
     "manager": "Tristan",
