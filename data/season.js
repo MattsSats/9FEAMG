@@ -69,7 +69,7 @@ window.SEASON = {
   // The week in progress. Set to null between weeks.
   live: {
     week: 8,
-    status: 'Kicks off Thursday · CAR @ GB, 7:15 PM',
+    status: 'Live · Thursday final (GB 27, CAR 19) · Sunday next',
     // When these numbers were pulled from Yahoo (Central); shows as "Scores as of Thu 10:19 PM".
     asOf: '2026-10-29T18:11:00-05:00',
     // [current points, projected final]
@@ -580,10 +580,10 @@ window.SEASON = {
         // Leg prices and vs: DraftKings via The Odds API, Thu Oct 29, 6:33 PM CT (the slip showed Watson at -114).
         odds: '+525',
         legs: [
-          { text: 'Packers moneyline vs Panthers', type: 'ml', team: 'GB', teams: ['GB', 'Car'], game: 'Thu 7:15 PM · CAR @ GB', odds: '-185', vs: '+154', status: 'open' },
-          { text: 'Jordan Love over 264.5 passing yards', player: 'Jordan Love', type: 'over', stat: 'Pass Yds', line: 264.5, game: 'Thu 7:15 PM · CAR @ GB', odds: '-111', vs: '-113', status: 'open' },
-          { text: 'Josh Jacobs over 61.5 rushing yards', player: 'Josh Jacobs', type: 'over', stat: 'Rush Yds', line: 61.5, game: 'Thu 7:15 PM · CAR @ GB', odds: '-111', vs: '-113', status: 'open' },
-          { text: 'Christian Watson over 71.5 receiving yards', player: 'Christian Watson', type: 'over', stat: 'Rec Yds', line: 71.5, game: 'Thu 7:15 PM · CAR @ GB', odds: '-113', vs: '-111', status: 'open' }
+          { text: 'Packers moneyline vs Panthers', type: 'ml', team: 'GB', teams: ['GB', 'Car'], game: 'Thu 7:15 PM · CAR @ GB', odds: '-185', vs: '+154', result: 'Final W 27–19', status: 'hit' },
+          { text: 'Jordan Love over 264.5 passing yards', player: 'Jordan Love', type: 'over', stat: 'Pass Yds', line: 264.5, game: 'Thu 7:15 PM · CAR @ GB', odds: '-111', vs: '-113', result: '288 pass yds', status: 'hit' },
+          { text: 'Josh Jacobs over 61.5 rushing yards', player: 'Josh Jacobs', type: 'over', stat: 'Rush Yds', line: 61.5, game: 'Thu 7:15 PM · CAR @ GB', odds: '-111', vs: '-113', result: '21-39 rush yds, 1 TD', status: 'miss' },
+          { text: 'Christian Watson over 71.5 receiving yards', player: 'Christian Watson', type: 'over', stat: 'Rec Yds', line: 71.5, game: 'Thu 7:15 PM · CAR @ GB', odds: '-113', vs: '-111', result: '8-113 rec yds', status: 'hit' }
         ]
       },
       {
@@ -595,10 +595,10 @@ window.SEASON = {
         // Leg prices and vs: DraftKings via The Odds API, Thu Oct 29, 6:33 PM CT.
         odds: '+750',
         legs: [
-          { text: 'Panthers moneyline at Packers', type: 'ml', team: 'Car', teams: ['Car', 'GB'], game: 'Thu 7:15 PM · CAR @ GB', odds: '+154', vs: '-185', status: 'open' },
-          { text: 'Bryce Young over 254.5 passing yards', player: 'Bryce Young', type: 'over', stat: 'Pass Yds', line: 254.5, game: 'Thu 7:15 PM · CAR @ GB', odds: '-111', vs: '-113', status: 'open' },
-          { text: 'Tetairoa McMillan over 72.5 receiving yards', player: 'Tetairoa McMillan', type: 'over', stat: 'Rec Yds', line: 72.5, game: 'Thu 7:15 PM · CAR @ GB', odds: '-110', vs: '-114', status: 'open' },
-          { text: 'Chuba Hubbard over 67.5 rushing yards', player: 'Chuba Hubbard', type: 'over', stat: 'Rush Yds', line: 67.5, game: 'Thu 7:15 PM · CAR @ GB', odds: '-113', vs: '-111', status: 'open' }
+          { text: 'Panthers moneyline at Packers', type: 'ml', team: 'Car', teams: ['Car', 'GB'], game: 'Thu 7:15 PM · CAR @ GB', odds: '+154', vs: '-185', result: 'Final L 19–27', status: 'miss' },
+          { text: 'Bryce Young over 254.5 passing yards', player: 'Bryce Young', type: 'over', stat: 'Pass Yds', line: 254.5, game: 'Thu 7:15 PM · CAR @ GB', odds: '-111', vs: '-113', result: '209 pass yds', status: 'miss' },
+          { text: 'Tetairoa McMillan over 72.5 receiving yards', player: 'Tetairoa McMillan', type: 'over', stat: 'Rec Yds', line: 72.5, game: 'Thu 7:15 PM · CAR @ GB', odds: '-110', vs: '-114', result: '6-58 rec yds', status: 'miss' },
+          { text: 'Chuba Hubbard over 67.5 rushing yards', player: 'Chuba Hubbard', type: 'over', stat: 'Rush Yds', line: 67.5, game: 'Thu 7:15 PM · CAR @ GB', odds: '-113', vs: '-111', result: '22-81 rush yds, 1 TD', status: 'hit' }
         ]
       }
     ]
