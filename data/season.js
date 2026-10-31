@@ -71,22 +71,26 @@ window.SEASON = {
     week: 8,
     status: 'Live · Thursday final (GB 27, CAR 19) · Sunday next',
     // When these numbers were pulled from Yahoo (Central); shows as "Scores as of Thu 10:19 PM".
-    asOf: '2026-10-29T18:11:00-05:00',
+    asOf: '2026-10-31T10:46:00-05:00',
     // [current points, projected final]
-    // Yahoo as of Thu Oct 29, 6:11 PM CT (Week 8 matchup pages).
+    // Yahoo as of Sat Oct 31, 10:46 AM CT (Week 8 matchup pages).
     scores: {
-      Matt: [0.00, 116.98], Colin: [0.00, 106.50],
-      Tristan: [0.00, 14.93], 'Mr. G': [0.00, 110.46],
-      Jerger: [0.00, 105.85], Tony: [0.00, 119.96],
-      Kurt: [0.00, 115.34], Pablo: [0.00, 107.37],
-      Andy: [0.00, 113.08], DLin: [0.00, 99.18]
+      Matt: [34.70, 123.20], Colin: [0.00, 113.55],
+      Tristan: [20.20, 119.01], 'Mr. G': [0.00, 111.18],
+      Jerger: [34.26, 100.76], Tony: [17.40, 124.00],
+      Kurt: [0.00, 106.38], Pablo: [19.80, 110.03],
+      Andy: [0.00, 113.78], DLin: [6.00, 94.90]
     },
-    yahooWin: { Tony: 62, Tristan: 1, Andy: 62, Matt: 59, Kurt: 57, Jerger: 38, 'Mr. G': 99, Colin: 41, DLin: 38, Pablo: 43 },
+    yahooWin: { Tony: 71, Tristan: 57, Andy: 67, Matt: 59, Kurt: 47, Jerger: 29, 'Mr. G': 43, Colin: 41, DLin: 33, Pablo: 53 },
     // Points so far for every player whose game has started (starters and bench).
     // Players listed in inProgress are still playing; the rest are final.
-    playerPoints: {},
+    playerPoints: {
+      'Matthew Golden': 17.40, 'Josh Jacobs': 20.20, 'Chuba Hubbard': 21.40, 'Christian Watson': 13.30,
+      'Jordan Love': 22.52, 'Bryce Young': 11.36, 'Jalen Coker': 8.60, 'Tucker Kraft': 14.30,
+      'Panthers': 6.00, 'Tetairoa McMillan': 8.80, 'Packers': 11.00
+    },
     inProgress: [],
-    sheetNote: 'Week 8 projections as of Thu 6:11 PM CT. Each player is tagged Final, Live or proj.'
+    sheetNote: 'Yahoo as of Sat 10:46 AM CT. Orange = points so far; the rest are projections.'
   },
 
   // The NFL week: every game ('Sun 12:00 PM · CHI @ GB', kickoff Central, same form as parlay legs)
