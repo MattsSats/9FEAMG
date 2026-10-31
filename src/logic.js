@@ -185,6 +185,8 @@ class Component extends DCLogic {
       if ((e.key == 'Enter' || e.key == ' ') && el?.getAttribute?.('role') == 'button' && el.tagName != 'BUTTON') { e.preventDefault(); el.click(); }
     });
     this.applyTheme();
+    // No pick saved: follow the phone when it switches between light and dark (at sunset, say).
+    try { window.matchMedia?.('(prefers-color-scheme: dark)').addEventListener('change', e => this.setState({ sysDark: e.matches })); } catch {}
     Promise.all(['uploads/9feamg-rosters.json', 'uploads/9feamg-draft-rosters.json', 'uploads/9feamg-transactions.json', 'uploads/9feamg-boxscores.json']
       .map(u => fetch(u, { cache: 'no-cache' }).then(r => r.ok ? r.json() : null).catch(() => null)))
       .then(([rosters, draft, tx, box]) => {
@@ -533,10 +535,12 @@ class Component extends DCLogic {
     const g = document.querySelector('[data-req-game]');
     if (g && g.value != this.state.req.game) g.value = this.state.req.game;
   }
-  // Light by default; a viewer's own pick is remembered on their device.
+  // A viewer's own pick, remembered on their device; without one, the phone's light or dark setting
+  // (Matt, Oct 31, 2026; it used to start light everywhere).
   theme() {
     if (this.state.theme) return this.state.theme;
     try { const t = localStorage.getItem('9feamg-theme'); if (t == 'light' || t == 'dark') return t; } catch {}
+    try { if (window.matchMedia?.('(prefers-color-scheme: dark)').matches) return 'dark'; } catch {}
     return this.props.theme ?? 'light';
   }
   applyTheme() {
@@ -615,10 +619,11 @@ class Component extends DCLogic {
     const pa = live ? winOf(this.state.rosters)[a + '|' + b] : undefined, fav = pa == null ? null : pa >= 0.5 ? a : b, fp = pa == null ? 0 : Math.max(pa, 1 - pa);
     const pk = pickOf(wk, pair), done = wk <= NF, winner = done ? (A.raw > B.raw ? a : B.raw > A.raw ? b : null) : null;
     // Live: the gray chip is the site's own win odds ("Odds: Matt 59% to win": Yahoo and ESPN projections,
-    // injury tags, lineups counted as set; Matt, Oct 29, 2026) and the Booth chip keeps the % its pick was
-    // made at ("Booth: Matt · 61%"), so the two show whether the call is aging well.
+    // injury tags, lineups counted as set; Matt, Oct 29, 2026) and the Booth chip names the pick alone
+    // ("Booth pick: Matt"): a second % beside the odds read as a disagreement (Matt, Oct 31, 2026). The %
+    // it was made at stays on the Booth line's tag.
     return { a: A, b: B, live, alerts: alerts.map(t => ({ t })), hasAlerts: alerts.length > 0,
-      hasPick: !!pk, pickText: pk ? `Booth: ${pk[0]}` + (done ? (winner == pk[0] ? ' ✓' : ' ✗') : pk[1] != null ? ` · ${pk[1]}%` : '') : '',
+      hasPick: !!pk, pickText: pk ? `Booth pick: ${pk[0]}` + (done ? (winner == pk[0] ? ' ✓' : ' ✗') : '') : '',
       pickColor: !pk || !done ? 'var(--accentInk)' : winner == pk[0] ? 'var(--pos)' : 'var(--neg)',
       // Column headers: Now (live only) and Proj, or Final once the week is done.
       colNow: live ? 'Now' : '', colScore: live ? 'Proj' : 'Final',
@@ -781,7 +786,7 @@ class Component extends DCLogic {
       const fav = pa == null ? null : pa >= 0.5 ? a : b, fp = pa == null ? null : Math.round(Math.max(pa, 1 - pa) * 100);
       return { a, b, recA: recOf(a), recB: recOf(b), stA: streakOf(a), stB: streakOf(b), proj: pra && prb ? `${f2(pra)}–${f2(prb)}` : '', fav, fp, booth: bp ? bp[0] : null };
     });
-    xEditRows.forEach((r, i) => { const f = xFacts[i]; r.facts = [`${f.a} ${f.recA} (${f.stA}) · ${f.b} ${f.recB} (${f.stB})`, f.proj ? `proj ${f.proj}` : '', f.fav ? `${f.fav} ${f.fp}% to win` : '', f.booth ? `Booth: ${f.booth}` : ''].filter(Boolean).join(' · '); });
+    xEditRows.forEach((r, i) => { const f = xFacts[i]; r.facts = [`${f.a} ${f.recA} (${f.stA}) · ${f.b} ${f.recB} (${f.stB})`, f.proj ? `proj ${f.proj}` : '', f.fav ? `${f.fav} ${f.fp}% to win` : '', f.booth ? `Booth pick: ${f.booth}` : ''].filter(Boolean).join(' · '); });
     const xStarter = () => [`Week ${LW} preview`, '', ...xFacts.flatMap((f, i) => [`${f.a} (${f.recA}) vs ${f.b} (${f.recB})`, `\t•\t${[f.proj ? 'Projected ' + f.proj : '', f.fav ? f.fav + ' ' + f.fp + '% to win on 9feamg' : '', f.stA ? streakText(f.a, f.stA) + ', ' + streakText(f.b, f.stB) : ''].filter(Boolean).join('. ')}. Experts pick ${EP[LW]?.[i] || '___'}.`, ''])].join('\n');
     const xEditInfo = !xEdit ? null : { title: `Your Week ${LW} picks`, lock: xFirst ? `Locks at kickoff, ${kickLabel(xFirst)}` : '', last: lastLog('pick'), rows: xEditRows,
       copy: () => this.copyText(xStarter(), 'Preview starter copied. Paste it in the chat and write over it.') };
@@ -799,9 +804,11 @@ class Component extends DCLogic {
     const sentAt = iso => { const d = new Date(iso); return isNaN(d) ? '' : d.toLocaleString('en-US', { weekday: 'short', hour: 'numeric', minute: '2-digit', timeZone: 'America/Chicago' }).replace(',', ''); };
     const anchorOf = p => `w${LW}-` + String(p.id ?? p.title ?? p.owner).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
     const pickMgr = m => () => { try { localStorage.setItem('9feamg-req-mgr', m); } catch {} this.setState({ reqMgr: m, reqPicking: false, req: { ...R, players: [], playerLegs: {} } }); };
-    // The requester's starters (no K or DEF, nobody on bye, Out or on IR, since a leg on a player who
-    // can't play only bounces at build time), and the two with the best points per game in final weeks.
-    const reqStarters = !hasReq || !rm ? [] : this.players(rm).filter(p => p.slot == 'starter' && !['K', 'DEF'].includes(p.pos) && !onBye(p.nfl, LW) && !['O', 'IR'].includes(p.inj));
+    // The requester's starters (no K or DEF, nobody on bye, Out or on IR, and nobody whose game has
+    // kicked off, since a leg on a player who can't play or a game already under way only bounces at
+    // build time), and the two with the best points per game in final weeks.
+    const kicked = p => LIVEPTS[p.name] != null || PLAYING.has(p.name) || Date.now() >= (kickoffAt(D, LW, nflGame(p.nfl, LW) || 'Sun 12:00 PM')?.getTime() ?? Infinity);
+    const reqStarters = !hasReq || !rm ? [] : this.players(rm).filter(p => p.slot == 'starter' && !['K', 'DEF'].includes(p.pos) && !onBye(p.nfl, LW) && !['O', 'IR'].includes(p.inj) && !kicked(p));
     const ppg = n => { let t = 0, g = 0; for (let w = 1; w <= NF; w++) { const v = this.fantasyPts(n, w); if (v != null) { t += v; g++; } } return g ? t / g : 0; };
     const suggNames = reqStarters.map(p => [p.name, ppg(p.name)]).sort((a, b) => b[1] - a[1]).slice(0, 2).map(x => x[0]);
     const togglePlayer = n => () => { const on = R.players.includes(n), players = on ? R.players.filter(x => x != n) : [...R.players, n].slice(-3), playerLegs = {};
@@ -1152,7 +1159,7 @@ class Component extends DCLogic {
     const pl = this.players(tm), lineupWeek = LW ?? NF + 1;
     const lineupMsg = !S.loaded ? 'Loading rosters…' : !S.rosters ? 'Couldn’t load rosters. Try refreshing in a minute.' : '';
     const team = {
-      m: tm, init: INIT[tm], color: col(tm), teamName: rt?.team ?? '', roast: D.roasts?.[tm] ?? '',
+      m: tm, init: INIT[tm], color: col(tm), teamName: rt?.team ?? '', roast: roastOf(D, tm, NF), hasRoast: boothOn && !!roastOf(D, tm, NF),
       line: `${s.w}–${s.l} · ${ord(place)} place` + (NF ? ` · ${res[res.length - 1]}${k} streak` : ''),
       lineupTitle: `Week ${lineupWeek} lineup`, proj: LW ? 'Proj ' + f2(PROJ[tm]) : '',
       stats: [{ label: 'PF', value: f1(s.pf), sub: ord(pfRank) + ' in league' }, { label: 'PA', value: f1(s.pa), sub: ord(paRank) + ' fewest' }, { label: 'Luck', value: sgn(s.luck), sub: 'W − xW', color: s.luck > 0 ? 'var(--pos)' : s.luck < 0 ? 'var(--neg)' : 'var(--ink)' }, { label: 'xW', value: s.xw.toFixed(2), sub: 'vs ' + s.w + ' real wins' }, { label: 'Max PF', value: maxOk ? f1(s.max) : '—', sub: maxOk ? ord(maxRank) + ' best possible' : 'Best possible lineup' }, { label: 'Bench', value: maxOk ? f1(bn) : '—', sub: 'Points left sitting' }, { label: 'FAAB left', value: txOk ? '$' + (budget - spent[tm]) : '—', sub: 'of $' + budget }, { label: 'Adds', value: txOk ? String(adds[tm]) : '—', sub: 'This season' }].map(x => ({ color: 'var(--ink)', isLuck: x.label == 'Luck', isBench: x.label == 'Bench', ...x })),

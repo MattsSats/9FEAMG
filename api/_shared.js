@@ -376,6 +376,10 @@ export function powerRanks(season, n) {
     return { m, score, pf, wl: w + '–' + (g - w), ap: apW + '–' + (g * k - apW) };
   }).sort((a, b) => b.score - a.score || b.pf - a.pf);
 }
+// A team page's roast: roasts[week] holds the set written after that week went final. It shows only
+// while that week is the latest final one (NF), so a roast's record and numbers never sit beside
+// newer ones (Matt, Oct 31, 2026); until the next set comes in, team pages go without.
+export const roastOf = (season, m, NF) => season.roasts?.[NF]?.[m] || '';
 
 // ---- Yahoo (the site's own sync, /api/league) on top of data/season.js ----
 // Yahoo fills final scores and the schedule. For the live week the newer source wins: Yahoo's

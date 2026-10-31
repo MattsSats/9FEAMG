@@ -652,7 +652,7 @@ window.SEASON = {
       Tony: 'Up one to first after 122.70 beat all nine teams, and 16–2 against the field over two weeks. 11 Shots In, and this week every one went in.',
       Andy: 'Down one despite a fifth straight win, because 98.58 beat only three teams. Winning ugly counts; it just doesn’t count here.',
       Jerger: 'Five straight wins, up one, and 15–3 against the field over two weeks. The experts went on strike; the team did not.',
-      Matt: 'Up one to 4th with a losing record, 3–4. The rankings believe in Matt more than the standings do, which is convenient, since Matt built the rankings.',
+      Matt: 'Up one to 4th with a losing record, 3–4. The rankings believe in Matt more than the standings do.',
       Kurt: 'Kurt lost to the week’s top score, fell to 2–5 with the league’s worst luck (−1.67), and still moved up to 5th. Kurt sets the lineup right; the schedule sets the result.',
       Tristan: 'Down three, the week’s biggest drop, after 91.30 beat nobody. 3–15 against the field over two weeks. Squirtle Squad has stopped evolving.',
       Pablo: 'Pablo rode Pollard’s 35.00, the top score on any roster, to 110.52 and up one spot. 7th here, 7th in the standings: for once the numbers and the record agree.',
@@ -662,17 +662,20 @@ window.SEASON = {
     }
   },
 
-  // One-liner on each team page.
+  // One-liner on each team page, by the week the set was written after. A set shows only while its
+  // week is the latest final one (api/_shared.js roastOf), so old records never sit beside new ones.
   roasts: {
-    Tony: 'First at 5–1 with the fewest points against (518.24) and the league’s best luck, +1.44. 11 Shots In, and opponents keep missing.',
-    Tristan: '4–2, the league’s second-best lineup efficiency (93.0%), and luck at exactly 0.00. The season Tristan declared over is right on schedule.',
-    Andy: '5–1, first in the power rankings, and the week’s top score with Gibbs on bye. It’s gibbing time, even when Gibbs isn’t.',
-    Matt: '7th at 2–4, with 121.28 points left on the bench and luck tied for worst at −1.22. There is no 2nd best, just 7th.',
-    Kurt: '2–4 with the league’s best lineup efficiency (95.2%) and luck tied for worst at −1.22. Average Sports Enthusiast, above-average lineups.',
-    Jerger: 'Four straight wins and 4–2, with a 29–25 record against the field. #1 Y! Fan, and Yahoo’s projections had Jerger losing Week 6.',
-    'Mr. G': '1–5 with 756.04 points allowed, 86.64 more than anyone. Definitely not a Boomer, definitely everyone’s favorite opponent.',
-    Colin: '31 adds, the most in the league by 9, and the season’s lowest score in Week 6, 61.58. C Lambs Biggest Hater, and Week 6 hated back.',
-    DLin: 'Last in the power rankings, 16–38 against the field, and 2–4 anyway. The Toilet Bowl King is defending the title on schedule.',
-    Pablo: '8th at 2–4, 19–35 against the field and the league’s worst lineup efficiency, 80.9%. He was #1, for one week: Week 4’s top score, 133.78.'
+    6: {
+      Tony: 'First at 5–1 with the fewest points against (518.24) and the league’s best luck, +1.44. 11 Shots In, and opponents keep missing.',
+      Tristan: '4–2, the league’s second-best lineup efficiency (93.0%), and luck at exactly 0.00. The season Tristan declared over is right on schedule.',
+      Andy: '5–1, first in the power rankings, and the week’s top score with Gibbs on bye. It’s gibbing time, even when Gibbs isn’t.',
+      Matt: '7th at 2–4, with 121.28 points left on the bench and luck tied for worst at −1.22. There is no 2nd best, just 7th.',
+      Kurt: '2–4 with the league’s best lineup efficiency (95.2%) and luck tied for worst at −1.22. Average Sports Enthusiast, above-average lineups.',
+      Jerger: 'Four straight wins and 4–2, with a 29–25 record against the field. #1 Y! Fan, and Yahoo’s projections had Jerger losing Week 6.',
+      'Mr. G': '1–5 with 756.04 points allowed, 86.64 more than anyone. Definitely not a Boomer, definitely everyone’s favorite opponent.',
+      Colin: '31 adds, the most in the league by 9, and the season’s lowest score in Week 6, 61.58. C Lambs Biggest Hater, and Week 6 hated back.',
+      DLin: 'Last in the power rankings, 16–38 against the field, and 2–4 anyway. The Toilet Bowl King is defending the title on schedule.',
+      Pablo: '8th at 2–4, 19–35 against the field and the league’s worst lineup efficiency, 80.9%. He was #1, for one week: Week 4’s top score, 133.78.'
+    }
   }
 };

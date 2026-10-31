@@ -9,7 +9,7 @@ import { loadSeason, escapeHtml, hash, anchorFor, describe } from './_parlays.js
 import { readJson, readData } from './_yahoo.js';
 import { seasonStats, loadBox, powerRanks } from './_stats.js';
 import { loadTx, wireOf } from './_wire.js';
-import { lineupIssues, playoffOdds, oddsPct, matchupOdds, pointSources, liveRosters, faabOf } from './_shared.js';
+import { lineupIssues, playoffOdds, oddsPct, matchupOdds, pointSources, liveRosters, faabOf, roastOf } from './_shared.js';
 import { C, F, h, fonts, mgrColor } from './_ogkit.js';
 
 const BOTS = /bot|crawl|spider|facebookexternalhit|facebot|twitterbot|slackbot|discordbot|whatsapp|telegram|linkedin|embedly|skype|iframely|preview/i;
@@ -226,14 +226,14 @@ function matchupOf(season, st, wk, aSlug, bSlug, rosters) {
   };
   const a = side(A), b = side(B), lead = a.score == b.score ? null : a.score > b.score ? a : b, gap = Math.abs(a.score - b.score);
   // Like the site's card: live, the gray chip is the site's own win odds (matchupOdds) and the Booth chip
-  // keeps the % its pick was made at; a final week grades the pick ✓ or ✗.
+  // names the pick alone; a final week grades the pick ✓ or ✗.
   const o = live ? (matchupOdds(season, rosters) || []).find(x => [x.a, x.b].includes(A.m)) : null;
   const pA = o ? (o.a == A.m ? o.pa : 1 - o.pa) : null, fav = pA == null ? null : pA >= 0.5 ? A.m : B.m;
   const chip = fav ? `Odds: ${fav} ${oddsPct(Math.max(pA, 1 - pA))} to win`
     : lead ? (live ? `${lead.m} +${gap.toFixed(2)} proj` : `${lead.m} won by ${gap.toFixed(2)}`) : live ? 'Even on projection' : 'Tied';
   const pi = (season.schedule[wk] || []).findIndex(p => p.includes(A.m) && p.includes(B.m)), pk = season.boothPicks?.[wk]?.[pi];
   const winner = live || !lead ? null : lead.m;
-  const pick = !pk ? '' : `Booth: ${pk[0]}` + (!live ? (winner == pk[0] ? ' ✓' : ' ✗') : pk[1] != null ? ` · ${pk[1]}%` : '');
+  const pick = !pk ? '' : `Booth pick: ${pk[0]}` + (!live ? (winner == pk[0] ? ' ✓' : ' ✗') : '');
   const pickColor = !pk || live ? C.accentInk : winner == pk[0] ? C.pos : C.neg;
   // A finished week shows its recap line; otherwise the preview, labelled with the day it was
   // written so its projections don't read as a mistake next to the live numbers.
@@ -404,7 +404,7 @@ function teamOf(season, st, slug, tx, yahoo = null) {
     ...(spent != null && season.faabBudget ? [['FAAB LEFT', '$' + (season.faabBudget - spent), '$' + season.faabBudget + ' to start']] : [])
   ];
   return { ...mg, slug, rec: `${r.w}–${r.l}`, place: rows.findIndex(x => x.m == m) + 1, streak: res.length ? res[res.length - 1] + k : '',
-    pf: r.pf, pfRank: rank('pf'), pa: r.pa, paRank: rank('pa', false), luck: r.luck, roast: season.roasts?.[m] || '', week, extras, NF: st.NF };
+    pf: r.pf, pfRank: rank('pf'), pa: r.pa, paRank: rank('pa', false), luck: r.luck, roast: roastOf(season, m, st.NF), week, extras, NF: st.NF };
 }
 
 function teamCard(T) {
