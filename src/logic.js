@@ -1266,10 +1266,10 @@ class Component extends DCLogic {
     const team = {
       m: tm, init: INIT[tm], color: col(tm), teamName: rt?.team ?? '', roast: roastOf(D, tm, NF), hasRoast: boothOn && !!roastOf(D, tm, NF),
       line: `${s.w}–${s.l} · ${ord(place)} place` + (NF ? ` · ${res[res.length - 1]}${k} streak` : ''),
-      lineupTitle: `Week ${lineupWeek} lineup`, proj: LW ? 'Proj ' + f2(PROJ[tm]) : '',
+      lineupTitle: `${tm}’s Week ${lineupWeek} lineup`, proj: LW ? 'Proj ' + f2(PROJ[tm]) : '',
       stats: [{ label: 'PF', value: f1(s.pf), sub: ord(pfRank) + ' in league' }, { label: 'PA', value: f1(s.pa), sub: ord(paRank) + ' fewest' }, { label: 'Luck', value: sgn(s.luck), sub: 'W − xW', color: s.luck > 0 ? 'var(--pos)' : s.luck < 0 ? 'var(--neg)' : 'var(--ink)' }, { label: 'xW', value: s.xw.toFixed(2), sub: 'vs ' + s.w + ' real wins' }, { label: 'Max PF', value: maxOk ? f1(s.max) : '—', sub: maxOk ? ord(maxRank) + ' best possible' : 'Best possible lineup' }, { label: 'Bench', value: maxOk ? f1(bn) : '—', sub: 'Points left sitting' }, { label: 'FAAB left', value: txOk ? '$' + (budget - spent[tm]) : '—', sub: 'of $' + budget }, { label: 'Adds', value: txOk ? String(adds[tm]) : '—', sub: 'This season' }].map(x => ({ color: 'var(--ink)', isLuck: x.label == 'Luck', isBench: x.label == 'Bench', ...x })),
       log, rest, hasRest: rest.length > 0, restSub, race, raceSwing, hasRace: !!race, hasRaceSwing: !!raceSwing, starters: this.starters(tm, lineupWeek), alerts: this.lineupAlerts(tm, lineupWeek).map(t => ({ t })), hasAlerts: this.lineupAlerts(tm, lineupWeek).length > 0,
-      bench: pl.filter(p => p.slot != 'starter').map(p => { const lp = LIVEPTS[p.name]; const v = lp ?? p.proj ?? p.projected ?? p.projections?.[lineupWeek] ?? PPROJ[p.name]; return { slot: p.slot == 'IR' ? 'IR' : p.pos, name: p.name, meta: (p.nfl || '').toUpperCase() + (lp == null && p.slot != 'IR' && lineupWeek == LW ? this.preGame(p, lineupWeek) : '') + (lp == null && v != null && p.slot != 'IR' && !(lineupWeek == LW && (nflGame(p.nfl, lineupWeek) || onBye(p.nfl, lineupWeek))) ? ' · proj' : lp != null && PLAYING.has(p.name) ? ' · live' : ''), pts: p.slot == 'IR' ? '' : (v != null ? f2(+v) : '—') }; }),
+      bench: pl.filter(p => p.slot != 'starter').map(p => { const lp = LIVEPTS[p.name]; const v = lp ?? p.proj ?? p.projected ?? p.projections?.[lineupWeek] ?? PPROJ[p.name]; return { slot: p.slot == 'IR' ? 'IR' : p.pos, name: p.name, meta: (p.nfl || '').toUpperCase() + (lp == null && p.slot != 'IR' && lineupWeek == LW ? this.preGame(p, lineupWeek) : '') + (lp == null && v != null && p.slot != 'IR' && !(lineupWeek == LW && (nflGame(p.nfl, lineupWeek) || onBye(p.nfl, lineupWeek))) ? ' · proj' : lp != null ? (PLAYING.has(p.name) ? ' · live' : ' · Final') : ''), pts: p.slot == 'IR' ? '' : (v != null ? f2(+v) : '—') }; }),
       benchCount: pl.filter(p => p.slot != 'starter').length, lineupMsg, hasLineup: !lineupMsg, src
     };
     const teamPicker = MGR.map(m => ({ m, init: INIT[m], color: col(m), ring: m == tm ? '2px solid var(--accent)' : '2px solid transparent', ringFill: m == tm ? 'var(--accent)' : 'transparent', op: m == tm ? 1 : .75, fg: m == tm ? 'var(--ink)' : 'var(--muted)', pick: () => this.setState({ team: m }) }));
@@ -1453,6 +1453,11 @@ class Component extends DCLogic {
       shotBracket: BR?.champion ? `Final · Champion: ${BR.champion}` : pic?.hasRounds ? 'The playoffs' : `If the season ended today · through week ${NF}`,
       menuPower: this.shareMenu('Power rankings', e => this.shareLink(location.origin + '/s/power', '9FEAMG · Power rankings', e), e => this.share('power', e)),
       menuTeam: this.shareMenu(S.team, e => this.shareLink(location.origin + '/s/team-' + teamSlug(S.team), '9FEAMG · ' + S.team, e), e => this.share('team', e)),
+      // A team's lineup and schedule (Matt, Oct 31, 2026): images of those sections; the link is the team page.
+      menuLineup: this.shareMenu(`${S.team} · Week ${lineupWeek} lineup`, e => this.shareLink(location.origin + '/s/team-' + teamSlug(S.team), '9FEAMG · ' + S.team, e), e => this.share('lineup', e)),
+      menuSchedule: this.shareMenu(`${S.team} · schedule`, e => this.shareLink(location.origin + '/s/team-' + teamSlug(S.team), '9FEAMG · ' + S.team, e), e => this.share('schedule', e)),
+      shotLineup: [tm, rt?.team].filter(Boolean).join(' · '),
+      shotSchedule: `${tm} · ${s.w}–${s.l}, ${ord(place)} · through week ${NF}`,
       // Wire: the view on screen (this fantasy week or the season), as a link preview or an image.
       menuWire: this.shareMenu(seasonMode ? 'Wire · season' : 'Wire · Week ' + wireWk, e => this.shareLink(location.origin + (seasonMode ? '/s/wire-season' : '/s/wire-week'), seasonMode ? '9FEAMG · Wire · season' : '9FEAMG · Wire · Week ' + wireWk, e), e => this.share('wire', e)),
       shotWire: seasonMode ? 'Wire · season' : 'Wire · Week ' + wireWk,
