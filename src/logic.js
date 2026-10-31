@@ -5,53 +5,63 @@
 // from Yahoo about once a minute) goes on top with the same merge, so the newest read wins. Booth lines, captions and parlays stay in season.js.
 // The league math the server also runs (api/_shared.js) is pasted in here by build.cjs:
 /*SHARED*/
-const D = mergeYahoo(mergeYahoo(window.SEASON, window.YAHOO), window.YAHOO_LIVE);
-const MGR = D ? D.managers.map(x => x.m) : [];
+// Everything computed from the season data (data/season.js, with Yahoo's sync and live read on top).
+// derive() sets it at load, and again when the game-day poll brings new numbers for the same week, so
+// the page redraws in place instead of reloading (Matt, Oct 31, 2026).
+let D, MGR, INIT, HUE, SC, NF, LIVE, LW, NEXT, LIVEPTS, PLAYING, LIVE_STARTED, HOME_WK, BOOTH_WK, PPROJ, PAIRS, PROJ, ST, WIN;
+function derive() {
+  D = mergeYahoo(mergeYahoo(window.SEASON, window.YAHOO), window.YAHOO_LIVE);
+  MGR = D ? D.managers.map(x => x.m) : [];
+  INIT = D ? Object.fromEntries(D.managers.map(x => [x.m, x.init])) : {};
+  HUE = D ? Object.fromEntries(D.managers.map(x => [x.m, x.hue])) : {};
+  SC = D ? D.scores : {};
+  NF = D ? Math.max(0, ...MGR.map(m => (SC[m] || []).length)) : 0; // weeks final
+  LIVE = D ? D.live : null;
+  LW = LIVE ? LIVE.week : null;
+  NEXT = D ? D.next : null;
+  LIVEPTS = LIVE?.playerPoints || {};
+  // Players still on the field: their points are so far, not final.
+  PLAYING = new Set(LIVE?.inProgress || []);
+  // The live week has points on the board (until then it's a preview: projections, "Week 6 · Preview").
+  LIVE_STARTED = !!LIVE && (Object.keys(LIVEPTS).length > 0 || Object.values(LIVE.scores || {}).some(s => s[0] > 0));
+  // Gameday opens on the week that just finished through Tuesday (Monday night's results), then
+  // on the live week from Wednesday, or sooner once it has points on the board.
+  HOME_WK = LW && (LIVE_STARTED || !NF || Date.now() >= (kickoffAt(D, LW, 'Wed 12:00 AM')?.getTime() ?? Infinity)) ? LW : NF;
+  // The week /#booth opens (the /s/booth link): the live week once it has lines, else the latest
+  // week with any, the same set api/section.js puts in the link preview.
+  BOOTH_WK = (() => { const has = w => [D?.boothPreview, D?.boothSnf, D?.booth].some(s => s?.[w]?.length);
+    return has(LW) ? LW : Object.keys(D?.schedule || {}).map(Number).filter(has).sort((a, b) => b - a)[0] ?? HOME_WK; })();
+  PPROJ = D?.projections || {};
+  PAIRS = D ? D.schedule : {};
+  PROJ = Object.fromEntries(MGR.map(m => [m, LIVE?.scores?.[m]?.[1] ?? 0]));
+  // Standings (wins, then points for), from the shared math. max is filled in by setMaxPF once the
+  // box scores load.
+  ST = D ? seasonStats(D, null).rows.sort(byStandings) : [];
+  WIN = [undefined, null];
+}
+derive();
 // Team link slugs: 'Mr. G' → 'mr-g' (#team-mr-g).
 const teamSlug = m => m.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
-const INIT = D ? Object.fromEntries(D.managers.map(x => [x.m, x.init])) : {};
 // Three-letter initials (Tony's ASG) shrink to fit inside the crest.
 if (D && typeof document != 'undefined' && !document.getElementById('ini-fit')) {
   const st = document.createElement('style'); st.id = 'ini-fit';
   st.textContent = D.managers.filter(x => (x.init || '').length > 2).map(x => `.crest .ini[data-i="${x.init}"]{font-size:.72em;letter-spacing:-.02em}`).join('');
   document.head.appendChild(st);
 }
-const HUE = D ? Object.fromEntries(D.managers.map(x => [x.m, x.hue])) : {};
 // Manager colors: lightness comes from --mgrL (0.76 dark, 0.61 light) so dots and bars hold 3:1 on the light background.
 const col = m => `oklch(var(--mgrL, 0.76) 0.12 ${HUE[m] ?? 0})`;
 // Parlays can belong to someone outside the league (e.g. 'The Booth'), who gets the accent color.
 const ownerCol = m => m in HUE ? col(m) : 'var(--accent)';
-const SC = D ? D.scores : {};
-const NF = D ? Math.max(0, ...MGR.map(m => (SC[m] || []).length)) : 0; // weeks final
-const LIVE = D ? D.live : null;
-const LW = LIVE ? LIVE.week : null;
-const NEXT = D ? D.next : null;
-const LIVEPTS = LIVE?.playerPoints || {};
-// Players still on the field: their points are so far, not final.
-const PLAYING = new Set(LIVE?.inProgress || []);
-// The live week has points on the board (until then it's a preview: projections, "Week 6 · Preview").
-const LIVE_STARTED = !!LIVE && (Object.keys(LIVEPTS).length > 0 || Object.values(LIVE.scores || {}).some(s => s[0] > 0));
-// Gameday opens on the week that just finished through Tuesday (Monday night's results), then
-// on the live week from Wednesday, or sooner once it has points on the board.
-const HOME_WK = LW && (LIVE_STARTED || !NF || Date.now() >= (kickoffAt(D, LW, 'Wed 12:00 AM')?.getTime() ?? Infinity)) ? LW : NF;
-// The week /#booth opens (the /s/booth link): the live week once it has lines, else the latest
-// week with any, the same set api/section.js puts in the link preview.
-const BOOTH_WK = (() => { const has = w => [D?.boothPreview, D?.boothSnf, D?.booth].some(s => s?.[w]?.length);
-  return has(LW) ? LW : Object.keys(D?.schedule || {}).map(Number).filter(has).sort((a, b) => b - a)[0] ?? HOME_WK; })();
-const PPROJ = D?.projections || {};
 // "Your team": the manager this phone picked (request form, "I'm on it" or the Gameday prompt).
 const MY_TEAM = (() => { try { const m = localStorage.getItem('9feamg-req-mgr'); return MGR.includes(m) ? m : null; } catch { return null; } })();
 // "Scores as of Thu 10:19 PM" (Central).
 const asOfLabel = iso => { const d = new Date(iso); return isNaN(d) ? '' : 'Scores as of ' + d.toLocaleString('en-US', { weekday: 'short', hour: 'numeric', minute: '2-digit', timeZone: 'America/Chicago' }).replace(',', ''); };
-const PAIRS = D ? D.schedule : {};
 // Win odds for the live week's matchups (matchupOdds in api/_shared.js), by "a|b". Q and D starters
 // count once the rosters file has loaded (winOf(rosters)); until then it's Yahoo's totals alone.
 const winMap = r => D ? Object.fromEntries((matchupOdds(D, r) || []).map(o => [o.a + '|' + o.b, o.pa])) : {};
-let WIN = [undefined, null];
 const winOf = r => { if (WIN[0] !== r) WIN = [r, winMap(r)]; return WIN[1]; };
 // The Booth's pick for a matchup: [pick, win % when picked] (boothPicks[week], schedule order).
 const pickOf = (wk, pair) => { const i = (PAIRS[wk] || []).findIndex(p => p[0] == pair[0] && p[1] == pair[1]); return i < 0 ? null : D?.boothPicks?.[wk]?.[i] || null; };
-const PROJ = Object.fromEntries(MGR.map(m => [m, LIVE?.scores?.[m]?.[1] ?? 0]));
 // Parlay request risk levels: total American odds, low to high. A doubling ladder (Matt, Oct 18, 2026):
 // each step up about doubles the payout and halves the chance to hit.
 const RISKS = [
@@ -120,9 +130,7 @@ const parseWhen = s => parseCT(s, D.year);
 function opp(m, w) { const p = (PAIRS[w] || []).find(p => p.includes(m)); return p ? (p[0] == m ? p[1] : p[0]) : null; }
 function won(m, w) { const o = opp(m, w); return o != null && SC[m][w - 1] > SC[o][w - 1]; }
 function rec(m, upto) { let w = 0, l = 0; for (let i = 1; i <= upto; i++) { if (!opp(m, i)) continue; won(m, i) ? w++ : l++; } return w + '–' + l; }
-// Standings (wins, then points for) and power rankings, from the shared math. max is filled in by
-// setMaxPF once the box scores load.
-const ST = D ? seasonStats(D, null).rows.sort(byStandings) : [];
+// Power rankings, from the shared math (the standings, ST, are set in derive()).
 const power = n => powerRanks(D, n);
 // The worked example for xW: in the latest final week, the best score that still lost its matchup.
 function xwWeek() {
@@ -190,6 +198,8 @@ class Component extends DCLogic {
     Promise.all(['uploads/9feamg-rosters.json', 'uploads/9feamg-draft-rosters.json', 'uploads/9feamg-transactions.json', 'uploads/9feamg-boxscores.json']
       .map(u => fetch(u, { cache: 'no-cache' }).then(r => r.ok ? r.json() : null).catch(() => null)))
       .then(([rosters, draft, tx, box]) => {
+        // The files as loaded, for laying Yahoo's newer reads over them again (applyFresh).
+        this.raw = { rosters, tx, box };
         // Yahoo fills box-score weeks the uploads file doesn't have.
         box = mergeBox(box, window.YAHOO);
         // And the live week's lineups, when Yahoo was read after the rosters file.
@@ -264,29 +274,46 @@ class Component extends DCLogic {
   }
   // Game days (any day with a kickoff on the NFL schedule, Saturdays and Christmas included, and
   // the early hours after; api/_shared.js isGameDay): check season.js and the Yahoo feeds every
-  // 2 minutes. New numbers refresh the page in place unless someone is mid-something, in which
-  // case a "New scores" button does it.
+  // 2 minutes. New numbers for the same week redraw the page in place (applyFresh), so nothing open
+  // closes and nothing flashes (Matt, Oct 31, 2026); while someone is typing, a "New scores" button
+  // waits for them. A new week, or anything going wrong, still reloads.
   pollScores() {
     if (!LW) return;
-    const read = () => Promise.all(['/data/season.js', '/api/league?format=js', '/api/live?format=js'].map(u => fetch(u, { cache: 'no-store' }).then(r => r.ok ? r.text() : '').catch(() => ''))).then(a => a.join('\n'));
+    // null for a feed that didn't load, so a failed read never counts as new numbers.
+    const read = () => Promise.all(['/data/season.js', '/api/league?format=js', '/api/live?format=js'].map(u => fetch(u, { cache: 'no-store' }).then(r => r.ok ? r.text() : null).catch(() => null)));
     let base = null;
-    read().then(t => { base = t; });
+    read().then(t => { if (!t.includes(null)) base = t.join('\n'); });
     setInterval(async () => {
-      if (base == null || document.hidden || !isGameDay(D)) return;
+      if (document.hidden || !isGameDay(D)) return;
       const t = await read();
-      if (!t || t == base) return;
-      base = t;
-      if (this.isIdle()) this.refreshInPlace(); else this.setState({ newScores: true });
+      if (t.includes(null)) return;
+      if (base == null) { base = t.join('\n'); return; }
+      if (t.join('\n') == base) return;
+      base = t.join('\n'); this.fresh = t;
+      const a = document.activeElement;
+      if (a && /^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName)) this.setState({ newScores: true }); else this.refreshInPlace();
     }, 120000);
   }
-  isIdle() {
-    const S = this.state, a = document.activeElement;
-    return !S.sheet && !S.shareSheet && !S.teamSheet && !S.sharing && !S.reqOpen && !(a && /^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName));
-  }
   refreshInPlace() {
+    try { if (this.fresh && this.applyFresh(this.fresh)) return; } catch (e) { console.error('In-place update failed; reloading', e); }
     const S = this.state;
     try { sessionStorage.setItem('9feamg-restore', JSON.stringify({ t: Date.now(), y: window.scrollY, tab: S.tab, week: S.week, team: S.team })); } catch {}
     location.reload();
+  }
+  // Runs the three data scripts the poll read, recomputes everything (derive), lays Yahoo's reads over
+  // the files again and redraws. False when the week changed (a final or a new week), which reloads.
+  applyFresh([season, league, live]) {
+    if (!this.raw) return false;
+    const was = [LW, NF];
+    window.YAHOO_LIVE = null;
+    for (const t of [season, league, live]) if (t) new Function(t)();
+    derive();
+    if (LW != was[0] || NF != was[1]) return false;
+    const R = this.raw, box = mergeBox(R.box, window.YAHOO);
+    const rosters = R.rosters ? liveRosters(liveRosters(R.rosters, window.YAHOO), window.YAHOO_LIVE) : null;
+    setMaxPF(box); this.fresh = null;
+    this.setState({ rosters, tx: R.tx ? mergeTx(R.tx, window.YAHOO) : null, box, newScores: false });
+    return true;
   }
   restoreAfterRefresh() {
     let r = null;
