@@ -3,24 +3,36 @@
 // for the Wire line and lineup alerts. Exits 1 if anything is wrong. Usage: node scripts/check.js
 import { readFileSync } from 'node:fs';
 import vm from 'node:vm';
-import { seasonStats, byStandings, kickoffAt, nflKey, lineupIssues, wireOf, pointsOf, ticketSlug, parlayState, parlayFair, impliedProb, toAmerican, playoffOdds, oddsPct, raceText, matchupOdds, boothPickRecord, expertPickRecord } from '../api/_shared.js';
+import { seasonStats, byStandings, kickoffAt, nflKey, lineupIssues, wireOf, pointsOf, ticketSlug, parlayState, parlayFair, impliedProb, toAmerican, playoffOdds, oddsPct, raceText, matchupOdds, boothPickRecord, expertPickRecord, mergeYahoo } from '../api/_shared.js';
 
 const read = p => readFileSync(new URL('../' + p, import.meta.url), 'utf8');
 const box = { window: {} }; vm.runInNewContext(read('data/season.js'), box);
-const S = box.window.SEASON, rosters = JSON.parse(read('uploads/9feamg-rosters.json'));
+const S0 = box.window.SEASON, rosters = JSON.parse(read('uploads/9feamg-rosters.json'));
 const tx = JSON.parse(read('uploads/9feamg-transactions.json')), scores = JSON.parse(read('uploads/9feamg-boxscores.json'));
-const MGR = S.managers.map(x => x.m), bad = [], warn = [];
+const MGR = S0.managers.map(x => x.m), bad = [], warn = [], R = S0.regularSeasonWeeks || 14;
+// Yahoo's saved sync (/api/league) laid over season.js the way the site and link previews do (Matt,
+// Oct 31, 2026), so the odds printed here are the site's and the playoff weeks have their games;
+// season.js alone when it can't be read. A season.js final that disagrees with Yahoo's is flagged.
+let Y = null;
+try { const r = await fetch('https://www.9feamg.cloud/api/league', { signal: AbortSignal.timeout(10000) }); if (r.ok) Y = await r.json(); } catch {}
+if (!Y?.weeks) warn.push('Couldn’t read /api/league: checked season.js alone, without Yahoo’s numbers on top.');
+else for (const [w, Wk] of Object.entries(Y.weeks)) if (Wk.status == 'postevent' && +w <= R) for (const m of MGR) {
+  const mine = S0.scores[m]?.[w - 1], ys = Wk.teams?.[m]?.pts;
+  if (mine != null && ys != null && Math.abs(mine - ys) > 0.005) warn.push(`Week ${w} ${m}: season.js has ${mine}, Yahoo has ${ys} (the site shows Yahoo's).`);
+}
+const S = Y?.weeks ? mergeYahoo(S0, Y) : S0;
 const st = seasonStats(S, scores), NF = st.NF, LW = S.live?.week;
 
-// Schedule: every listed week pairs all ten managers once.
+// Schedule: every regular-season week pairs all ten managers once (playoff weeks come from Yahoo).
 for (const [w, pairs] of Object.entries(S.schedule)) {
+  if (+w > R) continue;
   const seen = pairs.flat();
   if (seen.length != MGR.length || new Set(seen).size != MGR.length || !seen.every(m => MGR.includes(m))) bad.push(`Week ${w} schedule doesn't pair all ${MGR.length} managers once.`);
 }
 // Scores: one per final week for everyone, and only for weeks on the schedule.
 for (const m of MGR) if ((S.scores[m] || []).length != NF) bad.push(`${m} has ${(S.scores[m] || []).length} final scores; others have ${NF}.`);
 for (let w = 1; w <= NF; w++) if (!S.schedule[w]) bad.push(`Week ${w} has final scores but no schedule.`);
-if (LW && LW != NF + 1) warn.push(`live.week is ${LW} but ${NF} weeks are final.`);
+if (LW && LW <= R && LW != NF + 1) warn.push(`live.week is ${LW} but ${NF} weeks are final.`);
 if (LW && !S.schedule[LW]) bad.push(`live.week ${LW} has no schedule.`);
 if (LW && !S.nfl?.[LW]) warn.push(`No nfl[${LW}] (ESPN schedule): kickoff times and bye alerts fall back to Sunday noon / Monday night.`);
 if (st.maxOk === false) warn.push('Some final weeks have no box score, so Max PF and bench points are blank.');
