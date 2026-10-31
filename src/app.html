@@ -682,6 +682,27 @@ button{font-family:inherit;color:inherit}
   </div>
 </sc-if>
 
+<!-- A week that hasn't opened: its matchups from the schedule, yours first (Matt, Oct 31, 2026). -->
+<sc-if value="{{ hasUpcoming }}" hint-placeholder-val="{{ false }}">
+  <div style="padding:8px 20px 0">
+    <div style="font-size:14px;color:var(--muted);text-wrap:pretty">{{ upNote }}</div>
+    <div style="display:flex;flex-direction:column;gap:12px;margin-top:14px">
+      <sc-for list="{{ upcoming }}" as="u" hint-placeholder-count="5">
+        <div style="background:var(--surface);border:1px solid var(--line);border-radius:16px;overflow:hidden">
+          <sc-if value="{{ u.mine }}" hint-placeholder-val="{{ false }}"><div style="padding:14px 16px 0;font-family:'JetBrains Mono';font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--accentInk)">Your matchup</div></sc-if>
+          <div style="display:grid;grid-template-columns:32px minmax(0,1fr);column-gap:12px;row-gap:8px;align-items:center;padding:12px 16px 14px">
+            <div class="crest" style="width:32px;height:32px;background:{{ u.a.color }};color:var(--onAccent);display:flex;align-items:center;justify-content:center;font-family:'Big Shoulders Display';font-weight:800;font-size:13px;flex:none"><span class="ini" data-i="{{ u.a.init }}">{{ u.a.init }}</span></div>
+            <div style="min-width:0"><div style="font-weight:600;font-size:15px">{{ u.a.m }}</div><div style="font-family:'JetBrains Mono';font-size:11px;color:var(--muted);margin-top:2px">{{ u.a.info }}</div></div>
+            <div class="crest" style="width:32px;height:32px;background:{{ u.b.color }};color:var(--onAccent);display:flex;align-items:center;justify-content:center;font-family:'Big Shoulders Display';font-weight:800;font-size:13px;flex:none"><span class="ini" data-i="{{ u.b.init }}">{{ u.b.init }}</span></div>
+            <div style="min-width:0"><div style="font-weight:600;font-size:15px">{{ u.b.m }}</div><div style="font-family:'JetBrains Mono';font-size:11px;color:var(--muted);margin-top:2px">{{ u.b.info }}</div></div>
+          </div>
+          <div style="padding:11px 16px;border-top:1px solid var(--line);font-family:'JetBrains Mono';font-size:11px;color:var(--muted)">{{ u.meet }}</div>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+</sc-if>
+
 <sc-if value="{{ isW5 }}" hint-placeholder-val="{{ false }}">
   <div style="margin:20px;padding:44px 24px;border:1px dashed var(--line);border-radius:16px;text-align:center">
     <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:32px;text-transform:uppercase">{{ nextTitle }}</div>
@@ -1515,6 +1536,25 @@ button{font-family:inherit;color:inherit}
     </sc-for>
   </div>
 </div>
+<!-- Rest of schedule: the regular season's weeks still to come, and how the last meeting went. -->
+<sc-if value="{{ team.hasRest }}" hint-placeholder-val="{{ true }}">
+<div style="padding:28px 20px 0">
+  <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:26px;text-transform:uppercase">Rest of schedule</div>
+  <div style="font-family:'JetBrains Mono';font-size:11px;color:var(--muted);margin-top:4px">{{ team.restSub }}</div>
+  <div style="margin-top:8px">
+    <sc-for list="{{ team.rest }}" as="r" hint-placeholder-count="4">
+      <div style="display:grid;grid-template-columns:30px minmax(0,1fr) auto;gap:10px;align-items:center;padding:12px 0;border-top:1px solid var(--line)">
+        <span style="font-family:'Big Shoulders Display';font-weight:800;font-size:18px;color:var(--muted)">W{{ r.w }}</span>
+        <div style="min-width:0">
+          <div style="display:flex;align-items:center;gap:6px;font-weight:600;font-size:15px"><span style="font-size:13px;color:var(--muted);font-weight:400">vs</span><span style="width:8px;height:8px;border-radius:50%;background:{{ r.color }}"></span>{{ r.opp }}</div>
+          <div style="font-family:'JetBrains Mono';font-size:11px;color:var(--muted);margin-top:2px">{{ r.sub }}</div>
+        </div>
+        <div style="text-align:right;font-family:'JetBrains Mono'"><div style="font-size:13px;font-weight:600">{{ r.prev }}</div><div style="font-size:11px;color:var(--muted);margin-top:2px">{{ r.prevSub }}</div></div>
+      </div>
+    </sc-for>
+  </div>
+</div>
+</sc-if>
 <!-- Where the points come from: each player's started points, tagged with how he arrived. -->
 <sc-if value="{{ team.src.has }}" hint-placeholder-val="{{ true }}">
 <div style="padding:28px 20px 0">

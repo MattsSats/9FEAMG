@@ -699,6 +699,18 @@ class Component extends DCLogic {
     }
     const blank = { a: {}, b: {}, share: '50%' };
     const isNext = !hasWeek;
+    // A week that hasn't opened yet (Matt, Oct 31, 2026): its matchups from the schedule, yours first
+    // with you on top, each side's record and place, and how the last meeting went (Weeks 10–14 replay
+    // Weeks 1–5). Projections, odds and lineups come with the week itself.
+    const recPlace = m => { const i = ST.findIndex(x => x.m == m); return i < 0 ? '' : `${ST[i].w}–${ST[i].l} · ${ord(i + 1)}`; };
+    const lastMeet = (a, b, w) => { const w0 = Object.keys(PAIRS).map(Number).filter(x => x < w && x <= NF && PAIRS[x].some(p => p.includes(a) && p.includes(b))).sort((x, y) => y - x)[0];
+      return w0 ? { w: w0, sa: SC[a][w0 - 1], sb: SC[b][w0 - 1] } : null; };
+    const upcoming = isNext && wk > (LW ?? NF) && PAIRS[wk] ? PAIRS[wk]
+      .map(p => S.reqMgr && p[1] == S.reqMgr ? [p[1], p[0]] : p)
+      .sort((x, y) => (y[0] == S.reqMgr) - (x[0] == S.reqMgr))
+      .map(([a, b]) => { const lm = lastMeet(a, b, wk), side = m => ({ m, init: INIT[m], color: col(m), info: recPlace(m) });
+        return { a: side(a), b: side(b), mine: !!S.reqMgr && a == S.reqMgr,
+          meet: !lm ? 'First meeting' : `Rematch of Week ${lm.w} · ${lm.sa >= lm.sb ? a : b} won ${f2(Math.max(lm.sa, lm.sb))}–${f2(Math.min(lm.sa, lm.sb))}` }; }) : [];
     // Week recap (final weeks): every final score with its Booth line, for sharing.
     // booth[week] runs in schedule order, one line per matchup. Closest finish first;
     // one score row per matchup keeps the phone-width image short.
@@ -1144,6 +1156,16 @@ class Component extends DCLogic {
       const ap = allPlay(tm, w), win = won(tm, w);
       return { w, opp: o, color: col(o), sub: ord(ap.rank) + ' of ' + MGR.length + ' · all-play ' + ap.w + '–' + ap.l, score: f2(SC[tm][w - 1]) + '–' + f2(SC[o][w - 1]), r: win ? 'W' : 'L', rbg: win ? 'var(--accent)' : 'var(--surface2)', rfg: win ? 'var(--onAccent)' : 'var(--muted)', open: () => this.setState({ sheet: { a: tm, b: o, wk: w } }) };
     });
+    // Rest of the regular season (Matt, Oct 31, 2026): each week still to come with the opponent's record,
+    // place and average score so far, and how the last meeting went. How hard the run-in is: the
+    // opponents' average a week, ranked against what every other team has left (1st = toughest).
+    const restWks = m => [...Array(D.regularSeasonWeeks || 14).keys()].map(i => i + 1).filter(w => w > (LW ?? NF) && opp(m, w));
+    const perWeek = m => NF ? ST.find(x => x.m == m).pf / NF : 0;
+    const sosOf = m => { const o = restWks(m).map(w => opp(m, w)); return o.length ? o.reduce((t, x) => t + perWeek(x), 0) / o.length : 0; };
+    const rest = restWks(tm).map(w => { const o = opp(tm, w), lm = lastMeet(tm, o, w);
+      return { w, opp: o, color: col(o), sub: recPlace(o) + (NF ? ' · ' + f1(perWeek(o)) + ' a week' : ''),
+        prev: lm ? (lm.sa > lm.sb ? 'W ' : 'L ') + f2(lm.sa) + '–' + f2(lm.sb) : '—', prevSub: lm ? 'Week ' + lm.w : 'first meeting' }; });
+    const restSub = rest.length && NF ? `Opponents average ${f1(sosOf(tm))} a week · ${ord([...MGR].sort((x, y) => sosOf(y) - sosOf(x)).indexOf(tm) + 1)} toughest left` : '';
     const teamAcq = ACQ.filter(a => a.m == tm && a.weeks > 0).sort((a, b) => b.started - a.started || b.bench - a.bench);
     const srcTotal = teamAcq.reduce((t, a) => t + a.started, 0), srcOf = ok => teamAcq.filter(ok).reduce((t, a) => t + a.started, 0);
     // Streams: kickers and defenses added (api/_shared.js isStream), split from the real pickups.
@@ -1163,7 +1185,7 @@ class Component extends DCLogic {
       line: `${s.w}–${s.l} · ${ord(place)} place` + (NF ? ` · ${res[res.length - 1]}${k} streak` : ''),
       lineupTitle: `Week ${lineupWeek} lineup`, proj: LW ? 'Proj ' + f2(PROJ[tm]) : '',
       stats: [{ label: 'PF', value: f1(s.pf), sub: ord(pfRank) + ' in league' }, { label: 'PA', value: f1(s.pa), sub: ord(paRank) + ' fewest' }, { label: 'Luck', value: sgn(s.luck), sub: 'W − xW', color: s.luck > 0 ? 'var(--pos)' : s.luck < 0 ? 'var(--neg)' : 'var(--ink)' }, { label: 'xW', value: s.xw.toFixed(2), sub: 'vs ' + s.w + ' real wins' }, { label: 'Max PF', value: maxOk ? f1(s.max) : '—', sub: maxOk ? ord(maxRank) + ' best possible' : 'Best possible lineup' }, { label: 'Bench', value: maxOk ? f1(bn) : '—', sub: 'Points left sitting' }, { label: 'FAAB left', value: txOk ? '$' + (budget - spent[tm]) : '—', sub: 'of $' + budget }, { label: 'Adds', value: txOk ? String(adds[tm]) : '—', sub: 'This season' }].map(x => ({ color: 'var(--ink)', isLuck: x.label == 'Luck', isBench: x.label == 'Bench', ...x })),
-      log, starters: this.starters(tm, lineupWeek), alerts: this.lineupAlerts(tm, lineupWeek).map(t => ({ t })), hasAlerts: this.lineupAlerts(tm, lineupWeek).length > 0,
+      log, rest, hasRest: rest.length > 0, restSub, starters: this.starters(tm, lineupWeek), alerts: this.lineupAlerts(tm, lineupWeek).map(t => ({ t })), hasAlerts: this.lineupAlerts(tm, lineupWeek).length > 0,
       bench: pl.filter(p => p.slot != 'starter').map(p => { const lp = LIVEPTS[p.name]; const v = lp ?? p.proj ?? p.projected ?? p.projections?.[lineupWeek] ?? PPROJ[p.name]; return { slot: p.slot == 'IR' ? 'IR' : p.pos, name: p.name, meta: (p.nfl || '').toUpperCase() + (lp == null && p.slot != 'IR' && lineupWeek == LW ? this.preGame(p, lineupWeek) : '') + (lp == null && v != null && p.slot != 'IR' && !(lineupWeek == LW && (nflGame(p.nfl, lineupWeek) || onBye(p.nfl, lineupWeek))) ? ' · proj' : lp != null && PLAYING.has(p.name) ? ' · live' : ''), pts: p.slot == 'IR' ? '' : (v != null ? f2(+v) : '—') }; }),
       benchCount: pl.filter(p => p.slot != 'starter').length, lineupMsg, hasLineup: !lineupMsg, src
     };
@@ -1323,7 +1345,8 @@ class Component extends DCLogic {
       closeShareSheet: () => this.setState({ shareSheet: null }), stopTap: e => e.stopPropagation(),
       compactCls: S.compact ? 'app compact' : 'app',
       deskTabs: tabs,
-      weekChips, isW5: isNext, nextTitle, nextNote, hasWeek, hero: hero || blank, matchups, heroLabel: heroMine ? 'Your matchup' : wk == LW ? 'Matchup of the week' : 'Closest finish', heroCaption: this.heroCaption(wk, hero),
+      weekChips, isW5: isNext && !upcoming.length, nextTitle, nextNote, hasWeek, hero: hero || blank, matchups,
+      upcoming, hasUpcoming: upcoming.length > 0, upNote: 'Projections, odds and lineups come in when the week opens on Tuesday.', heroLabel: heroMine ? 'Your matchup' : wk == LW ? 'Matchup of the week' : 'Closest finish', heroCaption: this.heroCaption(wk, hero),
       weekStatus, parlays: parlays.filter(x => group(x) == 0), parlaysMore: parlays.filter(x => group(x) > 0), hasParlays: parlays.length > 0, hasLedger: allParlays.length > 0, ledgerTiles, ledgerSub, ledgerOwners, hasLedgerRows: tailsReady && ledgerOwners.length > 0, hasPaper, paperLine, latestTaps, hasLatestTaps: latestTaps.length > 0,
       shareLedger: e => this.share('ledger', e), ledgerLabel: S.sharing == 'ledger' ? '…' : 'Image',
       linkLedger: e => this.shareLink(location.origin + '/s/ledger', '9FEAMG · Parlay ledger', e), shotLedger: `Parlay ledger · through week ${LW ?? NF}`,
