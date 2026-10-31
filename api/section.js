@@ -9,7 +9,7 @@ import { loadSeason, escapeHtml, hash, anchorFor, describe } from './_parlays.js
 import { readJson, readData } from './_yahoo.js';
 import { seasonStats, loadBox, powerRanks } from './_stats.js';
 import { loadTx, wireOf } from './_wire.js';
-import { lineupIssues, playoffOdds, oddsPct, raceText, matchupOdds, pointSources, liveRosters, faabOf, roastOf } from './_shared.js';
+import { lineupIssues, playoffOdds, oddsPct, raceText, matchupOdds, pointSources, liveRosters, faabOf, roastOf, playoffBracket, byStandings } from './_shared.js';
 import { C, F, h, fonts, mgrColor } from './_ogkit.js';
 
 const BOTS = /bot|crawl|spider|facebookexternalhit|facebot|twitterbot|slackbot|discordbot|whatsapp|telegram|linkedin|embedly|skype|iframely|preview/i;
@@ -494,11 +494,39 @@ function boothCard(B) {
     h('div', { flexDirection: 'column', marginTop: 22 }, ...B.rows.map(row)));
 }
 
+// Playoff picture (/s/bracket, Matt, Oct 31, 2026): the bracket if the season ended today, seeded by the
+// standings, or once Yahoo has playoff games the latest playoff week's games with their rounds and
+// scores (playoffBracket), and the champion and the Toilet Bowl King at the end.
+function bracketOf(season, st) {
+  const BR = playoffBracket(season), look = Object.fromEntries(season.managers.map(x => [x.m, x]));
+  const seeds = BR?.seeds || Object.fromEntries([...st.rows].sort(byStandings).map((r, i) => [r.m, i + 1]));
+  const at = n => Object.keys(seeds).find(m => seeds[m] == n), rec = m => { const r = st.rows.find(x => x.m == m); return r ? `${r.w}–${r.l}` : ''; };
+  const ws = Object.keys(BR?.weeks || {}).map(Number).sort((a, b) => a - b), wk = ws.at(-1);
+  const pair = (a, b, label, sa, sb) => ({ a: { ...look[a], n: seeds[a], rec: rec(a), score: sa }, b: { ...look[b], n: seeds[b], rec: rec(b), score: sb }, label });
+  const games = wk ? BR.weeks[wk].map(g => pair(g.a, g.b, g.label, g.sa ?? season.live?.scores?.[g.a]?.[0], g.sb ?? season.live?.scores?.[g.b]?.[0])) : null;
+  return { NF: st.NF, wk, live: wk && season.live?.week == wk, games, champion: BR?.champion, king: BR?.king,
+    byes: [1, 2].map(n => ({ ...look[at(n)], n, rec: rec(at(n)) })),
+    champ: [[3, 6], [4, 5]].map(([a, b]) => pair(at(a), at(b), 'Week 15')), toilet: [[7, 10], [8, 9]].map(([a, b]) => pair(at(a), at(b), 'Week 16')) };
+}
+function bracketCard(B) {
+  const side = s => h('div', { alignItems: 'center', gap: 12, height: 44 }, h('div', { width: 30, fontFamily: F.display, fontSize: 26, fontWeight: 800, color: C.muted }, String(s.n)), crest(s, 32),
+    h('div', { flex: 1, fontFamily: F.sans, fontSize: 25, fontWeight: 600, color: C.ink }, s.m), h('div', { fontFamily: F.mono, fontSize: 20, fontWeight: 600, color: C.muted }, s.score != null ? s.score.toFixed(2) : s.rec));
+  const game = g => h('div', { flexDirection: 'column', padding: '4px 0', borderTop: `1px solid ${C.line}` },
+    h('div', { fontFamily: F.mono, fontSize: 15, fontWeight: 600, letterSpacing: 2, color: C.accentInk, marginTop: 4 }, g.label.toUpperCase()), side(g.a), side(g.b));
+  const col = (head, kids) => h('div', { flex: 1, flexDirection: 'column' }, h('div', { fontFamily: F.mono, fontSize: 16, fontWeight: 600, letterSpacing: 2, color: C.muted, marginBottom: 4 }, head), ...kids);
+  const body = B.games
+    ? h('div', { gap: 48, marginTop: 18 }, col(`WEEK ${B.wk}${B.live ? ' · LIVE' : ''}`, B.games.filter((g, i) => i % 2 == 0).map(game)), col(' ', B.games.filter((g, i) => i % 2 == 1).map(game)))
+    : h('div', { gap: 48, marginTop: 18 },
+        col('CHAMPIONSHIP · WEEKS 15–17', [h('div', { flexDirection: 'column', paddingBottom: 4 }, ...B.byes.map(s => side({ ...s, rec: 'Week 15 bye' }))), ...B.champ.map(game)]),
+        col('TOILET BOWL SIDE · WEEKS 16–17', [...B.toilet.map(game), h('div', { fontFamily: F.sans, fontSize: 19, color: C.muted, marginTop: 10, lineHeight: 1.35 }, 'The Week 16 losers meet in the Toilet Bowl for 9th. Its loser is the Toilet Bowl King.')]));
+  return frame(B.champion ? `CHAMPION: ${B.champion.toUpperCase()} · TOILET BOWL KING: ${String(B.king || '').toUpperCase()}` : B.games ? 'THE PLAYOFFS' : `IF THE SEASON ENDED TODAY · THROUGH WEEK ${B.NF}`, 'Playoff picture', null, body);
+}
+
 async function sectionRoute(url, request, name) {
   const team = name.match(/^team-([a-z0-9-]+)$/), wkm = name.match(/^w(\d+)$/);
-  const kind = name == 'standings' || name == 'power' || name == 'booth' || name == 'odds' ? name : name == 'wire-week' || name == 'wire-season' ? 'wire' : team ? 'team' : wkm ? 'week' : null;
+  const kind = name == 'standings' || name == 'power' || name == 'booth' || name == 'odds' || name == 'bracket' ? name : name == 'wire-week' || name == 'wire-season' ? 'wire' : team ? 'team' : wkm ? 'week' : null;
   if (!kind) return null;
-  const dest = new URL(kind == 'standings' ? '/#season' : kind == 'power' ? '/#power' : kind == 'odds' ? '/#odds' : kind == 'booth' ? '/#booth' : kind == 'wire' ? (name == 'wire-season' ? '/#wire-season' : '/#wire') : kind == 'team' ? '/#team-' + team[1] : '/#w' + wkm[1], url.origin).href;
+  const dest = new URL(kind == 'standings' ? '/#season' : kind == 'power' ? '/#power' : kind == 'odds' ? '/#odds' : kind == 'bracket' ? '/#bracket' : kind == 'booth' ? '/#booth' : kind == 'wire' ? (name == 'wire-season' ? '/#wire-season' : '/#wire') : kind == 'team' ? '/#team-' + team[1] : '/#w' + wkm[1], url.origin).href;
   const fallback = () => Response.redirect(new URL('/og.png', url.origin).href, 302), isImg = url.searchParams.has('img');
   if (!isImg && !BOTS.test(request.headers.get('user-agent') || '')) {
     return new Response(null, { status: 302, headers: { location: dest, 'cache-control': 'private, no-store', vary: 'User-Agent' } });
@@ -509,11 +537,12 @@ async function sectionRoute(url, request, name) {
   if (kind == 'week') data = weekOf(season, st, +wkm[1]);
   if (kind == 'booth') data = boothOf(season);
   if (kind == 'odds') data = oddsOf(season, st);
+  if (kind == 'bracket') data = bracketOf(season, st);
   if (kind == 'wire') { const tx = await loadTx(url.origin); if (!tx) return isImg ? fallback() : Response.redirect(dest, 302); data = wireOf(season, tx, await loadBox(url.origin), name == 'wire-season' ? 'season' : 'week'); }
   if ((kind == 'team' || kind == 'week' || kind == 'booth' || kind == 'odds') && !data) return isImg ? fallback() : Response.redirect(dest, 302);
   if (!st.NF && kind != 'week' && kind != 'booth') return isImg ? fallback() : Response.redirect(dest, 302);
   if (isImg) {
-    const card = kind == 'standings' ? standingsCard(season, st) : kind == 'power' ? powerCard(season, st) : kind == 'odds' ? oddsCard(data) : kind == 'wire' ? wireCard(data) : kind == 'team' ? teamCard(data) : kind == 'booth' ? boothCard(data) : weekCard(data);
+    const card = kind == 'standings' ? standingsCard(season, st) : kind == 'power' ? powerCard(season, st) : kind == 'odds' ? oddsCard(data) : kind == 'bracket' ? bracketCard(data) : kind == 'wire' ? wireCard(data) : kind == 'team' ? teamCard(data) : kind == 'booth' ? boothCard(data) : weekCard(data);
     return new ImageResponse(card, { width: 1200, height: 630, fonts: await fonts(), headers: { 'cache-control': 'public, max-age=300, s-maxage=300' } });
   }
   let title, desc, ver;
@@ -526,6 +555,12 @@ async function sectionRoute(url, request, name) {
     title = `Playoff odds · through week ${data.NF} · 9FEAMG`;
     desc = data.rows.slice(0, 3).map(x => `${x.m} ${data.pct(x.o, 'playoffs')}`).join(' · ') + ' to make the playoffs. On the bubble: ' + data.rows.slice(5, 7).map(x => `${x.m} ${data.pct(x.o, 'playoffs')}`).join(', ') + '.';
     ver = data.rows.map(x => [x.m, data.pct(x.o, 'playoffs'), data.pct(x.o, 'bye'), data.pct(x.o, 'last'), x.ch]);
+  } else if (kind == 'bracket') {
+    const v = (g, i) => `${g.a.n} ${g.a.m} v ${g.b.n} ${g.b.m}`;
+    title = (data.champion ? `Champion: ${data.champion}` : data.games ? `Playoffs · Week ${data.wk}` : `Playoff picture · through week ${data.NF}`) + ' · 9FEAMG';
+    desc = data.champion ? `Toilet Bowl King: ${data.king}.` : data.games ? data.games.map(g => `${g.label}: ${g.a.m}${g.a.score != null ? ' ' + g.a.score.toFixed(2) : ''} v ${g.b.m}${g.b.score != null ? ' ' + g.b.score.toFixed(2) : ''}`).join(' · ')
+      : `If it ended today: ${data.byes.map(s => s.n + ' ' + s.m).join(' and ')} on byes; ${data.champ.map(v).join(', ')}. Toilet Bowl side: ${data.toilet.map(v).join(', ')}.`;
+    ver = [data.wk, data.champion, data.king, (data.games || data.champ.concat(data.toilet)).map(g => [g.a.m, g.b.m, g.a.score, g.b.score])];
   } else if (kind == 'power') {
     const pr = powerRanks(season, st.NF), note = season.powerNotes?.[st.NF]?.[pr[0].m];
     title = `Power rankings · through week ${st.NF} · 9FEAMG`;

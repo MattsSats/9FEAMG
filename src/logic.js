@@ -1449,6 +1449,8 @@ class Component extends DCLogic {
       menuHero: this.shareMenu('This matchup', e => this.shareLink(location.origin + (hero ? `/s/w${S.week}-${teamSlug(hero.a.m)}-vs-${teamSlug(hero.b.m)}` : '/#w' + S.week), hero ? `9FEAMG · ${hero.a.m} vs ${hero.b.m}` : '9FEAMG · Week ' + S.week, e), e => this.share('hero', e)),
       menuStandings: this.shareMenu('Standings', e => this.shareLink(location.origin + '/s/standings', '9FEAMG · Standings', e), e => this.share('standings', e)),
       menuOdds: this.shareMenu('Playoff odds', e => this.shareLink(location.origin + '/s/odds', '9FEAMG · Playoff odds', e), e => this.share('odds', e)),
+      menuBracket: this.shareMenu('Playoff picture', e => this.shareLink(location.origin + '/s/bracket', '9FEAMG · Playoff picture', e), e => this.share('bracket', e)),
+      shotBracket: BR?.champion ? `Final · Champion: ${BR.champion}` : pic?.hasRounds ? 'The playoffs' : `If the season ended today · through week ${NF}`,
       menuPower: this.shareMenu('Power rankings', e => this.shareLink(location.origin + '/s/power', '9FEAMG · Power rankings', e), e => this.share('power', e)),
       menuTeam: this.shareMenu(S.team, e => this.shareLink(location.origin + '/s/team-' + teamSlug(S.team), '9FEAMG · ' + S.team, e), e => this.share('team', e)),
       // Wire: the view on screen (this fantasy week or the season), as a link preview or an image.

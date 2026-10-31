@@ -1233,9 +1233,10 @@ button{font-family:inherit;color:inherit}
 
 <!-- Playoff picture: the bracket if the season ended today, and the Toilet Bowl side (Matt, Oct 31, 2026). -->
 <sc-if value="{{ hasPic }}" hint-placeholder-val="{{ false }}">
-<div id="bracket" class="sg-od" style="padding:30px 20px 0;scroll-margin-top:64px">
+<div id="bracket" data-shot="bracket" class="sg-od" style="padding:30px 20px 0;scroll-margin-top:64px">
   <div class="sec-head">
     <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:26px;text-transform:uppercase">Playoff picture</div>
+    <span class="sec-btns no-shot"><button class="share-btn" sc-camel-on-click="{{ menuBracket }}" aria-label="Share the playoff picture">Share</button></span>
     <div class="sec-cap">{{ pic.sub }}</div>
   </div>
   <!-- Final places, once Week 17 is in. -->
@@ -1336,6 +1337,7 @@ button{font-family:inherit;color:inherit}
   </div>
   <div style="font-size:13px;color:var(--muted);margin-top:8px;line-height:1.4;text-wrap:pretty">The Week 16 losers meet in the Toilet Bowl for 9th. Its loser finishes 10th: the Toilet Bowl King.</div>
   </sc-if>
+  <div class="shot-footer"><b>9FEAMG</b><span>{{ shotBracket }}</span></div>
 </div>
 </sc-if>
 
