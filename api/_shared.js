@@ -237,7 +237,7 @@ export function playoffOdds(season, { through, live = true, sims = 20000, shrink
   const avg = Object.fromEntries(MGR.map(m => { const s = SC[m].slice(0, W0); return [m, (s.reduce((t, x) => t + x, 0) + shrink * lg) / (s.length + shrink)]; }));
   const sd = weeklySpread(season, W0);
   // The live week (the one right after W0) from Yahoo: points so far plus the rest of the projection.
-  const LV = live && season.live?.week == W0 + 1 && season.live.scores ? season.live.scores : null;
+  const LV = live && W0 < R && season.live?.week == W0 + 1 && season.live.scores ? season.live.scores : null;
   const wk = {};
   for (let w = W0 + 1; w <= R; w++) wk[w] = Object.fromEntries(MGR.map(m => {
     const s = LV && w == W0 + 1 ? LV[m] : null;
@@ -349,11 +349,13 @@ export function matchupOdds(season, rosters = null, now = Date.now()) {
 export function pickRecord(season, byWeek) {
   const NF = Math.max(0, ...season.managers.map(x => (season.scores[x.m] || []).length)), graded = [];
   for (const [w, picks] of Object.entries(byWeek || {})) {
-    if (+w > NF) continue;
+    // A playoff week is graded from its final scores (season.playoffs, mergeYahoo).
+    const po = season.playoffs?.scores?.[w];
+    if (+w > NF && !po) continue;
     (picks || []).forEach((p, i) => {
       const pair = season.schedule?.[w]?.[i]; if (!p || !pair) return;
       const [pick, pct] = Array.isArray(p) ? p : [p, null];
-      const [a, b] = pair, sa = season.scores[a][w - 1], sb = season.scores[b][w - 1];
+      const [a, b] = pair, sa = po ? po[a] : season.scores[a][w - 1], sb = po ? po[b] : season.scores[b][w - 1];
       const winner = sa > sb ? a : sb > sa ? b : null;
       graded.push({ wk: +w, i, pick, pct, winner, hit: winner == pick });
     });
@@ -409,15 +411,30 @@ export const roastOf = (season, m, NF) => season.roasts?.[NF]?.[m] || '';
 // update on a Sunday night isn't covered up by the morning's Yahoo pull.
 export function mergeYahoo(S, Y) {
   if (!S || !Y?.weeks) return S;
-  const ws = Object.keys(Y.weeks).map(Number).sort((a, b) => a - b);
-  const full = w => S.managers.every(x => Y.weeks[w].teams?.[x.m]);
+  const ws = Object.keys(Y.weeks).map(Number).sort((a, b) => a - b), R = S.regularSeasonWeeks || 14;
+  // A week counts once Yahoo has every team in it: all of them in the regular season; in the playoffs
+  // (the weeks after R), every team in that week's games, since byes and the eliminated sit out.
+  const inWeek = w => w > R ? (Y.weeks[w].matchups || []).flat() : S.managers.map(x => x.m);
+  const full = w => inWeek(w).length > 0 && inWeek(w).every(m => Y.weeks[w].teams?.[m]);
   S = { ...S, schedule: { ...S.schedule }, scores: Object.fromEntries(S.managers.map(x => [x.m, [...(S.scores[x.m] || [])]])) };
+  // The playoffs (Matt, Oct 31, 2026) come from Yahoo alone: each playoff week's games go in the schedule,
+  // with their kinds and, once final, their scores (season.scores stays the regular season), plus
+  // Yahoo's seeds once it has them. playoffBracket labels the games and works out the places.
+  const PO = { weeks: {}, scores: {} };
   for (const w of ws) {
     const Wk = Y.weeks[w];
     if (!full(w)) continue;
+    if (w > R) {
+      S.schedule[w] = Wk.matchups;
+      PO.weeks[w] = { status: Wk.status, kinds: Wk.kinds || Wk.matchups.map(() => 'playoffs') };
+      if (Wk.status == 'postevent') PO.scores[w] = Object.fromEntries(inWeek(w).map(m => [m, Wk.teams[m].pts]));
+      continue;
+    }
     if (!S.schedule[w] && Wk.matchups?.length == S.managers.length / 2) S.schedule[w] = Wk.matchups;
-    if (Wk.status == 'postevent' && w <= S.regularSeasonWeeks) for (const x of S.managers) { const a = S.scores[x.m]; if (a.length >= w - 1) a[w - 1] = Wk.teams[x.m].pts; }
+    if (Wk.status == 'postevent') for (const x of S.managers) { const a = S.scores[x.m]; if (a.length >= w - 1) a[w - 1] = Wk.teams[x.m].pts; }
   }
+  const seeds = S.managers.every(x => Y.managers?.[x.m]?.seed) ? Object.fromEntries(S.managers.map(x => [x.m, Y.managers[x.m].seed])) : null;
+  if (Object.keys(PO.weeks).length || seeds) S.playoffs = { ...PO, seeds };
   const live = ws.find(w => Y.weeks[w].status == 'midevent' && full(w));
   if (live) {
     const Wk = Y.weeks[live], same = S.live?.week == live;
@@ -426,10 +443,48 @@ export function mergeYahoo(S, Y) {
       const pp = { ...(same ? S.live.playerPoints : {}) };
       for (const t of Object.values(Wk.box || {})) for (const r of [...t.starters, ...t.bench]) if (r[4]) pp[r[1]] = r[4];
       S.live = { status: 'Live', sheetNote: 'Live from Yahoo. Orange = points so far; the rest are projections.', ...(same ? S.live : {}), week: live, playerPoints: pp, asOf: Y.syncedAt,
-        scores: Object.fromEntries(S.managers.map(x => [x.m, [Wk.teams[x.m].pts, Wk.teams[x.m].proj]])) };
+        scores: Object.fromEntries(inWeek(live).map(m => [m, [Wk.teams[m].pts, Wk.teams[m].proj]])) };
     }
   } else if (S.live && Y.weeks[S.live.week]?.status == 'postevent' && full(S.live.week)) S.live = null;
+  // Between playoff weeks nothing is live and nobody moves season.js on: the next playoff week Yahoo has
+  // games for opens as a preview with Yahoo's projections, so Gameday moves on by itself.
+  const next = ws.find(w => w > R && Y.weeks[w].status == 'preevent' && full(w));
+  if (next && !(S.live?.week >= next)) S.live = { status: 'Preview', sheetNote: 'Preview from Yahoo: projections until kickoff.', week: next, playerPoints: {}, asOf: Y.syncedAt,
+    scores: Object.fromEntries(inWeek(next).map(m => [m, [0, Y.weeks[next].teams[m].proj]])) };
   return S;
+}
+// The playoff bracket (Matt, Oct 31, 2026): seeds (Yahoo's, else the final standings once the regular
+// season is over) and every playoff week's games in schedule order as { a, b, label, side, sa, sb, winner },
+// then the final places once Week R + 3 is in. Seeds 1–6 are the championship side, 7–10 the Toilet Bowl
+// side. Labels go by who's still alive on each side: Quarterfinal; Semifinal or 5th place; Championship,
+// 3rd place or 5th place; on the other side Consolation, then 7th place or the Toilet Bowl (9th place; its
+// loser finishes 10th, the Toilet Bowl King). A tie goes to the higher seed (Yahoo's playoff tiebreaker).
+// null until there are seeds.
+export function playoffBracket(season) {
+  const R = season.regularSeasonWeeks || 14, P = season.playoffTeams || 6, PO = season.playoffs;
+  const NF = Math.max(0, ...season.managers.map(x => (season.scores[x.m] || []).length));
+  const seeds = PO?.seeds || (NF >= R ? Object.fromEntries(seasonStats(season, null).rows.sort(byStandings).map((r, i) => [r.m, i + 1])) : null);
+  if (!seeds) return null;
+  const lost = {}, weeks = {};
+  for (const w of Object.keys(season.schedule || {}).map(Number).filter(w => w > R).sort((a, b) => a - b)) {
+    const sc = PO?.scores?.[w], alive = m => !lost[m];
+    weeks[w] = season.schedule[w].map(([a, b]) => {
+      const side = seeds[a] <= P ? 'champ' : 'toilet';
+      const label = side == 'champ'
+        ? (w == R + 1 ? 'Quarterfinal' : alive(a) && alive(b) ? (w >= R + 3 ? 'Championship' : 'Semifinal') : lost[a] == R + 2 && lost[b] == R + 2 ? '3rd place' : '5th place')
+        : (w <= R + 2 ? 'Consolation' : alive(a) && alive(b) ? '7th place' : 'Toilet Bowl');
+      const sa = sc?.[a] ?? null, sb = sc?.[b] ?? null;
+      const winner = sa == null || sb == null ? null : sa > sb ? a : sb > sa ? b : seeds[a] < seeds[b] ? a : b;
+      return { a, b, label, side, sa, sb, winner };
+    });
+    for (const g of weeks[w]) if (g.winner) { const l = g.winner == g.a ? g.b : g.a; lost[l] ??= w; }
+  }
+  // Final places from the placement games, whichever week Yahoo played them in (the 5th place game can
+  // come in Week R + 2), once the last week is in; a place stays unset when Yahoo didn't play that game.
+  const places = {}, all = weeks[R + 3]?.every(g => g.winner) ? Object.values(weeks).flat() : [];
+  const put = (label, first) => { const g = all.filter(x => x.label == label && x.winner).at(-1); if (g) { places[g.winner] = first; places[g.winner == g.a ? g.b : g.a] = first + 1; } };
+  put('Championship', 1); put('3rd place', 3); put('5th place', 5); put('7th place', 7); put('Toilet Bowl', 9);
+  return { seeds, weeks, places, champion: Object.keys(places).find(m => places[m] == 1) || null, king: Object.keys(places).find(m => places[m] == 10) || null };
 }
 // Yahoo's box scores fill the final weeks the uploads file doesn't have.
 export function mergeBox(box, Y) {
@@ -443,12 +498,17 @@ export function mergeBox(box, Y) {
 // Players keep the file's projection and ESPN number; anyone new to the team comes in without them. A
 // team Yahoo didn't send stays as the file has it.
 const BOX_SLOT = { 'W/R/T': 'WRT', BN: null, IR: null };
-export function liveRosters(R, Y) {
-  const Wk = Y?.weeks?.[R?.week];
-  if (!Wk?.box || +Y.currentWeek != +R.week || !(Date.parse(Y.syncedAt) > Date.parse(R.asOf || 0))) return R;
-  return { ...R, asOf: Y.syncedAt, teams: R.teams.map(t => {
+// In the playoffs (Yahoo's current week after the regular season, playoffsFrom) nobody moves the rosters
+// file on, so when Yahoo is on a later week than the file, the lineups come from Yahoo's week anyway and
+// the file's projections are dropped, since they belong to the file's week (Matt, Oct 31, 2026).
+export function liveRosters(R, Y, playoffsFrom = 15) {
+  const cw = +Y?.currentWeek, moved = cw >= playoffsFrom && cw > +R?.week;
+  const Wk = Y?.weeks?.[moved ? cw : R?.week];
+  if (!Wk?.box || (!moved && cw != +R.week) || !(Date.parse(Y.syncedAt) > Date.parse(R.asOf || 0))) return R;
+  const fresh = p => { if (!moved) return p; const { proj, espn, projected, projections, ...rest } = p; return rest; };
+  return { ...R, ...(moved ? { week: cw } : {}), asOf: Y.syncedAt, teams: R.teams.map(t => {
     const B = Wk.box[t.name]; if (!B) return t;
-    const had = new Map(t.players.map(p => [nameKey(p.name), p]));
+    const had = new Map(t.players.map(p => [nameKey(p.name), fresh(p)]));
     const put = (r, slot) => { const p = { ...(had.get(nameKey(r[1])) || { name: r[1], nfl: r[2] }), slot, pos: slot == 'starter' ? (BOX_SLOT[r[0]] || r[0]) : r[3] };
       if (r.length > 6) { if (r[6]) p.inj = r[6]; else delete p.inj; }
       return p; };

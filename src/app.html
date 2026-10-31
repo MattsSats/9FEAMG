@@ -652,6 +652,13 @@ button{font-family:inherit;color:inherit}
   <span>{{ weekStatus }}</span>
   <sc-if value="{{ hasAsOf }}" hint-placeholder-val="{{ false }}"><span style="color:var(--ink)">{{ scoresAsOf }}</span></sc-if>
 </div>
+<!-- The season's end: the champion and the Toilet Bowl King (playoffBracket). -->
+<sc-if value="{{ hasChamp }}" hint-placeholder-val="{{ false }}">
+  <div style="margin:12px 20px 0;padding:14px 16px;border-radius:16px;background:var(--accent);color:var(--onAccent)">
+    <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:26px;text-transform:uppercase;line-height:1">{{ champTitle }}</div>
+    <div style="font-family:'JetBrains Mono';font-size:12px;margin-top:6px">{{ champSub }}</div>
+  </div>
+</sc-if>
 <sc-if value="{{ newScores }}" hint-placeholder-val="{{ false }}">
   <div style="padding:8px 20px 0"><button sc-camel-on-click="{{ refreshNow }}" style="width:100%;min-height:40px;border:0;border-radius:999px;background:var(--accent);color:var(--onAccent);font-weight:700;font-size:14px;cursor:pointer">New scores · Update</button></div>
 </sc-if>
@@ -745,6 +752,7 @@ button{font-family:inherit;color:inherit}
     <div style="display:flex;flex-direction:column;gap:10px">
       <sc-for list="{{ matchups }}" as="mu" hint-placeholder-count="4">
         <div style="background:var(--surface);border:1px solid var(--line);border-radius:16px;overflow:hidden">
+          <sc-if value="{{ mu.hasRound }}" hint-placeholder-val="{{ false }}"><div style="padding:14px 16px 0;font-family:'JetBrains Mono';font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--accentInk)">{{ mu.round }}</div></sc-if>
           <div style="display:grid;grid-template-columns:32px minmax(0,1fr) auto auto;column-gap:12px;row-gap:8px;align-items:center;padding:12px 16px 14px">
             <span></span><span></span><span style="font-family:'JetBrains Mono';font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);text-align:right">{{ mu.colNow }}</span><span style="font-family:'JetBrains Mono';font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);text-align:right">{{ mu.colScore }}</span>
             <div class="crest" style="width:32px;height:32px;background:{{ mu.a.color }};color:var(--onAccent);display:flex;align-items:center;justify-content:center;font-family:'Big Shoulders Display';font-weight:800;font-size:13px;flex:none"><span class="ini" data-i="{{ mu.a.init }}">{{ mu.a.init }}</span></div>
@@ -1230,6 +1238,53 @@ button{font-family:inherit;color:inherit}
     <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:26px;text-transform:uppercase">Playoff picture</div>
     <div class="sec-cap">{{ pic.sub }}</div>
   </div>
+  <!-- Final places, once Week 17 is in. -->
+  <sc-if value="{{ pic.hasPlaces }}" hint-placeholder-val="{{ false }}">
+    <div style="background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:4px 14px;margin-top:14px">
+      <sc-for list="{{ pic.places }}" as="pl" hint-placeholder-count="10">
+        <div style="display:grid;grid-template-columns:22px 26px minmax(0,1fr) auto;gap:10px;align-items:center;padding:7px 0;border-bottom:1px solid var(--line)">
+          <span style="font-family:'Big Shoulders Display';font-weight:800;font-size:17px;color:var(--muted)">{{ pl.n }}</span>
+          <div class="crest" style="width:26px;height:26px;background:{{ pl.color }};color:var(--onAccent);display:flex;align-items:center;justify-content:center;font-family:'Big Shoulders Display';font-weight:800;font-size:11px;flex:none"><span class="ini" data-i="{{ pl.init }}">{{ pl.init }}</span></div>
+          <span style="font-weight:600;font-size:15px">{{ pl.m }}</span>
+          <span style="font-family:'JetBrains Mono';font-size:11px;color:var(--accentInk);text-transform:uppercase;letter-spacing:.08em">{{ pl.title }}</span>
+        </div>
+      </sc-for>
+    </div>
+  </sc-if>
+  <!-- The playoffs as they're played: each week's games with round, seeds and scores. -->
+  <sc-if value="{{ pic.hasRounds }}" hint-placeholder-val="{{ false }}">
+    <sc-for list="{{ pic.rounds }}" as="rd" hint-placeholder-count="2">
+      <div style="font-family:'JetBrains Mono';font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-top:16px">{{ rd.title }}</div>
+      <div style="display:flex;flex-direction:column;gap:8px;margin-top:8px">
+        <sc-for list="{{ rd.byes }}" as="s" hint-placeholder-count="0">
+          <div style="display:grid;grid-template-columns:18px 26px minmax(0,1fr) auto;gap:10px;align-items:center;padding:8px 14px;background:var(--surface);border:1px solid var(--line);border-radius:14px">
+            <span style="font-family:'Big Shoulders Display';font-weight:800;font-size:17px;color:var(--muted)">{{ s.n }}</span>
+            <div class="crest" style="width:26px;height:26px;background:{{ s.color }};color:var(--onAccent);display:flex;align-items:center;justify-content:center;font-family:'Big Shoulders Display';font-weight:800;font-size:11px;flex:none"><span class="ini" data-i="{{ s.init }}">{{ s.init }}</span></div>
+            <span style="font-weight:600;font-size:15px">{{ s.m }}</span>
+            <span style="font-family:'JetBrains Mono';font-size:11px;color:var(--muted)">Bye</span>
+          </div>
+        </sc-for>
+        <sc-for list="{{ rd.games }}" as="g" hint-placeholder-count="2">
+          <div style="background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:10px 14px 4px">
+            <div style="font-family:'JetBrains Mono';font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--accentInk)">{{ g.label }}</div>
+            <div sc-camel-on-click="{{ g.a.open }}" class="hov" tabindex="0" role="button" style="display:grid;grid-template-columns:18px 26px minmax(0,1fr) auto;gap:10px;align-items:center;padding:8px 0;cursor:pointer">
+              <span style="font-family:'Big Shoulders Display';font-weight:800;font-size:17px;color:var(--muted)">{{ g.a.n }}</span>
+              <div class="crest" style="width:26px;height:26px;background:{{ g.a.color }};color:var(--onAccent);display:flex;align-items:center;justify-content:center;font-family:'Big Shoulders Display';font-weight:800;font-size:11px;flex:none"><span class="ini" data-i="{{ g.a.init }}">{{ g.a.init }}</span></div>
+              <span style="font-weight:{{ g.a.weight }};font-size:15px;color:{{ g.a.fg }}">{{ g.a.m }}</span>
+              <span style="font-family:'JetBrains Mono';font-size:13px;font-weight:{{ g.a.weight }};color:{{ g.a.fg }}">{{ g.a.score }}</span>
+            </div>
+            <div sc-camel-on-click="{{ g.b.open }}" class="hov" tabindex="0" role="button" style="display:grid;grid-template-columns:18px 26px minmax(0,1fr) auto;gap:10px;align-items:center;padding:8px 0;border-top:1px solid var(--line);cursor:pointer">
+              <span style="font-family:'Big Shoulders Display';font-weight:800;font-size:17px;color:var(--muted)">{{ g.b.n }}</span>
+              <div class="crest" style="width:26px;height:26px;background:{{ g.b.color }};color:var(--onAccent);display:flex;align-items:center;justify-content:center;font-family:'Big Shoulders Display';font-weight:800;font-size:11px;flex:none"><span class="ini" data-i="{{ g.b.init }}">{{ g.b.init }}</span></div>
+              <span style="font-weight:{{ g.b.weight }};font-size:15px;color:{{ g.b.fg }}">{{ g.b.m }}</span>
+              <span style="font-family:'JetBrains Mono';font-size:13px;font-weight:{{ g.b.weight }};color:{{ g.b.fg }}">{{ g.b.score }}</span>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </sc-for>
+  </sc-if>
+  <sc-if value="{{ pic.projected }}" hint-placeholder-val="{{ true }}">
   <div style="font-family:'JetBrains Mono';font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-top:16px">Championship · Weeks 15–17</div>
   <div style="display:flex;flex-direction:column;gap:8px;margin-top:8px">
     <div style="background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:4px 14px">
@@ -1280,6 +1335,7 @@ button{font-family:inherit;color:inherit}
     </sc-for>
   </div>
   <div style="font-size:13px;color:var(--muted);margin-top:8px;line-height:1.4;text-wrap:pretty">The Week 16 losers meet in the Toilet Bowl for 9th. Its loser finishes 10th: the Toilet Bowl King.</div>
+  </sc-if>
 </div>
 </sc-if>
 
