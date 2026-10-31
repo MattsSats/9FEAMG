@@ -3,12 +3,12 @@
 // Yahoo sync on top, as the site does) and finds parlays by their link name. The naming and odds
 // math are the site's own, from api/_shared.js.
 import vm from 'node:vm';
-import { readData } from './_yahoo.js';
+import { readData, dataOrigin } from './_yahoo.js';
 import { kickoffAt, ticketSlug, onTicket, toAmerican, hitChance, pct, parlayState, parlayFair, mergeYahoo } from './_shared.js';
 
 // data/season.js alone, without the Yahoo sync (api/league.js only needs the NFL schedule).
 export async function loadSeasonFile(origin) {
-  const res = await fetch(new URL('/data/season.js', origin), { cache: 'no-store' });
+  const res = await fetch(new URL('/data/season.js', dataOrigin(origin)), { cache: 'no-store' });
   if (!res.ok) throw new Error('season.js ' + res.status);
   const sandbox = { window: {} };
   vm.runInNewContext(await res.text(), sandbox, { timeout: 1000 });

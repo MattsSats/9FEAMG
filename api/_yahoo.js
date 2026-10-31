@@ -14,6 +14,12 @@ export const STATUS_PATH = 'yahoo/status.json';
 // Yahoo team id -> manager, as the league names them.
 export const TEAMS = { 1: 'Tristan', 2: 'Jerger', 3: 'Tony', 4: 'Kurt', 5: 'Colin', 6: 'Mr. G', 7: 'Andy', 8: 'Matt', 9: 'DLin', 10: 'Pablo' };
 
+// Where a function reads the site's own files (data/season.js, the uploads). Preview deployments
+// (*.vercel.app) sit behind Vercel's login, so a fetch from a function there gets the sign-in page
+// (HTML, so "Unexpected token '<'") instead of the file: those read the production site's copy.
+export const SITE = 'https://www.9feamg.cloud';
+export const dataOrigin = origin => /\.vercel\.app$/i.test(new URL(origin).hostname) ? SITE : origin;
+
 // ---- storage ----
 export async function readJson(path) {
   const r = await get(path, { access: 'private', useCache: false });
