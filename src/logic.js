@@ -435,7 +435,7 @@ class Component extends DCLogic {
     if (wk) { this.setState({ tab: 'Gameday', week: +wk[1], sheet: null }); window.scrollTo(0, 0); return; }
     if (h == '#season') { this.setState({ tab: 'Season', sheet: null }); window.scrollTo(0, 0); return; }
     // Season sections: #power, #pfpa, #luck, #xw, #bench, #src open the Season tab scrolled to that section.
-    if (['#power', '#odds', '#pfpa', '#luck', '#xw', '#bench', '#src'].includes(h)) { this.setState({ tab: 'Season', sheet: null }); setTimeout(() => document.getElementById(h.slice(1))?.scrollIntoView({ block: 'start' }), 350); return; }
+    if (['#power', '#odds', '#bracket', '#pfpa', '#luck', '#xw', '#bench', '#src'].includes(h)) { this.setState({ tab: 'Season', sheet: null }); setTimeout(() => document.getElementById(h.slice(1))?.scrollIntoView({ block: 'start' }), 350); return; }
     if (h == '#ledger') { this.setState({ tab: 'Gameday', week: HOME_WK, sheet: null }); setTimeout(() => document.getElementById('ledger')?.scrollIntoView({ block: 'start' }), 350); return; }
     if (h == '#booth') { this.setState({ tab: 'Gameday', week: BOOTH_WK, sheet: null }); setTimeout(() => document.getElementById('booth')?.scrollIntoView({ block: 'start' }), 350); return; }
     if (tm) { const t = MGR.find(x => teamSlug(x) == tm[1]); if (t) { this.setState({ tab: 'Teams', team: t, sheet: null }); window.scrollTo(0, 0); } return; }
@@ -560,7 +560,7 @@ class Component extends DCLogic {
       : S.tab == 'Wire' ? (S.wire == 'Season' ? '#wire-season' : '#wire') : S.tab == 'Draft' ? '#draft' : null;
     if (want == null || h == want) return;
     if (S.tab == 'Gameday' && (h == '#w' + S.week || h.startsWith('#w' + S.week + '-') || h == '#ledger' || (h == '#booth' && S.week == BOOTH_WK))) return;
-    if (S.tab == 'Season' && ['#power', '#odds', '#pfpa', '#luck', '#xw', '#bench', '#src'].includes(h)) return;
+    if (S.tab == 'Season' && ['#power', '#odds', '#bracket', '#pfpa', '#luck', '#xw', '#bench', '#src'].includes(h)) return;
     if (!want && !h) return;
     history.pushState(null, '', want || location.pathname + location.search);
   }
@@ -1130,6 +1130,14 @@ class Component extends DCLogic {
     const standings = ST.map((s, i) => ({ rank: i + 1, m: s.m, rowBg: s.m == S.reqMgr ? 'var(--surface2)' : 'transparent', rowEdge: s.m == S.reqMgr ? col(s.m) : 'transparent', you: s.m == S.reqMgr,
       // The row just above the playoff line has no rule of its own; the line is the divider.
       rowLine: i == P - 1 ? 'transparent' : 'var(--line)', init: INIT[s.m], color: col(s.m), pa: f1(s.pa), max: s.max == null ? '—' : f1(s.max), wl: s.w + '–' + s.l, pf: f1(s.pf), luck: sgn(s.luck), luckColor: s.luck > 0 ? 'var(--pos)' : s.luck < 0 ? 'var(--neg)' : 'var(--muted)', cut: i == P - 1, open: () => { this.setState({ tab: 'Teams', team: s.m }); window.scrollTo(0, 0); } }));
+    // Playoff picture (Matt, Oct 31, 2026): the bracket if the regular season ended today, seeded by the
+    // standings (wins, then points for). Seeds 1 and 2 sit out Week 15 while 3 plays 6 and 4 plays 5, and
+    // the semifinals reseed. Seeds 7–10 play from Week 16, 7 v 10 and 8 v 9; the two losers meet in Week
+    // 17's Toilet Bowl for 9th, and its loser finishes 10th: the Toilet Bowl King (Yahoo's consolation
+    // bracket, read Oct 31, 2026).
+    const seedOf = n => { const s = ST[n - 1]; return { n, m: s.m, init: INIT[s.m], color: col(s.m), wl: s.w + '–' + s.l, open: () => { this.setState({ tab: 'Teams', team: s.m }); window.scrollTo(0, 0); } }; };
+    const pic = ST.length == 10 && P == 6 ? { sub: NF < (D.regularSeasonWeeks || 14) ? `If the season ended today · through Week ${NF}` : 'The regular season is over: these are the seeds.',
+      byes: [seedOf(1), seedOf(2)], qf: [[3, 6], [4, 5]].map(([a, b]) => ({ a: seedOf(a), b: seedOf(b) })), cons: [[7, 10], [8, 9]].map(([a, b]) => ({ a: seedOf(a), b: seedOf(b) })) } : null;
     // Playoff odds (playoffOdds in api/_shared.js) with the change since the week before (this.odds).
     const OD = S.tab == 'Season' ? this.odds(true) : null, oddsDone = OD?.now?.weeksLeft == 0;
     const oddsRows = !OD?.now ? [] : MGR.map(m => ({ m, o: OD.now.teams[m], p: OD.prev?.teams[m], s: ST.find(x => x.m == m) }))
@@ -1401,7 +1409,7 @@ class Component extends DCLogic {
       // The live week before its first lines: the heading and when they're coming, so the Booth's
       // column isn't left blank on desktop.
       showBooth: boothOn, booth: boothLines, hasBooth: boothOn && (boothLines.length > 0 || hasWeek), boothCanShare: boothLines.length > 0,
-      seasonSub, seasonTiles, standings, playoffLine: `Playoff line · top ${P} of ${MGR.length}`, oddsRows, oddsSub,
+      seasonSub, seasonTiles, standings, playoffLine: `Playoff line · top ${P} of ${MGR.length}`, oddsRows, oddsSub, pic: pic || {}, hasPic: !!pic,
       heat, heatHead, heatColsM, heatColsD, heatMinM, heatMinD,
       team, teamPicker,
       draftInfo: D.draftInfo, draftToolUrl: D.draftToolUrl || '', hasDraftTool: !!D.draftToolUrl, draftOk: !draftMsg, draftMsg, draftFirsts, draftModes, draftChips, draftPicks, draftTitle, draftSub,

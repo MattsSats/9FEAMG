@@ -1223,6 +1223,66 @@ button{font-family:inherit;color:inherit}
   <div class="shot-footer"><b>9FEAMG</b><span>{{ shotOdds }}</span></div>
 </div>
 
+<!-- Playoff picture: the bracket if the season ended today, and the Toilet Bowl side (Matt, Oct 31, 2026). -->
+<sc-if value="{{ hasPic }}" hint-placeholder-val="{{ false }}">
+<div id="bracket" class="sg-od" style="padding:30px 20px 0;scroll-margin-top:64px">
+  <div class="sec-head">
+    <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:26px;text-transform:uppercase">Playoff picture</div>
+    <div class="sec-cap">{{ pic.sub }}</div>
+  </div>
+  <div style="font-family:'JetBrains Mono';font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-top:16px">Championship · Weeks 15–17</div>
+  <div style="display:flex;flex-direction:column;gap:8px;margin-top:8px">
+    <div style="background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:4px 14px">
+      <sc-for list="{{ pic.byes }}" as="s" hint-placeholder-count="2">
+        <div sc-camel-on-click="{{ s.open }}" class="hov" tabindex="0" role="button" style="display:grid;grid-template-columns:18px 26px minmax(0,1fr) auto;gap:10px;align-items:center;padding:8px 0;cursor:pointer">
+          <span style="font-family:'Big Shoulders Display';font-weight:800;font-size:17px;color:var(--muted)">{{ s.n }}</span>
+          <div class="crest" style="width:26px;height:26px;background:{{ s.color }};color:var(--onAccent);display:flex;align-items:center;justify-content:center;font-family:'Big Shoulders Display';font-weight:800;font-size:11px;flex:none"><span class="ini" data-i="{{ s.init }}">{{ s.init }}</span></div>
+          <div style="min-width:0;font-weight:600;font-size:15px">{{ s.m }} <span style="font-family:'JetBrains Mono';font-size:11px;font-weight:400;color:var(--muted)">{{ s.wl }}</span></div>
+          <span style="font-family:'JetBrains Mono';font-size:11px;color:var(--muted)">Week 15 bye</span>
+        </div>
+      </sc-for>
+    </div>
+    <sc-for list="{{ pic.qf }}" as="g" hint-placeholder-count="2">
+      <div style="background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:4px 14px">
+        <div sc-camel-on-click="{{ g.a.open }}" class="hov" tabindex="0" role="button" style="display:grid;grid-template-columns:18px 26px minmax(0,1fr) auto;gap:10px;align-items:center;padding:8px 0;cursor:pointer">
+          <span style="font-family:'Big Shoulders Display';font-weight:800;font-size:17px;color:var(--muted)">{{ g.a.n }}</span>
+          <div class="crest" style="width:26px;height:26px;background:{{ g.a.color }};color:var(--onAccent);display:flex;align-items:center;justify-content:center;font-family:'Big Shoulders Display';font-weight:800;font-size:11px;flex:none"><span class="ini" data-i="{{ g.a.init }}">{{ g.a.init }}</span></div>
+          <div style="min-width:0;font-weight:600;font-size:15px">{{ g.a.m }} <span style="font-family:'JetBrains Mono';font-size:11px;font-weight:400;color:var(--muted)">{{ g.a.wl }}</span></div>
+          <span style="font-family:'JetBrains Mono';font-size:11px;color:var(--muted)">Week 15</span>
+        </div>
+        <div sc-camel-on-click="{{ g.b.open }}" class="hov" tabindex="0" role="button" style="display:grid;grid-template-columns:18px 26px minmax(0,1fr) auto;gap:10px;align-items:center;padding:8px 0;border-top:1px solid var(--line);cursor:pointer">
+          <span style="font-family:'Big Shoulders Display';font-weight:800;font-size:17px;color:var(--muted)">{{ g.b.n }}</span>
+          <div class="crest" style="width:26px;height:26px;background:{{ g.b.color }};color:var(--onAccent);display:flex;align-items:center;justify-content:center;font-family:'Big Shoulders Display';font-weight:800;font-size:11px;flex:none"><span class="ini" data-i="{{ g.b.init }}">{{ g.b.init }}</span></div>
+          <div style="min-width:0;font-weight:600;font-size:15px">{{ g.b.m }} <span style="font-family:'JetBrains Mono';font-size:11px;font-weight:400;color:var(--muted)">{{ g.b.wl }}</span></div>
+          <span></span>
+        </div>
+      </div>
+    </sc-for>
+  </div>
+  <div style="font-size:13px;color:var(--muted);margin-top:8px;line-height:1.4;text-wrap:pretty">Week 16 reseeds: the top seed left plays the lowest. The final is Week 17.</div>
+  <div style="font-family:'JetBrains Mono';font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-top:18px">Toilet Bowl side · Weeks 16–17</div>
+  <div style="display:flex;flex-direction:column;gap:8px;margin-top:8px">
+    <sc-for list="{{ pic.cons }}" as="g" hint-placeholder-count="2">
+      <div style="background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:4px 14px">
+        <div sc-camel-on-click="{{ g.a.open }}" class="hov" tabindex="0" role="button" style="display:grid;grid-template-columns:18px 26px minmax(0,1fr) auto;gap:10px;align-items:center;padding:8px 0;cursor:pointer">
+          <span style="font-family:'Big Shoulders Display';font-weight:800;font-size:17px;color:var(--muted)">{{ g.a.n }}</span>
+          <div class="crest" style="width:26px;height:26px;background:{{ g.a.color }};color:var(--onAccent);display:flex;align-items:center;justify-content:center;font-family:'Big Shoulders Display';font-weight:800;font-size:11px;flex:none"><span class="ini" data-i="{{ g.a.init }}">{{ g.a.init }}</span></div>
+          <div style="min-width:0;font-weight:600;font-size:15px">{{ g.a.m }} <span style="font-family:'JetBrains Mono';font-size:11px;font-weight:400;color:var(--muted)">{{ g.a.wl }}</span></div>
+          <span style="font-family:'JetBrains Mono';font-size:11px;color:var(--muted)">Week 16</span>
+        </div>
+        <div sc-camel-on-click="{{ g.b.open }}" class="hov" tabindex="0" role="button" style="display:grid;grid-template-columns:18px 26px minmax(0,1fr) auto;gap:10px;align-items:center;padding:8px 0;border-top:1px solid var(--line);cursor:pointer">
+          <span style="font-family:'Big Shoulders Display';font-weight:800;font-size:17px;color:var(--muted)">{{ g.b.n }}</span>
+          <div class="crest" style="width:26px;height:26px;background:{{ g.b.color }};color:var(--onAccent);display:flex;align-items:center;justify-content:center;font-family:'Big Shoulders Display';font-weight:800;font-size:11px;flex:none"><span class="ini" data-i="{{ g.b.init }}">{{ g.b.init }}</span></div>
+          <div style="min-width:0;font-weight:600;font-size:15px">{{ g.b.m }} <span style="font-family:'JetBrains Mono';font-size:11px;font-weight:400;color:var(--muted)">{{ g.b.wl }}</span></div>
+          <span></span>
+        </div>
+      </div>
+    </sc-for>
+  </div>
+  <div style="font-size:13px;color:var(--muted);margin-top:8px;line-height:1.4;text-wrap:pretty">The Week 16 losers meet in the Toilet Bowl for 9th. Its loser finishes 10th: the Toilet Bowl King.</div>
+</div>
+</sc-if>
+
 <div id="bench" data-shot="bench" class="sg-bn" style="padding:30px 20px 0;scroll-margin-top:64px">
   <div class="sec-head">
     <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:26px;text-transform:uppercase">Points left on bench</div>

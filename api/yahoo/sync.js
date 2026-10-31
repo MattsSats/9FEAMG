@@ -2,9 +2,9 @@
 // Runs daily from the Vercel cron (Bearer CRON_SECRET), or on demand: open it to get a form for
 // the admin key (POSTed, never in the URL), or send Authorization: Bearer <ADMIN_KEY>.
 // Saved shape:
-// { syncedAt, league, leagueKey, currentWeek, weeks: { [w]: { status, matchups: [[a, b]],
-//   teams: { [m]: { pts, proj } }, box?: { [m]: { total, starters, bench } } } },
-//   managers: { [m]: { team, faab, moves, trades } }, tx: [transactions, newest first] }
+// { syncedAt, league, leagueKey, currentWeek, weeks: { [w]: { status, matchups: [[a, b]], kinds: ['regular' |
+//   'playoffs' | 'consolation', one per matchup], teams: { [m]: { pts, proj } }, box?: { [m]: { total, starters, bench } } } },
+//   managers: { [m]: { team, faab, moves, trades, rank, seed } }, tx: [transactions, newest first] }
 // Box rows match uploads/9feamg-boxscores.json: [slot, name, nfl, pos, pts, proj, inj]; proj is null
 // because Yahoo's API doesn't give per-player projections, and inj is the site's injury tag (Q, D, O,
 // IR, PUP) or null. The current week's box is read even before kickoff, for lineups and injury tags.
@@ -38,13 +38,15 @@ export async function scoreboard(token, key, w) {
   const lg = merge((await yahoo(`league/${key}/scoreboard` + (w ? `;week=${w}` : ''), token)).league);
   const sb = lg.scoreboard || {};
   const matchups = list(sb['0']?.matchups, 'matchup');
-  const out = { status: 'preevent', matchups: [], teams: {} };
+  // kinds runs with matchups: 'regular', 'playoffs' or 'consolation' (Yahoo's is_playoffs and
+  // is_consolation), for the playoff weeks' bracket and Toilet Bowl.
+  const out = { status: 'preevent', matchups: [], kinds: [], teams: {} };
   const st = new Set();
   for (const mu of matchups) {
     st.add(mu.status);
     const teams = list(mu['0']?.teams, 'team').map(t => merge(t));
     const ms = teams.map(teamManager);
-    if (ms.every(Boolean)) out.matchups.push(ms);
+    if (ms.every(Boolean)) { out.matchups.push(ms); out.kinds.push(mu.is_consolation == '1' ? 'consolation' : mu.is_playoffs == '1' ? 'playoffs' : 'regular'); }
     teams.forEach((t, i) => { if (ms[i]) out.teams[ms[i]] = { pts: num(t.team_points?.total), proj: num(t.team_projected_points?.total) }; });
   }
   out.status = st.has('midevent') ? 'midevent' : st.size && [...st].every(s => s == 'postevent') ? 'postevent' : 'preevent';
@@ -75,6 +77,15 @@ export async function managersOf(token, key) {
   const out = {};
   for (const t of list(merge((await yahoo(`league/${key}/teams`, token)).league).teams, 'team').map(t => merge(t))) {
     const m = teamManager(t); if (m) out[m] = { team: t.name, faab: t.faab_balance == null ? null : +t.faab_balance, moves: +t.number_of_moves || 0, trades: +t.number_of_trades || 0 };
+  }
+  return out;
+}
+// Each team's place and playoff seed from Yahoo's standings ({ rank, seed }; seed null until Yahoo sets it).
+export async function seedsOf(token, key) {
+  const out = {}, lg = merge((await yahoo(`league/${key}/standings`, token)).league);
+  for (const t of list(lg.standings?.['0']?.teams ?? lg.standings?.teams, 'team').map(t => merge(t))) {
+    const m = teamManager(t), s = t.team_standings || {};
+    if (m) out[m] = { rank: +s.rank || null, seed: +s.playoff_seed || null };
   }
   return out;
 }
@@ -131,7 +142,13 @@ export async function sync(origin) {
   // Moves and FAAB never cost the scores: if Yahoo refuses them, the last good copy stays and the
   // error is saved with it.
   let managers = prev.managers || null, tx = prev.leagueKey == key ? prev.tx || [] : [], txError = null;
-  try { managers = await managersOf(token, key); tx = await transactions(token, key, managers, tx); }
+  try {
+    managers = await managersOf(token, key);
+    // Seeds and places ride along with each manager; a standings hiccup never costs the moves.
+    const sd = await seedsOf(token, key).catch(() => ({}));
+    for (const m in sd) if (managers[m]) Object.assign(managers[m], sd[m]);
+    tx = await transactions(token, key, managers, tx);
+  }
   catch (e) { txError = String(e.message || e); }
   const data = { syncedAt: new Date().toISOString(), league: meta.name, leagueKey: key, season: meta.season, currentWeek: current, weeks, managers, tx, ...(txError ? { txError } : {}) };
   await writeData(data);
