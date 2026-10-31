@@ -3,7 +3,7 @@
 // for the Wire line and lineup alerts. Exits 1 if anything is wrong. Usage: node scripts/check.js
 import { readFileSync } from 'node:fs';
 import vm from 'node:vm';
-import { seasonStats, byStandings, kickoffAt, nflKey, lineupIssues, wireOf, pointsOf, ticketSlug, parlayState, parlayFair, impliedProb, toAmerican, playoffOdds, oddsPct, matchupOdds, boothPickRecord, expertPickRecord } from '../api/_shared.js';
+import { seasonStats, byStandings, kickoffAt, nflKey, lineupIssues, wireOf, pointsOf, ticketSlug, parlayState, parlayFair, impliedProb, toAmerican, playoffOdds, oddsPct, raceText, matchupOdds, boothPickRecord, expertPickRecord } from '../api/_shared.js';
 
 const read = p => readFileSync(new URL('../' + p, import.meta.url), 'utf8');
 const box = { window: {} }; vm.runInNewContext(read('data/season.js'), box);
@@ -85,7 +85,7 @@ for (const [w, order] of Object.entries(S.tristanRanks || {})) {
 // Playoff odds as the site shows them (to check odds quoted in Booth lines against).
 const OD = playoffOdds(S);
 if (!OD) warn.push(`No playoff odds: the schedule needs every week through ${S.regularSeasonWeeks}.`);
-else out.push('Playoff odds (playoffs/bye/last): ' + Object.entries(OD.teams).sort((a, b) => b[1].playoffs - a[1].playoffs).map(([m, o]) => `${m} ${oddsPct(o.playoffs, !OD.weeksLeft)}/${oddsPct(o.bye, !OD.weeksLeft)}/${oddsPct(o.last, !OD.weeksLeft)}`).join(', '));
+else out.push('Playoff odds (playoffs/bye/last): ' + Object.entries(OD.teams).sort((a, b) => b[1].playoffs - a[1].playoffs).map(([m, o]) => `${m} ${raceText(o, 'playoffs', !OD.weeksLeft)}/${raceText(o, 'bye', !OD.weeksLeft)}/${raceText(o, 'last', !OD.weeksLeft)}`).join(', '));
 const pts = (n, w) => pointsOf(S, scores, n, w);
 out.push('Wire, this week: ' + wireOf(S, tx, pts, 'week').line);
 out.push('Wire, season:    ' + wireOf(S, tx, pts, 'season').line);

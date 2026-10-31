@@ -300,6 +300,17 @@ class Component extends DCLogic {
     try { sessionStorage.setItem('9feamg-restore', JSON.stringify({ t: Date.now(), y: window.scrollY, tab: S.tab, week: S.week, team: S.team })); } catch {}
     location.reload();
   }
+  // Playoff odds for the current numbers (playoffOdds in api/_shared.js), once per set of numbers. 20,000
+  // seasons take a moment on a phone: the Season tab (full, with the change since the week before)
+  // waits for them; elsewhere they're worked out just after the page draws, and what uses them (the
+  // swing lines) appears a beat later. null until then.
+  odds(full) {
+    const keyOf = () => NF + '|' + JSON.stringify(LIVE?.scores || null), key = keyOf(), M = this.oddsMemo?.key == key ? this.oddsMemo : null;
+    if (full) return M && 'prev' in M ? M : (this.oddsMemo = { key, now: M?.now ?? playoffOdds(D), prev: NF > 1 ? playoffOdds(D, { through: NF - 1, live: false }) : null });
+    if (M) return M;
+    if (this.oddsLater != key) { this.oddsLater = key; setTimeout(() => { const k = keyOf(); if (this.oddsMemo?.key != k) { this.oddsMemo = { key: k, now: playoffOdds(D) }; this.setState({ oddsAt: Date.now() }); } }, 80); }
+    return null;
+  }
   // Runs the three data scripts the poll read, recomputes everything (derive), lays Yahoo's reads over
   // the files again and redraws. False when the week changed (a final or a new week), which reloads.
   applyFresh([season, league, live]) {
@@ -738,6 +749,14 @@ class Component extends DCLogic {
       .map(([a, b]) => { const lm = lastMeet(a, b, wk), side = m => ({ m, init: INIT[m], color: col(m), info: recPlace(m) });
         return { a: side(a), b: side(b), mine: !!S.reqMgr && a == S.reqMgr,
           meet: !lm ? 'First meeting' : `Rematch of Week ${lm.w} · ${lm.sa >= lm.sb ? a : b} won ${f2(Math.max(lm.sa, lm.sb))}–${f2(Math.min(lm.sa, lm.sb))}` }; }) : [];
+    // A team's playoff race in a line (Matt, Oct 31, 2026): settled ("Playoff spot clinched"), or what
+    // the coming game is worth: its playoff odds with a win and with a loss (playoffOdds' swing).
+    const swingOf = (od, m) => { const o = od?.teams?.[m]; if (!o) return '';
+      return o.playoffsSure === true ? 'Playoff spot clinched' : o.playoffsSure === false ? 'Out of the playoff race'
+        : o.ifWin != null && o.ifLose != null ? `Playoffs: ${oddsPct(o.ifWin)} with a win · ${oddsPct(o.ifLose)} with a loss` : ''; };
+    // On your matchup, once the odds are worked out just after the page draws.
+    const heroOD = heroMine && wk == LW ? this.odds(false)?.now : null;
+    const heroSwing = heroOD?.swingWeek == wk ? swingOf(heroOD, hero.a.m) : '';
     // Week recap (final weeks): every final score with its Booth line, for sharing.
     // booth[week] runs in schedule order, one line per matchup. Closest finish first;
     // one score row per matchup keeps the phone-width image short.
@@ -1111,16 +1130,13 @@ class Component extends DCLogic {
     const standings = ST.map((s, i) => ({ rank: i + 1, m: s.m, rowBg: s.m == S.reqMgr ? 'var(--surface2)' : 'transparent', rowEdge: s.m == S.reqMgr ? col(s.m) : 'transparent', you: s.m == S.reqMgr,
       // The row just above the playoff line has no rule of its own; the line is the divider.
       rowLine: i == P - 1 ? 'transparent' : 'var(--line)', init: INIT[s.m], color: col(s.m), pa: f1(s.pa), max: s.max == null ? '—' : f1(s.max), wl: s.w + '–' + s.l, pf: f1(s.pf), luck: sgn(s.luck), luckColor: s.luck > 0 ? 'var(--pos)' : s.luck < 0 ? 'var(--neg)' : 'var(--muted)', cut: i == P - 1, open: () => { this.setState({ tab: 'Teams', team: s.m }); window.scrollTo(0, 0); } }));
-    // Playoff odds (playoffOdds in api/_shared.js) with the change since the week before. 20,000 seasons
-    // take a moment on a phone, so they're worked out only on the Season tab, once per set of numbers.
-    const oddsKey = S.tab == 'Season' ? NF + '|' + JSON.stringify(LIVE?.scores || null) : null;
-    if (oddsKey && this.oddsMemo?.key != oddsKey) this.oddsMemo = { key: oddsKey, now: playoffOdds(D), prev: NF > 1 ? playoffOdds(D, { through: NF - 1, live: false }) : null };
-    const OD = oddsKey ? this.oddsMemo : null, oddsDone = OD?.now?.weeksLeft == 0;
+    // Playoff odds (playoffOdds in api/_shared.js) with the change since the week before (this.odds).
+    const OD = S.tab == 'Season' ? this.odds(true) : null, oddsDone = OD?.now?.weeksLeft == 0;
     const oddsRows = !OD?.now ? [] : MGR.map(m => ({ m, o: OD.now.teams[m], p: OD.prev?.teams[m], s: ST.find(x => x.m == m) }))
       .sort((a, b) => b.o.playoffs - a.o.playoffs || b.o.bye - a.o.bye || a.o.last - b.o.last).map(({ m, o, p, s }) => {
         const ch = p ? Math.round(o.playoffs * 100) - Math.round(p.playoffs * 100) : 0;
-        return { m, init: INIT[m], color: col(m), wl: s.w + '–' + s.l, pct: oddsPct(o.playoffs, oddsDone), bar: (o.playoffs * 100).toFixed(1) + '%',
-          bye: oddsPct(o.bye, oddsDone), last: oddsPct(o.last, oddsDone), move: !p ? '' : ch > 0 ? '▲' + ch : ch < 0 ? '▼' + -ch : '–',
+        return { m, init: INIT[m], color: col(m), wl: s.w + '–' + s.l, pct: raceText(o, 'playoffs', oddsDone), bar: (o.playoffs * 100).toFixed(1) + '%',
+          bye: raceText(o, 'bye', oddsDone), last: raceText(o, 'last', oddsDone), move: !p ? '' : ch > 0 ? '▲' + ch : ch < 0 ? '▼' + -ch : '–',
           moveColor: ch > 0 ? 'var(--pos)' : ch < 0 ? 'var(--neg)' : 'var(--muted)', open: () => { this.setState({ tab: 'Teams', team: m }); window.scrollTo(0, 0); } };
       });
     const oddsSub = !OD ? '' : !OD.now ? 'Odds start once the rest of the regular season is on the schedule.'
@@ -1193,6 +1209,10 @@ class Component extends DCLogic {
       return { w, opp: o, color: col(o), sub: recPlace(o) + (NF ? ' · ' + f1(perWeek(o)) + ' a week' : ''),
         prev: lm ? (lm.sa > lm.sb ? 'W ' : 'L ') + f2(lm.sa) + '–' + f2(lm.sb) : '—', prevSub: lm ? 'Week ' + lm.w : 'first meeting' }; });
     const restSub = rest.length && NF ? `Opponents average ${f1(sosOf(tm))} a week · ${ord([...MGR].sort((x, y) => sosOf(y) - sosOf(x)).indexOf(tm) + 1)} toughest left` : '';
+    // The playoff race on the team card: odds to make it and for a bye, then what the next game is worth.
+    const teamOD = S.tab == 'Teams' ? this.odds(false)?.now : null, to = teamOD?.teams?.[tm], tDone = teamOD?.weeksLeft == 0;
+    const race = !to ? '' : `Playoffs ${raceText(to, 'playoffs', tDone)} · Bye ${raceText(to, 'bye', tDone)}`;
+    const raceSwing = to && to.playoffsSure == null && teamOD.swingWeek ? `Week ${teamOD.swingWeek}: ` + swingOf(teamOD, tm).replace(/^Playoffs: /, '') : '';
     const teamAcq = ACQ.filter(a => a.m == tm && a.weeks > 0).sort((a, b) => b.started - a.started || b.bench - a.bench);
     const srcTotal = teamAcq.reduce((t, a) => t + a.started, 0), srcOf = ok => teamAcq.filter(ok).reduce((t, a) => t + a.started, 0);
     // Streams: kickers and defenses added (api/_shared.js isStream), split from the real pickups.
@@ -1212,7 +1232,7 @@ class Component extends DCLogic {
       line: `${s.w}–${s.l} · ${ord(place)} place` + (NF ? ` · ${res[res.length - 1]}${k} streak` : ''),
       lineupTitle: `Week ${lineupWeek} lineup`, proj: LW ? 'Proj ' + f2(PROJ[tm]) : '',
       stats: [{ label: 'PF', value: f1(s.pf), sub: ord(pfRank) + ' in league' }, { label: 'PA', value: f1(s.pa), sub: ord(paRank) + ' fewest' }, { label: 'Luck', value: sgn(s.luck), sub: 'W − xW', color: s.luck > 0 ? 'var(--pos)' : s.luck < 0 ? 'var(--neg)' : 'var(--ink)' }, { label: 'xW', value: s.xw.toFixed(2), sub: 'vs ' + s.w + ' real wins' }, { label: 'Max PF', value: maxOk ? f1(s.max) : '—', sub: maxOk ? ord(maxRank) + ' best possible' : 'Best possible lineup' }, { label: 'Bench', value: maxOk ? f1(bn) : '—', sub: 'Points left sitting' }, { label: 'FAAB left', value: txOk ? '$' + (budget - spent[tm]) : '—', sub: 'of $' + budget }, { label: 'Adds', value: txOk ? String(adds[tm]) : '—', sub: 'This season' }].map(x => ({ color: 'var(--ink)', isLuck: x.label == 'Luck', isBench: x.label == 'Bench', ...x })),
-      log, rest, hasRest: rest.length > 0, restSub, starters: this.starters(tm, lineupWeek), alerts: this.lineupAlerts(tm, lineupWeek).map(t => ({ t })), hasAlerts: this.lineupAlerts(tm, lineupWeek).length > 0,
+      log, rest, hasRest: rest.length > 0, restSub, race, raceSwing, hasRace: !!race, hasRaceSwing: !!raceSwing, starters: this.starters(tm, lineupWeek), alerts: this.lineupAlerts(tm, lineupWeek).map(t => ({ t })), hasAlerts: this.lineupAlerts(tm, lineupWeek).length > 0,
       bench: pl.filter(p => p.slot != 'starter').map(p => { const lp = LIVEPTS[p.name]; const v = lp ?? p.proj ?? p.projected ?? p.projections?.[lineupWeek] ?? PPROJ[p.name]; return { slot: p.slot == 'IR' ? 'IR' : p.pos, name: p.name, meta: (p.nfl || '').toUpperCase() + (lp == null && p.slot != 'IR' && lineupWeek == LW ? this.preGame(p, lineupWeek) : '') + (lp == null && v != null && p.slot != 'IR' && !(lineupWeek == LW && (nflGame(p.nfl, lineupWeek) || onBye(p.nfl, lineupWeek))) ? ' · proj' : lp != null && PLAYING.has(p.name) ? ' · live' : ''), pts: p.slot == 'IR' ? '' : (v != null ? f2(+v) : '—') }; }),
       benchCount: pl.filter(p => p.slot != 'starter').length, lineupMsg, hasLineup: !lineupMsg, src
     };
@@ -1373,7 +1393,7 @@ class Component extends DCLogic {
       compactCls: S.compact ? 'app compact' : 'app',
       deskTabs: tabs,
       weekChips, isW5: isNext && !upcoming.length, nextTitle, nextNote, hasWeek, hero: hero || blank, matchups,
-      upcoming, hasUpcoming: upcoming.length > 0, upNote: 'Projections, odds and lineups come in when the week opens on Tuesday.', heroLabel: heroMine ? 'Your matchup' : wk == LW ? 'Matchup of the week' : 'Closest finish', heroCaption: this.heroCaption(wk, hero),
+      upcoming, hasUpcoming: upcoming.length > 0, upNote: 'Projections, odds and lineups come in when the week opens on Tuesday.', heroSwing, hasHeroSwing: !!heroSwing, heroLabel: heroMine ? 'Your matchup' : wk == LW ? 'Matchup of the week' : 'Closest finish', heroCaption: this.heroCaption(wk, hero),
       weekStatus, parlays: parlays.filter(x => group(x) == 0), parlaysMore: parlays.filter(x => group(x) > 0), hasParlays: parlays.length > 0, hasLedger: allParlays.length > 0, ledgerTiles, ledgerSub, ledgerOwners, hasLedgerRows: tailsReady && ledgerOwners.length > 0, hasPaper, paperLine, latestTaps, hasLatestTaps: latestTaps.length > 0,
       shareLedger: e => this.share('ledger', e), ledgerLabel: S.sharing == 'ledger' ? '…' : 'Image',
       linkLedger: e => this.shareLink(location.origin + '/s/ledger', '9FEAMG · Parlay ledger', e), shotLedger: `Parlay ledger · through week ${LW ?? NF}`,

@@ -250,18 +250,40 @@ export function playoffOdds(season, { through, live = true, sims = 20000, shrink
   const rand = () => { seed = (seed + 0x6D2B79F5) | 0; let t = Math.imul(seed ^ (seed >>> 15), 1 | seed); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
   const draw = (mu, s) => s ? mu + s * Math.sqrt(-2 * Math.log(1 - rand())) * Math.cos(2 * Math.PI * rand()) : mu;
   const out = Object.fromEntries(MGR.map(m => [m, { playoffs: 0, bye: 0, top: 0, last: 0, wins: 0 }]));
+  // The swing (Matt, Oct 31, 2026): playoff odds in the runs where a team wins its next game (the first
+  // week simulated, W0 + 1) and in the runs where it loses.
+  const S1 = W0 < R ? W0 + 1 : null, sw = Object.fromEntries(MGR.map(m => [m, { w: 0, wIn: 0, l: 0, lIn: 0 }]));
   for (let i = 0; i < sims; i++) {
-    const W = { ...wins }, F = { ...pf };
+    const W = { ...wins }, F = { ...pf }, first = {};
     for (let w = W0 + 1; w <= R; w++) for (const [a, b] of PAIRS[w]) {
       const sa = draw(...wk[w][a]), sb = draw(...wk[w][b]); F[a] += sa; F[b] += sb;
       if (sa > sb) W[a]++; else if (sb > sa) W[b]++; else { W[a] += 0.5; W[b] += 0.5; }
+      if (w == S1 && sa != sb) { first[a] = sa > sb; first[b] = sb > sa; }
     }
     const order = MGR.map(m => ({ m, w: W[m], pf: F[m] })).sort(byStandings);
-    order.forEach((r, k) => { const o = out[r.m]; o.wins += W[r.m]; if (k < P) o.playoffs++; if (k < byes) o.bye++; if (k == 0) o.top++; if (k == N - 1) o.last++; });
+    order.forEach((r, k) => { const o = out[r.m], s = sw[r.m]; o.wins += W[r.m]; if (k < P) o.playoffs++; if (k < byes) o.bye++; if (k == 0) o.top++; if (k == N - 1) o.last++;
+      if (first[r.m] === true) { s.w++; if (k < P) s.wIn++; } else if (first[r.m] === false) { s.l++; if (k < P) s.lIn++; } });
   }
-  for (const m of MGR) for (const k in out[m]) out[m][k] /= sims;
-  return { through: W0, weeksLeft: R - W0, live: !!LV, sims, playoffTeams: P, byes, teams: out };
+  for (const m of MGR) { for (const k in out[m]) out[m][k] /= sims; const s = sw[m]; out[m].ifWin = s.w ? s.wIn / s.w : null; out[m].ifLose = s.l ? s.lIn / s.l : null; }
+  // What's already settled, from wins alone and never from a simulation: a team is in when at most
+  // P − 1 others can still reach its win total even if it loses out (a tie on wins counts as a loss,
+  // since it comes down to points), and out when P others already have more wins than it can reach.
+  // The same for a bye (byes) and for last place. null = still open (playoffsSure, byeSure, lastSure).
+  const games = m => { let g = 0; for (let w = W0 + 1; w <= R; w++) if (PAIRS[w].some(p => p.includes(m))) g++; return g; };
+  const G = Object.fromEntries(MGR.map(m => [m, games(m)]));
+  for (const m of MGR) {
+    const others = MGR.filter(y => y != m), lo = wins[m], hi = wins[m] + G[m];
+    const canReach = others.filter(y => wins[y] + G[y] >= lo).length, ahead = others.filter(y => wins[y] > hi).length;
+    const o = out[m];
+    o.playoffsSure = canReach < P ? true : ahead >= P ? false : null;
+    o.byeSure = canReach < byes ? true : ahead >= byes ? false : null;
+    o.lastSure = ahead == N - 1 ? true : others.some(y => wins[y] + G[y] < lo) ? false : null;
+  }
+  return { through: W0, weeksLeft: R - W0, live: !!LV, sims, playoffTeams: P, byes, swingWeek: S1, teams: out };
 }
+// A playoff-odds cell as the site shows it (k: 'playoffs', 'bye' or 'last'): "In" or "Out" once the
+// wins settle it, else the simulated share (oddsPct).
+export const raceText = (o, k, done) => o?.[k + 'Sure'] == null ? oddsPct(o[k], done) : o[k + 'Sure'] ? 'In' : 'Out';
 // A share as the site shows it. Simulated ends aren't certain, so they read ">99%" and "<1%"; once
 // no weeks are left (done = true) they're "In" and "Out".
 // Win odds for the live week's matchups, in schedule order: { a, b, pa } with pa a's chance to win.
