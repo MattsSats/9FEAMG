@@ -1,5 +1,5 @@
 {
-  "asOf": "2026-10-30T22:20:45.137Z",
+  "asOf": "2026-10-31T11:00:29.433Z",
   "source": "Signed-in Yahoo Fantasy league 935526 team roster pages (full reconcile)",
   "week": 8,
   "baseline": "yahoo-live",
@@ -133,6 +133,12 @@
           "proj": 0,
           "inj": "IR",
           "espn": 0
+        },
+        {
+          "name": "Texans",
+          "nfl": "Hou",
+          "slot": "bench",
+          "pos": "DEF"
         }
       ]
     },
@@ -1309,6 +1315,12 @@
           "proj": 0,
           "inj": "IR",
           "espn": 0
+        },
+        {
+          "name": "Marvin Harrison Jr.",
+          "nfl": "Hou",
+          "slot": "bench",
+          "pos": "WR"
         },
         {
           "name": "Alec Pierce",
