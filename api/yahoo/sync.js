@@ -11,7 +11,7 @@
 // tx rows are in uploads/9feamg-transactions.json's format plus Yahoo's key and timestamp, and
 // managers holds each team's FAAB left and moves from Yahoo (Matt, Oct 30, 2026: injuries, moves and
 // FAAB come from the API, so nothing needs the Yahoo website sign-in).
-import { accessToken, writeAuth, readData, writeData, writeJson, yahoo, merge, list, num, teamManager, isAdmin, isCron, keyForm, TEAMS, STATUS_PATH } from '../_yahoo.js';
+import { accessToken, writeAuth, readData, writeData, writeJson, yahoo, merge, list, num, teamManager, dataOrigin, isAdmin, isCron, keyForm, TEAMS, STATUS_PATH } from '../_yahoo.js';
 
 export async function findLeague(token, auth) {
   if (auth.league_key) return auth.league_key;
@@ -47,8 +47,7 @@ export async function scoreboard(token, key, w) {
     const teams = list(mu['0']?.teams, 'team').map(t => merge(t));
     const ms = teams.map(teamManager);
     if (ms.every(Boolean)) { out.matchups.push(ms); out.kinds.push(mu.is_consolation == '1' ? 'consolation' : mu.is_playoffs == '1' ? 'playoffs' : 'regular'); }
-    teams.forEach((t, i) => { if (ms[i]) out.teams[ms[i]] = { pts: num(t.team_points?.total), proj: num(t.team_projected_points?.total), ...(t.team_live_projected_points ? { live: num(t.team_live_projected_points.total) } : {}) }; });
-    if (mu === matchups[0]) console.info('scoreboard team fields:', Object.keys(teams[0] || {}).join(','), JSON.stringify(teams[0]?.team_live_projected_points || null), JSON.stringify(teams[0]?.team_remaining_games || null));
+    teams.forEach((t, i) => { if (ms[i]) out.teams[ms[i]] = { pts: num(t.team_points?.total), proj: num(t.team_projected_points?.total) }; });
   }
   out.status = st.has('midevent') ? 'midevent' : st.size && [...st].every(s => s == 'postevent') ? 'postevent' : 'preevent';
   return { out, league: lg };
@@ -71,6 +70,41 @@ export async function boxScores(token, key, w, teams) {
     box[m] = { total: teams[m].pts, starters: rows.filter(r => r[0] != 'BN' && r[0] != 'IR'), bench: rows.filter(r => r[0] == 'BN' || r[0] == 'IR') };
   }));
   return box;
+}
+
+// Yahoo's API only has the pregame team projection, which doesn't move during games (Nov 1, 2026), so
+// while a week is live each team also gets teams[m].live, what it's on pace to finish with: for each
+// starter his points plus his projection (uploads/9feamg-rosters.json) for the share of his game still
+// to play (ESPN's clock). A defense in progress counts at its current score, since its points can fall
+// as it allows points. Within a few points of Yahoo's own page when checked. A team stays on Yahoo's
+// number if ESPN or the file can't be read, the file is for another week (so also in the playoffs,
+// where it has no projections), or an unfinished starter isn't in the file.
+export async function addLiveProj(wk, w, season, origin) {
+  if (wk.status != 'midevent' || !wk.box) return;
+  try {
+    const [ros, sb] = await Promise.all([
+      fetch(new URL('/uploads/9feamg-rosters.json', dataOrigin(origin))).then(r => r.json()),
+      fetch(`https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard?seasontype=2&week=${w}&dates=${season}`).then(r => r.json())
+    ]);
+    if (ros.week != w) return;
+    const left = {};
+    for (const e of sb.events || []) {
+      const s = e.status, st = s.type.state, share = st == 'pre' ? 1 : st == 'post' ? 0 : Math.max(0, ((4 - s.period) * 900 + (s.clock || 0)) / 3600);
+      for (const c of e.competitions[0].competitors) left[c.team.abbreviation.toUpperCase()] = share;
+    }
+    left.WAS ??= left.WSH;
+    for (const m of Object.keys(wk.teams)) {
+      const players = ros.teams?.find(t => t.name == m)?.players || [], starters = wk.box[m]?.starters || [];
+      if (!starters.length) continue;
+      let total = 0, known = true;
+      for (const [, name, nfl, pos, pts] of starters) {
+        const p = players.find(x => x.name == name), share = left[String(nfl).toUpperCase()] ?? 1;
+        if (!p && share > 0) { known = false; break; }
+        total += share == 1 ? p.proj || 0 : pts + (pos == 'DEF' ? 0 : (p?.proj || 0) * share);
+      }
+      if (known) wk.teams[m].live = num(total);
+    }
+  } catch (e) { console.error('live projections:', e.message); }
 }
 
 // Each team's name, FAAB left and moves (adds), as Yahoo's standings show them.
@@ -140,6 +174,7 @@ export async function sync(origin) {
     if (wk.status == 'preevent' && +w != current) continue;
     wk.box = old?.box && old.status == 'postevent' && wk === old ? old.box : await boxScores(token, key, w, wk.teams);
   }
+  if (weeks[current]) await addLiveProj(weeks[current], current, meta.season, origin);
   // Moves and FAAB never cost the scores: if Yahoo refuses them, the last good copy stays and the
   // error is saved with it.
   let managers = prev.managers || null, tx = prev.leagueKey == key ? prev.tx || [] : [], txError = null;

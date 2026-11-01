@@ -69,7 +69,7 @@ window.SEASON = {
   // The week in progress. Set to null between weeks.
   live: {
     week: 8,
-    status: 'Live · Thursday final (GB 27, CAR 19) · Sunday next',
+    status: 'Live · Thursday final (GB 27, CAR 19)',
     // When these numbers were pulled from Yahoo (Central); shows as "Scores as of Thu 10:19 PM".
     asOf: '2026-11-01T11:09:00-06:00',
     // [current points, projected final]

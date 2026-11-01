@@ -8,9 +8,10 @@
 // answer for 60 seconds, so a busy Sunday costs Yahoo about one pull a minute and nobody watching
 // costs nothing. Outside game time it answers null without calling Yahoo, and the site uses
 // /api/league alone. Nothing is written to Blob storage (the free plan's write budget); the token
-// is kept in memory until it's close to expiring.
+// is kept in memory until it's close to expiring. Each team also gets `live`, its on-pace finish
+// (addLiveProj in yahoo/sync.js), which is what the site shows as PROJ and bases win odds on.
 import { accessToken } from './_yahoo.js';
-import { scoreboard, boxScores, findLeague } from './yahoo/sync.js';
+import { scoreboard, boxScores, addLiveProj, findLeague } from './yahoo/sync.js';
 import { loadSeasonFile } from './_parlays.js';
 import { isGameTime } from './_shared.js';
 
@@ -28,6 +29,7 @@ async function pull(origin) {
   const { out, league } = await scoreboard(token, key);
   const w = +league.current_week;
   if (out.status != 'preevent') out.box = await boxScores(token, key, w, out.teams);
+  await addLiveProj(out, w, league.season, origin);
   return { syncedAt: new Date().toISOString(), leagueKey: key, currentWeek: w, weeks: { [w]: out } };
 }
 

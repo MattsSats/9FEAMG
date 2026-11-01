@@ -443,7 +443,7 @@ export function mergeYahoo(S, Y) {
       const pp = { ...(same ? S.live.playerPoints : {}) };
       for (const t of Object.values(Wk.box || {})) for (const r of [...t.starters, ...t.bench]) if (r[4]) pp[r[1]] = r[4];
       S.live = { status: 'Live', sheetNote: 'Live from Yahoo. Orange = points so far; the rest are projections.', ...(same ? S.live : {}), week: live, playerPoints: pp, asOf: Y.syncedAt,
-        scores: Object.fromEntries(inWeek(live).map(m => [m, [Wk.teams[m].pts, Wk.teams[m].proj]])) };
+        scores: Object.fromEntries(inWeek(live).map(m => [m, [Wk.teams[m].pts, Wk.teams[m].live ?? Wk.teams[m].proj]])) };
     }
   } else if (S.live && Y.weeks[S.live.week]?.status == 'postevent' && full(S.live.week)) S.live = null;
   // Between playoff weeks nothing is live and nobody moves season.js on: the next playoff week Yahoo has
