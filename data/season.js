@@ -604,6 +604,29 @@ window.SEASON = {
           { text: 'Tetairoa McMillan over 72.5 receiving yards', player: 'Tetairoa McMillan', type: 'over', stat: 'Rec Yds', line: 72.5, game: 'Thu 7:15 PM · CAR @ GB', odds: '-110', vs: '-114', result: '6-58 rec yds', status: 'miss' },
           { text: 'Chuba Hubbard over 67.5 rushing yards', player: 'Chuba Hubbard', type: 'over', stat: 'Rush Yds', line: 67.5, game: 'Thu 7:15 PM · CAR @ GB', odds: '-113', vs: '-111', result: '22-81 rush yds, 1 TD', status: 'hit' }
         ]
+      },
+      {
+        owner: 'The Booth', init: 'TB', title: 'Noon Window',
+        // Built by Claude at Matt's ask (Sun Nov 1, before the noon games): one leg per noon game, the likeliest
+        // scorers in the two 54.5-point games and Detroit, plus Pittsburgh at home. Not marked placed.
+        // Odds and ladders: DraftKings via The Odds API, Sun Nov 1, 9:21 AM CT (Steelers vs is the Browns moneyline).
+        legs: [
+          { text: 'Javonte Williams anytime TD', player: 'Javonte Williams', type: 'td', count: 1, game: 'Sun 12:00 PM · ARI @ DAL', odds: '-240', ladder: ['-240', '+225', '+900'], status: 'open' },
+          { text: 'Jahmyr Gibbs anytime TD', player: 'Jahmyr Gibbs', type: 'td', count: 1, game: 'Sun 12:00 PM · MIN @ DET', odds: '-245', ladder: ['-245', '+225', '+900'], status: 'open' },
+          { text: 'James Cook anytime TD', player: 'James Cook III', type: 'td', count: 1, game: 'Sun 12:00 PM · BAL @ BUF', odds: '-150', ladder: ['-150', '+380', '+1700'], status: 'open' },
+          { text: 'Steelers moneyline vs Browns', type: 'ml', team: 'Pit', teams: ['Cle', 'Pit'], game: 'Sun 12:00 PM · CLE @ PIT', odds: '-185', vs: '+154', status: 'open' }
+        ]
+      },
+      {
+        owner: 'The Booth', init: 'TB', title: 'Late Window',
+        // Built by Claude at Matt's ask (Sun Nov 1, before the noon games): one anytime TD in each of the three
+        // afternoon games, each on the favorite's main scorer. Not marked placed.
+        // Odds and ladders: DraftKings via The Odds API, Sun Nov 1, 9:21 to 9:22 AM CT.
+        legs: [
+          { text: 'Puka Nacua anytime TD', player: 'Puka Nacua', type: 'td', count: 1, game: 'Sun 3:05 PM · LAC @ LAR', odds: '-120', ladder: ['-120', '+475', '+2200'], status: 'open' },
+          { text: 'Kenneth Walker III anytime TD', player: 'Kenneth Walker III', type: 'td', count: 1, game: 'Sun 3:25 PM · KC @ DEN', odds: '-160', ladder: ['-160', '+340', '+1400'], status: 'open' },
+          { text: 'Rhamondre Stevenson anytime TD', player: 'Rhamondre Stevenson', type: 'td', count: 1, game: 'Sun 3:25 PM · NE @ MIA', odds: '-125', ladder: ['-125', '+475', '+2200'], status: 'open' }
+        ]
       }
     ]
   },
