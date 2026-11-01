@@ -47,7 +47,8 @@ export async function scoreboard(token, key, w) {
     const teams = list(mu['0']?.teams, 'team').map(t => merge(t));
     const ms = teams.map(teamManager);
     if (ms.every(Boolean)) { out.matchups.push(ms); out.kinds.push(mu.is_consolation == '1' ? 'consolation' : mu.is_playoffs == '1' ? 'playoffs' : 'regular'); }
-    teams.forEach((t, i) => { if (ms[i]) out.teams[ms[i]] = { pts: num(t.team_points?.total), proj: num(t.team_projected_points?.total) }; });
+    teams.forEach((t, i) => { if (ms[i]) out.teams[ms[i]] = { pts: num(t.team_points?.total), proj: num(t.team_projected_points?.total), ...(t.team_live_projected_points ? { live: num(t.team_live_projected_points.total) } : {}) }; });
+    if (mu === matchups[0]) console.info('scoreboard team fields:', Object.keys(teams[0] || {}).join(','), JSON.stringify(teams[0]?.team_live_projected_points || null), JSON.stringify(teams[0]?.team_remaining_games || null));
   }
   out.status = st.has('midevent') ? 'midevent' : st.size && [...st].every(s => s == 'postevent') ? 'postevent' : 'preevent';
   return { out, league: lg };
