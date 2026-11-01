@@ -71,17 +71,17 @@ window.SEASON = {
     week: 8,
     status: 'Live · Thursday final (GB 27, CAR 19) · Sunday next',
     // When these numbers were pulled from Yahoo (Central); shows as "Scores as of Thu 10:19 PM".
-    asOf: '2026-10-31T10:46:00-05:00',
+    asOf: '2026-11-01T11:09:00-06:00',
     // [current points, projected final]
-    // Yahoo as of Sat Oct 31, 10:46 AM CT (Week 8 matchup pages).
+    // Yahoo as of Sun Nov 1, 11:09 AM CT (Week 8 matchup pages).
     scores: {
-      Matt: [34.70, 123.20], Colin: [0.00, 113.55],
-      Tristan: [20.20, 119.01], 'Mr. G': [0.00, 111.18],
-      Jerger: [34.26, 100.76], Tony: [17.40, 124.00],
-      Kurt: [0.00, 106.38], Pablo: [19.80, 110.03],
-      Andy: [0.00, 113.78], DLin: [6.00, 94.90]
+      Matt: [34.70, 123.78], Colin: [0.00, 115.25],
+      Tristan: [20.20, 117.51], 'Mr. G': [0.00, 114.03],
+      Jerger: [34.26, 109.15], Tony: [17.40, 125.83],
+      Kurt: [0.00, 114.91], Pablo: [19.80, 109.91],
+      Andy: [0.00, 114.50], DLin: [6.00, 102.50]
     },
-    yahooWin: { Tony: 71, Tristan: 57, Andy: 67, Matt: 59, Kurt: 47, Jerger: 29, 'Mr. G': 43, Colin: 41, DLin: 33, Pablo: 53 },
+    yahooWin: { Tony: 65, Tristan: 53, Andy: 61, Matt: 58, Kurt: 55, Jerger: 35, 'Mr. G': 47, Colin: 42, DLin: 39, Pablo: 45 },
     // Points so far for every player whose game has started (starters and bench).
     // Players listed in inProgress are still playing; the rest are final.
     playerPoints: {
@@ -90,7 +90,7 @@ window.SEASON = {
       'Panthers': 6.00, 'Tetairoa McMillan': 8.80, 'Packers': 11.00
     },
     inProgress: [],
-    sheetNote: 'Yahoo as of Sat 10:46 AM CT. Orange = points so far; the rest are projections.'
+    sheetNote: 'Yahoo as of Sun 11:09 AM CT. Orange = points so far; the rest are projections.'
   },
 
   // The NFL week: every game ('Sun 12:00 PM · CHI @ GB', kickoff Central, same form as parlay legs)

@@ -1,5 +1,41 @@
 [
   {
+    "when": "Nov 1, 10:41 am",
+    "yahooTeam": "Toilet Bowl King",
+    "manager": "DLin",
+    "action": "add",
+    "player": "J.K. Dobbins",
+    "nfl": "Den",
+    "pos": "RB",
+    "faab": null,
+    "via": "Free Agency",
+    "notes": "Yahoo facts Sun Nov 1, 11:09 AM CT"
+  },
+  {
+    "when": "Nov 1, 9:50 am",
+    "yahooTeam": "There is no 2nd best",
+    "manager": "Matt",
+    "action": "add",
+    "player": "Wan'Dale Robinson",
+    "nfl": "Ten",
+    "pos": "WR",
+    "faab": null,
+    "via": "Free Agency",
+    "notes": "Yahoo facts Sun Nov 1, 11:09 AM CT"
+  },
+  {
+    "when": "Oct 31, 12:08 pm",
+    "yahooTeam": "Squirtle Squad",
+    "manager": "Tristan",
+    "action": "add",
+    "player": "Makai Lemon",
+    "nfl": "Phi",
+    "pos": "WR",
+    "faab": null,
+    "via": "Free Agency",
+    "notes": "Yahoo facts Sun Nov 1, 11:09 AM CT"
+  },
+  {
     "when": "Oct 31, 3:00 am",
     "yahooTeam": "it’s gibbing time",
     "manager": "Andy",
