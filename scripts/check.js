@@ -20,7 +20,10 @@ else for (const [w, Wk] of Object.entries(Y.weeks)) if (Wk.status == 'postevent'
   const mine = S0.scores[m]?.[w - 1], ys = Wk.teams?.[m]?.pts;
   if (mine != null && ys != null && Math.abs(mine - ys) > 0.005) warn.push(`Week ${w} ${m}: season.js has ${mine}, Yahoo has ${ys} (the site shows Yahoo's).`);
 }
-const S = Y?.weeks ? mergeYahoo(S0, Y) : S0;
+// And during games the live read on top (null otherwise), so the numbers match what the site shows right now.
+let L = null;
+try { const r = await fetch('https://www.9feamg.cloud/api/live', { signal: AbortSignal.timeout(10000) }); if (r.ok) L = await r.json(); } catch {}
+const S = L?.weeks ? mergeYahoo(mergeYahoo(S0, Y), L) : Y?.weeks ? mergeYahoo(S0, Y) : S0;
 const st = seasonStats(S, scores), NF = st.NF, LW = S.live?.week;
 
 // Schedule: every regular-season week pairs all ten managers once (playoff weeks come from Yahoo).
