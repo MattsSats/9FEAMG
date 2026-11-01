@@ -76,7 +76,8 @@ export async function boxScores(token, key, w, teams) {
 // while a week is live each team also gets teams[m].live, what it's on pace to finish with: for each
 // starter his points plus his projection (uploads/9feamg-rosters.json) for the share of his game still
 // to play (ESPN's clock). A defense in progress counts at its current score, since its points can fall
-// as it allows points. Within a few points of Yahoo's own page when checked. A team stays on Yahoo's
+// as it allows points, and a starter Yahoo tags Out or IR at what he has (a player knocked out of his
+// game; Yahoo's page zeroes him too). Within a few points of Yahoo's own page when checked. A team stays on Yahoo's
 // number if ESPN or the file can't be read, the file is for another week (so also in the playoffs,
 // where it has no projections), or an unfinished starter isn't in the file.
 export async function addLiveProj(wk, w, season, origin) {
@@ -97,10 +98,11 @@ export async function addLiveProj(wk, w, season, origin) {
       const players = ros.teams?.find(t => t.name == m)?.players || [], starters = wk.box[m]?.starters || [];
       if (!starters.length) continue;
       let total = 0, known = true;
-      for (const [, name, nfl, pos, pts] of starters) {
+      for (const [, name, nfl, pos, pts, , inj] of starters) {
         const p = players.find(x => x.name == name), share = left[String(nfl).toUpperCase()] ?? 1;
         if (!p && share > 0) { known = false; break; }
-        total += share == 1 ? p.proj || 0 : pts + (pos == 'DEF' ? 0 : (p?.proj || 0) * share);
+        const out = inj == 'O' || inj == 'IR';
+        total += out ? pts : share == 1 ? p.proj || 0 : pts + (pos == 'DEF' ? 0 : (p?.proj || 0) * share);
       }
       if (known) wk.teams[m].live = num(total);
     }
