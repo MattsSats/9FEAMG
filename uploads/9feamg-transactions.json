@@ -1,5 +1,29 @@
 [
   {
+    "when": "Nov 1, 3:45 pm",
+    "yahooTeam": "Squirtle Squad",
+    "manager": "Tristan",
+    "action": "add",
+    "player": "Sam Darnold",
+    "nfl": "Sea",
+    "pos": "QB",
+    "faab": null,
+    "via": "Free Agency",
+    "notes": "Yahoo facts Sun Nov 1, 4:11 PM CT"
+  },
+  {
+    "when": "Nov 1, 3:45 pm",
+    "yahooTeam": "Squirtle Squad",
+    "manager": "Tristan",
+    "action": "drop",
+    "player": "Jordan Mason",
+    "nfl": "Min",
+    "pos": "RB",
+    "faab": null,
+    "via": "Waivers",
+    "notes": "Yahoo facts Sun Nov 1, 4:11 PM CT"
+  },
+  {
     "when": "Nov 1, 10:41 am",
     "yahooTeam": "Toilet Bowl King",
     "manager": "DLin",

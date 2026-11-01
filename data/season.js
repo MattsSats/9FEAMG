@@ -69,28 +69,52 @@ window.SEASON = {
   // The week in progress. Set to null between weeks.
   live: {
     week: 8,
-    status: 'Live · Thursday final (GB 27, CAR 19)',
+    status: 'Live · noon games final · 3:05 and 3:25 games in the 2nd · Sunday night PHI @ WAS',
     // When these numbers were pulled from Yahoo (Central); shows as "Scores as of Thu 10:19 PM".
-    asOf: '2026-11-01T11:09:00-06:00',
+    asOf: '2026-11-01T16:11:00-06:00',
     // [current points, projected final]
-    // Yahoo as of Sun Nov 1, 11:09 AM CT (Week 8 matchup pages).
+    // Yahoo as of Sun Nov 1, 4:11 PM CT (Week 8 matchup pages).
     scores: {
-      Matt: [34.70, 123.78], Colin: [0.00, 115.25],
-      Tristan: [20.20, 117.51], 'Mr. G': [0.00, 114.03],
-      Jerger: [34.26, 109.15], Tony: [17.40, 125.83],
-      Kurt: [0.00, 114.91], Pablo: [19.80, 109.91],
-      Andy: [0.00, 114.50], DLin: [6.00, 102.50]
+      Matt: [106.40, 126.18], Colin: [110.68, 145.55],
+      Tristan: [81.20, 88.28], 'Mr. G': [56.50, 96.65],
+      Jerger: [118.96, 117.13], Tony: [107.96, 144.83],
+      Kurt: [61.60, 91.83], Pablo: [83.30, 116.59],
+      Andy: [70.30, 76.21], DLin: [106.04, 111.59]
     },
-    yahooWin: { Tony: 65, Tristan: 53, Andy: 61, Matt: 58, Kurt: 55, Jerger: 35, 'Mr. G': 47, Colin: 42, DLin: 39, Pablo: 45 },
+    yahooWin: { Tony: 87, Tristan: 33, Andy: 1, Matt: 16, Kurt: 17, Jerger: 13, 'Mr. G': 67, Colin: 84, DLin: 99, Pablo: 83 },
     // Points so far for every player whose game has started (starters and bench).
     // Players listed in inProgress are still playing; the rest are final.
     playerPoints: {
-      'Matthew Golden': 17.40, 'Josh Jacobs': 20.20, 'Chuba Hubbard': 21.40, 'Christian Watson': 13.30,
-      'Jordan Love': 22.52, 'Bryce Young': 11.36, 'Jalen Coker': 8.60, 'Tucker Kraft': 14.30,
-      'Panthers': 6.00, 'Tetairoa McMillan': 8.80, 'Packers': 11.00
+      'Josh Allen': 27.56, 'Bucky Irving': 21.00, 'Ollie Gordon II': 1.60, 'Matthew Golden': 17.40,
+      'Dalton Kincaid': 16.60, 'Jonah Coleman': 2.80, 'Will Reichard': 1.00, 'Jaguars': 20.00,
+      'KC Concepcion Jr.': 5.20, 'Matthew Stafford': -0.20, 'Omarion Hampton': 3.00, 'Tyler Warren': 3.80,
+      'Raiders': 9.00, 'Lamar Jackson': 0.00, 'Josh Jacobs': 20.20, 'Bijan Robinson': 7.60,
+      'Germie Bernard': 5.50, 'Sam LaPorta': 5.00, 'Bhayshul Tuten': 28.90, 'Evan McPherson': 5.00,
+      'Rams': 9.00, 'Ashton Jeanty': 8.80, 'Ladd McConkey': 4.70, 'Aaron Jones Sr.': 5.00,
+      'Trevor Lawrence': 19.40, 'Jahmyr Gibbs': 23.80, 'Javonte Williams': 6.20, 'Drake London': 1.30,
+      'Tre Tucker': 0.00, 'Hunter Henry': 3.60, 'Chase McLaughlin': 12.00, 'Bengals': 4.00,
+      'Jaylen Waddle': 0.00, 'DJ Moore': 14.60, 'Brenton Strange': 6.50, 'Chuba Hubbard': 21.40,
+      'Quinshon Judkins': 5.90, 'Christian Watson': 13.30, 'Justin Jefferson': 11.80, 'Trey McBride': 16.70,
+      'Garrett Wilson': 11.30, 'Jake Bates': 7.00, 'Steelers': 19.00, 'Jordan Love': 22.52,
+      'Josh Downs': 10.30, 'Chris Godwin Jr.': 0.00, 'Xavier Worthy': 1.20, "Wan'Dale Robinson": 12.70,
+      'Dak Prescott': 19.80, 'Kenneth Walker III': 0.90, 'Jaylen Warren': 20.80, 'Zay Flowers': 0.00,
+      'Jordan Addison': 10.10, 'Cam Little': 6.00, 'Broncos': 4.00, 'Courtland Sutton': 2.80,
+      'Bryce Young': 11.36, 'James Cook III': 17.10, 'Braelon Allen': 22.30, 'CeeDee Lamb': 9.30,
+      'Jalen Coker': 8.60, 'Tucker Kraft': 14.30, 'Jameson Williams': 15.00, 'Matt Gay': 10.00,
+      'Patriots': 11.00, 'Blake Corum': 0.80, 'Travis Kelce': 3.60, 'Vikings': 7.00,
+      'Drake Maye': 1.40, 'Chase Brown': 12.10, 'Rhamondre Stevenson': 1.00, 'Amon-Ra St. Brown': 9.10,
+      'Parker Washington': 3.10, 'T.J. Hockenson': 13.80, 'Tyler Bass': 16.00, 'DK Metcalf': 0.90,
+      'Jeremiyah Love': 2.30, 'Joe Burrow': 42.48, 'Kyren Williams': 0.10, "Ja'Marr Chase": 25.60,
+      'Rashee Rice': 10.10, 'Brock Bowers': 24.70, 'Denzel Boston': 6.70, 'Spencer Shrader': 1.00,
+      'Keenan Allen': 10.20, 'Jared Goff': 10.04, 'Jonathan Taylor': 4.70, 'J.K. Dobbins': 1.80,
+      'George Pickens': 5.80, 'Tee Higgins': 32.50, 'Harold Fannin Jr.': 18.40, 'Michael Wilson': 22.80,
+      'Tyler Loop': 4.00, 'Panthers': 6.00, 'Aaron Rodgers': 5.88, 'Kenny Gainwell': 14.00,
+      'Rico Dowdle': 11.60, 'Derrick Henry': 13.00, 'Tony Pollard': 27.20, 'Puka Nacua': 4.30,
+      'Tetairoa McMillan': 8.80, 'Kyle Pitts Sr.': 1.60, 'Malik Washington': 4.40, 'Brandon Aubrey': 13.00,
+      'Packers': 11.00, 'Quentin Johnston': 4.10
     },
-    inProgress: [],
-    sheetNote: 'Yahoo as of Sun 11:09 AM CT. Orange = points so far; the rest are projections.'
+    inProgress: ['Ollie Gordon II', 'Jonah Coleman', 'Matthew Stafford', 'Omarion Hampton', 'Rams', 'Ladd McConkey', 'Hunter Henry', 'Jaylen Waddle', 'Xavier Worthy', 'Kenneth Walker III', 'Broncos', 'Courtland Sutton', 'Patriots', 'Blake Corum', 'Travis Kelce', 'Drake Maye', 'Rhamondre Stevenson', 'Kyren Williams', 'Rashee Rice', 'J.K. Dobbins', 'Puka Nacua', 'Malik Washington', 'Quentin Johnston'],
+    sheetNote: 'Yahoo as of Sun 4:11 PM CT. Orange = points so far; the rest are projections.'
   },
 
   // The NFL week: every game ('Sun 12:00 PM · CHI @ GB', kickoff Central, same form as parlay legs)
@@ -611,10 +635,10 @@ window.SEASON = {
         // scorers in the two 54.5-point games and Detroit, plus Pittsburgh at home. Not marked placed.
         // Odds and ladders: DraftKings via The Odds API, Sun Nov 1, 9:21 AM CT (Steelers vs is the Browns moneyline).
         legs: [
-          { text: 'Javonte Williams anytime TD', player: 'Javonte Williams', type: 'td', count: 1, game: 'Sun 12:00 PM · ARI @ DAL', odds: '-240', ladder: ['-240', '+225', '+900'], status: 'open' },
-          { text: 'Jahmyr Gibbs anytime TD', player: 'Jahmyr Gibbs', type: 'td', count: 1, game: 'Sun 12:00 PM · MIN @ DET', odds: '-245', ladder: ['-245', '+225', '+900'], status: 'open' },
-          { text: 'James Cook anytime TD', player: 'James Cook III', type: 'td', count: 1, game: 'Sun 12:00 PM · BAL @ BUF', odds: '-150', ladder: ['-150', '+380', '+1700'], status: 'open' },
-          { text: 'Steelers moneyline vs Browns', type: 'ml', team: 'Pit', teams: ['Cle', 'Pit'], game: 'Sun 12:00 PM · CLE @ PIT', odds: '-185', vs: '+154', status: 'open' }
+          { text: 'Javonte Williams anytime TD', player: 'Javonte Williams', type: 'td', count: 1, game: 'Sun 12:00 PM · ARI @ DAL', odds: '-240', ladder: ['-240', '+225', '+900'], result: 'No TD (24-56 rush, 1-1 rec)', status: 'miss' },
+          { text: 'Jahmyr Gibbs anytime TD', player: 'Jahmyr Gibbs', type: 'td', count: 1, game: 'Sun 12:00 PM · MIN @ DET', odds: '-245', ladder: ['-245', '+225', '+900'], result: '1 rush TD (23-153 rush, 2-15 rec)', status: 'hit' },
+          { text: 'James Cook anytime TD', player: 'James Cook III', type: 'td', count: 1, game: 'Sun 12:00 PM · BAL @ BUF', odds: '-150', ladder: ['-150', '+380', '+1700'], result: '1 rush TD (21-80 rush, 2-21 rec)', status: 'hit' },
+          { text: 'Steelers moneyline vs Browns', type: 'ml', team: 'Pit', teams: ['Cle', 'Pit'], game: 'Sun 12:00 PM · CLE @ PIT', odds: '-185', vs: '+154', result: 'Final W 27–6', status: 'hit' }
         ]
       },
       {
