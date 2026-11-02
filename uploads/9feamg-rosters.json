@@ -1,10 +1,10 @@
 {
-  "asOf": "2026-11-01T16:11:00-06:00",
+  "asOf": "2026-11-01T19:10:00-06:00",
   "source": "Signed-in Yahoo Fantasy league 935526 team roster pages (full reconcile)",
   "week": 8,
   "baseline": "yahoo-live",
   "baselineAvailable": true,
-  "baselineNote": "Rosters from Yahoo's Week 8 matchup pages (read in the built-in browser), with every player's Yahoo projection (proj) and injury tag (inj) as of Sun Nov 1, 4:11 PM CT.",
+  "baselineNote": "Rosters from Yahoo's Week 8 matchup pages (read in the built-in browser), with every player's Yahoo projection (proj) and injury tag (inj) as of Sun Nov 1, 7:10 PM CT.",
   "teams": [
     {
       "id": "1",
@@ -58,7 +58,8 @@
           "pos": "TE",
           "slot": "starter",
           "nfl": "NE",
-          "proj": 8.99,
+          "proj": 0,
+          "inj": "O",
           "espn": 8.35
         },
         {
@@ -88,7 +89,7 @@
           "pos": "RB",
           "slot": "bench",
           "nfl": "Chi",
-          "proj": 13.92,
+          "proj": 13.91,
           "espn": 13.12
         },
         {
@@ -179,7 +180,7 @@
           "pos": "WR",
           "slot": "starter",
           "nfl": "Phi",
-          "proj": 8.56,
+          "proj": 8.59,
           "espn": 7.69
         },
         {
@@ -308,7 +309,7 @@
           "pos": "RB",
           "slot": "starter",
           "nfl": "Was",
-          "proj": 10.89,
+          "proj": 10.81,
           "espn": 11.17
         },
         {
@@ -355,7 +356,7 @@
           "pos": "DEF",
           "slot": "starter",
           "nfl": "Was",
-          "proj": 7.03
+          "proj": 7.01
         },
         {
           "name": "Keenan Allen",
@@ -370,7 +371,7 @@
           "pos": "RB",
           "slot": "bench",
           "nfl": "Sea",
-          "proj": 9.06,
+          "proj": 9.05,
           "espn": 9.82
         },
         {
@@ -489,6 +490,7 @@
           "slot": "starter",
           "nfl": "Ari",
           "proj": 12.31,
+          "inj": "Q",
           "espn": 10.39
         },
         {
@@ -527,8 +529,8 @@
           "pos": "TE",
           "slot": "bench",
           "nfl": "Dal",
-          "proj": 0,
-          "inj": "O",
+          "proj": 6.2,
+          "inj": "Q",
           "espn": 4.46
         },
         {
@@ -552,7 +554,7 @@
           "pos": "WR",
           "slot": "bench",
           "nfl": "Was",
-          "proj": 10.43,
+          "proj": 10.42,
           "espn": 10.27
         },
         {
@@ -951,8 +953,8 @@
           "pos": "RB",
           "slot": "bench",
           "nfl": "Ari",
-          "proj": 0,
-          "inj": "O",
+          "proj": 7.02,
+          "inj": "Q",
           "espn": 10.34
         },
         {
@@ -976,7 +978,7 @@
           "pos": "QB",
           "slot": "starter",
           "nfl": "Was",
-          "proj": 19.78,
+          "proj": 19.75,
           "espn": 22.8
         },
         {
@@ -1289,7 +1291,7 @@
           "pos": "WRT",
           "slot": "starter",
           "nfl": "Phi",
-          "proj": 10.59,
+          "proj": 10.99,
           "espn": 12.79
         },
         {
@@ -2133,7 +2135,7 @@
   ],
   "espn": {
     "week": 8,
-    "asOf": "2026-11-01T22:12:40.489Z",
+    "asOf": "2026-11-02T01:12:51.948Z",
     "source": "ESPN fantasy projections, half-PPR (average of ESPN standard and PPR)"
   }
 }

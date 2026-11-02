@@ -69,52 +69,52 @@ window.SEASON = {
   // The week in progress. Set to null between weeks.
   live: {
     week: 8,
-    status: 'Live · noon games final · 3:05 and 3:25 games in the 2nd · Sunday night PHI @ WAS',
+    status: 'Live · afternoon games final · Sunday night PHI @ WAS · Monday CHI @ SEA',
     // When these numbers were pulled from Yahoo (Central); shows as "Scores as of Thu 10:19 PM".
-    asOf: '2026-11-01T16:11:00-06:00',
+    asOf: '2026-11-01T19:10:00-06:00',
     // [current points, projected final]
-    // Yahoo as of Sun Nov 1, 4:11 PM CT (Week 8 matchup pages).
+    // Yahoo as of Sun Nov 1, 7:10 PM CT (Week 8 matchup pages).
     scores: {
-      Matt: [106.40, 126.18], Colin: [110.68, 145.55],
-      Tristan: [81.20, 88.28], 'Mr. G': [56.50, 96.65],
-      Jerger: [118.96, 117.13], Tony: [107.96, 144.83],
-      Kurt: [61.60, 91.83], Pablo: [83.30, 116.59],
-      Andy: [70.30, 76.21], DLin: [106.04, 111.59]
+      Matt: [106.40, 126.15], Colin: [127.68, 145.50],
+      Tristan: [82.20, 90.79], 'Mr. G': [87.06, 103.97],
+      Jerger: [115.96, 115.96], Tony: [128.86, 150.60],
+      Kurt: [69.10, 88.81], Pablo: [106.60, 123.64],
+      Andy: [71.20, 71.20], DLin: [105.54, 105.54]
     },
-    yahooWin: { Tony: 87, Tristan: 33, Andy: 1, Matt: 16, Kurt: 17, Jerger: 13, 'Mr. G': 67, Colin: 84, DLin: 99, Pablo: 83 },
+    yahooWin: { Tony: 94, Tristan: 18, Matt: 8, Kurt: 1, Jerger: 6, 'Mr. G': 82, Colin: 92, Pablo: 99 },
     // Points so far for every player whose game has started (starters and bench).
     // Players listed in inProgress are still playing; the rest are final.
     playerPoints: {
-      'Josh Allen': 27.56, 'Bucky Irving': 21.00, 'Ollie Gordon II': 1.60, 'Matthew Golden': 17.40,
-      'Dalton Kincaid': 16.60, 'Jonah Coleman': 2.80, 'Will Reichard': 1.00, 'Jaguars': 20.00,
-      'KC Concepcion Jr.': 5.20, 'Matthew Stafford': -0.20, 'Omarion Hampton': 3.00, 'Tyler Warren': 3.80,
+      'Josh Allen': 27.56, 'Bucky Irving': 21.00, 'Ollie Gordon II': 6.90, 'Matthew Golden': 17.40,
+      'Dalton Kincaid': 16.60, 'Jonah Coleman': 18.40, 'Will Reichard': 1.00, 'Jaguars': 20.00,
+      'KC Concepcion Jr.': 5.20, 'Matthew Stafford': 9.28, 'Omarion Hampton': 3.70, 'Tyler Warren': 3.80,
       'Raiders': 9.00, 'Lamar Jackson': 0.00, 'Josh Jacobs': 20.20, 'Bijan Robinson': 7.60,
       'Germie Bernard': 5.50, 'Sam LaPorta': 5.00, 'Bhayshul Tuten': 28.90, 'Evan McPherson': 5.00,
-      'Rams': 9.00, 'Ashton Jeanty': 8.80, 'Ladd McConkey': 4.70, 'Aaron Jones Sr.': 5.00,
+      'Rams': 10.00, 'Ashton Jeanty': 8.80, 'Ladd McConkey': 10.60, 'Aaron Jones Sr.': 5.00,
       'Trevor Lawrence': 19.40, 'Jahmyr Gibbs': 23.80, 'Javonte Williams': 6.20, 'Drake London': 1.30,
-      'Tre Tucker': 0.00, 'Hunter Henry': 3.60, 'Chase McLaughlin': 12.00, 'Bengals': 4.00,
-      'Jaylen Waddle': 0.00, 'DJ Moore': 14.60, 'Brenton Strange': 6.50, 'Chuba Hubbard': 21.40,
+      'Tre Tucker': 0.00, 'Hunter Henry': 4.50, 'Chase McLaughlin': 12.00, 'Bengals': 4.00,
+      'Jaylen Waddle': 13.40, 'DJ Moore': 14.60, 'Brenton Strange': 6.50, 'Chuba Hubbard': 21.40,
       'Quinshon Judkins': 5.90, 'Christian Watson': 13.30, 'Justin Jefferson': 11.80, 'Trey McBride': 16.70,
       'Garrett Wilson': 11.30, 'Jake Bates': 7.00, 'Steelers': 19.00, 'Jordan Love': 22.52,
-      'Josh Downs': 10.30, 'Chris Godwin Jr.': 0.00, 'Xavier Worthy': 1.20, "Wan'Dale Robinson": 12.70,
-      'Dak Prescott': 19.80, 'Kenneth Walker III': 0.90, 'Jaylen Warren': 20.80, 'Zay Flowers': 0.00,
-      'Jordan Addison': 10.10, 'Cam Little': 6.00, 'Broncos': 4.00, 'Courtland Sutton': 2.80,
+      'Josh Downs': 10.30, 'Chris Godwin Jr.': 0.00, 'Xavier Worthy': 2.80, "Wan'Dale Robinson": 12.70,
+      'Dak Prescott': 19.80, 'Kenneth Walker III': 10.40, 'Jaylen Warren': 20.80, 'Zay Flowers': 0.00,
+      'Jordan Addison': 10.10, 'Cam Little': 6.00, 'Broncos': 2.00, 'Courtland Sutton': 7.30,
       'Bryce Young': 11.36, 'James Cook III': 17.10, 'Braelon Allen': 22.30, 'CeeDee Lamb': 9.30,
       'Jalen Coker': 8.60, 'Tucker Kraft': 14.30, 'Jameson Williams': 15.00, 'Matt Gay': 10.00,
-      'Patriots': 11.00, 'Blake Corum': 0.80, 'Travis Kelce': 3.60, 'Vikings': 7.00,
-      'Drake Maye': 1.40, 'Chase Brown': 12.10, 'Rhamondre Stevenson': 1.00, 'Amon-Ra St. Brown': 9.10,
+      'Patriots': 8.00, 'Blake Corum': 13.30, 'Travis Kelce': 9.20, 'Vikings': 7.00,
+      'Drake Maye': 22.46, 'Chase Brown': 12.10, 'Rhamondre Stevenson': 10.50, 'Amon-Ra St. Brown': 9.10,
       'Parker Washington': 3.10, 'T.J. Hockenson': 13.80, 'Tyler Bass': 16.00, 'DK Metcalf': 0.90,
-      'Jeremiyah Love': 2.30, 'Joe Burrow': 42.48, 'Kyren Williams': 0.10, "Ja'Marr Chase": 25.60,
-      'Rashee Rice': 10.10, 'Brock Bowers': 24.70, 'Denzel Boston': 6.70, 'Spencer Shrader': 1.00,
-      'Keenan Allen': 10.20, 'Jared Goff': 10.04, 'Jonathan Taylor': 4.70, 'J.K. Dobbins': 1.80,
+      'Jeremiyah Love': 2.30, 'Joe Burrow': 42.48, 'Kyren Williams': 12.40, "Ja'Marr Chase": 25.60,
+      'Rashee Rice': 14.80, 'Brock Bowers': 24.70, 'Denzel Boston': 6.70, 'Spencer Shrader': 1.00,
+      'Keenan Allen': 10.20, 'Jared Goff': 10.04, 'Jonathan Taylor': 4.70, 'J.K. Dobbins': 1.30,
       'George Pickens': 5.80, 'Tee Higgins': 32.50, 'Harold Fannin Jr.': 18.40, 'Michael Wilson': 22.80,
       'Tyler Loop': 4.00, 'Panthers': 6.00, 'Aaron Rodgers': 5.88, 'Kenny Gainwell': 14.00,
-      'Rico Dowdle': 11.60, 'Derrick Henry': 13.00, 'Tony Pollard': 27.20, 'Puka Nacua': 4.30,
-      'Tetairoa McMillan': 8.80, 'Kyle Pitts Sr.': 1.60, 'Malik Washington': 4.40, 'Brandon Aubrey': 13.00,
-      'Packers': 11.00, 'Quentin Johnston': 4.10
+      'Rico Dowdle': 11.60, 'Derrick Henry': 13.00, 'Tony Pollard': 27.20, 'Puka Nacua': 19.50,
+      'Tetairoa McMillan': 8.80, 'Kyle Pitts Sr.': 1.60, 'Malik Washington': 12.50, 'Brandon Aubrey': 13.00,
+      'Packers': 11.00, 'Quentin Johnston': 5.70
     },
-    inProgress: ['Ollie Gordon II', 'Jonah Coleman', 'Matthew Stafford', 'Omarion Hampton', 'Rams', 'Ladd McConkey', 'Hunter Henry', 'Jaylen Waddle', 'Xavier Worthy', 'Kenneth Walker III', 'Broncos', 'Courtland Sutton', 'Patriots', 'Blake Corum', 'Travis Kelce', 'Drake Maye', 'Rhamondre Stevenson', 'Kyren Williams', 'Rashee Rice', 'J.K. Dobbins', 'Puka Nacua', 'Malik Washington', 'Quentin Johnston'],
-    sheetNote: 'Yahoo as of Sun 4:11 PM CT. Orange = points so far; the rest are projections.'
+    inProgress: [],
+    sheetNote: 'Yahoo as of Sun 7:10 PM CT. Orange = points so far; the rest are projections.'
   },
 
   // The NFL week: every game ('Sun 12:00 PM · CHI @ GB', kickoff Central, same form as parlay legs)
@@ -647,9 +647,9 @@ window.SEASON = {
         // afternoon games, each on the favorite's main scorer. Not marked placed.
         // Odds and ladders: DraftKings via The Odds API, Sun Nov 1, 9:21 to 9:22 AM CT.
         legs: [
-          { text: 'Puka Nacua anytime TD', player: 'Puka Nacua', type: 'td', count: 1, game: 'Sun 3:05 PM · LAC @ LAR', odds: '-120', ladder: ['-120', '+475', '+2200'], status: 'open' },
-          { text: 'Kenneth Walker III anytime TD', player: 'Kenneth Walker III', type: 'td', count: 1, game: 'Sun 3:25 PM · KC @ DEN', odds: '-160', ladder: ['-160', '+340', '+1400'], status: 'open' },
-          { text: 'Rhamondre Stevenson anytime TD', player: 'Rhamondre Stevenson', type: 'td', count: 1, game: 'Sun 3:25 PM · NE @ MIA', odds: '-125', ladder: ['-125', '+475', '+2200'], status: 'open' }
+          { text: 'Puka Nacua anytime TD', player: 'Puka Nacua', type: 'td', count: 1, game: 'Sun 3:05 PM · LAC @ LAR', odds: '-120', ladder: ['-120', '+475', '+2200'], result: '1 rec TD (11-80 rec)', status: 'hit' },
+          { text: 'Kenneth Walker III anytime TD', player: 'Kenneth Walker III', type: 'td', count: 1, game: 'Sun 3:25 PM · KC @ DEN', odds: '-160', ladder: ['-160', '+340', '+1400'], result: 'No TD (21-69 rush, 4-15 rec)', status: 'miss' },
+          { text: 'Rhamondre Stevenson anytime TD', player: 'Rhamondre Stevenson', type: 'td', count: 1, game: 'Sun 3:25 PM · NE @ MIA', odds: '-125', ladder: ['-125', '+475', '+2200'], result: 'No TD (19-82 rush, 3-8 rec)', status: 'miss' }
         ]
       }
     ]
