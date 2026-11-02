@@ -1,10 +1,10 @@
 {
-  "asOf": "2026-11-01T19:10:00-06:00",
+  "asOf": "2026-11-01T22:50:00-06:00",
   "source": "Signed-in Yahoo Fantasy league 935526 team roster pages (full reconcile)",
   "week": 8,
   "baseline": "yahoo-live",
   "baselineAvailable": true,
-  "baselineNote": "Rosters from Yahoo's Week 8 matchup pages (read in the built-in browser), with every player's Yahoo projection (proj) and injury tag (inj) as of Sun Nov 1, 7:10 PM CT.",
+  "baselineNote": "Rosters from Yahoo's Week 8 matchup pages (read in the built-in browser), with every player's Yahoo projection (proj) and injury tag (inj) as of Sun Nov 1, 10:50 PM CT.",
   "teams": [
     {
       "id": "1",
@@ -58,8 +58,8 @@
           "pos": "TE",
           "slot": "starter",
           "nfl": "NE",
-          "proj": 0,
-          "inj": "O",
+          "proj": 8.99,
+          "inj": "Q",
           "espn": 8.35
         },
         {
@@ -2135,7 +2135,7 @@
   ],
   "espn": {
     "week": 8,
-    "asOf": "2026-11-02T01:12:51.948Z",
+    "asOf": "2026-11-02T04:51:50.536Z",
     "source": "ESPN fantasy projections, half-PPR (average of ESPN standard and PPR)"
   }
 }
