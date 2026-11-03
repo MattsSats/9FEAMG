@@ -720,6 +720,18 @@ window.SEASON = {
       DLin: 'Up two off the bottom after the week’s closest loss, 2.30. DLin’s 108.22 beat six teams, just not the one on the schedule.',
       Colin: 'Down two after 94.08 beat one team; 1–17 against the field over two weeks, the league’s worst. Rebuilt 34 times, and no 100 since Week 5.',
       'Mr. G': 'Last again after a sixth straight loss, this one by 6.12 with Maye’s 28.44, the week’s second-best QB score. None of this is Maye’s fault.'
+    },
+    8: {
+      Tony: 'Still first at 7–1, with the league’s best luck (+1.56) and fewest points against (734.62). Also 17–1 against the field over two weeks. Fraud watch is closed.',
+      Jerger: 'Up one to 2nd on the week the streak died by 33.70. Hard to lose your way up the rankings, but the reigning champ found a way.',
+      Pablo: 'Up four to 3rd, the week’s biggest jump, with five adds all season, the league’s fewest. Colin made 38 and sits three spots back. The waiver wire was barely consulted.',
+      Matt: 'Still 4th after 121.38 beat seven teams and lost to one of the two it couldn’t. 41–31 against the field, 3–5 where it counts. The rankings are running out of defenses.',
+      Andy: 'Down three after 71.20 beat nobody, with 55.60 left on the bench. Still 2nd in the standings. Winning ugly counted; losing ugly counts everywhere.',
+      Colin: 'Up three after 153.68 beat all nine, 0.84 off the season high. The season low, 61.58, is also Colin’s, from Week 6. Nobody knows which team shows up, Colin included.',
+      Tristan: 'Down one and 2–16 against the field over two weeks, the league’s worst. Lamar’s 0.00 only explains one of them. The season has been declared over for less.',
+      DLin: 'Holding 8th after a 34.34 win ended three straight losses. The fewest points in the league, 776.08, and still a win up on Kurt, who has 80.70 more. Points are optional.',
+      Kurt: 'Down four, the week’s biggest drop, after 89.00, Kurt’s lowest of the year, beat one team. Still the league’s worst luck at −1.78, but this week the schedule has an alibi.',
+      'Mr. G': 'Still last, but the six-game skid is over, and Tristan’s 90.90 was the fewest Mr. G has allowed all year. Opponents finally ran out of good weeks.'
     }
   },
 
