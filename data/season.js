@@ -279,6 +279,13 @@ window.SEASON = {
       ['Colin', 'The Booth picked Colin to hold the bridge. Colin needed CeeDee under 6.96 on Monday night, CeeDee scored 21.90, and Jerger won by 14.94. The hate is earned.', '2026-10-26T22:59-05:00'],
       ['Tony', 'Tony put up the week’s top score, 122.70, with three byes and an Out on the bench, and beat Kurt by 22.28. Tony says luck isn’t real; this week Tony didn’t need any.', '2026-10-26T22:59-05:00'],
       ['DLin', 'DLin started Skattebo for 6.10 and then 0.00, benched Skattebo this week for 18.60, and lost to Pablo by 2.30. The timing is impeccable.', '2026-10-26T22:59-05:00']
+    ],
+    8: [
+      ['Colin', 'The Booth picked Matt and called effort overrated. Colin, now at 38 adds, scored the week’s top 153.68 and won by 32.30. Effort would like a word.', '2026-11-03T07:41-06:00'],
+      ['Tristan', 'Lamar threw one pass for 0.00, Tristan added Darnold that afternoon, and Darnold’s 18.52 watched from the bench as Mr. G won by 13.26. That’s a bad beat with a receipt.', '2026-11-03T07:41-06:00'],
+      ['Jerger', 'The experts picked against their own boss and were right: Tony scored 149.66, beat Jerger by 33.70 and ended the champ’s five-game win streak. The staff keeps its jobs.', '2026-11-03T07:41-06:00'],
+      ['Pablo', 'Kurt lost by 31.58 with a season-low 89.00, and Flowers caught none of five targets. Pablo takes the last playoff spot. He was #1; sixth will do.', '2026-11-03T07:41-06:00'],
+      ['Andy', 'The Booth mocked DLin’s crown defense. Then Andy started Tucker and Cooper for 0.00 each, left Swift’s 26.90 on the bench and lost by 34.34. The crown defense is going great.', '2026-11-03T07:41-06:00']
     ]
   },
   // The day each week's previews were written; each line's own time (third field) wins when it has one.
