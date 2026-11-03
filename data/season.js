@@ -54,74 +54,39 @@ window.SEASON = {
 
   // Final scores (Yahoo, two decimals), one per completed week.
   scores: {
-    Tony: [123.06, 154.52, 95.42, 90.82, 142.40, 117.40, 122.70],
-    Tristan: [144.36, 104.10, 121.64, 125.88, 113.28, 86.92, 91.30],
-    Andy: [139.34, 75.96, 127.98, 96.38, 148.44, 119.72, 98.58],
-    Matt: [107.86, 105.64, 114.48, 92.08, 136.68, 106.14, 102.26],
-    Kurt: [100.60, 89.36, 135.88, 112.22, 116.54, 112.76, 100.42],
-    Jerger: [124.06, 92.60, 102.14, 113.66, 112.32, 119.54, 109.02],
-    'Mr. G': [135.22, 84.42, 75.06, 93.84, 109.76, 90.90, 96.14],
-    Colin: [65.66, 100.08, 124.14, 129.92, 133.20, 61.58, 94.08],
-    DLin: [99.82, 100.56, 82.52, 114.68, 92.62, 72.12, 108.22],
-    Pablo: [112.66, 70.92, 86.38, 133.78, 113.04, 66.50, 110.52]
+    Tony: [123.06, 154.52, 95.42, 90.82, 142.40, 117.40, 122.70, 149.66],
+    Tristan: [144.36, 104.10, 121.64, 125.88, 113.28, 86.92, 91.30, 90.90],
+    Andy: [139.34, 75.96, 127.98, 96.38, 148.44, 119.72, 98.58, 71.20],
+    Matt: [107.86, 105.64, 114.48, 92.08, 136.68, 106.14, 102.26, 121.38],
+    Kurt: [100.60, 89.36, 135.88, 112.22, 116.54, 112.76, 100.42, 89.00],
+    Jerger: [124.06, 92.60, 102.14, 113.66, 112.32, 119.54, 109.02, 115.96],
+    'Mr. G': [135.22, 84.42, 75.06, 93.84, 109.76, 90.90, 96.14, 104.16],
+    Colin: [65.66, 100.08, 124.14, 129.92, 133.20, 61.58, 94.08, 153.68],
+    DLin: [99.82, 100.56, 82.52, 114.68, 92.62, 72.12, 108.22, 105.54],
+    Pablo: [112.66, 70.92, 86.38, 133.78, 113.04, 66.50, 110.52, 120.58]
   },
 
   // The week in progress. Set to null between weeks.
   live: {
-    week: 8,
-    status: 'Live · Monday final (CHI 34, SEA 17) · all games final',
+    week: 9,
+    status: 'Kicks off Thursday · JAX @ BAL, 7:15 PM',
     // When these numbers were pulled from Yahoo (Central); shows as "Scores as of Thu 10:19 PM".
-    asOf: '2026-11-02T22:59:00-06:00',
+    asOf: '2026-11-03T10:16:00-06:00',
     // [current points, projected final]
-    // Yahoo as of Mon Nov 2, 10:59 PM CT (Week 8 matchup pages).
+    // Yahoo as of Tue Nov 3, 10:16 AM CT (Week 9 matchup pages).
     scores: {
-      Matt: [121.38, 121.38], Colin: [153.68, 153.68],
-      Tristan: [90.90, 90.90], 'Mr. G': [104.16, 104.16],
-      Jerger: [115.96, 115.96], Tony: [149.66, 149.66],
-      Kurt: [89.00, 89.00], Pablo: [120.58, 120.58],
-      Andy: [71.20, 71.20], DLin: [105.54, 105.54]
+      Matt: [0.00, 111.78], Tony: [0.00, 117.31],
+      Tristan: [0.00, 105.81], DLin: [0.00, 100.67],
+      Jerger: [0.00, 106.64], Pablo: [0.00, 104.41],
+      Kurt: [0.00, 106.42], Andy: [0.00, 121.80],
+      Colin: [0.00, 111.55], 'Mr. G': [0.00, 111.86]
     },
+    yahooWin: { Tony: 55, Tristan: 55, Andy: 63, Matt: 45, Kurt: 37, Jerger: 52, 'Mr. G': 50, Colin: 50, DLin: 45, Pablo: 48 },
     // Points so far for every player whose game has started (starters and bench).
     // Players listed in inProgress are still playing; the rest are final.
-    playerPoints: {
-      'Josh Allen': 27.56, 'Bucky Irving': 21.00, 'Ollie Gordon II': 6.90, 'Matthew Golden': 17.40,
-      'Jaxon Smith-Njigba': 20.80, 'Dalton Kincaid': 16.60, 'Jonah Coleman': 18.40, 'Will Reichard': 1.00,
-      'Jaguars': 20.00, 'KC Concepcion Jr.': 5.20, 'Matthew Stafford': 9.28, 'Omarion Hampton': 3.70,
-      'Tyler Warren': 3.80, 'Raiders': 9.00, 'Carnell Tate': 0.00, 'Lamar Jackson': 0.00,
-      'Josh Jacobs': 20.20, 'Bijan Robinson': 7.60, 'Makai Lemon': 8.70, 'Germie Bernard': 5.50,
-      'Sam LaPorta': 5.00, 'Bhayshul Tuten': 28.90, 'Evan McPherson': 5.00, 'Rams': 10.00,
-      'Ashton Jeanty': 8.80, 'Ladd McConkey': 10.60, 'Rome Odunze': 10.70, 'Aaron Jones Sr.': 5.00,
-      'Sam Darnold': 18.52, 'A.J. Brown': 0.00, 'Trevor Lawrence': 19.40, 'Jahmyr Gibbs': 23.80,
-      'Javonte Williams': 6.20, 'Drake London': 1.30, 'Tre Tucker': 0.00, 'Hunter Henry': 4.50,
-      'Omar Cooper Jr.': 0.00, 'Chase McLaughlin': 12.00, 'Bengals': 4.00, "D'Andre Swift": 26.90,
-      'Jaylen Waddle': 13.40, 'DJ Moore': 14.60, 'Brenton Strange': 6.50, 'Isiah Pacheco': 0.00,
-      'Jayden Daniels': 14.98, 'Chuba Hubbard': 21.40, 'Quinshon Judkins': 5.90, 'Christian Watson': 13.30,
-      'Justin Jefferson': 11.80, 'Trey McBride': 16.70, 'Garrett Wilson': 11.30, 'Jake Bates': 7.00,
-      'Steelers': 19.00, 'Jordan Love': 22.52, 'Josh Downs': 10.30, 'Chris Godwin Jr.': 0.00,
-      'Xavier Worthy': 2.80, "Wan'Dale Robinson": 12.70, 'DeVonta Smith': 0.00, 'Dak Prescott': 19.80,
-      'Kenneth Walker III': 10.40, 'Jaylen Warren': 20.80, 'Zay Flowers': 0.00, 'Jordan Addison': 10.10,
-      'Colston Loveland': 8.00, 'Saquon Barkley': 11.90, 'Cam Little': 6.00, 'Broncos': 2.00,
-      'Emeka Egbuka': 0.00, 'Courtland Sutton': 7.30, 'Jacory Croskey-Merritt': 0.00, 'Alec Pierce': 0.00,
-      'Bryce Young': 11.36, 'James Cook III': 17.10, 'Braelon Allen': 22.30, 'CeeDee Lamb': 9.30,
-      'Jalen Coker': 8.60, 'Tucker Kraft': 14.30, 'Jameson Williams': 15.00, 'Matt Gay': 10.00,
-      'Patriots': 8.00, 'Blake Corum': 13.30, 'Travis Kelce': 9.20, 'Vikings': 7.00,
-      'Drake Maye': 22.46, 'Chase Brown': 12.10, 'Rhamondre Stevenson': 10.50, 'Amon-Ra St. Brown': 9.10,
-      'Parker Washington': 3.10, 'T.J. Hockenson': 13.80, 'Luther Burden III': 15.10, 'Tyler Bass': 16.00,
-      'Seahawks': 2.00, 'DK Metcalf': 0.90, 'Jeremiyah Love': 2.30, 'Joe Burrow': 42.48,
-      'Kyren Williams': 12.40, 'Rachaad White': 13.00, "Ja'Marr Chase": 25.60, 'Rashee Rice': 14.80,
-      'Brock Bowers': 24.70, 'Denzel Boston': 6.70, 'Spencer Shrader': 1.00, 'Commanders': 13.00,
-      'Keenan Allen': 10.20, 'Zach Charbonnet': 4.40, 'Emanuel Wilson': 0.00, 'Kyle Monangai': 0.00,
-      'Jadarian Price': 4.70, 'Davante Adams': 0.00, 'Jared Goff': 10.04, 'Jonathan Taylor': 4.70,
-      'J.K. Dobbins': 1.30, 'George Pickens': 5.80, 'Tee Higgins': 32.50, 'Harold Fannin Jr.': 18.40,
-      'Michael Wilson': 22.80, 'Tyler Loop': 4.00, 'Panthers': 6.00, 'Aaron Rodgers': 5.88,
-      'Jake Ferguson': 0.00, 'Kenny Gainwell': 14.00, 'Rico Dowdle': 11.60, 'Stefon Diggs': 11.30,
-      'RJ Harvey': 0.00, 'Jalen Hurts': 0.00, 'Caleb Williams': 13.98, 'Derrick Henry': 13.00,
-      'Tony Pollard': 27.20, 'Puka Nacua': 19.50, 'Tetairoa McMillan': 8.80, 'Kyle Pitts Sr.': 1.60,
-      'Malik Washington': 12.50, 'Brandon Aubrey': 13.00, 'Packers': 11.00, 'Breece Hall': 0.00,
-      'Quentin Johnston': 5.70, 'Cairo Santos': 11.00
-    },
+    playerPoints: {},
     inProgress: [],
-    sheetNote: 'Yahoo as of Mon 10:59 PM CT. Orange = points so far; the rest are projections.'
+    sheetNote: 'Week 9 projections as of Tue 10:16 AM CT. Each player is tagged Final, Live or proj.'
   },
 
   // The NFL week: every game ('Sun 12:00 PM · CHI @ GB', kickoff Central, same form as parlay legs)
@@ -189,6 +154,15 @@ window.SEASON = {
         'Sun 7:20 PM · PHI @ WAS', 'Mon 7:15 PM · CHI @ SEA'
       ],
       byes: ['HOU', 'NO', 'NYG', 'SF']
+    },
+    9: {
+      games: [
+        'Thu 7:15 PM · JAX @ BAL', 'Sun 8:30 AM · CIN @ ATL', 'Sun 12:00 PM · DAL @ IND', 'Sun 12:00 PM · NYJ @ KC',
+        'Sun 12:00 PM · DET @ MIA', 'Sun 12:00 PM · CLE @ NO', 'Sun 12:00 PM · NYG @ PHI', 'Sun 12:00 PM · LAR @ WAS',
+        'Sun 12:00 PM · DEN @ CAR', 'Sun 3:05 PM · HOU @ LAC', 'Sun 3:25 PM · GB @ NE', 'Sun 3:25 PM · LV @ SF',
+        'Sun 3:25 PM · ARI @ SEA', 'Sun 7:20 PM · TB @ CHI', 'Mon 7:15 PM · BUF @ MIN'
+      ],
+      byes: ['PIT', 'TEN']
     }
   },
 
@@ -198,9 +172,9 @@ window.SEASON = {
 
   // Shown on the week after the live one.
   next: {
-    week: 9,
-    dates: 'Nov 5–9',
-    note: 'Week 9 matchups post once Week 8 goes final.'
+    week: 10,
+    dates: 'Nov 12–16',
+    note: 'Week 10 matchups post once Week 9 goes final.'
   },
 
   // Player projections for the live week, used when the roster file has none.
