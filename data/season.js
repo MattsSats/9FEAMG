@@ -282,7 +282,7 @@ window.SEASON = {
     ],
     8: [
       ['Colin', 'The Booth picked Matt and called effort overrated. Colin’s 38 adds put four pickups in the lineup for 33.70, and Colin won by 32.30. Effort would like a word.', '2026-11-03T07:49-06:00'],
-      ['Tristan', 'Lamar threw one pass for 0.00, Tristan added Darnold that afternoon, and Darnold’s 18.52 watched from the bench as Mr. G won by 13.26. That’s a bad beat with a receipt.', '2026-11-03T07:41-06:00'],
+      ['Tristan', 'Lamar got hurt on Baltimore’s first snap and scored 0.00, Tristan added Darnold that afternoon, and Darnold’s 18.52 watched from the bench as Mr. G won by 13.26. That’s a bad beat with a receipt.', '2026-11-03T07:57-06:00'],
       ['Jerger', 'The experts picked against their own boss and were right: Tony scored 149.66, beat Jerger by 33.70 and ended the champ’s five-game win streak. The staff keeps its jobs.', '2026-11-03T07:41-06:00'],
       ['Pablo', 'The projection had Kurt. Then Flowers caught none of five targets, Kurt hit a season-low 89.00 and Pablo won by 31.58 to take the last playoff spot. He was #1; sixth will do.', '2026-11-03T07:49-06:00'],
       ['Andy', 'The Booth mocked DLin’s crown defense. Then Andy started Tucker and Cooper for 0.00 each, with DJ Moore’s 14.60 and Swift’s 26.90 on the bench, and lost by 34.34. Wrong manager.', '2026-11-03T07:49-06:00']
