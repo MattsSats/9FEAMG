@@ -71,22 +71,22 @@ window.SEASON = {
     week: 9,
     status: 'Kicks off Thursday · JAX @ BAL, 7:15 PM',
     // When these numbers were pulled from Yahoo (Central); shows as "Scores as of Thu 10:19 PM".
-    asOf: '2026-11-03T10:16:00-06:00',
+    asOf: '2026-11-04T09:07:00-06:00',
     // [current points, projected final]
-    // Yahoo as of Tue Nov 3, 10:16 AM CT (Week 9 matchup pages).
+    // Yahoo as of Wed Nov 4, 9:07 AM CT (Week 9 matchup pages).
     scores: {
-      Matt: [0.00, 111.78], Tony: [0.00, 117.31],
-      Tristan: [0.00, 105.81], DLin: [0.00, 100.67],
-      Jerger: [0.00, 106.64], Pablo: [0.00, 104.41],
-      Kurt: [0.00, 106.42], Andy: [0.00, 121.80],
-      Colin: [0.00, 111.55], 'Mr. G': [0.00, 111.86]
+      Matt: [0.00, 112.79], Tony: [0.00, 123.30],
+      Tristan: [0.00, 113.65], DLin: [0.00, 93.71],
+      Jerger: [0.00, 106.25], Pablo: [0.00, 103.58],
+      Kurt: [0.00, 106.53], Andy: [0.00, 124.91],
+      Colin: [0.00, 107.53], 'Mr. G': [0.00, 110.57]
     },
-    yahooWin: { Tony: 55, Tristan: 55, Andy: 63, Matt: 45, Kurt: 37, Jerger: 52, 'Mr. G': 50, Colin: 50, DLin: 45, Pablo: 48 },
+    yahooWin: { Tony: 58, Tristan: 68, Andy: 65, Matt: 42, Kurt: 35, Jerger: 52, 'Mr. G': 53, Colin: 47, DLin: 32, Pablo: 48 },
     // Points so far for every player whose game has started (starters and bench).
     // Players listed in inProgress are still playing; the rest are final.
     playerPoints: {},
     inProgress: [],
-    sheetNote: 'Week 9 projections as of Tue 10:16 AM CT. Each player is tagged Final, Live or proj.'
+    sheetNote: 'Week 9 projections as of Wed 9:07 AM CT. Each player is tagged Final, Live or proj.'
   },
 
   // The NFL week: every game ('Sun 12:00 PM · CHI @ GB', kickoff Central, same form as parlay legs)
