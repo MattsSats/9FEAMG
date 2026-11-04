@@ -1457,7 +1457,7 @@ button{font-family:inherit;color:inherit}
   </div>
   <sc-for list="{{ powerRows }}" as="p" hint-placeholder-count="10">
     <!-- Rank and crest (with the week's movement on top) span both lines; the name line carries TRIST and
-         SCORE, and the writer's note sits right under the name, out to the score's edge. -->
+         SCORE, and the Booth's note sits right under the name, out to the score's edge. -->
     <div sc-camel-on-click="{{ p.open }}" class="hov shot-tight pw-row" data-tri="{{ triFlag }}" tabindex="0" role="button" style="display:grid;grid-template-columns:{{ powerCols }};column-gap:8px;row-gap:3px;align-items:center;padding:12px 0;border-bottom:1px solid var(--line);cursor:pointer">
       <span style="grid-row:1 / span 2;align-self:center;font-family:'Big Shoulders Display';font-weight:900;font-size:28px;line-height:1;color:var(--ink)">{{ p.rank }}</span>
       <div style="grid-row:1 / span 2;align-self:center;display:flex;flex-direction:column;align-items:center;gap:3px">

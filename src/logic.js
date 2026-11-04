@@ -808,7 +808,7 @@ class Component extends DCLogic {
       if (Date.now() - d > 6 * 864e5) return d.toLocaleDateString('en-US', { ...o, month: 'short', day: 'numeric' });
       return d.toLocaleDateString('en-US', { ...o, weekday: 'short' }) + (label == 'Post-SNF' && line[2] ? ' ' + d.toLocaleTimeString('en-US', { ...o, hour: 'numeric', minute: '2-digit' }) : '');
     };
-    // A fourth field 'claude' marks a line Claude wrote before the Booth writer's pass: " *".
+    // A fourth field 'claude' marks an old Claude draft: " *".
     const boothLines = boothSet[1].map((line, i) => {
       const [label] = boothSet, c = line[3] == 'claude', when = written(line, label), pair = PAIRS[wk]?.[i] || [line[0]];
       // The Booth's pick rides on the preview (with its odds then) and the recap (graded).
@@ -1137,7 +1137,7 @@ class Component extends DCLogic {
     const powerRows = NF ? power(NF).map((r, i) => {
       const mv = prevRank[r.m] ? prevRank[r.m] - (i + 1) : 0;
       const tr = triRank?.[r.m], td = tr ? (i + 1) - tr : 0;
-      // One-liner per team for the latest rankings (data/season.js -> powerNotes[week]), from the writer.
+      // One-liner per team for the latest rankings (data/season.js -> powerNotes[week]), from the Booth skill.
       const note = boothOn ? D.powerNotes?.[NF]?.[r.m] || '' : '';
       return { rank: i + 1, m: r.m, init: INIT[r.m], color: col(r.m), score: f1(r.score), wl: r.wl, ...(l => ({ luck: sgn(l), luckColor: l > 0 ? 'var(--pos)' : l < 0 ? 'var(--neg)' : 'var(--muted)' }))(ST.find(s => s.m == r.m).luck), note, hasNote: !!note,
         move: mv > 0 ? '▲' + mv : mv < 0 ? '▼' + -mv : '–', moveColor: mv > 0 ? 'var(--pos)' : mv < 0 ? 'var(--neg)' : 'var(--muted)',

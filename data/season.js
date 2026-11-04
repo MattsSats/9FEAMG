@@ -390,7 +390,7 @@ window.SEASON = {
           // price are still to come; until then the ticket shows Lines TBD. Nobody tailed it.
           { text: 'Ravens spread vs Titans', player: 'Ravens', type: 'spread', team: 'Bal', line: null, teams: ['Ten', 'Bal'], game: 'Sun 12:00 PM vs TEN', result: 'Final 24–18 · won by 6', odds: null, status: 'miss' }
         ]
-        // Booth line removed: it said the ticket cashed. The writer owes a new one.
+        // Booth line removed: it said the ticket cashed. A new one is still owed.
       },
       {
         owner: 'Andy & Tony', owners: ['Andy', 'Tony'], init: 'A&T', title: 'The Truce',
@@ -644,7 +644,7 @@ window.SEASON = {
   },
 
   // Power rankings one-liners, by the last final week the rankings cover: { Manager: text }.
-  // Written by the writer session; a team without a line just shows its numbers.
+  // Written with the Booth skill; a team without a line just shows its numbers.
   powerNotes: {
     4: {
       Tristan: 'First in the standings, first here, and 29–7 against the whole league. The season Tristan declared over is going fine.',
