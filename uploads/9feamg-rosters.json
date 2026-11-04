@@ -1,10 +1,10 @@
 {
-  "asOf": "2026-11-04T09:07:00-06:00",
+  "asOf": "2026-11-04T15:49:00-06:00",
   "source": "Signed-in Yahoo Fantasy league 935526 team roster pages (full reconcile)",
   "week": 9,
   "baseline": "yahoo-live",
   "baselineAvailable": true,
-  "baselineNote": "Rosters from Yahoo's Week 9 matchup pages (read in the built-in browser), with every player's Yahoo projection (proj) and injury tag (inj) as of Wed Nov 4, 9:07 AM CT.",
+  "baselineNote": "Rosters from Yahoo's Week 9 matchup pages (read in the built-in browser), with every player's Yahoo projection (proj) and injury tag (inj) as of Wed Nov 4, 3:49 PM CT.",
   "teams": [
     {
       "id": "1",
@@ -18,7 +18,7 @@
           "pos": "QB",
           "slot": "starter",
           "nfl": "Jax",
-          "proj": 18.92,
+          "proj": 18.89,
           "espn": 20.36
         },
         {
@@ -26,7 +26,7 @@
           "pos": "RB",
           "slot": "starter",
           "nfl": "Det",
-          "proj": 23.18,
+          "proj": 23.21,
           "espn": 24.16
         },
         {
@@ -34,7 +34,7 @@
           "pos": "RB",
           "slot": "starter",
           "nfl": "Dal",
-          "proj": 15.65,
+          "proj": 15.61,
           "espn": 16.46
         },
         {
@@ -42,7 +42,7 @@
           "pos": "WR",
           "slot": "starter",
           "nfl": "Atl",
-          "proj": 15.05,
+          "proj": 15.13,
           "espn": 13.64
         },
         {
@@ -50,7 +50,7 @@
           "pos": "WR",
           "slot": "starter",
           "nfl": "Den",
-          "proj": 10.11,
+          "proj": 10.08,
           "espn": 9.07
         },
         {
@@ -58,7 +58,7 @@
           "pos": "TE",
           "slot": "starter",
           "nfl": "NYG",
-          "proj": 11.26,
+          "proj": 11.23,
           "espn": 10.49
         },
         {
@@ -66,7 +66,7 @@
           "pos": "WRT",
           "slot": "starter",
           "nfl": "Chi",
-          "proj": 15.18,
+          "proj": 15.19,
           "espn": 14.5
         },
         {
@@ -81,14 +81,14 @@
           "pos": "DEF",
           "slot": "starter",
           "nfl": "Hou",
-          "proj": 7.87
+          "proj": 7.88
         },
         {
           "name": "Tre Tucker",
           "pos": "WR",
           "slot": "bench",
           "nfl": "LV",
-          "proj": 8.47,
+          "proj": 8.49,
           "espn": 7.65
         },
         {
@@ -96,16 +96,16 @@
           "pos": "TE",
           "slot": "bench",
           "nfl": "NE",
-          "proj": 7.77,
+          "proj": 7.17,
           "inj": "Q",
-          "espn": 7.69
+          "espn": 7.65
         },
         {
           "name": "Omar Cooper Jr.",
           "pos": "WR",
           "slot": "bench",
           "nfl": "NYJ",
-          "proj": 6.82,
+          "proj": 7.22,
           "espn": 7.52
         },
         {
@@ -130,7 +130,7 @@
           "pos": "DEF",
           "slot": "bench",
           "nfl": "Cin",
-          "proj": 5.84
+          "proj": 5.83
         }
       ]
     },
@@ -146,7 +146,7 @@
           "pos": "QB",
           "slot": "starter",
           "nfl": "KC",
-          "proj": 19.88,
+          "proj": 19.96,
           "espn": 18.17
         },
         {
@@ -154,7 +154,7 @@
           "pos": "RB",
           "slot": "starter",
           "nfl": "Atl",
-          "proj": 20.39,
+          "proj": 20.43,
           "espn": 16.94
         },
         {
@@ -162,7 +162,7 @@
           "pos": "RB",
           "slot": "starter",
           "nfl": "Jax",
-          "proj": 13.31,
+          "proj": 13.3,
           "inj": "Q",
           "espn": 14.21
         },
@@ -171,7 +171,7 @@
           "pos": "WR",
           "slot": "starter",
           "nfl": "SF",
-          "proj": 13.06,
+          "proj": 13.05,
           "inj": "Q",
           "espn": 13.38
         },
@@ -180,7 +180,7 @@
           "pos": "WR",
           "slot": "starter",
           "nfl": "LAC",
-          "proj": 10.18,
+          "proj": 10.19,
           "espn": 8.83
         },
         {
@@ -188,7 +188,7 @@
           "pos": "TE",
           "slot": "starter",
           "nfl": "Det",
-          "proj": 9.61,
+          "proj": 9.63,
           "espn": 9.87
         },
         {
@@ -196,7 +196,7 @@
           "pos": "WRT",
           "slot": "starter",
           "nfl": "Ari",
-          "proj": 10.84,
+          "proj": 10.8,
           "espn": 8.2
         },
         {
@@ -211,14 +211,14 @@
           "pos": "DEF",
           "slot": "starter",
           "nfl": "Det",
-          "proj": 7.32
+          "proj": 7.3
         },
         {
           "name": "Rome Odunze",
           "pos": "WR",
           "slot": "bench",
           "nfl": "Chi",
-          "proj": 8.73,
+          "proj": 8.74,
           "espn": 8.45
         },
         {
@@ -226,7 +226,7 @@
           "pos": "RB",
           "slot": "bench",
           "nfl": "GB",
-          "proj": 13.04,
+          "proj": 13.02,
           "espn": 14.56
         },
         {
@@ -243,24 +243,24 @@
           "slot": "bench",
           "nfl": "LV",
           "proj": 10.21,
-          "espn": 12.27
+          "espn": 12.5
         },
         {
           "name": "A.J. Brown",
           "pos": "WR",
           "slot": "bench",
           "nfl": "NE",
-          "proj": 10.16,
+          "proj": 9.24,
           "inj": "Q",
-          "espn": 11.24
+          "espn": 0
         },
         {
           "name": "Mike Washington Jr.",
           "pos": "RB",
           "slot": "bench",
           "nfl": "LV",
-          "proj": 7.72,
-          "espn": 6.89
+          "proj": 7.73,
+          "espn": 6.64
         },
         {
           "name": "Lamar Jackson",
@@ -285,7 +285,7 @@
           "pos": "QB",
           "slot": "starter",
           "nfl": "Cin",
-          "proj": 21.31,
+          "proj": 21.29,
           "espn": 21.36
         },
         {
@@ -297,19 +297,19 @@
           "espn": 15.27
         },
         {
-          "name": "Rachaad White",
+          "name": "Jadarian Price",
           "pos": "RB",
           "slot": "starter",
-          "nfl": "Was",
-          "proj": 9.9,
-          "espn": 10.45
+          "nfl": "Sea",
+          "proj": 9.99,
+          "espn": 10.16
         },
         {
           "name": "Ja'Marr Chase",
           "pos": "WR",
           "slot": "starter",
           "nfl": "Cin",
-          "proj": 16.83,
+          "proj": 16.97,
           "espn": 18.84
         },
         {
@@ -317,7 +317,8 @@
           "pos": "WR",
           "slot": "starter",
           "nfl": "KC",
-          "proj": 11.85,
+          "proj": 11.88,
+          "inj": "Q",
           "espn": 11.18
         },
         {
@@ -325,7 +326,7 @@
           "pos": "TE",
           "slot": "starter",
           "nfl": "LV",
-          "proj": 13.9,
+          "proj": 13.88,
           "espn": 14.67
         },
         {
@@ -333,7 +334,7 @@
           "pos": "WRT",
           "slot": "starter",
           "nfl": "Ind",
-          "proj": 9.28,
+          "proj": 9.45,
           "espn": 7.85
         },
         {
@@ -341,40 +342,47 @@
           "pos": "K",
           "slot": "starter",
           "nfl": "Ind",
-          "proj": 8.59
+          "proj": 8.61
+        },
+        {
+          "name": "Saints",
+          "pos": "DEF",
+          "slot": "starter",
+          "nfl": "NO",
+          "proj": 8.57
+        },
+        {
+          "name": "Rachaad White",
+          "pos": "RB",
+          "slot": "bench",
+          "nfl": "Was",
+          "proj": 9.9,
+          "espn": 10.45
         },
         {
           "name": "Denzel Boston",
           "pos": "WR",
           "slot": "bench",
           "nfl": "Cle",
-          "proj": 9.37,
-          "espn": 10.54
+          "proj": 8.93,
+          "espn": 10.71
         },
         {
           "name": "Zach Charbonnet",
           "pos": "RB",
           "slot": "bench",
           "nfl": "Sea",
-          "proj": 9.75,
-          "espn": 10.4
+          "proj": 9.91,
+          "espn": 10.22
         },
         {
           "name": "Kyle Monangai",
           "pos": "RB",
           "slot": "bench",
           "nfl": "Chi",
-          "proj": 5.94,
+          "proj": 5.97,
           "inj": "Q",
           "espn": 7.91
-        },
-        {
-          "name": "Jadarian Price",
-          "pos": "RB",
-          "slot": "bench",
-          "nfl": "Sea",
-          "proj": 9.91,
-          "espn": 10.29
         },
         {
           "name": "Jordyn Tyson",
@@ -392,13 +400,6 @@
           "nfl": "SF",
           "proj": 5.84,
           "espn": 7.82
-        },
-        {
-          "name": "Saints",
-          "pos": "DEF",
-          "slot": "bench",
-          "nfl": "NO",
-          "proj": 7.81
         },
         {
           "name": "Davante Adams",
@@ -432,7 +433,7 @@
           "pos": "QB",
           "slot": "starter",
           "nfl": "Det",
-          "proj": 19.17,
+          "proj": 19.14,
           "espn": 19.41
         },
         {
@@ -440,7 +441,7 @@
           "pos": "RB",
           "slot": "starter",
           "nfl": "Ind",
-          "proj": 16.09,
+          "proj": 16.04,
           "espn": 18.24
         },
         {
@@ -448,7 +449,7 @@
           "pos": "RB",
           "slot": "starter",
           "nfl": "Den",
-          "proj": 7.52,
+          "proj": 7.48,
           "espn": 7.62
         },
         {
@@ -456,7 +457,7 @@
           "pos": "WR",
           "slot": "starter",
           "nfl": "Dal",
-          "proj": 11.89,
+          "proj": 11.9,
           "espn": 10.85
         },
         {
@@ -464,7 +465,7 @@
           "pos": "WR",
           "slot": "starter",
           "nfl": "Cin",
-          "proj": 14.3,
+          "proj": 14.41,
           "espn": 13.83
         },
         {
@@ -472,15 +473,15 @@
           "pos": "TE",
           "slot": "starter",
           "nfl": "Cle",
-          "proj": 9.52,
-          "espn": 9
+          "proj": 9.23,
+          "espn": 9.18
         },
         {
           "name": "Michael Wilson",
           "pos": "WRT",
           "slot": "starter",
           "nfl": "Ari",
-          "proj": 10.31,
+          "proj": 10.28,
           "inj": "Q",
           "espn": 10.71
         },
@@ -497,14 +498,14 @@
           "pos": "DEF",
           "slot": "starter",
           "nfl": "Car",
-          "proj": 4.91
+          "proj": 4.94
         },
         {
           "name": "Cam Skattebo",
           "pos": "RB",
           "slot": "bench",
           "nfl": "NYG",
-          "proj": 10.94,
+          "proj": 10.91,
           "inj": "Q",
           "espn": 12.99
         },
@@ -521,7 +522,7 @@
           "pos": "TE",
           "slot": "bench",
           "nfl": "Dal",
-          "proj": 4.07,
+          "proj": 3.98,
           "inj": "Q",
           "espn": 4.27
         },
@@ -530,7 +531,7 @@
           "pos": "RB",
           "slot": "bench",
           "nfl": "TB",
-          "proj": 6.71,
+          "proj": 6.68,
           "espn": 7.31
         },
         {
@@ -581,7 +582,7 @@
           "pos": "QB",
           "slot": "starter",
           "nfl": "Chi",
-          "proj": 18.78,
+          "proj": 18.81,
           "espn": 16.87
         },
         {
@@ -589,7 +590,7 @@
           "pos": "RB",
           "slot": "starter",
           "nfl": "Bal",
-          "proj": 12.53,
+          "proj": 12.45,
           "espn": 13.31
         },
         {
@@ -606,7 +607,7 @@
           "pos": "WR",
           "slot": "starter",
           "nfl": "LAR",
-          "proj": 19.72,
+          "proj": 19.71,
           "espn": 19.89
         },
         {
@@ -614,7 +615,7 @@
           "pos": "WR",
           "slot": "starter",
           "nfl": "Car",
-          "proj": 11.2,
+          "proj": 11.35,
           "espn": 11.17
         },
         {
@@ -622,7 +623,7 @@
           "pos": "TE",
           "slot": "starter",
           "nfl": "NO",
-          "proj": 6.76,
+          "proj": 6.91,
           "espn": 5.81
         },
         {
@@ -630,7 +631,7 @@
           "pos": "WRT",
           "slot": "starter",
           "nfl": "Mia",
-          "proj": 8.76,
+          "proj": 8.75,
           "espn": 8.26
         },
         {
@@ -638,21 +639,21 @@
           "pos": "K",
           "slot": "starter",
           "nfl": "Dal",
-          "proj": 9.61
+          "proj": 9.58
         },
         {
           "name": "Bears",
           "pos": "DEF",
           "slot": "starter",
           "nfl": "Chi",
-          "proj": 6.89
+          "proj": 6.88
         },
         {
           "name": "Kyle Pitts Sr.",
           "pos": "TE",
           "slot": "bench",
           "nfl": "Atl",
-          "proj": 7.88,
+          "proj": 7.95,
           "espn": 8.17
         },
         {
@@ -668,23 +669,23 @@
           "pos": "TE",
           "slot": "bench",
           "nfl": "Hou",
-          "proj": 7.39,
-          "espn": 6.48
+          "proj": 7.59,
+          "espn": 6.46
         },
         {
           "name": "C.J. Stroud",
           "pos": "QB",
           "slot": "bench",
           "nfl": "Hou",
-          "proj": 17.55,
-          "espn": 16.82
+          "proj": 18.26,
+          "espn": 16.93
         },
         {
           "name": "Quentin Johnston",
           "pos": "WR",
           "slot": "bench",
           "nfl": "LAC",
-          "proj": 6.58,
+          "proj": 6.56,
           "espn": 5.42
         },
         {
@@ -732,7 +733,7 @@
           "pos": "WR",
           "slot": "starter",
           "nfl": "GB",
-          "proj": 12.7,
+          "proj": 12.67,
           "espn": 14.43
         },
         {
@@ -740,15 +741,15 @@
           "pos": "WR",
           "slot": "starter",
           "nfl": "Sea",
-          "proj": 20.87,
-          "espn": 19.03
+          "proj": 21.53,
+          "espn": 18.61
         },
         {
           "name": "George Kittle",
           "pos": "TE",
           "slot": "starter",
           "nfl": "SF",
-          "proj": 12.33,
+          "proj": 12.3,
           "espn": 13.28
         },
         {
@@ -756,7 +757,7 @@
           "pos": "WRT",
           "slot": "starter",
           "nfl": "Den",
-          "proj": 12.53,
+          "proj": 12.81,
           "espn": 13.01
         },
         {
@@ -771,7 +772,7 @@
           "pos": "DEF",
           "slot": "starter",
           "nfl": "Jax",
-          "proj": 7.42
+          "proj": 7.41
         },
         {
           "name": "Dalton Kincaid",
@@ -786,8 +787,8 @@
           "pos": "WR",
           "slot": "bench",
           "nfl": "Cle",
-          "proj": 9.15,
-          "espn": 8.72
+          "proj": 8.89,
+          "espn": 8.88
         },
         {
           "name": "Matthew Stafford",
@@ -803,7 +804,7 @@
           "pos": "RB",
           "slot": "bench",
           "nfl": "LAC",
-          "proj": 8.38,
+          "proj": 8.37,
           "espn": 8.01
         },
         {
@@ -811,7 +812,7 @@
           "pos": "TE",
           "slot": "bench",
           "nfl": "Ind",
-          "proj": 10.77,
+          "proj": 10.91,
           "espn": 9.36
         },
         {
@@ -819,8 +820,7 @@
           "pos": "WR",
           "slot": "bench",
           "nfl": "Jax",
-          "proj": 7.67,
-          "inj": "Q",
+          "proj": 7.68,
           "espn": 9.09
         },
         {
@@ -846,7 +846,7 @@
           "pos": "QB",
           "slot": "starter",
           "nfl": "NE",
-          "proj": 20.8,
+          "proj": 20.76,
           "espn": 20.93
         },
         {
@@ -854,7 +854,7 @@
           "pos": "RB",
           "slot": "starter",
           "nfl": "Cin",
-          "proj": 14.19,
+          "proj": 14.6,
           "espn": 14.19
         },
         {
@@ -862,15 +862,16 @@
           "pos": "RB",
           "slot": "starter",
           "nfl": "NE",
-          "proj": 11.15,
-          "espn": 10.39
+          "proj": 11.2,
+          "espn": 10.36
         },
         {
           "name": "Amon-Ra St. Brown",
           "pos": "WR",
           "slot": "starter",
           "nfl": "Det",
-          "proj": 16.39,
+          "proj": 16.36,
+          "inj": "Q",
           "espn": 16.81
         },
         {
@@ -886,7 +887,7 @@
           "pos": "TE",
           "slot": "starter",
           "nfl": "Cin",
-          "proj": 7.43,
+          "proj": 7.56,
           "espn": 6.75
         },
         {
@@ -894,7 +895,7 @@
           "pos": "WRT",
           "slot": "starter",
           "nfl": "Chi",
-          "proj": 11.45,
+          "proj": 11.47,
           "espn": 11.38
         },
         {
@@ -909,7 +910,7 @@
           "pos": "DEF",
           "slot": "starter",
           "nfl": "Sea",
-          "proj": 8.26
+          "proj": 7.8
         },
         {
           "name": "T.J. Hockenson",
@@ -924,8 +925,8 @@
           "pos": "RB",
           "slot": "bench",
           "nfl": "Hou",
-          "proj": 8.47,
-          "espn": 7.47
+          "proj": 10.75,
+          "espn": 13.42
         },
         {
           "name": "DK Metcalf",
@@ -940,15 +941,15 @@
           "pos": "WR",
           "slot": "bench",
           "nfl": "Hou",
-          "proj": 13.35,
-          "espn": 11.52
+          "proj": 13.86,
+          "espn": 11.47
         },
         {
           "name": "Tyler Shough",
           "pos": "QB",
           "slot": "bench",
           "nfl": "NO",
-          "proj": 17.07,
+          "proj": 17.58,
           "espn": 15.31
         },
         {
@@ -974,7 +975,7 @@
           "pos": "QB",
           "slot": "starter",
           "nfl": "Was",
-          "proj": 18.42,
+          "proj": 18.43,
           "espn": 19.79
         },
         {
@@ -982,7 +983,7 @@
           "pos": "RB",
           "slot": "starter",
           "nfl": "Car",
-          "proj": 15.19,
+          "proj": 15.25,
           "espn": 16.3
         },
         {
@@ -990,7 +991,7 @@
           "pos": "RB",
           "slot": "starter",
           "nfl": "SF",
-          "proj": 18.76,
+          "proj": 18.8,
           "inj": "Q",
           "espn": 20.51
         },
@@ -999,7 +1000,7 @@
           "pos": "WR",
           "slot": "starter",
           "nfl": "GB",
-          "proj": 13.34,
+          "proj": 13.23,
           "inj": "Q",
           "espn": 12.82
         },
@@ -1016,7 +1017,7 @@
           "pos": "TE",
           "slot": "starter",
           "nfl": "Ari",
-          "proj": 11.61,
+          "proj": 11.53,
           "espn": 10.81
         },
         {
@@ -1024,7 +1025,8 @@
           "pos": "WRT",
           "slot": "starter",
           "nfl": "NYJ",
-          "proj": 11.85,
+          "proj": 11.14,
+          "inj": "Q",
           "espn": 10.1
         },
         {
@@ -1035,26 +1037,26 @@
           "proj": 8.77
         },
         {
-          "name": "Steelers",
+          "name": "Eagles",
           "pos": "DEF",
           "slot": "starter",
-          "nfl": "Pit",
-          "proj": 0
+          "nfl": "Phi",
+          "proj": 7.63
         },
         {
           "name": "Quinshon Judkins",
           "pos": "RB",
           "slot": "bench",
           "nfl": "Cle",
-          "proj": 11.28,
-          "espn": 12.94
+          "proj": 10.98,
+          "espn": 13.24
         },
         {
           "name": "Jordan Love",
           "pos": "QB",
           "slot": "bench",
           "nfl": "GB",
-          "proj": 17.72,
+          "proj": 17.64,
           "espn": 17.02
         },
         {
@@ -1062,7 +1064,7 @@
           "pos": "WR",
           "slot": "bench",
           "nfl": "Ind",
-          "proj": 9.09,
+          "proj": 9.2,
           "espn": 6.92
         },
         {
@@ -1070,7 +1072,7 @@
           "pos": "WR",
           "slot": "bench",
           "nfl": "TB",
-          "proj": 8.29,
+          "proj": 8.25,
           "espn": 6.26
         },
         {
@@ -1078,23 +1080,15 @@
           "pos": "WR",
           "slot": "bench",
           "nfl": "KC",
-          "proj": 8.23,
+          "proj": 8.25,
           "espn": 7.67
-        },
-        {
-          "name": "Wan'Dale Robinson",
-          "pos": "WR",
-          "slot": "bench",
-          "nfl": "Ten",
-          "proj": 0,
-          "espn": 0
         },
         {
           "name": "DeVonta Smith",
           "pos": "WR",
-          "slot": "IR",
+          "slot": "bench",
           "nfl": "Phi",
-          "proj": 8.44,
+          "proj": 8.04,
           "inj": "Q",
           "espn": 0
         }
@@ -1112,7 +1106,7 @@
           "pos": "QB",
           "slot": "starter",
           "nfl": "Car",
-          "proj": 16.69,
+          "proj": 16.71,
           "espn": 15.72
         },
         {
@@ -1128,7 +1122,7 @@
           "pos": "RB",
           "slot": "starter",
           "nfl": "NYJ",
-          "proj": 7.99,
+          "proj": 8.01,
           "espn": 8.13
         },
         {
@@ -1144,7 +1138,7 @@
           "pos": "WR",
           "slot": "starter",
           "nfl": "NO",
-          "proj": 12.79,
+          "proj": 13.07,
           "espn": 11.36
         },
         {
@@ -1152,7 +1146,7 @@
           "pos": "TE",
           "slot": "starter",
           "nfl": "GB",
-          "proj": 9.29,
+          "proj": 9.3,
           "espn": 8.35
         },
         {
@@ -1160,7 +1154,7 @@
           "pos": "WRT",
           "slot": "starter",
           "nfl": "NYG",
-          "proj": 14.87,
+          "proj": 14.96,
           "espn": 14.29
         },
         {
@@ -1182,7 +1176,7 @@
           "pos": "WR",
           "slot": "bench",
           "nfl": "Det",
-          "proj": 10.25,
+          "proj": 10.18,
           "espn": 11.8
         },
         {
@@ -1190,7 +1184,7 @@
           "pos": "WR",
           "slot": "bench",
           "nfl": "Car",
-          "proj": 10.72,
+          "proj": 10.65,
           "espn": 9.87
         },
         {
@@ -1206,7 +1200,8 @@
           "pos": "TE",
           "slot": "bench",
           "nfl": "KC",
-          "proj": 9.88,
+          "proj": 9.95,
+          "inj": "Q",
           "espn": 8.65
         },
         {
@@ -1214,9 +1209,9 @@
           "pos": "RB",
           "slot": "bench",
           "nfl": "Hou",
-          "proj": 9.6,
-          "inj": "Q",
-          "espn": 11.11
+          "proj": 0,
+          "inj": "O",
+          "espn": 0
         },
         {
           "name": "Kyler Murray",
@@ -1249,7 +1244,7 @@
           "pos": "RB",
           "slot": "starter",
           "nfl": "KC",
-          "proj": 20.13,
+          "proj": 20.19,
           "espn": 21.5
         },
         {
@@ -1257,15 +1252,15 @@
           "pos": "RB",
           "slot": "starter",
           "nfl": "Phi",
-          "proj": 11.42,
-          "espn": 12.2
+          "proj": 11.37,
+          "espn": 11.81
         },
         {
           "name": "Zay Flowers",
           "pos": "WR",
           "slot": "starter",
           "nfl": "Bal",
-          "proj": 11.79,
+          "proj": 11.74,
           "espn": 10.44
         },
         {
@@ -1281,7 +1276,7 @@
           "pos": "TE",
           "slot": "starter",
           "nfl": "Chi",
-          "proj": 9.29,
+          "proj": 9.32,
           "espn": 9.81
         },
         {
@@ -1289,7 +1284,7 @@
           "pos": "WRT",
           "slot": "starter",
           "nfl": "Den",
-          "proj": 7.31,
+          "proj": 7.24,
           "espn": 7.48
         },
         {
@@ -1297,21 +1292,21 @@
           "pos": "K",
           "slot": "starter",
           "nfl": "Jax",
-          "proj": 8.86
+          "proj": 8.84
         },
         {
           "name": "Broncos",
           "pos": "DEF",
           "slot": "starter",
           "nfl": "Den",
-          "proj": 6.89
+          "proj": 6.91
         },
         {
           "name": "Emeka Egbuka",
           "pos": "WR",
           "slot": "bench",
           "nfl": "TB",
-          "proj": 8.89,
+          "proj": 8.85,
           "inj": "Q",
           "espn": 9.41
         },
@@ -1320,7 +1315,7 @@
           "pos": "QB",
           "slot": "bench",
           "nfl": "Dal",
-          "proj": 20.59,
+          "proj": 20.53,
           "espn": 19.09
         },
         {
@@ -1345,8 +1340,8 @@
           "pos": "WR",
           "slot": "bench",
           "nfl": "Hou",
-          "proj": 5.29,
-          "espn": 5.9
+          "proj": 5.47,
+          "espn": 6.34
         },
         {
           "name": "Alec Pierce",
@@ -2133,7 +2128,7 @@
   ],
   "espn": {
     "week": 9,
-    "asOf": "2026-11-04T15:09:18.105Z",
+    "asOf": "2026-11-04T21:50:58.555Z",
     "source": "ESPN fantasy projections, half-PPR (average of ESPN standard and PPR)"
   }
 }

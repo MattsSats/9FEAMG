@@ -1,5 +1,41 @@
 [
   {
+    "when": "Nov 4, 3:46 pm",
+    "yahooTeam": "There is no 2nd best",
+    "manager": "Matt",
+    "action": "add",
+    "player": "Eagles",
+    "nfl": "Phi",
+    "pos": "DEF",
+    "faab": null,
+    "via": "Free Agency",
+    "notes": "Yahoo facts Wed Nov 4, 3:49 PM CT"
+  },
+  {
+    "when": "Nov 4, 3:46 pm",
+    "yahooTeam": "There is no 2nd best",
+    "manager": "Matt",
+    "action": "drop",
+    "player": "Steelers",
+    "nfl": "Pit",
+    "pos": "DEF",
+    "faab": null,
+    "via": "Waivers",
+    "notes": "Yahoo facts Wed Nov 4, 3:49 PM CT"
+  },
+  {
+    "when": "Nov 4, 3:45 pm",
+    "yahooTeam": "There is no 2nd best",
+    "manager": "Matt",
+    "action": "drop",
+    "player": "Wan'Dale Robinson",
+    "nfl": "Ten",
+    "pos": "WR",
+    "faab": null,
+    "via": "Waivers",
+    "notes": "Yahoo facts Wed Nov 4, 3:49 PM CT"
+  },
+  {
     "when": "Nov 4, 7:47 am",
     "yahooTeam": "11 Shots In",
     "manager": "Tony",
