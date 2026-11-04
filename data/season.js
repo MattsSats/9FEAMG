@@ -263,14 +263,15 @@ window.SEASON = {
     ]
   },
   // The day each week's previews were written; each line's own time (third field) wins when it has one.
-  boothPreviewAt: { 5: '2026-10-07', 6: '2026-10-15', 7: '2026-10-21', 8: '2026-10-29' },
+  boothPreviewAt: { 5: '2026-10-07', 6: '2026-10-15', 7: '2026-10-21', 8: '2026-10-29', 9: '2026-11-04' },
   // The Booth's picks, made with the previews: [pick, win % when picked], one per matchup in schedule
   // order. The win % is check.js's "Win odds" line before kickoff. The site grades them once the week is
   // final and keeps the season record.
   boothPicks: {
     6: [['Matt', 60], ['Tristan', 62], ['Tony', 68], ['Colin', 69], ['Mr. G', 62]],
     7: [['Matt', 51], ['Andy', 62], ['Colin', 51], ['Tony', 52], ['Pablo', 66]],
-    8: [['Matt', 61], ['Mr. G', 52], ['Tony', 65], ['Kurt', 58], ['Andy', 73]]
+    8: [['Matt', 61], ['Mr. G', 52], ['Tony', 65], ['Kurt', 58], ['Andy', 73]],
+    9: [['Tony', 63], ['Tristan', 57], ['Jerger', 57], ['Andy', 72], ['Colin', 60]]
   },
   // Jerger's weekly preview picks ("the experts"): one name per matchup in schedule order, graded
   // like the Booth's (Matt, Oct 20, 2026; Jerger agreed). Only the pick goes here; the write-up stays private.
@@ -295,6 +296,15 @@ window.SEASON = {
     ]
   },
   boothPreview: {
+    // Week 9: written by Claude at Matt's request (Wed Nov 4, before TNF) from Yahoo's Wed 3:49 PM
+    // projections and check.js's win odds, graded by a reviewer and revised.
+    9: [
+      ['Tony', 'Tony’s luck is +1.56 and Matt’s is −1.56, exact opposites, and Tony still says luck isn’t real. Projected 124.17–119.63, Tony doesn’t need to be right.', '2026-11-04T16:03-06:00'],
+      ['Tristan', 'Tristan vowed to retire if last, then nearly emptied the waiver budget. The site gives Tristan 1% to finish last and DLin, budget untouched, 25%. Only one of them is worried.', '2026-11-04T16:03-06:00'],
+      ['Pablo', 'Jerger and Pablo are 2nd and 3rd in the power rankings, 2.90 apart in projection. The Booth takes the champ, and sixth gets thin fast: Matt is one win back with 72.14 more points.', '2026-11-04T16:03-06:00'],
+      ['Kurt', 'The projection watched Andy score 71.20, the week’s lowest, and still has Andy by 18.46 over Kurt. Average Sports Enthusiast, below-average benefit of the doubt.', '2026-11-04T16:03-06:00'],
+      ['Colin', 'Colin hit 153.68, then cut the Commanders’ 13.00 defense and made adds 39 and 40. Projected over Mr. G by 5.86. Nobody has told Colin it worked.', '2026-11-04T16:03-06:00']
+    ],
     // Week 8: written by Claude at Matt's request (Thu Oct 29, before TNF) from Yahoo's Thu 6:11 PM
     // projections and check.js's win odds, graded by three reviewers and revised.
     8: [
