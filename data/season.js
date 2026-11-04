@@ -302,7 +302,7 @@ window.SEASON = {
       ['Tony', 'Tony’s luck is +1.56 and Matt’s is −1.56, exact opposites, and Tony still says luck isn’t real. Projected 124.17–119.63, Tony doesn’t need to be right.', '2026-11-04T16:03-06:00'],
       ['Tristan', 'Tristan vowed to retire if last, then nearly emptied the waiver budget. The site gives Tristan 1% to finish last and DLin, budget untouched, 25%. Only one of them is worried.', '2026-11-04T16:03-06:00'],
       ['Pablo', 'Jerger and Pablo are 2nd and 3rd in the power rankings, 2.90 apart in projection. The Booth takes the champ, and Pablo’s sixth place has a one-win cushion. Sixth isn’t a lead, it’s a rental.', '2026-11-04T16:03-06:00'],
-      ['Kurt', 'The projection watched Andy score 71.20, the week’s lowest, and still has Andy by 18.46 over Kurt. Average Sports Enthusiast, below-average benefit of the doubt.', '2026-11-04T16:03-06:00'],
+      ['Kurt', 'The projection watched Andy score 71.20 and Kurt 89.00, the week’s two lowest, then made Andy an 18.46-point favorite. Kurt’s bad luck now comes with a forecast.', '2026-11-04T16:03-06:00'],
       ['Colin', 'Colin hit 153.68, then cut the Commanders’ 13.00 defense and made adds 39 and 40. Projected over Mr. G by 5.86. Nobody has told Colin it worked.', '2026-11-04T16:03-06:00']
     ],
     // Week 8: written by Claude at Matt's request (Thu Oct 29, before TNF) from Yahoo's Thu 6:11 PM
