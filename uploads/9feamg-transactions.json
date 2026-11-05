@@ -1,5 +1,53 @@
 [
   {
+    "when": "Nov 4, 9:50 pm",
+    "yahooTeam": "C LAMBS BIGGEST HATER",
+    "manager": "Colin",
+    "action": "add",
+    "player": "Jordan Mason",
+    "nfl": "Min",
+    "pos": "RB",
+    "faab": null,
+    "via": "Free Agency",
+    "notes": "Yahoo API Thu, Nov 5, 5:00 AM CT"
+  },
+  {
+    "when": "Nov 4, 9:50 pm",
+    "yahooTeam": "C LAMBS BIGGEST HATER",
+    "manager": "Colin",
+    "action": "drop",
+    "player": "Kaelon Black",
+    "nfl": "SF",
+    "pos": "RB",
+    "faab": null,
+    "via": "Waivers",
+    "notes": "Yahoo API Thu, Nov 5, 5:00 AM CT"
+  },
+  {
+    "when": "Nov 4, 7:14 pm",
+    "yahooTeam": "Toilet Bowl King",
+    "manager": "DLin",
+    "action": "drop",
+    "player": "Jalen Hurts",
+    "nfl": "Phi",
+    "pos": "QB",
+    "faab": null,
+    "via": "Waivers",
+    "notes": "Yahoo API Thu, Nov 5, 5:00 AM CT"
+  },
+  {
+    "when": "Nov 4, 5:21 pm",
+    "yahooTeam": "#1 Y! Fan",
+    "manager": "Jerger",
+    "action": "add",
+    "player": "Malik Willis",
+    "nfl": "Mia",
+    "pos": "QB",
+    "faab": null,
+    "via": "Free Agency",
+    "notes": "Yahoo API Thu, Nov 5, 5:00 AM CT"
+  },
+  {
     "when": "Nov 4, 3:46 pm",
     "yahooTeam": "There is no 2nd best",
     "manager": "Matt",
