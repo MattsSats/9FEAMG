@@ -69,24 +69,28 @@ window.SEASON = {
   // The week in progress. Set to null between weeks.
   live: {
     week: 9,
-    status: 'Kicks off Thursday · JAX @ BAL, 7:15 PM',
+    status: 'Live · Thursday final (JAX 33, BAL 10) · Sunday next',
     // When these numbers were pulled from Yahoo (Central); shows as "Scores as of Thu 10:19 PM".
-    asOf: '2026-11-04T15:49:00-06:00',
+    asOf: '2026-11-05T22:49:00-06:00',
     // [current points, projected final]
-    // Yahoo as of Wed Nov 4, 3:49 PM CT (Week 9 matchup pages).
+    // Yahoo as of Thu Nov 5, 10:49 PM CT (the site's Yahoo API, /api/live; Thursday final).
     scores: {
-      Matt: [0.00, 119.63], Tony: [0.00, 124.17],
-      Tristan: [0.00, 113.72], DLin: [0.00, 93.42],
-      Jerger: [0.00, 106.67], Pablo: [0.00, 103.77],
-      Kurt: [0.00, 106.45], Andy: [0.00, 124.91],
-      Colin: [0.00, 116.51], 'Mr. G': [0.00, 110.65]
+      Matt: [0.00, 119.63], Tony: [11.00, 127.76],
+      Tristan: [8.90, 105.01], DLin: [0.00, 91.91],
+      Jerger: [0.00, 89.96], Pablo: [5.58, 96.90],
+      Kurt: [20.80, 108.28], Andy: [13.58, 119.60],
+      Colin: [0.00, 116.51], 'Mr. G': [13.10, 112.80]
     },
     yahooWin: { Tony: 54, Tristan: 68, Andy: 65, Matt: 46, Kurt: 35, Jerger: 53, 'Mr. G': 45, Colin: 55, DLin: 32, Pablo: 47 },
     // Points so far for every player whose game has started (starters and bench).
     // Players listed in inProgress are still playing; the rest are final.
-    playerPoints: {},
+    playerPoints: {
+      'Zay Flowers': 3.80, 'Cam Little': 17.00, 'Parker Washington': 13.10, 'Trevor Lawrence': 13.58,
+      'Brenton Strange': 3.20, 'Jaguars': 11.00, 'Jakobi Meyers': 8.50, 'Derrick Henry': 5.58,
+      'Bhayshul Tuten': 8.90, 'Lamar Jackson': 0.00, 'Tyler Loop': 0.00
+    },
     inProgress: [],
-    sheetNote: 'Week 9 projections as of Wed 3:49 PM CT. Each player is tagged Final, Live or proj.'
+    sheetNote: 'Yahoo as of Thu 10:49 PM CT (Thursday final). Each player is tagged Final, Live or proj.'
   },
 
   // The NFL week: every game ('Sun 12:00 PM · CHI @ GB', kickoff Central, same form as parlay legs)
