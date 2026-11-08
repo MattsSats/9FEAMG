@@ -220,8 +220,17 @@ export function weeklySpread(season, W0) {
 // the seeds that skip the first round (two of six) get a bye. A fixed seed makes every run give the
 // same numbers, so the site, link previews and check.js agree. `through` (default: every final week)
 // with live: false gives the odds as they stood after an earlier week, for the change since then.
+// Two refinements (Matt, Nov 8, 2026), both on by default, off with roster: false / spread: false:
+// - Roster strength: the average is blended with what the roster projects to score now
+//   (season.rosterProj[W0 + 1], from scripts/roster-strength.mjs, centered on the league average),
+//   weighted 40% plus 2 points a week (56% after Week 8, at most 70%), so a trade or a season-ending
+//   injury moves the odds that day. Without rosterProj for that week, the average alone.
+// - Unknown strength: each simulated season draws every team's true level once, around its average,
+//   with the uncertainty its weeks so far leave (the weekly spread over √(weeks + shrink)); the weeks
+//   are then rolled around that. One run's teams are hot or cold all season, as real ones are, so the
+//   far ends (>99%, <1%) come in a little less sure. The live week stays on Yahoo's projection.
 // Returns null when a week left to play has no schedule.
-export function playoffOdds(season, { through, live = true, sims = 20000, shrink = 5 } = {}) {
+export function playoffOdds(season, { through, live = true, sims = 20000, shrink = 5, roster = true, spread = true } = {}) {
   const MGR = season.managers.map(x => x.m), SC = season.scores, PAIRS = season.schedule || {};
   const NF = Math.max(0, ...MGR.map(m => (SC[m] || []).length)), W0 = Math.min(through ?? NF, NF), R = season.regularSeasonWeeks || 14;
   const P = season.playoffTeams || 6, byes = Math.max(0, 2 ** Math.ceil(Math.log2(P)) - P), N = MGR.length;
@@ -235,7 +244,12 @@ export function playoffOdds(season, { through, live = true, sims = 20000, shrink
   // Each team's expected weekly score, and the league's week-to-week spread around team averages.
   const all = MGR.flatMap(m => SC[m].slice(0, W0)), lg = all.length ? all.reduce((s, x) => s + x, 0) / all.length : 110;
   const avg = Object.fromEntries(MGR.map(m => { const s = SC[m].slice(0, W0); return [m, (s.reduce((t, x) => t + x, 0) + shrink * lg) / (s.length + shrink)]; }));
-  const sd = weeklySpread(season, W0);
+  const RP = roster ? season.rosterProj?.[W0 + 1] : null;
+  if (RP && MGR.every(m => RP[m] > 0)) {
+    const a = Math.min(0.7, 0.4 + 0.02 * W0), mu = MGR.reduce((t, m) => t + RP[m], 0) / N;
+    for (const m of MGR) avg[m] = (1 - a) * avg[m] + a * (RP[m] - mu + lg);
+  }
+  const sd = weeklySpread(season, W0), tau = spread ? sd / Math.sqrt(W0 + shrink) : 0;
   // The live week (the one right after W0) from Yahoo: points so far plus the rest of the projection.
   const LV = live && W0 < R && season.live?.week == W0 + 1 && season.live.scores ? season.live.scores : null;
   const wk = {};
@@ -254,9 +268,9 @@ export function playoffOdds(season, { through, live = true, sims = 20000, shrink
   // week simulated, W0 + 1) and in the runs where it loses.
   const S1 = W0 < R ? W0 + 1 : null, sw = Object.fromEntries(MGR.map(m => [m, { w: 0, wIn: 0, l: 0, lIn: 0 }]));
   for (let i = 0; i < sims; i++) {
-    const W = { ...wins }, F = { ...pf }, first = {};
+    const W = { ...wins }, F = { ...pf }, first = {}, lvl = Object.fromEntries(MGR.map(m => [m, draw(0, tau)]));
     for (let w = W0 + 1; w <= R; w++) for (const [a, b] of PAIRS[w]) {
-      const sa = draw(...wk[w][a]), sb = draw(...wk[w][b]); F[a] += sa; F[b] += sb;
+      const live1 = LV && w == W0 + 1, sa = draw(...wk[w][a]) + (live1 ? 0 : lvl[a]), sb = draw(...wk[w][b]) + (live1 ? 0 : lvl[b]); F[a] += sa; F[b] += sb;
       if (sa > sb) W[a]++; else if (sb > sa) W[b]++; else { W[a] += 0.5; W[b] += 0.5; }
       if (w == S1 && sa != sb) { first[a] = sa > sb; first[b] = sb > sa; }
     }
