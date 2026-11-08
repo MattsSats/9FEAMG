@@ -1163,6 +1163,7 @@ button{font-family:inherit;color:inherit}
 <div style="padding:22px 20px 0">
   <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:48px;line-height:.9;text-transform:uppercase">Season</div>
   <div style="font-family:'JetBrains Mono';font-size:11px;color:var(--muted);margin-top:10px">{{ seasonSub }}</div>
+  <button class="share-btn" sc-camel-on-click="{{ openAwards }}" style="margin-top:12px">Season awards ›</button>
 </div>
 <div class="tiles" style="display:grid;gap:10px;padding:18px 20px 0">
   <sc-for list="{{ seasonTiles }}" as="t" hint-placeholder-count="4">
@@ -1773,6 +1774,36 @@ button{font-family:inherit;color:inherit}
 </div>
 </div>
 </div>
+</sc-if>
+
+<!-- Season awards (Matt, Nov 8, 2026): seasonAwards in api/_shared.js. Not in the tab bar; linked from Season, at #awards. -->
+<sc-if value="{{ tabAwards }}" hint-placeholder-val="{{ false }}">
+<div style="padding:22px 20px 0">
+  <button class="share-btn" sc-camel-on-click="{{ backToSeason }}" style="margin-bottom:14px">‹ Season</button>
+  <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:48px;line-height:.9;text-transform:uppercase">Season awards</div>
+  <div style="font-family:'JetBrains Mono';font-size:11px;color:var(--muted);margin-top:10px">{{ awardsSub }}</div>
+</div>
+<sc-if value="{{ noAwards }}" hint-placeholder-val="{{ false }}">
+  <div style="margin:16px 20px 0;padding:28px 16px;border:1px dashed var(--line);border-radius:16px;text-align:center;font-size:14px;color:var(--muted)">Loading the box scores…</div>
+</sc-if>
+<sc-for list="{{ awardGroups }}" as="g" hint-placeholder-count="4">
+  <div style="padding:26px 20px 0">
+    <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:26px;text-transform:uppercase">{{ g.group }}</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,280px),1fr));gap:10px;margin-top:10px">
+      <sc-for list="{{ g.awards }}" as="a" hint-placeholder-count="4">
+        <div style="background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px">
+          <div style="font-family:'JetBrains Mono';font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)">{{ a.title }}</div>
+          <div style="display:flex;align-items:center;gap:10px;margin-top:10px">
+            <div class="crest" style="width:30px;height:30px;background:{{ a.color }};color:var(--onAccent);display:flex;align-items:center;justify-content:center;font-family:'Big Shoulders Display';font-weight:800;font-size:12px;flex:none"><span class="ini" data-i="{{ a.init }}">{{ a.init }}</span></div>
+            <div style="font-weight:600;font-size:16px;min-width:0;flex:1">{{ a.m }}</div>
+            <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:30px;line-height:1;color:var(--accentInk)">{{ a.value }}</div>
+          </div>
+          <div style="font-size:14px;line-height:1.4;margin-top:10px;text-wrap:pretty">{{ a.line }}</div>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+</sc-for>
 </sc-if>
 
 <sc-if value="{{ tabDraft }}" hint-placeholder-val="{{ false }}">

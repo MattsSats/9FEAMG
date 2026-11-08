@@ -3,7 +3,7 @@
 // for the Wire line and lineup alerts. Exits 1 if anything is wrong. Usage: node scripts/check.js
 import { readFileSync } from 'node:fs';
 import vm from 'node:vm';
-import { seasonStats, byStandings, kickoffAt, nflKey, lineupIssues, wireOf, pointsOf, ticketSlug, parlayState, parlayFair, impliedProb, toAmerican, playoffOdds, oddsPct, raceText, matchupOdds, boothPickRecord, expertPickRecord, mergeYahoo, playoffScenarios } from '../api/_shared.js';
+import { seasonStats, byStandings, kickoffAt, nflKey, lineupIssues, wireOf, pointsOf, ticketSlug, parlayState, parlayFair, impliedProb, toAmerican, playoffOdds, oddsPct, raceText, matchupOdds, boothPickRecord, expertPickRecord, mergeYahoo, playoffScenarios, seasonAwards } from '../api/_shared.js';
 
 const read = p => readFileSync(new URL('../' + p, import.meta.url), 'utf8');
 const box = { window: {} }; vm.runInNewContext(read('data/season.js'), box);
@@ -104,6 +104,9 @@ else out.push('Playoff odds (playoffs/bye/last): ' + Object.entries(OD.teams).so
 const SCN = playoffScenarios(S);
 if (SCN) out.push(`Playoff scenarios (a win or loss means Week ${SCN.week}):` + Object.entries(SCN.teams).map(([m, t]) => `
   ${m}: ${t.lines.join(' ')}`).join(''));
+const AW = seasonAwards(S, scores);
+if (AW) out.push(`Season awards (through Week ${AW.through}):` + AW.awards.map(a => `
+  ${a.title}: ${a.m}, ${a.value}. ${a.line}`).join(''));
 const pts = (n, w) => pointsOf(S, scores, n, w);
 out.push('Wire, this week: ' + wireOf(S, tx, pts, 'week').line);
 out.push('Wire, season:    ' + wireOf(S, tx, pts, 'season').line);

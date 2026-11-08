@@ -602,6 +602,74 @@ export function pointSources(season, box, draft, tx) {
 }
 
 // ---- Lineup alerts (live week) ----
+// ---- Season awards (Matt, Nov 8, 2026) ----
+// The regular season so far, from the final scores and box scores (`box`, uploads/9feamg-boxscores.json
+// after mergeBox), so it moves on by itself when a week goes final. Each award is { group, title, m
+// (whose crest shows), value, line }; every line is plain fact, for the page and for the Booth.
+// A bench swap only counts where the benched player could have played: same position, or a RB, WR or
+// TE into the FLEX. The worst bench decision is the biggest swap that would have turned a loss into a
+// win; if no swap ever did, the biggest swap.
+export function seasonAwards(season, box) {
+  const st = seasonStats(season, box), NF = Math.min(st.NF, season.regularSeasonWeeks || 14), SC = season.scores, PAIRS = season.schedule || {};
+  if (!NF) return null;
+  const n = x => (x < 0 ? '−' : '') + Math.abs(x).toFixed(2), best = (l, f) => l.reduce((a, x) => (!a || f(x) > f(a) ? x : a), null);
+  const score = (a, b) => `${n(a)}–${n(b)}`, N = season.managers.length;
+  const games = [];
+  for (let w = 1; w <= NF; w++) for (const [a, b] of PAIRS[w] || []) {
+    const sa = SC[a]?.[w - 1], sb = SC[b]?.[w - 1];
+    if (sa == null || sb == null || sa == sb) continue;
+    const [W, L, sw, sl] = sa > sb ? [a, b, sa, sb] : [b, a, sb, sa];
+    const beat = (s, m) => season.managers.filter(x => x.m != m && SC[x.m][w - 1] < s).length;
+    games.push({ w, W, L, sw, sl, gap: sw - sl, beatL: beat(sl, L), beatW: beat(sw, W) });
+  }
+  const teams = games.flatMap(g => [{ w: g.w, m: g.W, s: g.sw, opp: g.L, os: g.sl, won: true }, { w: g.w, m: g.L, s: g.sl, opp: g.W, os: g.sw, won: false }]);
+  const out = [], add = (group, title, m, value, line) => out.push({ group, title, m, value, line });
+  const lost = games.length ? best(games, g => g.sl) : null, lucky = games.length ? best(games, g => -g.sw) : null;
+  if (games.length) {
+    const b = best(games, g => g.gap), c = best(games, g => -g.gap), hi = best(teams, t => t.s), lo = best(teams, t => -t.s);
+    add('Games', 'Biggest blowout', b.L, n(b.gap), `${b.W} beat ${b.L} ${score(b.sw, b.sl)} in Week ${b.w}.`);
+    add('Games', 'Closest game', c.L, n(c.gap), `${c.W} edged ${c.L} ${score(c.sw, c.sl)} in Week ${c.w}.`);
+    add('Games', 'Unluckiest loss', lost.L, n(lost.sl), `${lost.L} lost to ${lost.W} ${score(lost.sl, lost.sw)} in Week ${lost.w}, a score that beat ${lost.beatL} of the other ${N - 1} teams.`);
+    add('Games', 'Luckiest win', lucky.W, n(lucky.sw), `${lucky.W} beat ${lucky.L} ${score(lucky.sw, lucky.sl)} in Week ${lucky.w}, a score that beat ${lucky.beatW} of the other ${N - 1} teams.`);
+    add('Games', 'Highest score', hi.m, n(hi.s), `${hi.m} in Week ${hi.w}, ${hi.won ? 'beating' : 'losing to'} ${hi.opp} (${n(hi.os)}).`);
+    add('Games', 'Lowest score', lo.m, n(lo.s), `${lo.m} in Week ${lo.w}, ${lo.won ? 'beating' : 'losing to'} ${lo.opp} (${n(lo.os)}).`);
+  }
+  // Lineups and players, for the weeks with a box score.
+  const swaps = [], left = [], starts = [], total = {};
+  for (let w = 1; w <= NF; w++) for (const t of teams.filter(x => x.w == w)) {
+    const bx = box?.weeks?.[w]?.[t.m]; if (!bx) continue;
+    const opt = optimalLineup([...bx.starters, ...bx.bench]);
+    left.push({ w, m: t.m, s: t.s, opt, gap: opt - t.s });
+    (total[t.m] ||= { s: 0, opt: 0, wk: 0 }); total[t.m].s += t.s; total[t.m].opt += opt; total[t.m].wk++;
+    for (const r of bx.starters) if (r[5] > 0) starts.push({ w, m: t.m, name: r[1], pts: r[4], proj: r[5], over: r[4] - r[5] });
+    for (const bn of bx.bench.filter(r => r[0] == 'BN')) for (const s of bx.starters) {
+      if (!(s[0] == bn[3] || (s[0] == 'W/R/T' && FLEX_POS.includes(bn[3])))) continue;
+      const gain = bn[4] - s[4];
+      if (gain > 0) swaps.push({ w, m: t.m, bn: bn[1], bp: bn[4], st: s[1], sp: s[4], gain, flips: !t.won && gain > t.os - t.s, by: t.os - t.s, opp: t.opp });
+    }
+  }
+  const worst = best(swaps.filter(s => s.flips), s => s.gain) || best(swaps, s => s.gain);
+  if (worst) add('Lineups', 'Worst bench decision', worst.m, n(worst.gain), `${worst.m} started ${worst.st} (${n(worst.sp)}) over ${worst.bn} (${n(worst.bp)}) in Week ${worst.w}.` + (worst.flips ? ` Lost to ${worst.opp} by ${n(worst.by)}; that swap wins it.` : ''));
+  if (left.length) { const l = best(left, x => x.gap); add('Lineups', 'Most points left on the bench', l.m, n(l.gap), `${l.m} scored ${n(l.s)} in Week ${l.w}; the best possible lineup scored ${n(l.opt)}.`); }
+  const eff = Object.entries(total).map(([m, t]) => ({ m, ...t, pct: t.s / t.opt }));
+  if (eff.length) {
+    const say = e => `${e.m} scored ${n(e.s)} of a possible ${n(e.opt)}.`, pc = e => (e.pct * 100).toFixed(1) + '%';
+    const hi = best(eff, e => e.pct), lo = best(eff, e => -e.pct);
+    add('Lineups', 'Best lineup setter', hi.m, pc(hi), say(hi)); add('Lineups', 'Worst lineup setter', lo.m, pc(lo), say(lo));
+  }
+  if (starts.length) {
+    const up = best(starts, x => x.over), dn = best(starts, x => -x.over);
+    add('Players', 'Biggest boom', up.m, '+' + n(up.over), `${up.name} scored ${n(up.pts)} on a ${n(up.proj)} projection for ${up.m} in Week ${up.w}.`);
+    add('Players', 'Biggest bust', dn.m, n(dn.over), `${dn.name} scored ${n(dn.pts)} on a ${n(dn.proj)} projection for ${dn.m} in Week ${dn.w}.`);
+  }
+  const rec = r => `${r.w}–${r.l} on ${r.xw.toFixed(2)} expected wins`, sign = x => (x > 0 ? '+' : '') + n(x);
+  const lk = best(st.rows, r => r.luck), ul = best(st.rows, r => -r.luck), pa = best(st.rows, r => r.pa);
+  add('Season', 'Luckiest team', lk.m, sign(lk.luck), `${lk.m} is ${rec(lk)}.`);
+  add('Season', 'Unluckiest team', ul.m, sign(ul.luck), `${ul.m} is ${rec(ul)}.`);
+  add('Season', 'Most points against', pa.m, n(pa.pa), `Opponents have scored the most against ${pa.m}, ${(pa.pa / NF).toFixed(2)} a week.`);
+  return { through: NF, awards: out };
+}
+
 // ---- Playoff scenarios (Matt, Nov 8, 2026) ----
 // Plain lines per team from the final scores so far and the games left (the live week counts as
 // unplayed). Exact, not simulated: "could this team miss / make it?" comes down to who can be given

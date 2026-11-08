@@ -438,12 +438,13 @@ class Component extends DCLogic {
     window.scrollTo(0, 0);
   }
   openHash(nav) {
-    // #w5 opens that week, #season the standings, #team-mr-g a team page, #wire and #draft those tabs.
+    // #w5 opens that week, #season the standings, #team-mr-g a team page, #wire, #draft and #awards those tabs.
     const h = location.hash, wk = h.match(/^#w(\d+)$/), tm = h.match(/^#team-([\w-]+)$/);
     if (!h && nav) { this.setState({ tab: 'Gameday', week: HOME_WK, sheet: null }); window.scrollTo(0, 0); return; }
     if (h == '#wire' || h == '#wire-season' || h == '#draft') { this.setState({ tab: h == '#draft' ? 'Draft' : 'Wire', ...(h == '#draft' ? {} : { wire: h == '#wire-season' ? 'Season' : 'This week' }), sheet: null }); window.scrollTo(0, 0); return; }
     if (wk) { this.setState({ tab: 'Gameday', week: +wk[1], sheet: null }); window.scrollTo(0, 0); return; }
     if (h == '#season') { this.setState({ tab: 'Season', sheet: null }); window.scrollTo(0, 0); return; }
+    if (h == '#awards') { this.setState({ tab: 'Awards', sheet: null }); window.scrollTo(0, 0); return; }
     // Season sections: #power, #pfpa, #luck, #xw, #bench, #src open the Season tab scrolled to that section.
     if (['#power', '#odds', '#bracket', '#pfpa', '#luck', '#xw', '#bench', '#src'].includes(h)) { this.setState({ tab: 'Season', sheet: null }); setTimeout(() => document.getElementById(h.slice(1))?.scrollIntoView({ block: 'start' }), 350); return; }
     if (h == '#ledger') { this.setState({ tab: 'Gameday', week: HOME_WK, sheet: null }); setTimeout(() => document.getElementById('ledger')?.scrollIntoView({ block: 'start' }), 350); return; }
@@ -567,7 +568,7 @@ class Component extends DCLogic {
     const S = this.state, h = location.hash;
     const want = S.tab == 'Gameday' ? (S.week == HOME_WK ? '' : '#w' + S.week)
       : S.tab == 'Season' ? '#season' : S.tab == 'Teams' ? '#team-' + teamSlug(S.team)
-      : S.tab == 'Wire' ? (S.wire == 'Season' ? '#wire-season' : '#wire') : S.tab == 'Draft' ? '#draft' : null;
+      : S.tab == 'Wire' ? (S.wire == 'Season' ? '#wire-season' : '#wire') : S.tab == 'Draft' ? '#draft' : S.tab == 'Awards' ? '#awards' : null;
     if (want == null || h == want) return;
     if (S.tab == 'Gameday' && (h == '#w' + S.week || h.startsWith('#w' + S.week + '-') || h == '#ledger' || (h == '#booth' && S.week == BOOTH_WK))) return;
     if (S.tab == 'Season' && ['#power', '#odds', '#bracket', '#pfpa', '#luck', '#xw', '#bench', '#src'].includes(h)) return;
@@ -1181,6 +1182,9 @@ class Component extends DCLogic {
     const oddsSub = !OD ? '' : !OD.now ? 'Odds start once the rest of the regular season is on the schedule.'
       : oddsDone ? 'The regular season is over.'
       : `${OD.now.sims.toLocaleString('en-US')} simulated seasons · ${OD.now.live ? `Week ${LW} from Yahoo’s projections · ` : ''}${OD.prev ? '± since last week' : ''}`;
+    // Season awards (seasonAwards in api/_shared.js), once the box scores have loaded.
+    const AW = S.tab == 'Awards' && S.box ? seasonAwards(D, S.box) : null;
+    const awardGroups = !AW ? [] : [...new Set(AW.awards.map(a => a.group))].map(group => ({ group, awards: AW.awards.filter(a => a.group == group).map(a => ({ ...a, init: INIT[a.m], color: col(a.m) })) }));
     // Playoff scenarios (playoffScenarios in api/_shared.js), once per set of final scores.
     const scnKey = S.tab == 'Season' ? JSON.stringify(SC) : null;
     if (scnKey && this.scnKey != scnKey) { this.scnKey = scnKey; this.scn = playoffScenarios(D); }
@@ -1416,7 +1420,7 @@ class Component extends DCLogic {
       themeLabel, toggleTheme,
       draftIconCls: S.tab == 'Draft' ? 'hi play inv' : 'hi', goHome: e => this.goHome(e), openDraft: () => { this.setState({ tab: 'Draft' }); window.scrollTo(0, 0); },
       draftBtnBg: S.tab == 'Draft' ? 'var(--accent)' : 'var(--surface)', draftBtnFg: S.tab == 'Draft' ? 'var(--onAccent)' : 'var(--ink)', draftBtnBorder: S.tab == 'Draft' ? 'var(--accent)' : 'var(--line)',
-      tabs, tabGameday: S.tab == 'Gameday', tabSeason: S.tab == 'Season', tabTeams: S.tab == 'Teams', tabDraft: S.tab == 'Draft', tabWire: S.tab == 'Wire',
+      tabs, tabGameday: S.tab == 'Gameday', tabSeason: S.tab == 'Season', tabTeams: S.tab == 'Teams', tabDraft: S.tab == 'Draft', tabWire: S.tab == 'Wire', tabAwards: S.tab == 'Awards', openAwards: () => { this.setState({ tab: 'Awards' }); window.scrollTo(0, 0); }, backToSeason: () => { this.setState({ tab: 'Season' }); window.scrollTo(0, 0); }, awardGroups, awardsSub: AW ? `Regular season through Week ${AW.through} · updates when each week goes final` : '', hasAwards: awardGroups.length > 0, noAwards: !awardGroups.length,
       // Gameday header, jump links, your-team prompt, scores time, request toggle, share sheet.
       gamedaySub: hasRecap ? (isFinal ? 'Week recap · scores + Booth' : LIVE_STARTED ? 'Live week · scores + Booth' : 'Week preview · projections + Booth') : '9 Fantasy Experts & Mr. Glenn',
       gamedayShare: hasRecap ? this.shareMenu(`Week ${wk}`, e => this.shareLink(location.origin + '/s/w' + wk, '9FEAMG · Week ' + wk, e), e => this.share('recap', e)) : null, hasGamedayShare: !!hasRecap,
