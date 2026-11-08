@@ -1,5 +1,5 @@
 {
-  "asOf": "2026-11-07T11:00:29.752Z",
+  "asOf": "2026-11-08T07:10:33.868Z",
   "source": "Signed-in Yahoo Fantasy league 935526 team roster pages (full reconcile)",
   "week": 9,
   "baseline": "yahoo-live",
@@ -114,7 +114,6 @@
           "slot": "bench",
           "nfl": "Buf",
           "proj": 10.06,
-          "inj": "Q",
           "espn": 10.52
         },
         {
@@ -166,19 +165,19 @@
           "espn": 14.21
         },
         {
-          "name": "Adonai Mitchell",
-          "nfl": "NYJ",
-          "slot": "starter",
-          "pos": "WR",
-          "espn": 9.41
-        },
-        {
           "name": "Ladd McConkey",
           "pos": "WR",
           "slot": "starter",
           "nfl": "LAC",
           "proj": 10.19,
           "espn": 8.83
+        },
+        {
+          "name": "Adonai Mitchell",
+          "nfl": "NYJ",
+          "slot": "starter",
+          "pos": "WR",
+          "espn": 9.41
         },
         {
           "name": "Sam LaPorta",
@@ -211,6 +210,14 @@
           "proj": 7.3
         },
         {
+          "name": "Rome Odunze",
+          "pos": "WR",
+          "slot": "bench",
+          "nfl": "Chi",
+          "proj": 8.74,
+          "espn": 8.45
+        },
+        {
           "name": "Mike Evans",
           "pos": "WR",
           "slot": "bench",
@@ -220,28 +227,12 @@
           "espn": 0
         },
         {
-          "name": "Rome Odunze",
-          "pos": "WR",
-          "slot": "bench",
-          "nfl": "Chi",
-          "proj": 8.74,
-          "espn": 8.45
-        },
-        {
           "name": "Josh Jacobs",
           "pos": "RB",
           "slot": "bench",
           "nfl": "GB",
           "proj": 13.02,
           "espn": 14.56
-        },
-        {
-          "name": "Germie Bernard",
-          "pos": "WR",
-          "slot": "bench",
-          "nfl": "Pit",
-          "proj": 0,
-          "espn": 0
         },
         {
           "name": "Ashton Jeanty",
@@ -258,6 +249,13 @@
           "nfl": "LV",
           "proj": 7.73,
           "espn": 6.64
+        },
+        {
+          "name": "Antonio Williams",
+          "nfl": "Was",
+          "slot": "bench",
+          "pos": "WR",
+          "espn": 8.11
         },
         {
           "name": "A.J. Brown",
@@ -395,7 +393,7 @@
           "slot": "bench",
           "nfl": "NO",
           "proj": 0,
-          "inj": "IR",
+          "inj": "Q",
           "espn": 4.81
         },
         {
@@ -1017,13 +1015,12 @@
           "espn": 10.78
         },
         {
-          "name": "Garrett Wilson",
+          "name": "Quinshon Judkins",
           "pos": "WRT",
           "slot": "starter",
-          "nfl": "NYJ",
-          "proj": 11.14,
-          "inj": "O",
-          "espn": 0
+          "nfl": "Cle",
+          "proj": 10.98,
+          "espn": 13.24
         },
         {
           "name": "Jake Bates",
@@ -1040,12 +1037,13 @@
           "proj": 7.63
         },
         {
-          "name": "Quinshon Judkins",
-          "pos": "RB",
+          "name": "Garrett Wilson",
+          "pos": "WR",
           "slot": "bench",
-          "nfl": "Cle",
-          "proj": 10.98,
-          "espn": 13.24
+          "nfl": "NYJ",
+          "proj": 11.14,
+          "inj": "O",
+          "espn": 0
         },
         {
           "name": "Jordan Love",
@@ -1080,9 +1078,16 @@
           "espn": 7.67
         },
         {
+          "name": "Alvin Kamara",
+          "nfl": "NO",
+          "slot": "bench",
+          "pos": "RB",
+          "espn": 10.48
+        },
+        {
           "name": "DeVonta Smith",
           "pos": "WR",
-          "slot": "bench",
+          "slot": "IR",
           "nfl": "Phi",
           "proj": 8.04,
           "inj": "O",
@@ -1113,12 +1118,11 @@
           "espn": 17.53
         },
         {
-          "name": "Braelon Allen",
-          "pos": "RB",
+          "name": "Devin Singletary",
+          "nfl": "NYG",
           "slot": "starter",
-          "nfl": "NYJ",
-          "proj": 8.01,
-          "espn": 8.13
+          "pos": "RB",
+          "espn": 12.23
         },
         {
           "name": "CeeDee Lamb",
@@ -1167,13 +1171,20 @@
           "proj": 5.87
         },
         {
-          "name": "Kyler Murray",
-          "pos": "QB",
+          "name": "Travis Kelce",
+          "pos": "TE",
           "slot": "bench",
-          "nfl": "Min",
-          "proj": 18.03,
-          "inj": "Q",
-          "espn": 0
+          "nfl": "KC",
+          "proj": 9.95,
+          "espn": 8.65
+        },
+        {
+          "name": "Braelon Allen",
+          "pos": "RB",
+          "slot": "bench",
+          "nfl": "NYJ",
+          "proj": 8.01,
+          "espn": 8.13
         },
         {
           "name": "Bryce Young",
@@ -1200,17 +1211,16 @@
           "espn": 9.24
         },
         {
-          "name": "Travis Kelce",
-          "pos": "TE",
+          "name": "Ryan Flournoy",
+          "nfl": "Dal",
           "slot": "bench",
-          "nfl": "KC",
-          "proj": 9.95,
-          "espn": 8.65
+          "pos": "WR",
+          "espn": 7.61
         },
         {
           "name": "Deebo Samuel Sr.",
           "nfl": "SF",
-          "slot": "bench",
+          "slot": "IR",
           "pos": "WR",
           "inj": "O",
           "espn": 0
@@ -1266,12 +1276,11 @@
           "espn": 10.44
         },
         {
-          "name": "Jordan Addison",
-          "pos": "WR",
+          "name": "Jameson Williams",
+          "nfl": "Det",
           "slot": "starter",
-          "nfl": "Min",
-          "proj": 8.73,
-          "espn": 9.23
+          "pos": "WR",
+          "espn": 11.8
         },
         {
           "name": "Colston Loveland",
@@ -1305,6 +1314,14 @@
           "proj": 6.91
         },
         {
+          "name": "Jordan Addison",
+          "pos": "WR",
+          "slot": "bench",
+          "nfl": "Min",
+          "proj": 8.73,
+          "espn": 9.23
+        },
+        {
           "name": "Courtland Sutton",
           "pos": "WR",
           "slot": "bench",
@@ -1336,13 +1353,6 @@
           "nfl": "Hou",
           "proj": 5.47,
           "espn": 6.34
-        },
-        {
-          "name": "Jameson Williams",
-          "nfl": "Det",
-          "slot": "bench",
-          "pos": "WR",
-          "espn": 11.8
         },
         {
           "name": "Alec Pierce",
@@ -2129,7 +2139,7 @@
   ],
   "espn": {
     "week": 9,
-    "asOf": "2026-11-08T06:58:44.823Z",
+    "asOf": "2026-11-08T07:11:40.962Z",
     "source": "ESPN fantasy projections, half-PPR (average of ESPN standard and PPR)"
   }
 }

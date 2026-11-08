@@ -1,5 +1,77 @@
 [
   {
+    "when": "Nov 8, 12:54 am",
+    "yahooTeam": "There is no 2nd best",
+    "manager": "Matt",
+    "action": "add",
+    "player": "Alvin Kamara",
+    "nfl": "NO",
+    "pos": "RB",
+    "faab": null,
+    "via": "Free Agency",
+    "notes": "Yahoo API Sun, Nov 8, 1:10 AM CT"
+  },
+  {
+    "when": "Nov 7, 2:16 pm",
+    "yahooTeam": "Squirtle Squad",
+    "manager": "Tristan",
+    "action": "add",
+    "player": "Antonio Williams",
+    "nfl": "Was",
+    "pos": "WR",
+    "faab": null,
+    "via": "Free Agency",
+    "notes": "Yahoo API Sun, Nov 8, 1:10 AM CT"
+  },
+  {
+    "when": "Nov 7, 2:16 pm",
+    "yahooTeam": "Squirtle Squad",
+    "manager": "Tristan",
+    "action": "drop",
+    "player": "Germie Bernard",
+    "nfl": "Pit",
+    "pos": "WR",
+    "faab": null,
+    "via": "Waivers",
+    "notes": "Yahoo API Sun, Nov 8, 1:10 AM CT"
+  },
+  {
+    "when": "Nov 7, 6:34 am",
+    "yahooTeam": "#1 Y! Fan",
+    "manager": "Jerger",
+    "action": "add",
+    "player": "Ryan Flournoy",
+    "nfl": "Dal",
+    "pos": "WR",
+    "faab": null,
+    "via": "Free Agency",
+    "notes": "Yahoo API Sun, Nov 8, 1:10 AM CT"
+  },
+  {
+    "when": "Nov 7, 6:31 am",
+    "yahooTeam": "#1 Y! Fan",
+    "manager": "Jerger",
+    "action": "add",
+    "player": "Devin Singletary",
+    "nfl": "NYG",
+    "pos": "RB",
+    "faab": null,
+    "via": "Free Agency",
+    "notes": "Yahoo API Sun, Nov 8, 1:10 AM CT"
+  },
+  {
+    "when": "Nov 7, 6:31 am",
+    "yahooTeam": "#1 Y! Fan",
+    "manager": "Jerger",
+    "action": "drop",
+    "player": "Kyler Murray",
+    "nfl": "Min",
+    "pos": "QB",
+    "faab": null,
+    "via": "Waivers",
+    "notes": "Yahoo API Sun, Nov 8, 1:10 AM CT"
+  },
+  {
     "when": "Nov 6, 12:59 pm",
     "yahooTeam": "Squirtle Squad",
     "manager": "Tristan",
