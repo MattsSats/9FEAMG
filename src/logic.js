@@ -1181,6 +1181,11 @@ class Component extends DCLogic {
     const oddsSub = !OD ? '' : !OD.now ? 'Odds start once the rest of the regular season is on the schedule.'
       : oddsDone ? 'The regular season is over.'
       : `${OD.now.sims.toLocaleString('en-US')} simulated seasons · ${OD.now.live ? `Week ${LW} from Yahoo’s projections · ` : ''}${OD.prev ? '± since last week' : ''}`;
+    // Playoff scenarios (playoffScenarios in api/_shared.js), once per set of final scores.
+    const scnKey = S.tab == 'Season' ? JSON.stringify(SC) : null;
+    if (scnKey && this.scnKey != scnKey) { this.scnKey = scnKey; this.scn = playoffScenarios(D); }
+    const SCN = scnKey ? this.scn : null;
+    const scenarios = SCN ? ST.map(s => ({ m: s.m, init: INIT[s.m], color: col(s.m), wl: s.w + '–' + s.l, lines: SCN.teams[s.m].lines.map(t => ({ t })) })) : [];
     const allS = Object.values(SC).flat(), lo = Math.min(...allS), hi = Math.max(...allS);
     // Weekly scores: one column per regular-season week. Played weeks are shaded (darker = higher),
     // the live week shows current points, and future weeks are faint empty cells on desktop.
@@ -1442,7 +1447,7 @@ class Component extends DCLogic {
       // The live week before its first lines: the heading and when they're coming, so the Booth's
       // column isn't left blank on desktop.
       showBooth: boothOn, booth: boothLines, hasBooth: boothOn && (boothLines.length > 0 || hasWeek), boothCanShare: boothLines.length > 0,
-      seasonSub, seasonTiles, standings, playoffLine: `Playoff line · top ${P} of ${MGR.length}`, oddsRows, oddsSub, pic: pic || {}, hasPic: !!pic,
+      seasonSub, seasonTiles, standings, playoffLine: `Playoff line · top ${P} of ${MGR.length}`, oddsRows, oddsSub, scenarios, hasScenarios: scenarios.length > 0, scenariosSub: SCN ? `Through Week ${SCN.through} · a win or a loss means Week ${SCN.week}` : '', pic: pic || {}, hasPic: !!pic,
       heat, heatHead, heatColsM, heatColsD, heatMinM, heatMinD,
       team, teamPicker,
       draftInfo: D.draftInfo, draftToolUrl: D.draftToolUrl || '', hasDraftTool: !!D.draftToolUrl, draftOk: !draftMsg, draftMsg, draftFirsts, draftModes, draftChips, draftPicks, draftTitle, draftSub,

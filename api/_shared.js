@@ -602,6 +602,116 @@ export function pointSources(season, box, draft, tx) {
 }
 
 // ---- Lineup alerts (live week) ----
+// ---- Playoff scenarios (Matt, Nov 8, 2026) ----
+// Plain lines per team from the final scores so far and the games left (the live week counts as
+// unplayed). Exact, not simulated: "could this team miss / make it?" comes down to who can be given
+// which remaining wins, a small matching problem. Seeds go by wins, then points for, and points can't
+// be known ahead, so a clinch must hold with every tie on wins going against the team and elimination
+// must hold with every tie going for it. Off with more than 8 weeks left (too early, and too slow).
+export function playoffScenarios(season, { through } = {}) {
+  const MGR = season.managers.map(x => x.m), SC = season.scores, PAIRS = season.schedule || {}, N = MGR.length;
+  const NF = Math.max(0, ...MGR.map(m => (SC[m] || []).length)), W0 = Math.min(through ?? NF, NF), R = season.regularSeasonWeeks || 14;
+  const P = season.playoffTeams || 6, BYES = Math.max(0, 2 ** Math.ceil(Math.log2(P)) - P), left = R - W0;
+  if (left <= 0 || left > 8) return null;
+  for (let w = W0 + 1; w <= R; w++) if (!PAIRS[w]) return null;
+  const wins = Object.fromEntries(MGR.map(m => [m, 0]));
+  for (let w = 1; w <= W0; w++) for (const [a, b] of PAIRS[w] || []) {
+    const sa = SC[a][w - 1], sb = SC[b][w - 1];
+    if (sa > sb) wins[a]++; else if (sb > sa) wins[b]++; else { wins[a] += 0.5; wins[b] += 0.5; }
+  }
+  const G = []; for (let w = W0 + 1; w <= R; w++) for (const [a, b] of PAIRS[w]) G.push({ w, a, b });
+  const combos = (l, k, fn, from = 0, pick = []) => {
+    if (pick.length == k) return fn(pick);
+    for (let i = from; i <= l.length - (k - pick.length); i++) if (combos(l, k, fn, i + 1, [...pick, l[i]])) return true;
+    return false;
+  };
+  // Can every item take one of its options, with each option holding at most cap(option) items?
+  const fits = (items, cap) => {
+    const held = new Map();
+    const place = (i, seen) => {
+      for (const o of items[i]) {
+        if (seen.has(o)) continue; seen.add(o);
+        if (!held.has(o)) held.set(o, []);
+        const l = held.get(o);
+        if (l.length < cap(o)) { l.push(i); return true; }
+        for (let k = 0; k < l.length; k++) if (place(l[k], seen)) { l[k] = i; return true; }
+      }
+      return false;
+    };
+    return items.every((_, i) => place(i, new Set()));
+  };
+  // Results so far under `fixed` ({ game index: winner }) with x's other games all going `mode`.
+  const setup = (x, fixed, mode) => {
+    const cur = { ...wins }, free = [];
+    G.forEach((g, i) => {
+      const w = fixed[i] ?? (g.a == x || g.b == x ? (mode == 'win' ? x : g.a == x ? g.b : g.a) : null);
+      if (w) cur[w]++; else free.push(i);
+    });
+    return { cur, free, T: cur[x], others: MGR.filter(m => m != x) };
+  };
+  // Can x finish outside the top c, losing every tie?
+  const canMiss = (x, c, fixed = {}) => {
+    const { cur, free, T, others } = setup(x, fixed, 'lose');
+    return combos(others, c, S => {
+      const items = S.flatMap(t => { const n = Math.ceil(T - cur[t]); return n > 0 ? Array(n).fill(free.filter(i => G[i].a == t || G[i].b == t)) : []; });
+      return items.length <= free.length && fits(items, () => 1);
+    });
+  };
+  // Can x finish inside the top c, winning every tie? N - c other teams must stay at or below x.
+  const canMake = (x, c, fixed = {}) => {
+    const { cur, free, T, others } = setup(x, fixed, 'win');
+    return combos(others, N - c, S => {
+      if (S.some(t => cur[t] > T)) return false;
+      const lim = Object.fromEntries(S.map(t => [t, Math.floor(T - cur[t])]));
+      return fits(free.map(i => [G[i].a, G[i].b]), o => lim[o] ?? Infinity);
+    });
+  };
+  const nextG = G.map((g, i) => i).filter(i => G[i].w == W0 + 1);
+  // The fewest other Week W0 + 1 results that make test(fixed) true on top of `base`: one result, then two.
+  const helped = (base, mine, test) => {
+    const rest = nextG.filter(i => i != mine), res = i => [G[i].a, G[i].b].map(w => ({ i, w, l: w == G[i].a ? G[i].b : G[i].a }));
+    const one = rest.flatMap(res).filter(r => test({ ...base, [r.i]: r.w }));
+    if (one.length) return { one };
+    const two = [];
+    combos(rest, 2, ([p, q]) => { for (const r of res(p)) for (const s of res(q)) if (test({ ...base, [r.i]: r.w, [s.i]: s.w })) two.push([r, s]); return false; });
+    return two.length ? { two } : null;
+  };
+  const list = a => a.length < 3 ? a.join(' or ') : a.slice(0, -1).join(', ') + ' or ' + a[a.length - 1];
+  const say = (h, key, word) => {
+    if (h.one) return list(h.one.slice(0, 3).map(r => `a ${r[key]} ${word}`));
+    const [r, s] = h.two[0];
+    return `${word}${word == 'loss' ? 'es' : 's'} by ${r[key]} and ${s[key]}` + (h.two.length > 1 ? ' (other combinations work too)' : '');
+  };
+  const win = n => `${n} more win${n == 1 ? '' : 's'}`;
+  return { through: W0, week: W0 + 1, left, teams: Object.fromEntries(MGR.map(x => {
+    const mine = nextG.find(i => G[i].a == x || G[i].b == x), opp = G[mine].a == x ? G[mine].b : G[mine].a;
+    const W = { [mine]: x }, L = { [mine]: opp }, lines = [];
+    const t = { clinched: !canMiss(x, P), out: !canMake(x, P), byeClinched: BYES > 0 && !canMiss(x, BYES), winClinch: false, lossOut: false, lock: null, chance: null };
+    if (t.clinched) lines.push('Clinched a playoff spot.');
+    else if (t.out) lines.push('Eliminated from the playoffs.');
+    else {
+      t.winClinch = !canMiss(x, P, W); t.lossOut = !canMake(x, P, L);
+      const h1 = t.winClinch ? null : helped(W, mine, f => !canMiss(x, P, f)), h2 = t.lossOut ? null : helped(L, mine, f => !canMake(x, P, f));
+      if (t.winClinch) lines.push('Clinches a playoff spot with a win.'); else if (h1) lines.push(`Clinches a playoff spot with a win and ${say(h1, 'l', 'loss')}.`);
+      if (t.lossOut) lines.push('Eliminated with a loss.'); else if (h2) lines.push(`Eliminated with a loss and ${say(h2, 'w', 'win')}.`);
+      // How many more wins lock it, whichever games they come in, and the fewest that could be enough.
+      const mineAll = G.map((g, i) => i).filter(i => G[i].a == x || G[i].b == x), fix = wonSet => Object.fromEntries(mineAll.map(i => [i, wonSet.includes(i) ? x : G[i].a == x ? G[i].b : G[i].a]));
+      for (let k = 0; k <= left && t.lock == null; k++) if (!combos(mineAll, k, s => canMiss(x, P, fix(s)))) t.lock = k;
+      for (let k = 0; k <= left && t.chance == null; k++) if (combos(mineAll, k, s => canMake(x, P, fix(s)))) t.chance = k;
+      if (!lines.length) {
+        if (t.lock != null) lines.push((t.lock == left ? 'Locks a playoff spot by winning out' : `Locks a playoff spot with ${win(t.lock)}`) + (t.chance < t.lock ? (t.chance ? `; ${t.chance} could be enough with help.` : '; could get in without another win, with help.') : '.'));
+        else lines.push(`Can’t lock a spot on wins alone. Needs at least ${win(t.chance)} and help.`);
+      }
+    }
+    if (t.byeClinched) lines.push('Clinched a first-round bye.');
+    else if (BYES > 0 && !t.out && canMake(x, BYES)) {
+      if (!canMiss(x, BYES, W)) lines.push('Clinches a bye with a win.');
+      else { const h = helped(W, mine, f => !canMiss(x, BYES, f)); if (h) lines.push(`Clinches a bye with a win and ${say(h, 'l', 'loss')}.`); }
+    }
+    return [x, { ...t, lines }];
+  })) };
+}
+
 // Starters a lineup needs (Yahoo: QB, 2 RB, 2 WR, TE, W/R/T, K, DEF).
 export const SLOTS = { QB: 1, RB: 2, WR: 2, TE: 1, WRT: 1, K: 1, DEF: 1 };
 // Starters who can't score and empty slots. A player's Out alert clears at his kickoff (Sunday noon

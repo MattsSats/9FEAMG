@@ -1231,6 +1231,28 @@ button{font-family:inherit;color:inherit}
   <div class="shot-footer"><b>9FEAMG</b><span>{{ shotOdds }}</span></div>
 </div>
 
+<!-- Playoff scenarios (Matt, Nov 8, 2026): what each team needs, from the final scores and the games left. -->
+<sc-if value="{{ hasScenarios }}" hint-placeholder-val="{{ false }}">
+<div id="scenarios" class="sg-od" style="padding:30px 20px 0;scroll-margin-top:64px">
+  <div class="sec-head">
+    <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:26px;text-transform:uppercase">Playoff scenarios</div>
+    <div class="sec-cap">{{ scenariosSub }}</div>
+  </div>
+  <div style="margin-top:10px;border-top:1px solid var(--line)">
+    <sc-for list="{{ scenarios }}" as="s" hint-placeholder-count="10">
+      <div style="display:grid;grid-template-columns:26px minmax(0,1fr);gap:10px;align-items:start;padding:10px 0;border-bottom:1px solid var(--line)">
+        <div class="crest" style="width:26px;height:26px;background:{{ s.color }};color:var(--onAccent);display:flex;align-items:center;justify-content:center;font-family:'Big Shoulders Display';font-weight:800;font-size:11px;flex:none"><span class="ini" data-i="{{ s.init }}">{{ s.init }}</span></div>
+        <div style="min-width:0">
+          <div style="font-weight:600;font-size:15px">{{ s.m }} <span style="font-family:'JetBrains Mono';font-size:11px;color:var(--muted);font-weight:400">{{ s.wl }}</span></div>
+          <sc-for list="{{ s.lines }}" as="l" hint-placeholder-count="1"><div style="font-size:14px;line-height:1.4;margin-top:2px">{{ l.t }}</div></sc-for>
+        </div>
+      </div>
+    </sc-for>
+  </div>
+  <div style="font-size:12px;line-height:1.4;color:var(--muted);margin-top:10px">Seeds go by wins, then points for. A clinch holds even if every tie on wins goes against the team.</div>
+</div>
+</sc-if>
+
 <!-- Playoff picture: the bracket if the season ended today, and the Toilet Bowl side (Matt, Oct 31, 2026). -->
 <sc-if value="{{ hasPic }}" hint-placeholder-val="{{ false }}">
 <div id="bracket" data-shot="bracket" class="sg-od" style="padding:30px 20px 0;scroll-margin-top:64px">
