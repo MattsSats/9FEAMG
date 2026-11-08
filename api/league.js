@@ -38,7 +38,8 @@ export default {
     const url = new URL(request.url), js = url.searchParams.get('format') == 'js';
     let data = null;
     try { data = await readData(); } catch { /* not connected yet */ }
-    if (data?.syncedAt && Date.now() - Date.parse(data.syncedAt) > FRESH) waitUntil(refresh(url.origin).catch(() => {}));
+    // ?peek=1: the hourly watcher (scripts/watch.mjs) reads the status without starting a sync.
+    if (!url.searchParams.has('peek') && data?.syncedAt && Date.now() - Date.parse(data.syncedAt) > FRESH) waitUntil(refresh(url.origin).catch(() => {}));
     if (url.searchParams.get('format') == 'status') return Response.json(await status(data), { headers: { 'cache-control': 'no-store' } });
     const body = js ? `window.YAHOO=${JSON.stringify(data).replace(/</g, '\\u003c')};` : JSON.stringify(data);
     return new Response(body, {

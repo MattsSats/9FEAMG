@@ -36,7 +36,7 @@ async function pull(origin) {
 export default {
   async fetch(request) {
     const url = new URL(request.url), js = url.searchParams.get('format') == 'js';
-    let data = null, live = false;
+    let data = null, live = false, error = null;
     try {
       live = await gameTime(url.origin);
       if (live) {
@@ -47,7 +47,10 @@ export default {
       // Yahoo or the token failed: keep showing this instance's last pull if there is one.
       console.error('live:', e.message);
       data = live ? last : null;
+      error = String(e.message || e).slice(0, 200);
     }
+    // ?format=status (scripts/watch.mjs): did this read work? Unknown game time counts as game time.
+    if (url.searchParams.get('format') == 'status') return Response.json({ gameTime: live || !!error, ok: !error && (!live || !!data?.weeks), syncedAt: data?.syncedAt || null, error }, { headers: { 'cache-control': 'no-store' } });
     const body = js ? `window.YAHOO_LIVE=${JSON.stringify(data).replace(/</g, '\\u003c')};` : JSON.stringify(data);
     return new Response(body, {
       headers: {
