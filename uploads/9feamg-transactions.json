@@ -1,5 +1,17 @@
 [
   {
+    "when": "Nov 6, 12:59 pm",
+    "yahooTeam": "Squirtle Squad",
+    "manager": "Tristan",
+    "action": "add",
+    "player": "Adonai Mitchell",
+    "nfl": "NYJ",
+    "pos": "WR",
+    "faab": null,
+    "via": "Free Agency",
+    "notes": "Yahoo API Sat, Nov 7, 5:00 AM CT"
+  },
+  {
     "when": "Nov 5, 4:30 pm",
     "yahooTeam": "Toilet Bowl King",
     "manager": "DLin",
