@@ -99,10 +99,12 @@ export async function addLiveProj(wk, w, season, origin) {
       if (!starters.length) continue;
       let total = 0, known = true;
       for (const [, name, nfl, pos, pts, , inj] of starters) {
-        const p = players.find(x => x.name == name), share = left[String(nfl).toUpperCase()] ?? 1;
-        if (!p && share > 0) { known = false; break; }
-        const out = inj == 'O' || inj == 'IR';
-        total += out ? pts : share == 1 ? p.proj || 0 : pts + (pos == 'DEF' ? 0 : (p?.proj || 0) * share);
+        const p = players.find(x => x.name == name), share = left[String(nfl).toUpperCase()] ?? 1, out = inj == 'O' || inj == 'IR';
+        // A starter still to play with no Yahoo projection yet (a new add, Nov 8, 2026) counts at ESPN's;
+        // with neither, the team keeps Yahoo's own projection rather than counting him at 0.
+        const proj = p?.proj > 0 ? p.proj : p?.espn > 0 ? p.espn : null;
+        if (share > 0 && !out && proj == null) { known = false; break; }
+        total += out ? pts : share == 1 ? proj || 0 : pts + (pos == 'DEF' ? 0 : (proj || 0) * share);
       }
       if (known) wk.teams[m].live = num(total);
     }
