@@ -39,7 +39,7 @@ try {
   console.log('Live scores:', JSON.stringify(s));
 } catch (e) { problems.push(`Live scores: the status check itself failed: ${e.message}`); }
 
-if (!problems.length) { console.log('OK: Yahoo sync and live scores are healthy.'); process.exit(0); }
+if (!problems.length) console.log('OK: Yahoo sync and live scores are healthy.');
 for (const p of problems) console.log(`::error::${p}`);
 if (process.env.GITHUB_STEP_SUMMARY) (await import('fs')).appendFileSync(process.env.GITHUB_STEP_SUMMARY, problems.map(p => `- ${p}`).join('\n') + '\n');
-process.exit(1);
+if (problems.length) process.exitCode = 1;
