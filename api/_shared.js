@@ -455,7 +455,7 @@ export function mergeYahoo(S, Y) {
     const ahead = S.live?.week > live, older = same && S.live?.asOf && Date.parse(Y.syncedAt) <= Date.parse(S.live.asOf);
     if (!ahead && !older) {
       const pp = { ...(same ? S.live.playerPoints : {}) };
-      for (const t of Object.values(Wk.box || {})) for (const r of [...t.starters, ...t.bench]) if (r[4]) pp[r[1]] = r[4];
+      for (const t of Object.values(Wk.box || {})) for (const r of [...t.starters, ...t.bench]) if (r[4] || (r[0] != 'IR' && Wk.started?.includes(String(r[2]).toUpperCase()))) pp[r[1]] = r[4] || 0;
       // Wk.playing (addLiveProj, ESPN's clock): the NFL teams on the field now. Without it a player with points reads as Final.
       const inProgress = Wk.playing && Object.values(Wk.box || {}).flatMap(t => [...t.starters, ...t.bench]).filter(r => Wk.playing.includes(String(r[2]).toUpperCase())).map(r => r[1]);
       S.live = { status: 'Live', ...(same ? S.live : {}), sheetNote: 'Live from Yahoo. Each player is tagged Final, Live or proj.', week: live, playerPoints: pp, asOf: Y.syncedAt, ...(inProgress ? { inProgress } : {}),

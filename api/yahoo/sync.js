@@ -87,18 +87,20 @@ export async function addLiveProj(wk, w, season, origin) {
       fetch(new URL('/uploads/9feamg-rosters.json', dataOrigin(origin))).then(r => r.json()),
       fetch(`https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard?seasontype=2&week=${w}&dates=${season}`).then(r => r.json())
     ]);
-    const left = {}, playing = [];
+    const left = {}, playing = [], started = [];
     for (const e of sb.events || []) {
       const s = e.status, st = s.type.state, share = st == 'pre' ? 1 : st == 'post' ? 0 : Math.max(0, ((4 - s.period) * 900 + (s.clock || 0)) / 3600);
       for (const c of e.competitions[0].competitors) {
-        const t = c.team.abbreviation.toUpperCase();
+        const t = c.team.abbreviation.toUpperCase(), names = t == 'WSH' ? [t, 'WAS'] : [t];
         left[t] = share;
-        // NFL teams playing right now: mergeYahoo marks their players Live instead of Final (Nov 8, 2026).
-        if (st == 'in') playing.push(t, ...(t == 'WSH' ? ['WAS'] : []));
+        // For mergeYahoo (Nov 8, 2026): teams on the field now show Live instead of Final, and a
+        // player whose game has started counts at his points even at 0.
+        if (st == 'in') playing.push(...names);
+        if (st != 'pre') started.push(...names);
       }
     }
     left.WAS ??= left.WSH;
-    wk.playing = playing;
+    wk.playing = playing; wk.started = started;
     if (ros.week != w) return;
     for (const m of Object.keys(wk.teams)) {
       const players = ros.teams?.find(t => t.name == m)?.players || [], starters = wk.box[m]?.starters || [];
