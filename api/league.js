@@ -1,38 +1,27 @@
 // /api/league : the last Yahoo sync. ?format=js returns `window.YAHOO = …;` for a <script> tag
 // that loads right after data/season.js; anything missing gives null and the site uses season.js alone.
-// The daily cron is the most the free Vercel plan allows, so during games this also starts a fresh
-// sync in the background when the saved one is more than 10 minutes old (at most one every 10
-// minutes, and only once Yahoo is connected). The page that asked gets the saved copy right away;
-// the next load after the sync finishes gets the new numbers.
+// The daily cron is the most the free Vercel plan allows, so this also starts a fresh sync in the
+// background when the saved one is more than 10 minutes old (at most one every 10 minutes, and only
+// once Yahoo is connected). Any time of day, not just during games (Matt, Nov 8, 2026), so a lineup
+// set the night before shows up on the next visit or chat sync, without a browser pull. The page
+// that asked gets the saved copy right away; the next load after the sync finishes gets the new numbers.
 // ?format=status is the health check (no tokens in it): when Yahoo was last read, when the token last
-// renewed, how many moves are on file, and the last error from a sync, a game-time refresh or the
+// renewed, how many moves are on file, and the last error from a sync, a background refresh or the
 // moves/FAAB read. healthy is false once the last good read is more than 26 hours old.
 import { waitUntil } from '@vercel/functions';
 import { readData, readJson, writeJson, readAuth, STATUS_PATH } from './_yahoo.js';
 import { sync } from './yahoo/sync.js';
-import { loadSeasonFile } from './_parlays.js';
-import { isGameTime } from './_shared.js';
 
 const FRESH = 10 * 60e3, MARK = 'yahoo/refresh.json';
 
-// Game time (api/_shared.js isGameTime): 15 minutes before each kickoff on data/season.js's NFL
-// schedule until 5 hours after it, so Saturday and Christmas games count. The schedule is read at
-// most every 10 minutes per instance.
-let season = null, seasonAt = 0;
-async function gameTime(origin) {
-  if (!season || Date.now() - seasonAt > FRESH) { season = await loadSeasonFile(origin); seasonAt = Date.now(); }
-  return isGameTime(season);
-}
-
 async function refresh(origin) {
-  if (!await gameTime(origin)) return;
   const mark = await readJson(MARK).catch(() => null);
   if (mark?.at && Date.now() - mark.at < FRESH) return;
   await writeJson(MARK, { at: Date.now() });
   try { await sync(origin); } catch (e) {
     const error = String(e.message || e);
     await writeJson(MARK, { at: Date.now(), error }).catch(() => {});
-    await writeJson(STATUS_PATH, { at: new Date().toISOString(), error, from: 'game-time refresh' }).catch(() => {});
+    await writeJson(STATUS_PATH, { at: new Date().toISOString(), error, from: 'background refresh' }).catch(() => {});
   }
 }
 
