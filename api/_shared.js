@@ -607,22 +607,27 @@ export const SLOTS = { QB: 1, RB: 2, WR: 2, TE: 1, WRT: 1, K: 1, DEF: 1 };
 // Starters who can't score and empty slots. A player's Out alert clears at his kickoff (Sunday noon
 // when his game isn't on file); bye and empty-slot alerts clear at the week's last kickoff
 // (Monday night when the schedule isn't on file), when nothing can be swapped in any more.
+// noProj (Matt, Nov 8, 2026): a starter still to play with no projection from Yahoo or ESPN, which pins
+// the team's live PROJ to Yahoo's pregame number (addLiveProj). Clears at his kickoff, like Out. It only
+// means something when the starters come from the live week's rosters file, so callers check that;
+// the playoffs have no player projections, so never there.
 export function lineupIssues(season, starters, wk, livePts = {}, now = Date.now()) {
   const games = season.nfl?.[wk]?.games || [];
   const lastKick = games.length ? Math.max(0, ...games.map(g => kickoffAt(season, wk, g)?.getTime() || 0)) : kickoffAt(season, wk, 'Mon 7:15 PM')?.getTime() || 0;
-  const open = now < lastKick, bye = [], out = [], empty = [];
+  const open = now < lastKick, bye = [], out = [], empty = [], noProj = [];
   for (const p of starters) {
     if (livePts[p.name] != null) continue;
     if (onByeOf(season, p.nfl, wk)) { if (open) bye.push(p); continue; }
     const k = kickoffAt(season, wk, nflGameOf(season, p.nfl, wk) || 'Sun 12:00 PM');
     if (k && now >= k.getTime()) continue;
     if (['O', 'IR'].includes(String(p.inj || '').toUpperCase())) out.push(p);
+    else if (!(p.proj > 0) && !(p.espn > 0) && wk <= (season.regularSeasonWeeks || 14)) noProj.push(p);
   }
   if (open) {
     const have = {}; starters.forEach(p => { have[p.pos] = (have[p.pos] || 0) + 1; });
     for (const [k, n] of Object.entries(SLOTS)) for (let i = have[k] || 0; i < n; i++) empty.push(k);
   }
-  return { open, bye, out, empty };
+  return { open, bye, out, empty, noProj };
 }
 
 // ---- The Wire: adds per manager and the line at the top of the tab ----

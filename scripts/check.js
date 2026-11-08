@@ -105,8 +105,8 @@ const pts = (n, w) => pointsOf(S, scores, n, w);
 out.push('Wire, this week: ' + wireOf(S, tx, pts, 'week').line);
 out.push('Wire, season:    ' + wireOf(S, tx, pts, 'season').line);
 if (LW) for (const t of rosters.teams) {
-  const { bye, out: o, empty } = lineupIssues(S, t.players.filter(p => p.slot == 'starter'), LW, S.live.playerPoints || {});
-  const bits = [...bye.map(p => p.name + ' on bye'), ...o.map(p => p.name + ' Out'), ...(empty.length ? [empty.length + ' empty'] : [])];
+  const { bye, out: o, empty, noProj } = lineupIssues(S, t.players.filter(p => p.slot == 'starter'), LW, S.live.playerPoints || {});
+  const bits = [...bye.map(p => p.name + ' on bye'), ...o.map(p => p.name + ' Out'), ...(empty.length ? [empty.length + ' empty'] : []), ...(rosters.week == LW ? noProj.map(p => p.name + ' no projection (Yahoo or ESPN)') : [])];
   if (bits.length) out.push(`Alert, ${t.name}: ${bits.join(', ')}`);
 }
 for (const p of S.parlays?.[LW] || []) { const s = parlayState(p); const f = parlayFair(p); out.push(`Ticket ${ticketSlug(LW, p)}: ${s.status}${s.priced ? ' ' + toAmerican(s.dec) : ''}${f ? ` (fair ${f.est ? '~' : ''}${toAmerican(f.dec)}${f.est ? ' est.' : ''}, book edge ${(f.edge * 100).toFixed(1)}%)` : ''}`); }

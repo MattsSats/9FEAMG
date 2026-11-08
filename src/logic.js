@@ -694,11 +694,15 @@ class Component extends DCLogic {
   // until the week's last kickoff, a starter listed Out until his game.
   lineupAlerts(m, wk) {
     if (wk != LW || !opp(m, wk)) return [];
-    const { bye, out, empty } = lineupIssues(D, this.players(m).filter(p => p.slot == 'starter'), wk, LIVEPTS);
+    const { bye, out, empty, noProj } = lineupIssues(D, this.players(m).filter(p => p.slot == 'starter'), wk, LIVEPTS);
     const lines = [...bye.map(p => `${p.pos == 'DEF' ? p.name + ' defense' : p.name} is on a bye`), ...out.map(p => `${p.name} is listed Out`)];
     // Empty slots only once the rosters have loaded (before then every lineup looks empty).
     const names = this.state.rosters ? empty.map(k => SLOT_NAME[k]) : [];
     if (names.length) lines.push(names.length == 1 ? `Empty ${names[0]} slot` : `${names.length} empty slots (${[...new Set(names)].join(', ')})`);
+    // No projection from Yahoo or ESPN, only against this week's rosters file (a starter still to play).
+    const np = this.state.rosters?.week == wk ? noProj : [];
+    if (np.length > 2) lines.push(`${np.length} starters have no projection`);
+    else lines.push(...np.map(p => `${p.pos == 'DEF' ? p.name + ' defense' : p.name} has no projection`));
     return lines;
   }
   startersLeft(m) {
