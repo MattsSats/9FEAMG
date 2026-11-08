@@ -65,7 +65,7 @@ const block = '  // Roster strength (scripts/roster-strength.mjs): each team\'s 
   '  rosterProj: {\n' + weeks.map(w => `    ${w}: { ` + MGR.map(m => `${/^[A-Za-z]+$/.test(m) ? m : `'${m}'`}: ${out[w][m]}`).join(', ') + ' }').join(',\n') + '\n  },\n';
 let next;
 if (/\n  \/\/ Roster strength[\s\S]*?\n  rosterProj: \{[\s\S]*?\n  \},\n/.test(src)) next = src.replace(/\n  \/\/ Roster strength[\s\S]*?\n  rosterProj: \{[\s\S]*?\n  \},\n/, '\n' + block);
-else next = src.replace(/\n  scores: \{/, '\n' + block + '  scores: {');
+else next = src.replace(/\n  \/\/ Final scores/, '\n' + block + '\n  // Final scores');
 if (next == src) { console.log('rosterProj unchanged.'); process.exit(0); }
 if (dry) { console.log('Dry run: nothing written.'); process.exit(0); }
 fs.writeFileSync(SEASON, next);

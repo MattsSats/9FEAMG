@@ -52,7 +52,6 @@ window.SEASON = {
     14: [['Matt', 'Kurt'], ['Tristan', 'Tony'], ['Jerger', 'Mr. G'], ['Colin', 'DLin'], ['Andy', 'Pablo']]
   },
 
-  // Final scores (Yahoo, two decimals), one per completed week.
   // Roster strength (scripts/roster-strength.mjs): each team's best healthy lineup, projected, at the
   // start of each week. The playoff odds blend it with the season average. Written by the script; don't edit.
   rosterProj: {
@@ -66,6 +65,8 @@ window.SEASON = {
     8: { Tony: 125.08, Tristan: 115.07, Andy: 122.68, Matt: 125.75, Kurt: 113.76, Jerger: 119.94, 'Mr. G': 119.9, Colin: 115.18, DLin: 101.06, Pablo: 113.07 },
     9: { Tony: 122.27, Tristan: 112.3, Andy: 119.78, Matt: 118.97, Kurt: 115.83, Jerger: 109.62, 'Mr. G': 114.44, Colin: 116.97, DLin: 107.67, Pablo: 109.47 }
   },
+
+  // Final scores (Yahoo, two decimals), one per completed week.
   scores: {
     Tony: [123.06, 154.52, 95.42, 90.82, 142.40, 117.40, 122.70, 149.66],
     Tristan: [144.36, 104.10, 121.64, 125.88, 113.28, 86.92, 91.30, 90.90],
