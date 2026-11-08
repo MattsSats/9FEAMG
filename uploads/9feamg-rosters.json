@@ -489,13 +489,15 @@
           "name": "Eddy Pineiro",
           "nfl": "SF",
           "slot": "starter",
-          "pos": "K"
+          "pos": "K",
+          "espn": 8.42
         },
         {
           "name": "Chiefs",
           "nfl": "KC",
           "slot": "starter",
-          "pos": "DEF"
+          "pos": "DEF",
+          "espn": 6.05
         },
         {
           "name": "George Pickens",
@@ -561,7 +563,8 @@
           "slot": "IR",
           "nfl": "Bal",
           "proj": 0,
-          "inj": "IR"
+          "inj": "IR",
+          "espn": 0
         }
       ]
     },
@@ -2135,7 +2138,7 @@
   ],
   "espn": {
     "week": 9,
-    "asOf": "2026-11-08T17:09:21.918Z",
+    "asOf": "2026-11-08T19:22:15.939Z",
     "source": "ESPN fantasy projections, half-PPR (average of ESPN standard and PPR)"
   }
 }
