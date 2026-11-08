@@ -456,7 +456,9 @@ export function mergeYahoo(S, Y) {
     if (!ahead && !older) {
       const pp = { ...(same ? S.live.playerPoints : {}) };
       for (const t of Object.values(Wk.box || {})) for (const r of [...t.starters, ...t.bench]) if (r[4]) pp[r[1]] = r[4];
-      S.live = { status: 'Live', sheetNote: 'Live from Yahoo. Orange = points so far; the rest are projections.', ...(same ? S.live : {}), week: live, playerPoints: pp, asOf: Y.syncedAt,
+      // Wk.playing (addLiveProj, ESPN's clock): the NFL teams on the field now. Without it a player with points reads as Final.
+      const inProgress = Wk.playing && Object.values(Wk.box || {}).flatMap(t => [...t.starters, ...t.bench]).filter(r => Wk.playing.includes(String(r[2]).toUpperCase())).map(r => r[1]);
+      S.live = { status: 'Live', ...(same ? S.live : {}), sheetNote: 'Live from Yahoo. Each player is tagged Final, Live or proj.', week: live, playerPoints: pp, asOf: Y.syncedAt, ...(inProgress ? { inProgress } : {}),
         scores: Object.fromEntries(inWeek(live).map(m => [m, [Wk.teams[m].pts, Wk.teams[m].live ?? Wk.teams[m].proj]])) };
     }
   } else if (S.live && Y.weeks[S.live.week]?.status == 'postevent' && full(S.live.week)) S.live = null;

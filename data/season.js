@@ -83,7 +83,7 @@ window.SEASON = {
   // The week in progress. Set to null between weeks.
   live: {
     week: 9,
-    status: 'Live · Thursday final (JAX 33, BAL 10) · London CIN @ ATL in the 4th · noon games next',
+    status: 'Live · Thursday final (JAX 33, BAL 10) · London final · noon games under way',
     // When these numbers were pulled from Yahoo (Central); shows as "Scores as of Thu 10:19 PM".
     asOf: '2026-11-05T22:49:00-06:00',
     // [current points, projected final]
