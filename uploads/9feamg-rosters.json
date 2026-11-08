@@ -1,5 +1,5 @@
 {
-  "asOf": "2026-11-08T07:10:33.868Z",
+  "asOf": "2026-11-08T17:08:13.866Z",
   "source": "Signed-in Yahoo Fantasy league 935526 team roster pages (full reconcile)",
   "week": 9,
   "baseline": "yahoo-live",
@@ -35,7 +35,7 @@
           "slot": "starter",
           "nfl": "Dal",
           "proj": 15.61,
-          "espn": 16.51
+          "espn": 16.5
         },
         {
           "name": "Drake London",
@@ -177,7 +177,7 @@
           "nfl": "NYJ",
           "slot": "starter",
           "pos": "WR",
-          "espn": 9.41
+          "espn": 9.42
         },
         {
           "name": "Sam LaPorta",
@@ -314,7 +314,7 @@
           "slot": "starter",
           "nfl": "Cin",
           "proj": 16.97,
-          "espn": 18.84
+          "espn": 18.85
         },
         {
           "name": "Rashee Rice",
@@ -393,7 +393,6 @@
           "slot": "bench",
           "nfl": "NO",
           "proj": 0,
-          "inj": "Q",
           "espn": 4.81
         },
         {
@@ -447,22 +446,12 @@
           "espn": 18.24
         },
         {
-          "name": "Cam Skattebo",
+          "name": "J.K. Dobbins",
           "pos": "RB",
           "slot": "starter",
-          "nfl": "NYG",
-          "proj": 10.91,
-          "inj": "D",
-          "espn": 0
-        },
-        {
-          "name": "George Pickens",
-          "pos": "WR",
-          "slot": "starter",
-          "nfl": "Dal",
-          "proj": 11.9,
-          "inj": "Q",
-          "espn": 11.01
+          "nfl": "Den",
+          "proj": 7.48,
+          "espn": 7.63
         },
         {
           "name": "Tee Higgins",
@@ -473,6 +462,14 @@
           "espn": 13.83
         },
         {
+          "name": "Michael Wilson",
+          "pos": "WR",
+          "slot": "starter",
+          "nfl": "Ari",
+          "proj": 10.28,
+          "espn": 10.67
+        },
+        {
           "name": "Harold Fannin Jr.",
           "pos": "TE",
           "slot": "starter",
@@ -481,12 +478,12 @@
           "espn": 9.18
         },
         {
-          "name": "Michael Wilson",
+          "name": "Stefon Diggs",
           "pos": "WRT",
           "slot": "starter",
-          "nfl": "Ari",
-          "proj": 10.28,
-          "espn": 10.67
+          "nfl": "Was",
+          "proj": 9.88,
+          "espn": 10.26
         },
         {
           "name": "Eddy Pineiro",
@@ -501,19 +498,21 @@
           "pos": "DEF"
         },
         {
-          "name": "J.K. Dobbins",
-          "pos": "RB",
+          "name": "George Pickens",
+          "pos": "WR",
           "slot": "bench",
-          "nfl": "Den",
-          "proj": 7.48,
-          "espn": 7.63
+          "nfl": "Dal",
+          "proj": 11.9,
+          "inj": "O",
+          "espn": 0
         },
         {
-          "name": "Aaron Rodgers",
-          "pos": "QB",
+          "name": "Cam Skattebo",
+          "pos": "RB",
           "slot": "bench",
-          "nfl": "Pit",
-          "proj": 0,
+          "nfl": "NYG",
+          "proj": 10.91,
+          "inj": "O",
           "espn": 0
         },
         {
@@ -522,8 +521,7 @@
           "slot": "bench",
           "nfl": "Dal",
           "proj": 3.98,
-          "inj": "Q",
-          "espn": 0
+          "espn": 6.75
         },
         {
           "name": "Kenny Gainwell",
@@ -542,12 +540,11 @@
           "espn": 0
         },
         {
-          "name": "Stefon Diggs",
-          "pos": "WR",
+          "name": "Drew Lock",
+          "nfl": "Sea",
           "slot": "bench",
-          "nfl": "Was",
-          "proj": 9.88,
-          "espn": 10.26
+          "pos": "QB",
+          "espn": 16.89
         },
         {
           "name": "RJ Harvey",
@@ -629,7 +626,7 @@
           "slot": "starter",
           "nfl": "Mia",
           "proj": 8.75,
-          "espn": 8.27
+          "espn": 8.28
         },
         {
           "name": "Brandon Aubrey",
@@ -723,7 +720,7 @@
           "slot": "starter",
           "nfl": "Mia",
           "proj": 12.19,
-          "espn": 15.63
+          "espn": 15.69
         },
         {
           "name": "Matthew Golden",
@@ -867,7 +864,6 @@
           "slot": "starter",
           "nfl": "Det",
           "proj": 16.36,
-          "inj": "Q",
           "espn": 16.81
         },
         {
@@ -1130,7 +1126,7 @@
           "slot": "starter",
           "nfl": "Dal",
           "proj": 16.84,
-          "espn": 17.16
+          "espn": 17.67
         },
         {
           "name": "Chris Olave",
@@ -1192,7 +1188,7 @@
           "slot": "bench",
           "nfl": "Car",
           "proj": 16.71,
-          "espn": 15.76
+          "espn": 15.78
         },
         {
           "name": "Jalen Coker",
@@ -1215,7 +1211,7 @@
           "nfl": "Dal",
           "slot": "bench",
           "pos": "WR",
-          "espn": 7.61
+          "espn": 10.18
         },
         {
           "name": "Deebo Samuel Sr.",
@@ -1291,13 +1287,12 @@
           "espn": 9.8
         },
         {
-          "name": "Emeka Egbuka",
+          "name": "Jordan Addison",
           "pos": "WRT",
           "slot": "starter",
-          "nfl": "TB",
-          "proj": 8.85,
-          "inj": "Q",
-          "espn": 9.41
+          "nfl": "Min",
+          "proj": 8.73,
+          "espn": 9.23
         },
         {
           "name": "Cam Little",
@@ -1314,12 +1309,13 @@
           "proj": 6.91
         },
         {
-          "name": "Jordan Addison",
+          "name": "Emeka Egbuka",
           "pos": "WR",
           "slot": "bench",
-          "nfl": "Min",
-          "proj": 8.73,
-          "espn": 9.23
+          "nfl": "TB",
+          "proj": 8.85,
+          "inj": "Q",
+          "espn": 9.41
         },
         {
           "name": "Courtland Sutton",
@@ -2139,7 +2135,7 @@
   ],
   "espn": {
     "week": 9,
-    "asOf": "2026-11-08T07:11:40.962Z",
+    "asOf": "2026-11-08T17:09:21.918Z",
     "source": "ESPN fantasy projections, half-PPR (average of ESPN standard and PPR)"
   }
 }

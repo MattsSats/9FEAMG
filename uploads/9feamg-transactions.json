@@ -1,5 +1,29 @@
 [
   {
+    "when": "Nov 8, 3:35 am",
+    "yahooTeam": "Toilet Bowl King",
+    "manager": "DLin",
+    "action": "add",
+    "player": "Drew Lock",
+    "nfl": "Sea",
+    "pos": "QB",
+    "faab": null,
+    "via": "Free Agency",
+    "notes": "Yahoo API Sun, Nov 8, 11:08 AM CT"
+  },
+  {
+    "when": "Nov 8, 3:35 am",
+    "yahooTeam": "Toilet Bowl King",
+    "manager": "DLin",
+    "action": "drop",
+    "player": "Aaron Rodgers",
+    "nfl": "Pit",
+    "pos": "QB",
+    "faab": null,
+    "via": "Waivers",
+    "notes": "Yahoo API Sun, Nov 8, 11:08 AM CT"
+  },
+  {
     "when": "Nov 8, 12:54 am",
     "yahooTeam": "There is no 2nd best",
     "manager": "Matt",

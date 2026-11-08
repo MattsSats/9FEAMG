@@ -63,7 +63,7 @@ window.SEASON = {
     6: { Tony: 121.06, Tristan: 114.28, Andy: 121.08, Matt: 124.15, Kurt: 109.69, Jerger: 115.64, 'Mr. G': 113.52, Colin: 117.99, DLin: 106.46, Pablo: 108.63 },
     7: { Tony: 121.7, Tristan: 116.62, Andy: 123.4, Matt: 126.82, Kurt: 113.04, Jerger: 116.08, 'Mr. G': 119.45, Colin: 112.31, DLin: 99.49, Pablo: 116.21 },
     8: { Tony: 125.08, Tristan: 115.07, Andy: 122.68, Matt: 125.75, Kurt: 113.76, Jerger: 119.94, 'Mr. G': 119.9, Colin: 115.18, DLin: 101.06, Pablo: 113.07 },
-    9: { Tony: 122.27, Tristan: 112.3, Andy: 119.78, Matt: 118.97, Kurt: 115.83, Jerger: 109.62, 'Mr. G': 114.44, Colin: 116.97, DLin: 107.67, Pablo: 109.47 }
+    9: { Tony: 122.27, Tristan: 112.31, Andy: 119.78, Matt: 118.97, Kurt: 115.83, Jerger: 109.62, 'Mr. G': 114.44, Colin: 116.97, DLin: 100.8, Pablo: 109.47 }
   },
 
   // Final scores (Yahoo, two decimals), one per completed week.
@@ -83,7 +83,7 @@ window.SEASON = {
   // The week in progress. Set to null between weeks.
   live: {
     week: 9,
-    status: 'Live · Thursday final (JAX 33, BAL 10) · Sunday next',
+    status: 'Live · Thursday final (JAX 33, BAL 10) · London CIN @ ATL in the 4th · noon games next',
     // When these numbers were pulled from Yahoo (Central); shows as "Scores as of Thu 10:19 PM".
     asOf: '2026-11-05T22:49:00-06:00',
     // [current points, projected final]
