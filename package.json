@@ -10,5 +10,8 @@
     "@vercel/blob": "^2.8.0",
     "@vercel/functions": "^2.2.13",
     "@vercel/og": "^0.8.6"
+  },
+  "overrides": {
+    "zod": "^4.6.6"
   }
 }
