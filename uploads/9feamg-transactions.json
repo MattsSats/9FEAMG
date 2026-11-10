@@ -1,5 +1,29 @@
 [
   {
+    "when": "Nov 10, 5:40 am",
+    "yahooTeam": "it’s gibbing time",
+    "manager": "Andy",
+    "action": "drop",
+    "player": "Brenton Strange",
+    "nfl": "Jax",
+    "pos": "TE",
+    "faab": null,
+    "via": "Waivers",
+    "notes": "Yahoo API Tue, Nov 10, 10:12 AM CT"
+  },
+  {
+    "when": "Nov 9, 2:05 pm",
+    "yahooTeam": "Definitely not a Boomer",
+    "manager": "Mr. G",
+    "action": "add",
+    "player": "Aaron Jones Sr.",
+    "nfl": "Min",
+    "pos": "RB",
+    "faab": null,
+    "via": "Free Agency",
+    "notes": "Yahoo API Tue, Nov 10, 10:12 AM CT"
+  },
+  {
     "when": "Nov 8, 3:35 am",
     "yahooTeam": "Toilet Bowl King",
     "manager": "DLin",
