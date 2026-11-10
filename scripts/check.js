@@ -121,3 +121,10 @@ console.log(out.join('\n'));
 if (warn.length) console.log('\n' + warn.map(x => '! ' + x).join('\n'));
 if (bad.length) { console.log('\n' + bad.map(x => '✗ ' + x).join('\n')); process.exit(1); }
 console.log('\nOK: data/season.js checks out.');
+// Then the built page itself, in a headless browser (scripts/smoke.mjs): a script error in the
+// bundle passes every data check above and still takes the site down. --no-smoke skips it.
+if (!process.argv.includes('--no-smoke')) {
+  const { spawnSync } = await import('node:child_process');
+  const { fileURLToPath } = await import('node:url');
+  process.exit(spawnSync(process.execPath, [fileURLToPath(new URL('./smoke.mjs', import.meta.url))], { stdio: 'inherit' }).status ?? 1);
+}
