@@ -748,6 +748,18 @@ window.SEASON = {
       DLin: 'Holding 8th after a 34.34 win ended three straight losses. The fewest points in the league, 776.08, and still a win up on Kurt, who has 80.70 more. Points are optional.',
       Kurt: 'Down four, the week’s biggest drop, after 89.00, Kurt’s lowest of the year, beat one team. Still the league’s worst luck at −1.78, but this week the schedule has an alibi.',
       'Mr. G': 'Still last, but the six-game skid is over, and Tristan’s 90.90 was the fewest Mr. G has allowed all year. Opponents finally ran out of good weeks.'
+    },
+    9: {
+      Tony: 'Still 1st on the week’s top score, 127.86. Tony averages 124.87 a week, 13.07 more than anyone. That’s not a race.',
+      Colin: 'Up four to 2nd, the week’s biggest jump, after outscoring 17 of 18 opponents over two weeks. Forty-one adds, and the same team finally showed up twice.',
+      Matt: 'Up one to 3rd at 3–6, four spots above the standings, after drawing the week’s top score two weeks running. The rankings grade on a curve.',
+      Jerger: 'Down two to 4th on back-to-back losses after five straight wins. Same record as Colin, same xW, two spots lower. The belt doesn’t break ties.',
+      Pablo: 'Down two to 5th in the middle of a three-game win streak. Pablo is 5–4; the scores say 4–5. Pablo keeps winning; the math keeps asking how.',
+      Andy: 'Down one to 6th while 2nd in the standings. Three of the six wins came by under 8.00. Close counts in the standings; it doesn’t count here.',
+      Tristan: 'Holding 7th after winning with 81.88, the fourth straight week under 92. Then two trades in one day. The rebuild started on a Tuesday.',
+      Kurt: 'Up one to 8th. Kurt’s three wins came by 60.82, 51.18 and 14.00, and the one close game was a 1.44 loss. Right points, wrong weeks.',
+      'Mr. G': 'Up one to 9th, out of last for the first time since Week 6. Three losses came by 2.56, 6.12 and 6.48. Mr. G is about 15 points from 5–4.',
+      DLin: 'Down two to last after 79.40 beat nobody. The fewest points in the league, 855.48. The King is home.'
     }
   },
 
@@ -765,6 +777,18 @@ window.SEASON = {
       Colin: '31 adds, the most in the league by 9, and the season’s lowest score in Week 6, 61.58. C Lambs Biggest Hater, and Week 6 hated back.',
       DLin: 'Last in the power rankings, 16–38 against the field, and 2–4 anyway. The Toilet Bowl King is defending the title on schedule.',
       Pablo: '8th at 2–4, 19–35 against the field and the league’s worst lineup efficiency, 80.9%. He was #1, for one week: Week 4’s top score, 133.78.'
+    },
+    9: {
+      Tony: '8–1 without once facing one of the week’s two best scores. The toughest draw was Week 9’s third-best. 11 Shots In, and the schedule keeps buying.',
+      Tristan: '5–4 with 34 adds and 91% of the waiver budget spent. Squirtle Squad has evolved 34 times and is still a Squirtle.',
+      Andy: '6–3 with the league’s worst lineup efficiency, 82.3%, and 209.80 points left on the table. It’s gibbing time; it’s rarely the right lineup.',
+      Matt: '7th at 3–6 with the second-most points in the league and the worst luck, −2.33. There is no 2nd best, except in points for.',
+      Kurt: '3–6, and all six losses came against one of the week’s five best scores, two of them the best. Average Sports Enthusiast, scheduled like a contender.',
+      Jerger: '5–4 and the reigning champ, with the experts at 6–9 on the season. #1 Y! Fan. The belt is real; the expertise is under review.',
+      'Mr. G': '2–7 after drawing the week’s top score four times in nine weeks. Nobody else has seen it more than twice. Definitely not a Boomer. Possibly cursed.',
+      Colin: '5–4 with five weeks over 120, second only to Tony, and two weeks dead last. C Lambs Biggest Hater has no middle setting.',
+      DLin: '3–6 without a 120-point week all season, the only team that can say so, and the full waiver budget still unspent. Toilet Bowl King is saving up for something.',
+      Pablo: '6th at 5–4 despite three weeks under 90, thanks to a 3–1 record in games decided by under 10. He was #1. Sixth still gets in.'
     }
   }
 };
