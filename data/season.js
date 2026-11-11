@@ -15,7 +15,7 @@ window.SEASON = {
   regularSeasonWeeks: 14,
   playoffTeams: 6,
   faabBudget: 100,
-  draftInfo: 'Sep 6 · 10-team snake · 15 rounds · Half-PPR',
+  draftInfo: 'Sep 5 · 10-team snake · 15 rounds · Half-PPR',
   // Draft tab "Open tool" button. Set to null to hide the button.
   draftToolUrl: '/draft',  // the old Grok tool, copied into draft/, assets/ and docs/
 
