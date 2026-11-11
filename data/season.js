@@ -284,6 +284,13 @@ window.SEASON = {
       ['Jerger', 'The experts picked against their own boss and were right: Tony scored 149.66, beat Jerger by 33.70 and ended the champ’s five-game win streak. The staff keeps its jobs.', '2026-11-03T07:41-06:00'],
       ['Pablo', 'The projection had Kurt. Then Flowers caught none of five targets, Kurt hit a season-low 89.00 and Pablo won by 31.58 to take the last playoff spot. He was #1; sixth will do.', '2026-11-03T07:49-06:00'],
       ['Andy', 'The Booth mocked DLin’s crown defense. Then Andy started Tucker and Cooper for 0.00 each, with DJ Moore’s 14.60 and Swift’s 26.90 on the bench, and lost by 34.34. Wrong manager.', '2026-11-03T07:49-06:00']
+    ],
+    9: [
+      ['Matt', 'Matt lost to Tony by 8.20 with Love’s 36.18 on the bench while Daniels started for 14.56. Tony says luck isn’t real, and this week Tony has a point.', '2026-11-10T19:37-06:00'],
+      ['Tristan', 'Tristan started McConkey and Mitchell for 0.00 each and still beat DLin, 81.88–79.40, the week’s two lowest scores and the lowest winning score of the season. Retirement can wait.', '2026-11-10T19:37-06:00'],
+      ['Jerger', 'The Booth took the champ. Jerger started Kraft for 1.40 with Kelce’s 15.30 on the bench and lost to Pablo by 7.54. Three straight for Pablo. The rental on sixth has been renewed.', '2026-11-10T19:37-06:00'],
+      ['Andy', 'Andy was the Booth’s surest pick of the week at 72%. Andy benched Swift’s 26.90 in Week 8, started Swift for 3.10 in Week 9 and lost to Kurt by 14.00. Kurt’s bad luck took the week off.', '2026-11-10T19:37-06:00'],
+      ['Mr. G', 'Mr. G scored 118.76, the best Mr. G week since Week 1, and ran into Colin’s 125.24, second-best of the week. Opponents save their best for Mr. G: 1074.44 against, most in the league.', '2026-11-10T19:37-06:00']
     ]
   },
   // The day each week's previews were written; each line's own time (third field) wins when it has one.
