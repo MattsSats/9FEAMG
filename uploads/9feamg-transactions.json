@@ -1,5 +1,17 @@
 [
   {
+    "when": "Nov 10, 7:13 pm",
+    "yahooTeam": "There is no 2nd best",
+    "manager": "Matt",
+    "action": "drop",
+    "player": "Chris Godwin Jr.",
+    "nfl": "TB",
+    "pos": "WR",
+    "faab": null,
+    "via": "Waivers",
+    "notes": "Yahoo API Tue, Nov 10, 7:21 PM CT"
+  },
+  {
     "when": "Nov 10, 5:10 pm",
     "yahooTeam": "11 Shots In",
     "manager": "Tony",

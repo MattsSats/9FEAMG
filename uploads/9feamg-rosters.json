@@ -1,5 +1,5 @@
 {
-  "asOf": "2026-11-10T18:19:00-06:00",
+  "asOf": "2026-11-11T01:21:25.489Z",
   "source": "Signed-in Yahoo Fantasy league 935526 team roster pages (full reconcile)",
   "week": 10,
   "baseline": "yahoo-live",
@@ -957,12 +957,12 @@
       "yahooUrlId": "8",
       "players": [
         {
-          "name": "Jayden Daniels",
+          "name": "Jordan Love",
           "pos": "QB",
           "slot": "starter",
-          "nfl": "Was",
-          "proj": 18.56,
-          "espn": 18.66
+          "nfl": "GB",
+          "proj": 17.29,
+          "espn": 16.02
         },
         {
           "name": "Chuba Hubbard",
@@ -1020,12 +1020,12 @@
           "proj": 8.77
         },
         {
-          "name": "Eagles",
-          "pos": "DEF",
-          "slot": "starter",
-          "nfl": "Phi",
-          "proj": 0,
-          "espn": 0
+          "name": "Jayden Daniels",
+          "pos": "QB",
+          "slot": "bench",
+          "nfl": "Was",
+          "proj": 18.56,
+          "espn": 18.66
         },
         {
           "name": "Garrett Wilson",
@@ -1037,28 +1037,12 @@
           "espn": 10.24
         },
         {
-          "name": "Jordan Love",
-          "pos": "QB",
-          "slot": "bench",
-          "nfl": "GB",
-          "proj": 17.29,
-          "espn": 16.02
-        },
-        {
           "name": "Josh Downs",
           "pos": "WR",
           "slot": "bench",
           "nfl": "KC",
           "proj": 4.29,
           "espn": 7.45
-        },
-        {
-          "name": "Chris Godwin Jr.",
-          "pos": "WR",
-          "slot": "bench",
-          "nfl": "TB",
-          "proj": 0,
-          "espn": 0
         },
         {
           "name": "Xavier Worthy",
@@ -1084,6 +1068,14 @@
           "nfl": "Phi",
           "proj": 0,
           "inj": "O",
+          "espn": 0
+        },
+        {
+          "name": "Eagles",
+          "pos": "DEF",
+          "slot": "bench",
+          "nfl": "Phi",
+          "proj": 0,
           "espn": 0
         }
       ]
@@ -1329,20 +1321,20 @@
           "espn": 5.09
         },
         {
-          "name": "Broncos",
-          "pos": "DEF",
-          "slot": "bench",
-          "nfl": "Den",
-          "proj": 0,
-          "espn": 0
-        },
-        {
           "name": "Alec Pierce",
           "pos": "WR",
           "slot": "IR",
           "nfl": "Ind",
           "proj": 0,
           "inj": "IR",
+          "espn": 0
+        },
+        {
+          "name": "Broncos",
+          "pos": "DEF",
+          "slot": "bench",
+          "nfl": "Den",
+          "proj": 0,
           "espn": 0
         }
       ]
@@ -2121,7 +2113,7 @@
   ],
   "espn": {
     "week": 10,
-    "asOf": "2026-11-11T00:21:32.572Z",
+    "asOf": "2026-11-11T01:23:13.463Z",
     "source": "ESPN fantasy projections, half-PPR (average of ESPN standard and PPR)"
   }
 }
