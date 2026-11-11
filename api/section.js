@@ -10,7 +10,7 @@ import { loadSeason, escapeHtml, hash, anchorFor, describe, BOTS, goTo } from '.
 import { readJson, readData, dataOrigin } from './_yahoo.js';
 import { seasonStats, loadBox, powerRanks } from './_stats.js';
 import { loadTx, wireOf } from './_wire.js';
-import { lineupIssues, playoffOdds, oddsPct, raceText, matchupOdds, pointSources, liveRosters, faabOf, roastOf, playoffBracket, byStandings } from './_shared.js';
+import { lineupIssues, playoffOdds, oddsPct, raceText, matchupOdds, pointSources, liveRosters, faabOf, roastOf, playoffBracket, byStandings, paRankLabel } from './_shared.js';
 import { C, F, h, fonts, mgrColor } from './_ogkit.js';
 
 const CHARTS = { luck: 'Luck', xw: 'Expected wins', src: 'Where the points come from', bench: 'Points left on bench', pfpa: 'Points for vs against', ledger: 'Parlay ledger' };
@@ -401,7 +401,7 @@ function teamOf(season, st, slug, tx, yahoo = null) {
     ...(spent != null && season.faabBudget ? [['FAAB LEFT', '$' + (season.faabBudget - spent), '$' + season.faabBudget + ' to start']] : [])
   ];
   return { ...mg, slug, rec: `${r.w}–${r.l}`, place: rows.findIndex(x => x.m == m) + 1, streak: res.length ? res[res.length - 1] + k : '',
-    pf: r.pf, pfRank: rank('pf'), pa: r.pa, paRank: rank('pa', false), luck: r.luck, roast: roastOf(season, m, st.NF), week, extras, NF: st.NF };
+    pf: r.pf, pfRank: rank('pf'), pa: r.pa, paRank: rank('pa', false), teams: st.rows.length, luck: r.luck, roast: roastOf(season, m, st.NF), week, extras, NF: st.NF };
 }
 
 function teamCard(T) {
@@ -415,7 +415,7 @@ function teamCard(T) {
         h('div', { fontFamily: F.display, fontSize: 76, fontWeight: 900, lineHeight: 1, textTransform: 'uppercase', color: C.ink }, T.m),
         h('div', { fontFamily: F.mono, fontSize: 24, fontWeight: 600, color: C.muted, marginTop: 8 }, [T.rec, ordinal(T.place) + ' place', T.streak ? T.streak + ' streak' : ''].filter(Boolean).join(' · ')))),
     h('div', { gap: 12, marginTop: 24 },
-      tile('PF', T.pf.toFixed(1), ordinal(T.pfRank) + ' in league'), tile('PA', T.pa.toFixed(1), ordinal(T.paRank) + ' fewest'),
+      tile('PF', T.pf.toFixed(1), ordinal(T.pfRank) + ' in league'), tile('PA', T.pa.toFixed(1), paRankLabel(T.paRank, T.teams, ordinal)),
       tile('LUCK', signed(T.luck), 'W − xW', T.luck > 0 ? C.pos : T.luck < 0 ? C.neg : C.ink)),
     T.roast ? h('div', { marginTop: 18, maxHeight: 62, overflow: 'hidden', fontFamily: F.sans, fontSize: 24, fontWeight: 600, lineHeight: 1.3, color: C.ink }, T.roast) : null,
     T.week ? h('div', { marginTop: 10, fontFamily: F.mono, fontSize: 20, fontWeight: 600, color: C.accentInk }, T.week) : null,

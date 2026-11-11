@@ -202,6 +202,9 @@ export function seasonStats(season, box) {
   });
   return { NF, rows, maxOk: rows.every(r => r.max != null) };
 }
+// A points-against rank (1 = fewest of n) in words: "3rd fewest", or "2nd most" for the top half,
+// since allowing a lot is the story there (Matt, Nov 10, 2026). ord turns 2 into "2nd".
+export const paRankLabel = (rank, n, ord) => rank == 1 ? 'fewest in league' : rank == n ? 'most in league' : rank > n / 2 ? ord(n + 1 - rank) + ' most' : ord(rank) + ' fewest';
 // Standings order: wins, then points for.
 export const byStandings = (a, b) => b.w - a.w || b.pf - a.pf;
 // The league's week-to-week spread: how far a team's weekly score lands from its own average
@@ -816,7 +819,8 @@ export function lineupIssues(season, starters, wk, livePts = {}, now = Date.now(
 //   2. Best pickup (this week): the add in the window with the most points since.
 //   3. Adds vs record (Season, or this week when 1-2 don't apply): the busiest adder against the
 //      best record among the light adders (fewer season adds than the league median).
-//   4. No adds in the window.
+//   4. Trades in the window, when nobody has added anyone (Matt, Nov 10, 2026): who got whom.
+//   5. No adds in the window.
 // "Since" counts a player's points in games that kicked off after the move (Sunday noon for weeks
 // without a schedule on file). ptsOf(name, week) gives a player's points. Never FAAB amounts.
 export function wireOf(season, tx, ptsOf, mode, now = Date.now()) {
@@ -844,6 +848,21 @@ export function wireOf(season, tx, ptsOf, mode, now = Date.now()) {
   }).filter(x => x && x.pts > 0).sort((a, b) => b.pts - a.pts)[0];
   const pickup = inWin.filter(t => t.action == 'add').map(a => ({ a, pts: ptsSince(a, when(a)) })).filter(x => x.pts > 0).sort((a, b) => b.pts - a.pts)[0];
   const topWk = Object.keys(wkAdds).sort((a, b) => wkAdds[b] - wkAdds[a])[0];
+  // This window's trades, oldest first: one deal per time and pair of managers ("trade from <Yahoo team>").
+  const teamMgr = Object.fromEntries(tx.map(t => [t.yahooTeam, t.manager])), deals = [];
+  [...inWin].filter(t => t.action == 'trade' && MGR.includes(t.manager)).sort((a, b) => when(a) - when(b)).forEach(t => {
+    const from = teamMgr[String(t.via || '').replace('trade from ', '')]; if (!from) return;
+    let d = deals.find(x => x.when == t.when && x.got[t.manager] && x.got[from]);
+    if (!d) deals.push(d = { when: t.when, got: { [t.manager]: [], [from]: [] } });
+    d.got[t.manager].push(lastName(t.player));
+  });
+  const list = a => a.length > 1 ? a.slice(0, -1).join(', ') + ' and ' + a.at(-1) : a[0];
+  // Each deal is told from the side of whoever traded most this week, so one name leads the line.
+  const dealt = m => deals.filter(d => d.got[m]).length;
+  const tradeLine = deals.map(d => {
+    const [a, b] = Object.keys(d.got).sort((x, y) => dealt(y) - dealt(x));
+    return `${a} got ${list(d.got[a])} from ${b}` + (d.got[b].length ? ` for ${list(d.got[b])}` : '');
+  }).join('; ');
   const addsVsRecord = (m, lead) => {
     const low = pickLow(m), x = ST.find(r => r.m == m), y = ST.find(r => r.m == low);
     const end = x.w - x.l > y.w - y.l ? 'Turns out the waiver wire works.' : x.w - x.l < y.w - y.l ? 'Busy is not the same as good.'
@@ -854,6 +873,7 @@ export function wireOf(season, tx, ptsOf, mode, now = Date.now()) {
     : regret ? `${regret.d.manager} dropped ${who(regret.d)}. ${regret.pick.manager} picked ${regret.d.pos == 'DEF' ? 'it' : 'him'} up, and ${regret.d.pos == 'DEF' ? 'that defense' : lastName(regret.d.player)} has ${f2(regret.pts)} since.`
     : pickup ? `${pickup.a.manager} picked up ${who(pickup.a)} on ${dayOf(when(pickup.a))}. ${f2(pickup.pts)} since.`
     : topWk ? addsVsRecord(topWk, `${topWk} made ${wkAdds[topWk]} ${s('add', wkAdds[topWk])} this week and is ${recOf(topWk)}.`)
+    : deals.length ? `${deals.length == 1 ? 'A trade' : deals.length + ' trades'} this week: ${tradeLine}.`
     : 'Nobody has added anyone this week. Suspiciously quiet.';
   return { mode: seasonMode ? 'season' : 'week', wk, cut, adds, wkAdds, rows, line, total: rows.reduce((a, r) => a + r.n, 0) };
 }
