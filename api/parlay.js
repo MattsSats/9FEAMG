@@ -1,10 +1,9 @@
-// /p/<slug> (rewritten here by vercel.json). Link-preview bots get a page whose
-// Open Graph tags describe this parlay and point at its generated image
-// (/api/og). People are redirected to the card on the site (/#<slug>).
-import { loadSeason, findParlay, describe, escapeHtml, hash } from './_parlays.js';
+// /p/<slug> (rewritten here by vercel.json). The answer is a page whose Open Graph tags
+// describe this parlay and point at its generated image (/api/og). Known preview bots get just
+// that; anyone else gets the tags and is sent on to the card on the site (/#<slug>) by a script
+// in the page (goTo in _parlays.js).
+import { loadSeason, findParlay, describe, escapeHtml, hash, BOTS, goTo } from './_parlays.js';
 import { readJson } from './_yahoo.js';
-
-const BOTS = /bot|crawl|spider|facebookexternalhit|facebot|twitterbot|slackbot|discordbot|whatsapp|telegram|linkedin|embedly|skype|iframely|preview/i;
 
 export default {
   async fetch(request) {
@@ -13,13 +12,11 @@ export default {
     const home = new URL('/', url.origin);
     const card = new URL('/#' + slug, url.origin);
 
-    if (!BOTS.test(request.headers.get('user-agent') || '')) {
-      return new Response(null, { status: 302, headers: { location: card.href, 'cache-control': 'private, no-store', vary: 'User-Agent' } });
-    }
+    const person = !BOTS.test(request.headers.get('user-agent') || '');
 
     let found = null;
     try { found = findParlay(await loadSeason(url.origin), slug); } catch { /* fall back to the site preview */ }
-    if (!found) return Response.redirect(home.href, 302);
+    if (!found) return Response.redirect(person ? card.href : home.href, 302);
 
     let taps = [], passes = [];
     try { const t = await readJson(`tails/w${found.week}.json`); taps = t?.tails?.[slug] || []; passes = t?.passes?.[slug] || []; } catch { /* none yet */ }
@@ -42,7 +39,7 @@ export default {
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="${e(img)}">
-</head><body><a href="${e(card.href)}">${e(title)}</a></body></html>`;
+${person ? goTo(card.href) : ''}</head><body><a href="${e(card.href)}">${e(title)}</a></body></html>`;
 
     return new Response(html, {
       // Never cache: bots and people get different responses from the same URL.

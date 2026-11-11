@@ -63,6 +63,12 @@ export function describe(week, p, taps = [], passes = []) {
   };
 }
 
+// Share links (/s/..., /p/...) answer with a page that carries the Open Graph tags. Known preview
+// fetchers get that page alone. Everyone else gets the same tags plus goTo(), a script that sends a
+// person straight on to the site: an app whose fetcher isn't on the list still finds the preview
+// (Matt, Nov 10, 2026), where before it was redirected to the home page's generic card.
+export const BOTS = /bot|crawl|spider|facebookexternalhit|facebot|twitterbot|slackbot|discordbot|whatsapp|telegram|linkedin|embedly|skype|iframely|preview/i;
+export const goTo = dest => `<script>location.replace(${JSON.stringify(String(dest)).replace(/</g, '\\u003c')})</script>`;
 export const escapeHtml = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
 export function hash(s) {

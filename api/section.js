@@ -1,18 +1,18 @@
 // /s/<chart> (rewritten here by vercel.json) for the Season charts (luck, bench, pfpa), the
 // Gameday parlay ledger (ledger), matchups (w5-andy-vs-pablo), standings, power, odds, team-<name>
 // and a week's Gameday (w5).
-// Link-preview bots get a page whose Open Graph tags point at a 1200x630 image of the chart
-// (this same function with &img=1); people are sent to the chart on the site (/#<chart>).
+// The answer is a page whose Open Graph tags point at a 1200x630 image of the chart (this same
+// function with &img=1). Known preview bots get just that; anyone else gets the tags and is sent
+// on to the chart on the site (/#<chart>) by a script in the page (goTo in _parlays.js).
 // Numbers come from the live data/season.js and box scores, so the image is always current.
 import { ImageResponse } from '@vercel/og';
-import { loadSeason, escapeHtml, hash, anchorFor, describe } from './_parlays.js';
+import { loadSeason, escapeHtml, hash, anchorFor, describe, BOTS, goTo } from './_parlays.js';
 import { readJson, readData, dataOrigin } from './_yahoo.js';
 import { seasonStats, loadBox, powerRanks } from './_stats.js';
 import { loadTx, wireOf } from './_wire.js';
 import { lineupIssues, playoffOdds, oddsPct, raceText, matchupOdds, pointSources, liveRosters, faabOf, roastOf, playoffBracket, byStandings } from './_shared.js';
 import { C, F, h, fonts, mgrColor } from './_ogkit.js';
 
-const BOTS = /bot|crawl|spider|facebookexternalhit|facebot|twitterbot|slackbot|discordbot|whatsapp|telegram|linkedin|embedly|skype|iframely|preview/i;
 const CHARTS = { luck: 'Luck', xw: 'Expected wins', src: 'Where the points come from', bench: 'Points left on bench', pfpa: 'Points for vs against', ledger: 'Parlay ledger' };
 const f1 = n => n.toFixed(1), f2 = n => n.toFixed(2);
 const money = n => (n < 0 ? '−' : n > 0 ? '+' : '') + '$' + Math.abs(n).toFixed(2);
@@ -280,10 +280,7 @@ function matchupCard(M) {
 
 async function matchupRoute(url, request, m) {
   const wk = +m[1], dest = new URL('/#w' + wk, url.origin).href, fallback = () => Response.redirect(new URL('/og.png', url.origin).href, 302);
-  const isImg = url.searchParams.has('img');
-  if (!isImg && !BOTS.test(request.headers.get('user-agent') || '')) {
-    return new Response(null, { status: 302, headers: { location: dest, 'cache-control': 'private, no-store', vary: 'User-Agent' } });
-  }
+  const isImg = url.searchParams.has('img'), person = !isImg && !BOTS.test(request.headers.get('user-agent') || '');
   let M;
   try {
     const season = await loadSeason(url.origin);
@@ -291,7 +288,7 @@ async function matchupRoute(url, request, m) {
     try { const r = await fetch(new URL('/uploads/9feamg-rosters.json', dataOrigin(url.origin)), { cache: 'no-store' }); rosters = r.ok ? await r.json() : null; } catch { /* no alerts then */ }
     if (rosters) try { rosters = liveRosters(rosters, await readData()); } catch { /* the file's lineups then */ }
     M = matchupOf(season, seasonStats(season, null), wk, m[2], m[3], rosters);
-  } catch { return fallback(); }
+  } catch { return person ? Response.redirect(dest, 302) : fallback(); }
   if (!M) return isImg ? fallback() : Response.redirect(dest, 302);
   if (isImg) return new ImageResponse(matchupCard(M), { width: 1200, height: 630, fonts: await fonts(), headers: { 'cache-control': 'public, max-age=300, s-maxage=300' } });
   const name = m[0], e = escapeHtml;
@@ -311,7 +308,7 @@ async function matchupRoute(url, request, m) {
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
-</head><body><a href="/#w${wk}">${e(title)}</a></body></html>`, {
+${person ? goTo(dest) : ''}</head><body><a href="/#w${wk}">${e(title)}</a></body></html>`, {
     headers: { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'private, no-store', vary: 'User-Agent' } });
 }
 
@@ -487,11 +484,13 @@ function boothOf(season) {
 }
 
 function boothCard(B) {
-  const row = r => h('div', { alignItems: 'center', gap: 18, minHeight: 84, padding: '8px 0', borderTop: `1px solid ${C.line}` },
-    h('div', { gap: 6, width: 78, flexShrink: 0 }, ...r.pair.map(m => crest(m, 34))),
-    h('div', { flex: 1, maxHeight: 64, overflow: 'hidden', fontFamily: F.sans, fontSize: 21, fontWeight: 600, lineHeight: 1.45, color: C.ink }, r.text));
+  // Sized for a chat thumbnail (Matt, Nov 10, 2026): the crests stack so the line gets the width, and
+  // three lines of 25px type hold a full Booth line.
+  const row = r => h('div', { alignItems: 'center', gap: 18, height: 101, borderTop: `1px solid ${C.line}` },
+    h('div', { flexDirection: 'column', gap: 4, width: 40, flexShrink: 0 }, ...r.pair.map(m => crest(m, 40))),
+    h('div', { flex: 1, maxHeight: 93, overflow: 'hidden', fontFamily: F.sans, fontSize: 25, fontWeight: 600, lineHeight: 1.24, color: C.ink }, r.text));
   return frame(`THE BOOTH · WEEK ${B.wk} · ${B.label.toUpperCase()}${B.when ? ' · ' + B.when.toUpperCase() : ''}`, null, null,
-    h('div', { flexDirection: 'column', marginTop: 22 }, ...B.rows.map(row)));
+    h('div', { flexDirection: 'column', marginTop: 16 }, ...B.rows.map(row)));
 }
 
 // Playoff picture (/s/bracket, Matt, Oct 31, 2026): the bracket if the season ended today, seeded by the
@@ -528,11 +527,9 @@ async function sectionRoute(url, request, name) {
   if (!kind) return null;
   const dest = new URL(kind == 'standings' ? '/#season' : kind == 'power' ? '/#power' : kind == 'odds' ? '/#odds' : kind == 'bracket' ? '/#bracket' : kind == 'booth' ? '/#booth' : kind == 'wire' ? (name == 'wire-season' ? '/#wire-season' : '/#wire') : kind == 'team' ? '/#team-' + team[1] : '/#w' + wkm[1], url.origin).href;
   const fallback = () => Response.redirect(new URL('/og.png', url.origin).href, 302), isImg = url.searchParams.has('img');
-  if (!isImg && !BOTS.test(request.headers.get('user-agent') || '')) {
-    return new Response(null, { status: 302, headers: { location: dest, 'cache-control': 'private, no-store', vary: 'User-Agent' } });
-  }
+  const person = !isImg && !BOTS.test(request.headers.get('user-agent') || '');
   let season, st, data = null;
-  try { season = await loadSeason(url.origin); st = seasonStats(season, null); } catch { return fallback(); }
+  try { season = await loadSeason(url.origin); st = seasonStats(season, null); } catch { return person ? Response.redirect(dest, 302) : fallback(); }
   if (kind == 'team') { const [box, tx, yahoo] = await Promise.all([loadBox(url.origin).catch(() => null), loadTx(url.origin), readData().catch(() => null)]); data = teamOf(season, seasonStats(season, box), team[1], tx, yahoo); }
   if (kind == 'week') data = weekOf(season, st, +wkm[1]);
   if (kind == 'booth') data = boothOf(season);
@@ -596,7 +593,7 @@ async function sectionRoute(url, request, name) {
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
-</head><body><a href="${e(dest)}">${e(title)}</a></body></html>`, {
+${person ? goTo(dest) : ''}</head><body><a href="${e(dest)}">${e(title)}</a></body></html>`, {
     headers: { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'private, no-store', vary: 'User-Agent' } });
 }
 
@@ -609,10 +606,8 @@ export default {
     const sec = await sectionRoute(url, request, name);
     if (sec) return sec;
     if (!CHARTS[name]) return Response.redirect(new URL('/', url.origin).href, 302);
-    const isImg = url.searchParams.has('img');
-    if (!isImg && !BOTS.test(request.headers.get('user-agent') || '')) {
-      return new Response(null, { status: 302, headers: { location: new URL('/#' + name, url.origin).href, 'cache-control': 'private, no-store', vary: 'User-Agent' } });
-    }
+    const isImg = url.searchParams.has('img'), dest = new URL('/#' + name, url.origin).href;
+    const person = !isImg && !BOTS.test(request.headers.get('user-agent') || '');
     let st, L = null, LW;
     try {
       const season = await loadSeason(url.origin);
@@ -622,7 +617,7 @@ export default {
       if (name == 'src') { const [draft, tx] = await Promise.all([fetch(new URL('/uploads/9feamg-draft-rosters.json', dataOrigin(url.origin))).then(r => r.ok ? r.json() : null).catch(() => null), loadTx(url.origin)]); st.src = draft ? pointSources(season, box, draft, tx).filter(r => r.total > 0) : []; }
       LW = season.live?.week ?? st.NF;
       if (name == 'ledger') L = await ledgerOf(season);
-    } catch { return Response.redirect(new URL('/og.png', url.origin).href, 302); }
+    } catch { return Response.redirect(person ? dest : new URL('/og.png', url.origin).href, 302); }
     if ((name == 'bench' && !st.maxOk) || (name == 'src' && !st.src.length)) return isImg ? Response.redirect(new URL('/og.png', url.origin).href, 302) : Response.redirect(new URL('/#bench', url.origin).href, 302);
     if (isImg) return image(name, st, L, LW);
 
@@ -641,7 +636,7 @@ export default {
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
-</head><body><a href="/#${name}">${e(title)}</a></body></html>`, {
+${person ? goTo(dest) : ''}</head><body><a href="/#${name}">${e(title)}</a></body></html>`, {
       // Bots and people share this URL, so never let the CDN hand the bot page to a person.
       headers: { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'private, no-store', vary: 'User-Agent' } });
   }
