@@ -310,7 +310,8 @@ window.SEASON = {
   expertPicks: {
     6: ['Matt', 'Pablo', 'Tony', 'Kurt', 'Mr. G'],
     8: ['Colin', 'Tristan', 'Tony', 'Kurt', 'Andy'],
-    9: ['Matt', 'Tristan', 'Jerger', 'Andy', 'Colin']
+    9: ['Matt', 'Tristan', 'Jerger', 'Andy', 'Colin'],
+    10: ['Matt', 'Kurt', 'Jerger', 'Tony', 'DLin']
   },
   // Tristan's weekly power rankings, 1 to 10 (Matt, Oct 20, 2026; Tristan agreed). Rank order only; the
   // Season tab shows it beside the site's own power rankings for the same week.
