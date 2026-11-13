@@ -333,10 +333,10 @@ window.SEASON = {
     // projections and check.js's win odds.
     10: [
       ['Pablo', 'Pablo outbid Matt for the Rams, then started a tight end at FLEX with Puka on IR. Projected 110.46–90.55, Matt. Winning the waiver wire isn’t winning the week.', '2026-11-12T19:05-06:00'],
-      ['Tristan', 'Tristan traded for Henry and Tate after 91.30, 90.90 and 81.88. Projected 114.12–106.70, Tristan, but three starters are Questionable, and Kurt is the pick at 55% with nobody at tight end.', '2026-11-12T19:05-06:00'],
-      ['Andy', 'The reigning champ is projected 113.50 to Andy’s 116.33. Andy left 55.60 on the bench in Week 8, the most in the league, so Jerger’s real opponent is Andy’s lineup decisions.', '2026-11-12T19:05-06:00'],
-      ['Tony', 'Tony clinches a playoff spot with a win and is projected 118.98–117.67 over Colin, who scored 153.68 two weeks ago. Tony is 8–1 on 6.44 expected wins. The luck has one more week to hold.', '2026-11-12T19:05-06:00'],
-      ['DLin', 'The race for last: Mr. G at 2–7, DLin at 3–6, each 42% or 43% to finish tenth. Projected 111.47–105.90, Mr. G. Toilet Bowl King is starting to sound like a forecast.', '2026-11-12T19:05-06:00']
+      ['Tristan', 'Tristan traded for Henry and Tate after three straight weeks under 92, then started three Questionables. Projected 114.12–106.70, Tristan; the pick is Kurt at 55%. Panic isn’t a plan.', '2026-11-12T19:05-06:00'],
+      ['Andy', 'Andy is 6–3 and projected 116.33 to the reigning champ’s 113.50. Andy left a season-high 55.60 on the bench in Week 8. Jerger’s toughest opponent is Andy’s bench.', '2026-11-12T19:05-06:00'],
+      ['Tony', 'Tony clinches a playoff spot with a win and is projected 118.98–117.67 over Colin. Tony is 8–1 on 6.44 expected wins. The luck has one more week to hold.', '2026-11-12T19:05-06:00'],
+      ['DLin', 'The race for last: Mr. G is 43% and DLin 42% to finish the regular season at the bottom. Projected 111.47–105.90, Mr. G. DLin’s team name is turning into a scouting report.', '2026-11-12T19:05-06:00']
     ],
     // Week 9: written by Claude at Matt's request (Wed Nov 4, before TNF) from Yahoo's Wed 3:49 PM
     // projections and check.js's win odds, graded by a reviewer and revised.
