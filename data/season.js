@@ -64,7 +64,7 @@ window.SEASON = {
     7: { Tony: 121.7, Tristan: 116.62, Andy: 123.4, Matt: 126.82, Kurt: 113.04, Jerger: 116.08, 'Mr. G': 119.45, Colin: 112.31, DLin: 99.49, Pablo: 116.21 },
     8: { Tony: 125.18, Tristan: 115.07, Andy: 121.03, Matt: 126.83, Kurt: 113.76, Jerger: 119.37, 'Mr. G': 117.03, Colin: 115.18, DLin: 101.06, Pablo: 111.12 },
     9: { Tony: 125.52, Tristan: 111.17, Andy: 123.81, Matt: 122.55, Kurt: 114.51, Jerger: 113.86, 'Mr. G': 117.83, Colin: 117.16, DLin: 101.53, Pablo: 109.9 },
-    10: { Tony: 127.18, Tristan: 108.05, Andy: 127.62, Matt: 121.32, Kurt: 117.54, Jerger: 105.6, 'Mr. G': 111.86, Colin: 118.19, DLin: 104.15, Pablo: 97.05 }
+    10: { Tony: 125.91, Tristan: 107.88, Andy: 124.73, Matt: 120.88, Kurt: 118.88, Jerger: 107.08, 'Mr. G': 111.67, Colin: 117.91, DLin: 105.65, Pablo: 97.64 }
   },
 
   // Final scores (Yahoo, two decimals), one per completed week.
@@ -86,22 +86,22 @@ window.SEASON = {
     week: 10,
     status: 'Kicks off Thursday · WAS @ NYG, 7:15 PM',
     // When these numbers were pulled from Yahoo (Central); shows as "Scores as of Thu 10:19 PM".
-    asOf: '2026-11-10T18:19:00-06:00',
+    asOf: '2026-11-12T19:01:00-06:00',
     // [current points, projected final]
-    // Yahoo as of Tue Nov 10, 6:19 PM CT (Week 10 matchup pages).
+    // Yahoo as of Thu Nov 12, 7:01 PM CT (Week 10 matchup pages).
     scores: {
-      Matt: [0.00, 112.59], Pablo: [0.00, 65.40],
-      Tristan: [0.00, 113.07], Kurt: [0.00, 98.04],
-      Jerger: [0.00, 112.29], Andy: [0.00, 108.06],
-      Tony: [0.00, 120.76], Colin: [0.00, 116.18],
-      'Mr. G': [0.00, 111.69], DLin: [0.00, 105.50]
+      Matt: [0.00, 110.46], Pablo: [0.00, 90.55],
+      Tristan: [0.00, 114.12], Kurt: [0.00, 106.70],
+      Jerger: [0.00, 113.50], Andy: [0.00, 116.33],
+      Tony: [0.00, 118.98], Colin: [0.00, 117.67],
+      'Mr. G': [0.00, 111.47], DLin: [0.00, 105.90]
     },
-    yahooWin: { Tony: 54, Tristan: 63, Andy: 46, Matt: 88, Kurt: 37, Jerger: 54, 'Mr. G': 56, Colin: 46, DLin: 44, Pablo: 12 },
+    yahooWin: { Tony: 51, Tristan: 57, Andy: 52, Matt: 68, Kurt: 43, Jerger: 48, 'Mr. G': 55, Colin: 49, DLin: 45, Pablo: 32 },
     // Points so far for every player whose game has started (starters and bench).
     // Players listed in inProgress are still playing; the rest are final.
     playerPoints: {},
     inProgress: [],
-    sheetNote: 'Week 10 projections as of Tue 6:19 PM CT. Each player is tagged Final, Live or proj.'
+    sheetNote: 'Week 10 projections as of Thu 7:01 PM CT. Each player is tagged Final, Live or proj.'
   },
 
   // The NFL week: every game ('Sun 12:00 PM · CHI @ GB', kickoff Central, same form as parlay legs)
@@ -294,7 +294,7 @@ window.SEASON = {
     ]
   },
   // The day each week's previews were written; each line's own time (third field) wins when it has one.
-  boothPreviewAt: { 5: '2026-10-07', 6: '2026-10-15', 7: '2026-10-21', 8: '2026-10-29', 9: '2026-11-04' },
+  boothPreviewAt: { 5: '2026-10-07', 6: '2026-10-15', 7: '2026-10-21', 8: '2026-10-29', 9: '2026-11-04', 10: '2026-11-12' },
   // The Booth's picks, made with the previews: [pick, win % when picked], one per matchup in schedule
   // order. The win % is check.js's "Win odds" line before kickoff. The site grades them once the week is
   // final and keeps the season record.
@@ -302,7 +302,8 @@ window.SEASON = {
     6: [['Matt', 60], ['Tristan', 62], ['Tony', 68], ['Colin', 69], ['Mr. G', 62]],
     7: [['Matt', 51], ['Andy', 62], ['Colin', 51], ['Tony', 52], ['Pablo', 66]],
     8: [['Matt', 61], ['Mr. G', 52], ['Tony', 65], ['Kurt', 58], ['Andy', 73]],
-    9: [['Tony', 63], ['Tristan', 57], ['Jerger', 57], ['Andy', 72], ['Colin', 60]]
+    9: [['Tony', 63], ['Tristan', 57], ['Jerger', 57], ['Andy', 72], ['Colin', 60]],
+    10: [['Matt', 85], ['Kurt', 55], ['Andy', 57], ['Tony', 54], ['Mr. G', 59]]
   },
   // Jerger's weekly preview picks ("the experts"): one name per matchup in schedule order, graded
   // like the Booth's (Matt, Oct 20, 2026; Jerger agreed). Only the pick goes here; the write-up stays private.
@@ -328,6 +329,15 @@ window.SEASON = {
     ]
   },
   boothPreview: {
+    // Week 10: written by Claude at Matt's request (Thu Nov 12, before TNF) from Yahoo's Thu 7:01 PM
+    // projections and check.js's win odds.
+    10: [
+      ['Pablo', 'Pablo outbid Matt for the Rams, then started a tight end at FLEX with Puka on IR. Projected 110.46–90.55, Matt. Winning the waiver wire isn’t winning the week.', '2026-11-12T19:05-06:00'],
+      ['Tristan', 'Tristan traded for Henry and Tate after 91.30, 90.90 and 81.88. Projected 114.12–106.70, Tristan, but three starters are Questionable, and Kurt is the pick at 55% with nobody at tight end.', '2026-11-12T19:05-06:00'],
+      ['Andy', 'The reigning champ is projected 113.50 to Andy’s 116.33. Andy left 55.60 on the bench in Week 8, the most in the league, so Jerger’s real opponent is Andy’s lineup decisions.', '2026-11-12T19:05-06:00'],
+      ['Tony', 'Tony clinches a playoff spot with a win and is projected 118.98–117.67 over Colin, who scored 153.68 two weeks ago. Tony is 8–1 on 6.44 expected wins. The luck has one more week to hold.', '2026-11-12T19:05-06:00'],
+      ['DLin', 'The race for last: Mr. G at 2–7, DLin at 3–6, each 42% or 43% to finish tenth. Projected 111.47–105.90, Mr. G. Toilet Bowl King is starting to sound like a forecast.', '2026-11-12T19:05-06:00']
+    ],
     // Week 9: written by Claude at Matt's request (Wed Nov 4, before TNF) from Yahoo's Wed 3:49 PM
     // projections and check.js's win odds, graded by a reviewer and revised.
     9: [
