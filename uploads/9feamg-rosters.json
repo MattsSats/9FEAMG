@@ -1,5 +1,5 @@
 {
-  "asOf": "2026-11-15T17:08:21.903Z",
+  "asOf": "2026-11-15T18:24:35.208Z",
   "source": "Signed-in Yahoo Fantasy league 935526 team roster pages (full reconcile)",
   "week": 10,
   "baseline": "yahoo-live",
@@ -140,6 +140,29 @@
       "yahooUrlId": "1",
       "players": [
         {
+          "name": "Patrick Mahomes",
+          "pos": "QB",
+          "slot": "starter",
+          "nfl": "KC",
+          "proj": 18.81,
+          "espn": 18.55
+        },
+        {
+          "name": "Bijan Robinson",
+          "pos": "RB",
+          "slot": "starter",
+          "nfl": "Atl",
+          "proj": 19.23,
+          "espn": 16.77
+        },
+        {
+          "name": "Emmett Johnson",
+          "nfl": "KC",
+          "slot": "starter",
+          "pos": "RB",
+          "espn": 16.73
+        },
+        {
           "name": "A.J. Brown",
           "pos": "WR",
           "slot": "starter",
@@ -147,6 +170,14 @@
           "proj": 10.28,
           "inj": "Q",
           "espn": 10.7
+        },
+        {
+          "name": "Caleb Douglas",
+          "pos": "WR",
+          "slot": "starter",
+          "nfl": "Mia",
+          "proj": 7.99,
+          "espn": 7.07
         },
         {
           "name": "Sam LaPorta",
@@ -157,50 +188,26 @@
           "espn": 9.22
         },
         {
-          "name": "Bills",
-          "pos": "DEF",
-          "slot": "starter",
-          "nfl": "Buf",
-          "proj": 6.81
-        },
-        {
           "name": "Derrick Henry",
-          "pos": "RB",
-          "slot": "bench",
+          "pos": "WRT",
+          "slot": "starter",
           "nfl": "Bal",
           "proj": 16.19,
           "espn": 17.56
         },
         {
-          "name": "Caleb Douglas",
-          "pos": "WR",
-          "slot": "bench",
-          "nfl": "Mia",
-          "proj": 7.99,
-          "espn": 7.07
+          "name": "Evan McPherson",
+          "pos": "K",
+          "slot": "starter",
+          "nfl": "Cin",
+          "proj": 8.8
         },
         {
-          "name": "Emmett Johnson",
-          "nfl": "KC",
-          "slot": "bench",
-          "pos": "RB",
-          "espn": 15.03
-        },
-        {
-          "name": "Bijan Robinson",
-          "pos": "RB",
-          "slot": "bench",
-          "nfl": "Atl",
-          "proj": 19.23,
-          "espn": 16.77
-        },
-        {
-          "name": "Patrick Mahomes",
-          "pos": "QB",
-          "slot": "bench",
-          "nfl": "KC",
-          "proj": 18.81,
-          "espn": 18.55
+          "name": "Bills",
+          "pos": "DEF",
+          "slot": "starter",
+          "nfl": "Buf",
+          "proj": 6.81
         },
         {
           "name": "Bhayshul Tuten",
@@ -262,13 +269,6 @@
           "espn": 0
         },
         {
-          "name": "Evan McPherson",
-          "pos": "K",
-          "slot": "bench",
-          "nfl": "Cin",
-          "proj": 8.8
-        },
-        {
           "name": "Buccaneers",
           "pos": "DEF",
           "slot": "bench",
@@ -323,7 +323,7 @@
           "slot": "starter",
           "nfl": "KC",
           "proj": 11.34,
-          "espn": 10.64
+          "espn": 10.58
         },
         {
           "name": "Brock Bowers",
@@ -385,7 +385,7 @@
           "slot": "bench",
           "nfl": "Min",
           "proj": 8.85,
-          "espn": 8.4
+          "espn": 8.44
         },
         {
           "name": "Travis Etienne Jr.",
@@ -586,12 +586,12 @@
           "espn": 12.48
         },
         {
-          "name": "Breece Hall",
+          "name": "Ashton Jeanty",
           "pos": "RB",
           "slot": "starter",
-          "nfl": "NYJ",
-          "proj": 11.79,
-          "espn": 11
+          "nfl": "LV",
+          "proj": 10.46,
+          "espn": 11.49
         },
         {
           "name": "Tetairoa McMillan",
@@ -640,6 +640,14 @@
           "proj": 7.86
         },
         {
+          "name": "Breece Hall",
+          "pos": "RB",
+          "slot": "bench",
+          "nfl": "NYJ",
+          "proj": 11.79,
+          "espn": 11
+        },
+        {
           "name": "Ladd McConkey",
           "pos": "WR",
           "slot": "bench",
@@ -674,14 +682,6 @@
           "espn": 5.5
         },
         {
-          "name": "Ashton Jeanty",
-          "pos": "RB",
-          "slot": "bench",
-          "nfl": "LV",
-          "proj": 10.46,
-          "espn": 11.49
-        },
-        {
           "name": "Cairo Santos",
           "pos": "K",
           "slot": "bench",
@@ -704,7 +704,7 @@
           "slot": "starter",
           "nfl": "Buf",
           "proj": 23.53,
-          "espn": 24.31
+          "espn": 24.3
         },
         {
           "name": "Ollie Gordon II",
@@ -830,7 +830,7 @@
           "slot": "starter",
           "nfl": "NE",
           "proj": 22.24,
-          "inj": "O",
+          "inj": "Q",
           "espn": 21.96
         },
         {
@@ -933,7 +933,7 @@
           "slot": "bench",
           "nfl": "NO",
           "proj": 19.69,
-          "espn": 17.48
+          "espn": 17.47
         },
         {
           "name": "Corey Kiner",
@@ -1008,7 +1008,7 @@
           "slot": "starter",
           "nfl": "Min",
           "proj": 14.38,
-          "espn": 14.59
+          "espn": 15.41
         },
         {
           "name": "Trey McBride",
@@ -1062,7 +1062,7 @@
           "slot": "bench",
           "nfl": "KC",
           "proj": 5.62,
-          "espn": 8.42
+          "espn": 8.61
         },
         {
           "name": "Xavier Worthy",
@@ -1070,7 +1070,7 @@
           "slot": "bench",
           "nfl": "KC",
           "proj": 6.13,
-          "espn": 7.71
+          "espn": 8.14
         },
         {
           "name": "Alvin Kamara",
@@ -1152,7 +1152,8 @@
           "slot": "starter",
           "nfl": "KC",
           "proj": 9.83,
-          "espn": 9.46
+          "inj": "Q",
+          "espn": 9.41
         },
         {
           "name": "CeeDee Lamb",
@@ -1255,7 +1256,7 @@
           "nfl": "Min",
           "slot": "starter",
           "pos": "RB",
-          "espn": 7.48
+          "espn": 7.52
         },
         {
           "name": "Zay Flowers",
@@ -2127,7 +2128,7 @@
   ],
   "espn": {
     "week": 10,
-    "asOf": "2026-11-15T17:09:27.119Z",
+    "asOf": "2026-11-15T18:35:07.302Z",
     "source": "ESPN fantasy projections, half-PPR (average of ESPN standard and PPR)"
   }
 }
