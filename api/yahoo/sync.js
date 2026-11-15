@@ -11,6 +11,7 @@
 // tx rows are in uploads/9feamg-transactions.json's format plus Yahoo's key and timestamp, and
 // managers holds each team's FAAB left and moves from Yahoo (Matt, Oct 30, 2026: injuries, moves and
 // FAAB come from the API, so nothing needs the Yahoo website sign-in).
+import { loadSeasonFile } from '../_parlays.js';
 import { accessToken, writeAuth, readData, writeData, writeJson, yahoo, merge, list, num, teamManager, dataOrigin, isAdmin, isCron, keyForm, TEAMS, STATUS_PATH } from '../_yahoo.js';
 
 export async function findLeague(token, auth) {
@@ -101,7 +102,8 @@ const lastGood = { ros: null, sb: null, inj: {} };
 // often tags a player Q or nothing for a while after he leaves. Each player's latest injury note wins:
 // "LV-B.Bowers was injured during the play." or "** Injury Update: ... is out for the game / will not
 // return / is questionable to return" means out; "... has returned to the game." means back.
-// Keys are 'LV|b|bowers' (team, first initial, last name); the answer is { key: 'out' | 'back' }.
+// Keys are 'LV|b|bowers' (team, first initial, last name); the answer is { key: { s: 'out' | 'back', at } },
+// at the play's wall-clock time (ms), so a manual report (season.js live.leftGame) can be weighed against it.
 // ESPN's play text uses the league's own team codes for a few teams (ARZ, BLT, CLV, HST, LA).
 const PBP_TEAM = { WSH: 'WAS', ARZ: 'ARI', BLT: 'BAL', CLV: 'CLE', HST: 'HOU', LA: 'LAR' };
 const injKey = (team, first, last) => [(t => PBP_TEAM[t] || t)(String(team).toUpperCase()), String(first)[0].toLowerCase(),
@@ -110,11 +112,14 @@ export function injuryNotes(summary) {
   const plays = [...(summary?.drives?.previous || []), ...(summary?.drives?.current ? [summary.drives.current] : [])]
     .flatMap(d => d.plays || []).sort((a, b) => +a.sequenceNumber - +b.sequenceNumber);
   const out = {}, re = /\b([A-Z]{2,3})-([A-Za-z']+)\.\s?([A-Z][A-Za-z'-]*\.?(?: [A-Z][A-Za-z'-]*\.?){0,2}) (was injured during the play|has returned to the game|is out for the game|has been ruled out|will not return|is (?:questionable|doubtful|probable) to return)/g;
-  for (const p of plays) for (const m of String(p.text || '').matchAll(re)) out[injKey(m[1], m[2], m[3])] = /returned/.test(m[4]) ? 'back' : 'out';
+  for (const p of plays) for (const m of String(p.text || '').matchAll(re)) out[injKey(m[1], m[2], m[3])] = { s: /returned/.test(m[4]) ? 'back' : 'out', at: Date.parse(p.wallclock || p.modified) || 0 };
   return out;
 }
 const playerKey = (name, nfl) => { const w = String(name).split(' '); return injKey(nfl, w[0], w.slice(1).join(' ')); };
-export async function addLiveProj(wk, w, season, origin) {
+// leftGame: season.js live.leftGame, { 'Brock Bowers': '2026-11-15T16:05-06:00' }: players Matt reported leaving
+// their game before ESPN logged it (Nov 15, 2026). Each counts as out from that time unless ESPN logs a later
+// note saying he returned.
+export async function addLiveProj(wk, w, season, origin, leftGame = {}) {
   if (wk.status != 'midevent' || !wk.box) return;
   try {
     const sbUrl = `https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard?seasontype=2&week=${w}&dates=${season}`;
@@ -152,8 +157,10 @@ export async function addLiveProj(wk, w, season, origin) {
     // wk.hurt: players whose latest note says they left (counted at their points, "left game" on the sheet);
     // wk.back: players whose latest note says they returned (counted in full even if Yahoo tagged them O).
     const rows = Object.values(wk.box).flatMap(t => [...t.starters, ...t.bench]);
-    wk.hurt = rows.filter(r => notes[playerKey(r[1], r[2])] == 'out').map(r => r[1]);
-    wk.back = rows.filter(r => notes[playerKey(r[1], r[2])] == 'back').map(r => r[1]);
+    const stateOf = r => { const n = notes[playerKey(r[1], r[2])], man = Date.parse(leftGame?.[r[1]]);
+      return man && (!n || man >= n.at) ? 'out' : n?.s; };
+    wk.hurt = rows.filter(r => stateOf(r) == 'out').map(r => r[1]);
+    wk.back = rows.filter(r => stateOf(r) == 'back').map(r => r[1]);
     const hurt = new Set(wk.hurt), back = new Set(wk.back);
     if (!ros) return;
     if (ros.week != w) return;
@@ -243,7 +250,8 @@ export async function sync(origin) {
     if (wk.status == 'preevent' && +w != current) continue;
     wk.box = old?.box && old.status == 'postevent' && wk === old ? old.box : await boxScores(token, key, w, wk.teams);
   }
-  if (weeks[current]) await addLiveProj(weeks[current], current, meta.season, origin);
+  const sf = await loadSeasonFile(origin).catch(() => null);
+  if (weeks[current]) await addLiveProj(weeks[current], current, meta.season, origin, sf?.live?.leftGame);
   // Moves and FAAB never cost the scores: if Yahoo refuses them, the last good copy stays and the
   // error is saved with it.
   let managers = prev.managers || null, tx = prev.leagueKey == key ? prev.tx || [] : [], txError = null;

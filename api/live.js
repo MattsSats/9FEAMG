@@ -15,7 +15,8 @@ import { scoreboard, boxScores, addLiveProj, findLeague } from './yahoo/sync.js'
 import { loadSeasonFile } from './_parlays.js';
 import { isGameTime } from './_shared.js';
 
-const FRESH = 90e3, SEASON_FRESH = 10 * 60e3;
+// season.js is re-read every 2 minutes, so a live.leftGame report counts within a few minutes.
+const FRESH = 90e3, SEASON_FRESH = 2 * 60e3;
 let season = null, seasonAt = 0, auth = null, last = null;
 
 async function gameTime(origin) {
@@ -29,7 +30,7 @@ async function pull(origin) {
   const { out, league } = await scoreboard(token, key);
   const w = +league.current_week;
   if (out.status != 'preevent') out.box = await boxScores(token, key, w, out.teams);
-  await addLiveProj(out, w, league.season, origin);
+  await addLiveProj(out, w, league.season, origin, season?.live?.leftGame);
   return { syncedAt: new Date().toISOString(), leagueKey: key, currentWeek: w, weeks: { [w]: out } };
 }
 

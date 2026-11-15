@@ -101,6 +101,9 @@ window.SEASON = {
     // Players listed in inProgress are still playing; the rest are final.
     playerPoints: {},
     inProgress: [],
+    // Players Matt reported leaving their game before ESPN's play-by-play logged it (Yahoo name: when, Central).
+    // Counted at their points from then, unless ESPN later says they returned (addLiveProj in api/yahoo/sync.js).
+    leftGame: { 'Brock Bowers': '2026-11-15T16:04-06:00' },
     sheetNote: 'Week 10 projections as of Thu 7:01 PM CT. Each player is tagged Final, Live or proj.'
   },
 
