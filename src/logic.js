@@ -675,9 +675,13 @@ class Component extends DCLogic {
     const out = inj == 'O' || inj == 'IR' || inj == 'PUP', bye = onBye(p.nfl, wk);
     const playing = live && !bye && (ck ? ck.s == 'in' : PLAYING.has(p.name));
     const started = !live || (ck ? ck.s != 'pre' : p.pts != null);
-    const state = !live ? (p.pts == null ? 'none' : 'final') : bye ? 'bye' : playing ? (out ? 'hurt' : 'live') : started ? 'final' : 'pre';
+    // Left his game (Nov 15, 2026): ESPN's play-by-play says he was hurt and hasn't returned (LIVE.hurt), or
+    // Yahoo tags him O or IR mid-game and ESPN doesn't say he came back (LIVE.back). The server's on-pace
+    // counts him at his points only, the same rule (addLiveProj).
+    const left = playing && (LIVE?.hurt?.includes(p.name) || out && !LIVE?.back?.includes(p.name));
+    const state = !live ? (p.pts == null ? 'none' : 'final') : bye ? 'bye' : playing ? (left ? 'hurt' : 'live') : started ? 'final' : 'pre';
     const c = { name: p.name, last: lastName(p.name) || p.name, meta: (m ? m[1].toUpperCase() : String(p.nfl || '').toUpperCase()), empty: false,
-      inj: out ? 'OUT' : inj == 'Q' || inj == 'D' ? inj : '', injCls: out ? 'ls-out' : 'ls-q', sideCls: out && state != 'final' ? 'ls-hurtrow' : '', dot: state == 'live' || state == 'hurt', hasBar: false };
+      inj: out ? 'OUT' : inj == 'Q' || inj == 'D' ? inj : '', injCls: out ? 'ls-out' : 'ls-q', sideCls: out && state != 'final' && state != 'live' || state == 'hurt' ? 'ls-hurtrow' : '', dot: state == 'live' || state == 'hurt', hasBar: false };
     c.hasInj = !!c.inj;
     if (state == 'bye') return { ...c, meta: String(p.nfl || '').toUpperCase(), num: '0.00', numCls: 'bye', sub: 'bye', subCls: '' };
     if (state == 'pre') {
@@ -726,7 +730,7 @@ class Component extends DCLogic {
     // ("Booth pick: Matt"): a second % beside the odds read as a disagreement (Matt, Oct 31, 2026). The %
     // it was made at stays on the Booth line's tag.
     return { a: A, b: B, live, alerts: alerts.map(t => ({ t })), hasAlerts: alerts.length > 0, round: rd?.label || '', hasRound: !!rd,
-      hasPick: !!pk, pickText: pk ? `Booth pick: ${pk[0]}` + (done ? (winner == pk[0] ? ' ✓' : ' ✗') : '') : '',
+      hasPick: !!pk, pickText: pk ? pickChip(D, wk, pk[0], done || live && LIVE_STARTED) + (done ? (winner == pk[0] ? ' ✓' : ' ✗') : '') : '',
       pickColor: !pk || !done ? 'var(--accentInk)' : winner == pk[0] ? 'var(--pos)' : 'var(--neg)',
       // Column headers: Now (live only) and Proj, or Final once the week is done.
       colNow: live ? 'Now' : '', colScore: live ? 'Proj' : 'Final',
@@ -855,7 +859,11 @@ class Component extends DCLogic {
       .filter(([label, l]) => label != 'Post-SNF' || l.length);
     const boothSets = boothAll.filter(([, l]) => l.length);
     const boothSet = boothAll.find(([label]) => label == S.boothSet?.[wk]) || boothSets.at(-1) || boothAll[0];
-    const BOOTH_NOTE = { Preview: 'Written before Thursday’s kickoff. Numbers are from then.', 'Post-SNF': isFinal ? 'Written after Sunday night, before Monday night’s game.' : 'Written after Sunday night. Monday night is still to play.', Recap: 'Final.' };
+    // Previews rewritten after the week's first kickoff (Matt, Nov 15, 2026: Week 10, in the Booth's lighter
+    // voice) say so; their numbers and picks stay from before Thursday's kickoff.
+    const firstKick = Math.min(...(D.nfl?.[wk]?.games || []).map(g => kickoff(wk, g)?.getTime()).filter(Boolean));
+    const reAt = (D.boothPreview?.[wk] || []).map(l => Date.parse(l[2])).filter(t => t > firstKick).sort().at(-1);
+    const BOOTH_NOTE = { Preview: reAt ? `Rewritten ${new Date(reAt).toLocaleDateString('en-US', { timeZone: 'America/Chicago', weekday: 'short' })} after kickoff. Numbers and picks are from before Thursday’s kickoff.` : 'Written before Thursday’s kickoff. Numbers are from then.', 'Post-SNF': isFinal ? 'Written after Sunday night, before Monday night’s game.' : 'Written after Sunday night. Monday night is still to play.', Recap: 'Final.' };
     const written = (line, label) => {
       const at = line[2] || (label == 'Preview' && D.boothPreviewAt?.[wk] ? D.boothPreviewAt[wk] + 'T12:00:00-05:00' : null);
       if (!at) return '';

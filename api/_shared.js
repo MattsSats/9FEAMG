@@ -398,6 +398,14 @@ export const PUNDIT_OF = { picks: 'Jerger', ranks: 'Tristan' };
 export const boothPickRecord = season => pickRecord(season, season.boothPicks);
 // Jerger's preview picks ("the experts"): expertPicks[week] holds a name per matchup (Matt, Oct 20, 2026).
 export const expertPickRecord = season => pickRecord(season, season.expertPicks);
+// The Booth pick chip (Matt, Nov 15, 2026). Picks are made before Thursday's kickoff and never change,
+// so once games start the chip says which preview made it ("Thu preview pick: Tony"): next to live odds
+// that now favor the other side, a bare "Booth pick" read like a mistake. Before kickoff: "Booth pick: Tony".
+export function pickChip(season, wk, pick, started) {
+  if (!started) return `Booth pick: ${pick}`;
+  const d = season?.boothPreviewAt?.[wk], day = d ? new Date(d + 'T12:00:00Z').toLocaleDateString('en-US', { weekday: 'short', timeZone: 'UTC' }) : '';
+  return (day ? `${day} preview pick: ` : 'Preview pick: ') + pick;
+}
 export const oddsPct = (x, done) => done ? (x >= 0.5 ? 'In' : 'Out') : x >= 0.995 ? '>99%' : x < 0.005 ? '<1%' : Math.round(x * 100) + '%';
 // Power rankings through week n, 0–100: half season all-play win %, a quarter actual win %,
 // a quarter all-play win % over the last two weeks (form). Ties go to PF.
@@ -466,6 +474,8 @@ export function mergeYahoo(S, Y) {
       // shows a FLEX player's real position and a starter tagged Out mid-game.
       S.live = { status: 'Live', ...(same ? S.live : {}), sheetNote: 'Live from Yahoo. Each player is tagged Final, Live or proj.', week: live, playerPoints: pp, asOf: Y.syncedAt, ...(inProgress ? { inProgress } : {}),
         ...(Wk.clock ? { clock: Wk.clock } : {}), ...(Wk.box ? { box: Wk.box } : {}),
+        // Wk.hurt / Wk.back (addLiveProj, ESPN's play-by-play): players who left their game, and ones who returned.
+        ...(Wk.hurt ? { hurt: Wk.hurt, back: Wk.back || [] } : {}),
         scores: Object.fromEntries(inWeek(live).map(m => [m, [Wk.teams[m].pts, Wk.teams[m].live ?? Wk.teams[m].proj]])) };
     }
   } else if (S.live && Y.weeks[S.live.week]?.status == 'postevent' && full(S.live.week)) S.live = null;

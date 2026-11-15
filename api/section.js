@@ -10,7 +10,7 @@ import { loadSeason, escapeHtml, hash, anchorFor, describe, BOTS, goTo } from '.
 import { readJson, readData, dataOrigin } from './_yahoo.js';
 import { seasonStats, loadBox, powerRanks } from './_stats.js';
 import { loadTx, wireOf } from './_wire.js';
-import { lineupIssues, playoffOdds, oddsPct, raceText, matchupOdds, pointSources, liveRosters, faabOf, roastOf, playoffBracket, byStandings, paRankLabel } from './_shared.js';
+import { lineupIssues, playoffOdds, oddsPct, pickChip, raceText, matchupOdds, pointSources, liveRosters, faabOf, roastOf, playoffBracket, byStandings, paRankLabel } from './_shared.js';
 import { C, F, h, fonts, mgrColor } from './_ogkit.js';
 
 const CHARTS = { luck: 'Luck', xw: 'Expected wins', src: 'Where the points come from', bench: 'Points left on bench', pfpa: 'Points for vs against', ledger: 'Parlay ledger' };
@@ -233,7 +233,8 @@ function matchupOf(season, st, wk, aSlug, bSlug, rosters) {
     : lead ? (live ? `${lead.m} +${gap.toFixed(2)} proj` : `${lead.m} won by ${gap.toFixed(2)}`) : live ? 'Even on projection' : 'Tied';
   const pi = (season.schedule[wk] || []).findIndex(p => p.includes(A.m) && p.includes(B.m)), pk = season.boothPicks?.[wk]?.[pi];
   const winner = live || !lead ? null : lead.m;
-  const pick = !pk ? '' : `Booth pick: ${pk[0]}` + (!live ? (winner == pk[0] ? ' ✓' : ' ✗') : '');
+  const started = !live || Object.values(season.live?.scores || {}).some(s => s[0] > 0);
+  const pick = !pk ? '' : pickChip(season, wk, pk[0], started) + (!live ? (winner == pk[0] ? ' ✓' : ' ✗') : '');
   const pickColor = !pk || live ? C.accentInk : winner == pk[0] ? C.pos : C.neg;
   // A finished week shows its recap line; otherwise the preview, labelled with the day it was
   // written so its projections don't read as a mistake next to the live numbers.

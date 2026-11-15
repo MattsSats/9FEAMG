@@ -96,7 +96,24 @@ async function getJson(url) {
   }
 }
 // The last good copy of each, per server instance: a bad read falls back to it.
-const lastGood = { ros: null, sb: null };
+const lastGood = { ros: null, sb: null, inj: {} };
+// Players hurt mid-game (Matt, Nov 15, 2026), from ESPN's play-by-play for each game in progress: Yahoo
+// often tags a player Q or nothing for a while after he leaves. Each player's latest injury note wins:
+// "LV-B.Bowers was injured during the play." or "** Injury Update: ... is out for the game / will not
+// return / is questionable to return" means out; "... has returned to the game." means back.
+// Keys are 'LV|b|bowers' (team, first initial, last name); the answer is { key: 'out' | 'back' }.
+// ESPN's play text uses the league's own team codes for a few teams (ARZ, BLT, CLV, HST, LA).
+const PBP_TEAM = { WSH: 'WAS', ARZ: 'ARI', BLT: 'BAL', CLV: 'CLE', HST: 'HOU', LA: 'LAR' };
+const injKey = (team, first, last) => [(t => PBP_TEAM[t] || t)(String(team).toUpperCase()), String(first)[0].toLowerCase(),
+  String(last).toLowerCase().replace(/\b(jr|sr|ii|iii|iv|v)\b\.?/g, '').replace(/[^a-z]/g, '')].join('|');
+export function injuryNotes(summary) {
+  const plays = [...(summary?.drives?.previous || []), ...(summary?.drives?.current ? [summary.drives.current] : [])]
+    .flatMap(d => d.plays || []).sort((a, b) => +a.sequenceNumber - +b.sequenceNumber);
+  const out = {}, re = /\b([A-Z]{2,3})-([A-Za-z']+)\.\s?([A-Z][A-Za-z'-]*\.?(?: [A-Z][A-Za-z'-]*\.?){0,2}) (was injured during the play|has returned to the game|is out for the game|has been ruled out|will not return|is (?:questionable|doubtful|probable) to return)/g;
+  for (const p of plays) for (const m of String(p.text || '').matchAll(re)) out[injKey(m[1], m[2], m[3])] = /returned/.test(m[4]) ? 'back' : 'out';
+  return out;
+}
+const playerKey = (name, nfl) => { const w = String(name).split(' '); return injKey(nfl, w[0], w.slice(1).join(' ')); };
 export async function addLiveProj(wk, w, season, origin) {
   if (wk.status != 'midevent' || !wk.box) return;
   try {
@@ -123,6 +140,21 @@ export async function addLiveProj(wk, w, season, origin) {
     }
     left.WAS ??= left.WSH;
     wk.playing = playing; wk.started = started; wk.clock = clock;
+    // Mid-game injuries from ESPN's play-by-play, games in progress only (one summary each). A summary that
+    // can't be read keeps that game's last good notes.
+    const liveIds = (sb.events || []).filter(e => e.status?.type?.state == 'in').map(e => e.id);
+    const notes = {};
+    await Promise.all(liveIds.map(async id => {
+      const s = await getJson(`https://site.api.espn.com/apis/site/v2/sports/football/nfl/summary?event=${id}`);
+      if (s?.drives) lastGood.inj[id] = injuryNotes(s);
+      Object.assign(notes, lastGood.inj[id] || {});
+    }));
+    // wk.hurt: players whose latest note says they left (counted at their points, "left game" on the sheet);
+    // wk.back: players whose latest note says they returned (counted in full even if Yahoo tagged them O).
+    const rows = Object.values(wk.box).flatMap(t => [...t.starters, ...t.bench]);
+    wk.hurt = rows.filter(r => notes[playerKey(r[1], r[2])] == 'out').map(r => r[1]);
+    wk.back = rows.filter(r => notes[playerKey(r[1], r[2])] == 'back').map(r => r[1]);
+    const hurt = new Set(wk.hurt), back = new Set(wk.back);
     if (!ros) return;
     if (ros.week != w) return;
     for (const m of Object.keys(wk.teams)) {
@@ -130,7 +162,9 @@ export async function addLiveProj(wk, w, season, origin) {
       if (!starters.length) continue;
       let total = 0, known = true;
       for (const [, name, nfl, pos, pts, , inj] of starters) {
-        const p = players.find(x => x.name == name), share = left[String(nfl).toUpperCase()] ?? 1, out = inj == 'O' || inj == 'IR';
+        // Out: hurt mid-game per ESPN, or tagged O or IR by Yahoo unless ESPN says he returned. Counted at his points.
+        const p = players.find(x => x.name == name), share = left[String(nfl).toUpperCase()] ?? 1;
+        const out = share > 0 && share < 1 && hurt.has(name) || (inj == 'O' || inj == 'IR') && !back.has(name);
         // A starter still to play with no Yahoo projection yet (a new add, Nov 8, 2026) counts at ESPN's;
         // with neither, the team keeps Yahoo's own projection rather than counting him at 0.
         const proj = p?.proj > 0 ? p.proj : p?.espn > 0 ? p.espn : null;

@@ -330,14 +330,15 @@ window.SEASON = {
     ]
   },
   boothPreview: {
-    // Week 10: written by Claude at Matt's request (Thu Nov 12, before TNF) from Yahoo's Thu 7:01 PM
-    // projections and check.js's win odds.
+    // Week 10: rewritten by Claude at Matt's request (Sun Nov 15, during the late games) in the Booth's
+    // lighter voice. Numbers are Yahoo's Thu 7:01 PM projections and records through Week 9; no results.
+    // The picks in boothPicks[10] are unchanged (made Thursday before kickoff).
     10: [
-      ['Pablo', 'Pablo outbid Matt for the Rams, then started a tight end at FLEX with Puka on IR. Projected 110.46–90.55, Matt. Winning the waiver wire isn’t winning the week.', '2026-11-12T19:05-06:00'],
-      ['Tristan', 'Tristan traded for Henry and Tate after three straight weeks under 92, then started three Questionables. Projected 114.12–106.70, Tristan; the pick is Kurt at 55%. Panic isn’t a plan.', '2026-11-12T19:05-06:00'],
-      ['Andy', 'Andy is 6–3 and projected 116.33 to the reigning champ’s 113.50. Andy left a season-high 55.60 on the bench in Week 8. Jerger’s toughest opponent is Andy’s bench.', '2026-11-12T19:05-06:00'],
-      ['Tony', 'Tony clinches a playoff spot with a win and is projected 118.98–117.67 over Colin. Tony is 8–1 on 6.44 expected wins. The luck has one more week to hold.', '2026-11-12T19:05-06:00'],
-      ['DLin', 'The race for last: Mr. G is 43% and DLin 42% to finish the regular season at the bottom. Projected 111.47–105.90, Mr. G. DLin’s team name is turning into a scouting report.', '2026-11-12T19:05-06:00']
+      ['Pablo', 'Matt is projected 110.46–90.55, the widest gap of the week. Pablo went with a tight end at FLEX and Puka on IR. He was #1, and the past tense is putting in overtime.', '2026-11-15T15:47-06:00'],
+      ['Kurt', 'Tristan is projected 114.12–106.70 but went into Thursday with three starters tagged Q. Kurt is 3–6 with the league’s second-worst luck, and the Booth thinks that turns here.', '2026-11-15T15:47-06:00'],
+      ['Jerger', 'The reigning champ draws second place: Andy is 6–3 and projected 116.33–113.50 over Jerger. Belts don’t defend themselves, and the Booth leans Andy.', '2026-11-15T15:47-06:00'],
+      ['Tony', 'Tony clinches a playoff spot with a win, and the projections call it 118.98–117.67, the closest game of the week. Colin gets a coin flip and the spoiler role.', '2026-11-15T15:47-06:00'],
+      ['Mr. G', 'Mr. G and DLin have five wins between them, and the projections favor Mr. G 111.47–105.90. The basement has a door, and one of them finds it this week.', '2026-11-15T15:47-06:00']
     ],
     // Week 9: written by Claude at Matt's request (Wed Nov 4, before TNF) from Yahoo's Wed 3:49 PM
     // projections and check.js's win odds, graded by a reviewer and revised.
