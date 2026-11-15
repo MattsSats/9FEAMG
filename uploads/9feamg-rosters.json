@@ -1,5 +1,5 @@
 {
-  "asOf": "2026-11-15T15:50:07.050Z",
+  "asOf": "2026-11-15T17:08:21.903Z",
   "source": "Signed-in Yahoo Fantasy league 935526 team roster pages (full reconcile)",
   "week": 10,
   "baseline": "yahoo-live",
@@ -140,43 +140,13 @@
       "yahooUrlId": "1",
       "players": [
         {
-          "name": "Patrick Mahomes",
-          "pos": "QB",
-          "slot": "starter",
-          "nfl": "KC",
-          "proj": 18.81,
-          "espn": 18.55
-        },
-        {
-          "name": "Bijan Robinson",
-          "pos": "RB",
-          "slot": "starter",
-          "nfl": "Atl",
-          "proj": 19.23,
-          "espn": 16.77
-        },
-        {
-          "name": "Emmett Johnson",
-          "nfl": "KC",
-          "slot": "starter",
-          "pos": "RB",
-          "espn": 15.03
-        },
-        {
           "name": "A.J. Brown",
           "pos": "WR",
           "slot": "starter",
           "nfl": "NE",
           "proj": 10.28,
+          "inj": "Q",
           "espn": 10.7
-        },
-        {
-          "name": "Caleb Douglas",
-          "pos": "WR",
-          "slot": "starter",
-          "nfl": "Mia",
-          "proj": 7.99,
-          "espn": 7.07
         },
         {
           "name": "Sam LaPorta",
@@ -187,26 +157,50 @@
           "espn": 9.22
         },
         {
-          "name": "Derrick Henry",
-          "pos": "WRT",
-          "slot": "starter",
-          "nfl": "Bal",
-          "proj": 16.19,
-          "espn": 17.56
-        },
-        {
-          "name": "Evan McPherson",
-          "pos": "K",
-          "slot": "starter",
-          "nfl": "Cin",
-          "proj": 8.8
-        },
-        {
           "name": "Bills",
           "pos": "DEF",
           "slot": "starter",
           "nfl": "Buf",
           "proj": 6.81
+        },
+        {
+          "name": "Derrick Henry",
+          "pos": "RB",
+          "slot": "bench",
+          "nfl": "Bal",
+          "proj": 16.19,
+          "espn": 17.56
+        },
+        {
+          "name": "Caleb Douglas",
+          "pos": "WR",
+          "slot": "bench",
+          "nfl": "Mia",
+          "proj": 7.99,
+          "espn": 7.07
+        },
+        {
+          "name": "Emmett Johnson",
+          "nfl": "KC",
+          "slot": "bench",
+          "pos": "RB",
+          "espn": 15.03
+        },
+        {
+          "name": "Bijan Robinson",
+          "pos": "RB",
+          "slot": "bench",
+          "nfl": "Atl",
+          "proj": 19.23,
+          "espn": 16.77
+        },
+        {
+          "name": "Patrick Mahomes",
+          "pos": "QB",
+          "slot": "bench",
+          "nfl": "KC",
+          "proj": 18.81,
+          "espn": 18.55
         },
         {
           "name": "Bhayshul Tuten",
@@ -266,6 +260,13 @@
           "proj": 0,
           "inj": "O",
           "espn": 0
+        },
+        {
+          "name": "Evan McPherson",
+          "pos": "K",
+          "slot": "bench",
+          "nfl": "Cin",
+          "proj": 8.8
         },
         {
           "name": "Buccaneers",
@@ -360,7 +361,6 @@
           "slot": "bench",
           "nfl": "Cle",
           "proj": 9.5,
-          "inj": "Q",
           "espn": 10.8
         },
         {
@@ -393,7 +393,6 @@
           "slot": "bench",
           "nfl": "NO",
           "proj": 0,
-          "inj": "Q",
           "espn": 9.36
         },
         {
@@ -1055,7 +1054,6 @@
           "slot": "bench",
           "nfl": "NYJ",
           "proj": 11.46,
-          "inj": "Q",
           "espn": 10.24
         },
         {
@@ -1283,13 +1281,11 @@
           "espn": 7.68
         },
         {
-          "name": "Jordan Addison",
-          "pos": "WRT",
+          "name": "Deebo Samuel Sr.",
+          "nfl": "SF",
           "slot": "starter",
-          "nfl": "Min",
-          "proj": 8.64,
-          "inj": "Q",
-          "espn": 9.44
+          "pos": "WRT",
+          "espn": 10.04
         },
         {
           "name": "Cam Little",
@@ -1304,15 +1300,6 @@
           "slot": "starter",
           "nfl": "Ind",
           "proj": 7.46
-        },
-        {
-          "name": "Kenneth Walker III",
-          "pos": "RB",
-          "slot": "bench",
-          "nfl": "KC",
-          "proj": 19.62,
-          "inj": "O",
-          "espn": 0
         },
         {
           "name": "Saquon Barkley",
@@ -1336,6 +1323,15 @@
           "slot": "bench",
           "nfl": "TB",
           "proj": 0,
+          "espn": 0
+        },
+        {
+          "name": "Kenneth Walker III",
+          "pos": "RB",
+          "slot": "IR",
+          "nfl": "KC",
+          "proj": 19.62,
+          "inj": "O",
           "espn": 0
         },
         {
@@ -2131,7 +2127,7 @@
   ],
   "espn": {
     "week": 10,
-    "asOf": "2026-11-15T15:50:59.194Z",
+    "asOf": "2026-11-15T17:09:27.119Z",
     "source": "ESPN fantasy projections, half-PPR (average of ESPN standard and PPR)"
   }
 }

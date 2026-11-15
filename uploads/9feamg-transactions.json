@@ -1,5 +1,29 @@
 [
   {
+    "when": "Nov 15, 10:55 am",
+    "yahooTeam": "Average Sports Enthusiast",
+    "manager": "Kurt",
+    "action": "add",
+    "player": "Deebo Samuel Sr.",
+    "nfl": "SF",
+    "pos": "WR",
+    "faab": null,
+    "via": "Free Agency",
+    "notes": "Yahoo API Sun, Nov 15, 11:08 AM CT"
+  },
+  {
+    "when": "Nov 15, 10:55 am",
+    "yahooTeam": "Average Sports Enthusiast",
+    "manager": "Kurt",
+    "action": "drop",
+    "player": "Jordan Addison",
+    "nfl": "Min",
+    "pos": "WR",
+    "faab": null,
+    "via": "Waivers",
+    "notes": "Yahoo API Sun, Nov 15, 11:08 AM CT"
+  },
+  {
     "when": "Nov 15, 9:18 am",
     "yahooTeam": "Average Sports Enthusiast",
     "manager": "Kurt",
