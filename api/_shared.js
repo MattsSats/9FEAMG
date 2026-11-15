@@ -398,14 +398,10 @@ export const PUNDIT_OF = { picks: 'Jerger', ranks: 'Tristan' };
 export const boothPickRecord = season => pickRecord(season, season.boothPicks);
 // Jerger's preview picks ("the experts"): expertPicks[week] holds a name per matchup (Matt, Oct 20, 2026).
 export const expertPickRecord = season => pickRecord(season, season.expertPicks);
-// The Booth pick chip (Matt, Nov 15, 2026). Picks are made before Thursday's kickoff and never change,
-// so once games start the chip says which preview made it ("Thu preview pick: Tony"): next to live odds
-// that now favor the other side, a bare "Booth pick" read like a mistake. Before kickoff: "Booth pick: Tony".
-export function pickChip(season, wk, pick, started) {
-  if (!started) return `Booth pick: ${pick}`;
-  const d = season?.boothPreviewAt?.[wk], day = d ? new Date(d + 'T12:00:00Z').toLocaleDateString('en-US', { weekday: 'short', timeZone: 'UTC' }) : '';
-  return (day ? `${day} preview pick: ` : 'Preview pick: ') + pick;
-}
+// The Booth's pick, one label everywhere (Matt, Nov 15, 2026): "Preview pick: Tony" on the cards and link
+// previews, "Preview pick: Tony 54%" on the Booth's line. Picks are made with the preview, before the week's
+// first kickoff, and never change, so next to live odds that favor the other side it reads as that call.
+export const pickChip = (season, wk, pick) => `Preview pick: ${pick}`;
 export const oddsPct = (x, done) => done ? (x >= 0.5 ? 'In' : 'Out') : x >= 0.995 ? '>99%' : x < 0.005 ? '<1%' : Math.round(x * 100) + '%';
 // Power rankings through week n, 0–100: half season all-play win %, a quarter actual win %,
 // a quarter all-play win % over the last two weeks (form). Ties go to PF.

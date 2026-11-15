@@ -366,6 +366,13 @@ button{font-family:inherit;color:inherit}
    OUT tags, and the faint red behind a player who's out. Light first, dark below. */
 :root{--pQB:#F6DCD5;--pRB:#D9EEDD;--pWR:#DBE6F6;--pTE:#F6E6CC;--pK:#E9DFF3;--pDEF:#E6E2D8;--pInk:#3A3730;--amber:#8A5300;--amberBg:#FBE8C2;--outBg:#FBECEC;--outInk:#A81F37;--outTag:#F8D4DA;--live:#25784A}
 :root[data-theme="dark"]{--pQB:#4A2C26;--pRB:#24402C;--pWR:#26364C;--pTE:#4A3B22;--pK:#3A2F4A;--pDEF:#36332C;--pInk:#ECE7DE;--amber:#F2BE5C;--amberBg:#4A3714;--outBg:#2E1C1E;--outInk:#F2667A;--outTag:#55222B;--live:#72C690}
+/* Draft board (Nov 15, 2026): 10 team columns, 15 rounds; phones scroll it sideways. */
+.draft-board{display:grid;grid-template-columns:22px repeat(10,minmax(84px,1fr));gap:3px;min-width:900px}
+.db-head{display:flex;flex-direction:column;align-items:center;gap:3px;padding-bottom:4px;font-size:11px;font-weight:600;text-align:center}
+.db-r{font-family:'JetBrains Mono';font-size:10px;color:var(--muted);align-self:center;text-align:center}
+.db-cell{min-width:0;padding:5px 6px;border-radius:6px;color:var(--pInk)}
+.db-n{font-size:12px;font-weight:600;line-height:1.15;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.db-m{font-family:'JetBrains Mono';font-size:9.5px;opacity:.75;margin-top:1px;white-space:nowrap}
 .ls-head{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px;margin-top:10px}
 .ls-hb{text-align:right}
 .ls-hn{display:flex;align-items:center;gap:6px;font-weight:700;font-size:15px}
@@ -572,7 +579,8 @@ button{font-family:inherit;color:inherit}
 @media (min-width:900px){
   .wire-cols{display:grid;grid-template-columns:minmax(0,3fr) minmax(0,2fr)}
   .cols.two.wire-cols{grid-template-columns:minmax(0,3fr) minmax(0,2fr)}
-  .wire-cols>.wire-side{order:0;position:sticky;top:64px}
+  .wire-cols>.wire-side{order:0}
+  .stick{position:sticky;top:64px;align-self:start}
   .team-tiles{grid-template-columns:repeat(4,minmax(0,1fr))!important}
 }
 /* Collapsed parlays still show every leg in a shared image. */
@@ -698,7 +706,7 @@ button{font-family:inherit;color:inherit}
   <sc-if value="{{ hasJumps }}" hint-placeholder-val="{{ true }}">
     <nav class="jumps" aria-label="On this page" style="display:flex;gap:6px;margin-top:12px">
       <sc-for list="{{ jumps }}" as="j" hint-placeholder-count="3">
-        <button sc-camel-on-click="{{ j.go }}" class="hov" style="min-height:32px;padding:0 12px;border:1px solid var(--line);border-radius:999px;background:transparent;color:var(--ink);font-size:13px;font-weight:600;cursor:pointer">{{ j.label }}</button>
+        <button sc-camel-on-click="{{ j.go }}" aria-disabled="{{ j.dis }}" class="hov" style="min-height:32px;padding:0 12px;border:1px solid var(--line);border-radius:999px;background:transparent;color:var(--ink);font-size:13px;font-weight:600;cursor:pointer;opacity:{{ j.op }}">{{ j.label }}</button>
       </sc-for>
     </nav>
   </sc-if>
@@ -706,7 +714,7 @@ button{font-family:inherit;color:inherit}
 <!-- Week buttons stay pinned under the header while Gameday scrolls. -->
 <div data-weekchips="" class="scroll-x wk" style="position:sticky;top:var(--hdrLive,var(--hdrH));z-index:19;background:var(--bg);display:flex;gap:6px;margin-top:8px;padding:10px 20px">
   <sc-for list="{{ weekChips }}" as="w" hint-placeholder-count="5">
-    <button sc-camel-on-click="{{ w.pick }}" data-on="{{ w.on }}" class="wchip" style="flex:1 0 48px;min-height:48px;border-radius:10px;border:1px solid {{ w.border }};background:{{ w.bg }};color:{{ w.fg }};cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:4px 0">
+    <button sc-camel-on-click="{{ w.pick }}" aria-label="{{ w.aria }}" aria-pressed="{{ w.cur }}" data-on="{{ w.on }}" class="wchip" style="flex:1 0 48px;min-height:48px;border-radius:10px;border:1px solid {{ w.border }};background:{{ w.bg }};color:{{ w.fg }};cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:4px 0">
       <span style="font-family:'Big Shoulders Display';font-weight:800;font-size:20px;line-height:1">{{ w.label }}</span>
       <span class="wsub" style="font-family:'JetBrains Mono';font-size:11px;letter-spacing:.1em;font-weight:600;opacity:.85;display:flex;align-items:center;gap:3px"><sc-if value="{{ w.live }}" hint-placeholder-val="{{ false }}"><svg class="hi play" style="--hi-a:currentColor" width="11" height="11" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle class="a-rip" cx="24" cy="24" r="11" style="stroke:var(--hi-a)"></circle><circle class="a-rip a-rip2" cx="24" cy="24" r="11" style="stroke:var(--hi-a)"></circle><circle class="a-rip a-rip3" cx="24" cy="24" r="11" style="stroke:var(--hi-a)"></circle><circle class="a-dot" cx="24" cy="24" r="6" stroke="none" style="fill:var(--hi-a)"></circle></svg></sc-if>{{ w.sub }}</span>
     </button>
@@ -757,9 +765,10 @@ button{font-family:inherit;color:inherit}
 <sc-if value="{{ hasUpcoming }}" hint-placeholder-val="{{ false }}">
   <div style="padding:8px 20px 0">
     <div style="font-size:14px;color:var(--muted);text-wrap:pretty">{{ upNote }}</div>
-    <div style="display:flex;flex-direction:column;gap:12px;margin-top:14px">
+    <!-- Next week's matchups fill the width in rows of equal-height cards (Matt, Nov 15, 2026), not one long column. -->
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr));gap:12px;margin-top:14px;align-items:stretch">
       <sc-for list="{{ upcoming }}" as="u" hint-placeholder-count="5">
-        <div style="background:var(--surface);border:1px solid var(--line);border-radius:16px;overflow:hidden">
+        <div style="background:var(--surface);border:1px solid var(--line);border-radius:16px;overflow:hidden;display:flex;flex-direction:column">
           <sc-if value="{{ u.mine }}" hint-placeholder-val="{{ false }}"><div style="padding:14px 16px 0;font-family:'JetBrains Mono';font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--accentInk)">Your matchup</div></sc-if>
           <div style="display:grid;grid-template-columns:32px minmax(0,1fr);column-gap:12px;row-gap:8px;align-items:center;padding:12px 16px 14px">
             <div class="crest" style="width:32px;height:32px;background:{{ u.a.color }};color:var(--onAccent);display:flex;align-items:center;justify-content:center;font-family:'Big Shoulders Display';font-weight:800;font-size:13px;flex:none"><span class="ini" data-i="{{ u.a.init }}">{{ u.a.init }}</span></div>
@@ -767,7 +776,7 @@ button{font-family:inherit;color:inherit}
             <div class="crest" style="width:32px;height:32px;background:{{ u.b.color }};color:var(--onAccent);display:flex;align-items:center;justify-content:center;font-family:'Big Shoulders Display';font-weight:800;font-size:13px;flex:none"><span class="ini" data-i="{{ u.b.init }}">{{ u.b.init }}</span></div>
             <div style="min-width:0"><div style="font-weight:600;font-size:15px">{{ u.b.m }}</div><div style="font-family:'JetBrains Mono';font-size:11px;color:var(--muted);margin-top:2px">{{ u.b.info }}</div></div>
           </div>
-          <div style="padding:11px 16px;border-top:1px solid var(--line);font-family:'JetBrains Mono';font-size:11px;color:var(--muted)">{{ u.meet }}</div>
+          <div style="margin-top:auto;padding:11px 16px;border-top:1px solid var(--line);font-family:'JetBrains Mono';font-size:11px;color:var(--muted)">{{ u.meet }}</div>
         </div>
       </sc-for>
     </div>
@@ -783,7 +792,7 @@ button{font-family:inherit;color:inherit}
 
 <sc-if value="{{ hasWeek }}" hint-placeholder-val="{{ true }}">
 <div class="cols gd-cols">
-<div id="matchups" class="jump-to">
+<div id="matchups" class="jump-to stick">
   <div data-shot="hero" sc-camel-on-click="{{ hero.open }}" tabindex="0" role="button" style="margin:16px 20px 0;background:var(--surface);border:1px solid var(--line);border-radius:20px;overflow:hidden;cursor:pointer">
     <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;padding:14px 16px 0;min-height:46px">
       <span style="display:flex;align-items:baseline;gap:8px;min-width:0"><span style="font-family:'JetBrains Mono';font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--accentInk);font-weight:600">{{ heroLabel }}</span></span>
@@ -841,16 +850,16 @@ button{font-family:inherit;color:inherit}
     </div>
     <!-- How the odds work (Matt, Oct 29, 2026): the live week's Odds and Booth chips, explained. -->
     <sc-if value="{{ hasOddsHelp }}" hint-placeholder-val="{{ false }}"><div class="no-shot" style="padding:6px 2px 0;font-size:12.5px;color:var(--muted)">
-      <button sc-camel-on-click="{{ oddsHow }}" aria-expanded="{{ oddsHelp }}" style="min-height:32px;padding:0;border:0;background:transparent;font:inherit;color:var(--accentInk);text-decoration:underline;cursor:pointer">{{ oddsHelpLabel }}</button>
-      <sc-if value="{{ oddsHelp }}" hint-placeholder-val="{{ false }}"><div style="margin-top:4px;padding:10px 12px;border-radius:10px;background:var(--surface2);font-size:13px;line-height:1.45;color:var(--ink);text-wrap:pretty">
+      <button type="button" sc-camel-on-click="{{ oddsHow }}" aria-expanded="{{ oddsHelp }}" aria-controls="odds-help" class="hov" style="min-height:32px;padding:0 12px;border:1px solid var(--line);border-radius:999px;background:transparent;font:inherit;font-weight:600;color:var(--accentInk);cursor:pointer">{{ oddsHelpLabel }}</button>
+      <sc-if value="{{ oddsHelp }}" hint-placeholder-val="{{ false }}"><div id="odds-help" role="region" aria-label="How the odds work" style="margin-top:6px;padding:10px 12px;border-radius:10px;background:var(--surface2);font-size:13px;line-height:1.45;color:var(--ink);text-wrap:pretty">
         <p style="margin:0 0 8px"><b>Odds</b> are each side’s chance to win right now. They start from Yahoo’s and ESPN’s projections averaged, then adjust: a Q starter counts at 85% of his projection, a D at 35%, and an empty slot or a starter on bye counts as the best bench player who could fill it, since managers set their lineups. How much weekly scores swing in this league sets how sure the odds are, and they firm up as games finish. A 10-point projected edge before kickoff is about 60%.</p>
-        <p style="margin:0"><b>Booth pick</b> is who the Booth picked before Thursday’s kickoff; the odds it was made at are on the Booth’s line. It doesn’t change after that, so once games start it reads “Thu preview pick” and can differ from the live odds. After the week it shows ✓ or ✗, and the season record is under the Booth.</p>
+        <p style="margin:0"><b>Preview pick</b> is who the Booth picked in its preview, before the week’s first kickoff; the odds it was made at are on the Booth’s line. It doesn’t change after that, so it can differ from the live odds. After the week it shows ✓ or ✗, and the season record is under the Booth.</p>
       </div></sc-if>
     </div></sc-if>
   </div>
 </div>
 
-<div class="gd-booth">
+<div class="gd-booth stick">
   <sc-if value="{{ hasBooth }}" hint-placeholder-val="{{ true }}">
     <div id="booth" class="jump-to" data-shot="booth" style="padding:28px 20px 0;background:var(--bg)">
       <div style="display:flex;align-items:baseline;justify-content:space-between">
@@ -892,6 +901,7 @@ button{font-family:inherit;color:inherit}
             <div style="background:var(--surface2);border-radius:12px;padding:10px 12px"><div style="font-family:'JetBrains Mono';font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)">The Booth</div><div style="font-family:'Big Shoulders Display';font-weight:900;font-size:30px;line-height:1.05">{{ pundits.booth }}</div></div>
             <div style="background:var(--surface2);border-radius:12px;padding:10px 12px"><div style="font-family:'JetBrains Mono';font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)">Jerger’s experts</div><div style="font-family:'Big Shoulders Display';font-weight:900;font-size:30px;line-height:1.05">{{ pundits.experts }}</div></div>
           </div>
+          <div style="font-family:'JetBrains Mono';font-size:11px;color:var(--muted);margin-top:6px;text-wrap:pretty">{{ pundits.recNote }}</div>
           <sc-if value="{{ pundits.hasEdit }}" hint-placeholder-val="{{ false }}">
             <div style="margin-top:10px;border:1.5px dashed var(--line);border-radius:14px;padding:12px">
               <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap"><b style="font-size:15px">{{ pundits.edit.title }}</b><span style="font-family:'JetBrains Mono';font-size:11px;color:var(--muted)">{{ pundits.edit.lock }}</span></div>
@@ -927,7 +937,7 @@ button{font-family:inherit;color:inherit}
   </sc-if>
 </div>
 
-<div id="parlays" class="col-wide jump-to">
+<div id="parlays" class="col-wide jump-to stick">
   <!-- Parlay requests (live week): who's asking, risk slider, legs, optional players or game. -->
   <sc-if value="{{ hasReq }}" hint-placeholder-val="{{ false }}">
     <div class="col-head" style="padding:28px 20px 0">
@@ -979,8 +989,9 @@ button{font-family:inherit;color:inherit}
             <sc-for list="{{ reqForm.suggest }}" as="pl" hint-placeholder-count="2">
               <button sc-camel-on-click="{{ pl.pick }}" aria-pressed="{{ pl.pressed }}" aria-label="{{ pl.name }}" title="{{ pl.name }}" style="min-width:0;min-height:36px;padding:0 8px;border:1px solid {{ pl.border }};border-radius:999px;background:{{ pl.bg }};color:{{ pl.fg }};font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer">{{ pl.short }}</button>
             </sc-for>
-            <button sc-camel-on-click="{{ reqForm.team.toggle }}" aria-expanded="{{ reqForm.team.open }}" style="min-width:0;min-height:36px;padding:0 8px;border:1px solid {{ reqForm.team.border }};border-radius:999px;background:{{ reqForm.team.bg }};color:{{ reqForm.team.fg }};font-size:13px;font-weight:600;white-space:nowrap;cursor:pointer">{{ reqForm.team.label }}</button>
+            <sc-if value="{{ reqForm.hasMore }}" hint-placeholder-val="{{ true }}"><button sc-camel-on-click="{{ reqForm.team.toggle }}" aria-expanded="{{ reqForm.team.open }}" style="min-width:0;min-height:36px;padding:0 8px;border:1px solid {{ reqForm.team.border }};border-radius:999px;background:{{ reqForm.team.bg }};color:{{ reqForm.team.fg }};font-size:13px;font-weight:600;white-space:nowrap;cursor:pointer">{{ reqForm.team.label }}</button></sc-if>
           </div>
+          <sc-if value="{{ reqForm.noPlayers }}" hint-placeholder-val="{{ false }}"><div style="font-size:13px;color:var(--muted);margin-top:8px">Every one of your starters has kicked off, so there’s nobody left to add this week. Use “Add a leg?” below for anyone else.</div></sc-if>
           <sc-if value="{{ reqForm.teamOpen }}" hint-placeholder-val="{{ false }}">
           <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;padding-top:8px;border-top:1px dashed var(--line)">
             <sc-for list="{{ reqForm.players }}" as="pl" hint-placeholder-count="7">
@@ -1188,18 +1199,32 @@ button{font-family:inherit;color:inherit}
         <sc-if value="{{ hasLedgerRows }}" hint-placeholder-val="{{ true }}">
           <div style="margin-top:12px">
             <sc-for list="{{ ledgerOwners }}" as="lo" hint-placeholder-count="3">
-              <div class="shot-tight" style="display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:12px;align-items:center;padding:10px 0;border-top:1px solid var(--line)">
+              <div class="shot-tight hov" role="button" tabindex="0" aria-expanded="{{ lo.exp }}" sc-camel-on-click="{{ lo.toggle }}" style="display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:12px;align-items:center;padding:10px 0;border-top:1px solid var(--line);cursor:pointer">
                 <span style="display:inline-flex;align-items:center;gap:10px;min-width:0;font-size:15px;font-weight:600"><span class="crest" style="width:26px;height:26px;background:{{ lo.color }};color:var(--onAccent);display:flex;align-items:center;justify-content:center;font-family:'Big Shoulders Display';font-weight:800;font-size:11px;flex:none"><span class="ini" data-i="{{ lo.init }}">{{ lo.init }}</span></span><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ lo.m }}</span></span>
                 <span style="font-family:'JetBrains Mono';font-size:12px;color:var(--muted);text-align:right"><b style="color:var(--ink);font-weight:600">{{ lo.rec }}</b> {{ lo.open }}</span>
                 <span style="font-family:'JetBrains Mono';font-size:13px;font-weight:700;min-width:64px;text-align:right;color:{{ lo.netColor }}">{{ lo.net }}</span>
               </div>
+              <sc-if value="{{ lo.isOpen }}" hint-placeholder-val="{{ false }}">
+                <div class="no-shot" style="padding:0 0 10px 36px">
+                  <sc-for list="{{ lo.tix }}" as="tk" hint-placeholder-count="3">
+                    <a href="{{ tk.href }}" style="display:grid;grid-template-columns:30px minmax(0,1fr) auto;gap:8px;align-items:baseline;padding:5px 0;text-decoration:none;color:var(--ink);font-size:13px"><span style="font-family:'JetBrains Mono';font-size:11px;color:var(--muted)">{{ tk.wk }}</span><span style="min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ tk.title }}</span><span style="font-family:'JetBrains Mono';font-size:11px;font-weight:600;color:{{ tk.resColor }}">{{ tk.res }}</span></a>
+                  </sc-for>
+                </div>
+              </sc-if>
             </sc-for>
           </div>
         </sc-if>
         <sc-if value="{{ hasPaper }}" hint-placeholder-val="{{ true }}">
-          <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:4px;padding:10px 0 14px;border-top:1px dashed var(--line);font-family:'JetBrains Mono';font-size:11px;color:var(--muted)">
+          <div class="hov" role="button" tabindex="0" aria-expanded="{{ paperExp }}" sc-camel-on-click="{{ togglePaper }}" style="display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:4px;padding:10px 0 14px;border-top:1px dashed var(--line);font-family:'JetBrains Mono';font-size:11px;color:var(--muted);cursor:pointer">
             <span>PAPER · NOBODY BET THESE</span><span>{{ paperLine }}</span>
           </div>
+          <sc-if value="{{ paperOpen }}" hint-placeholder-val="{{ false }}">
+            <div class="no-shot" style="padding:0 0 12px">
+              <sc-for list="{{ paperTix }}" as="tk" hint-placeholder-count="3">
+                <a href="{{ tk.href }}" style="display:grid;grid-template-columns:30px minmax(0,1fr) auto;gap:8px;align-items:baseline;padding:5px 0;text-decoration:none;color:var(--ink);font-size:13px"><span style="font-family:'JetBrains Mono';font-size:11px;color:var(--muted)">{{ tk.wk }}</span><span style="min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ tk.title }}</span><span style="font-family:'JetBrains Mono';font-size:11px;font-weight:600;color:{{ tk.resColor }}">{{ tk.res }}</span></a>
+              </sc-for>
+            </div>
+          </sc-if>
         </sc-if>
         <sc-if value="{{ hasLatestTaps }}" hint-placeholder-val="{{ false }}">
           <div class="no-shot" style="padding:10px 0 14px;border-top:1px solid var(--line)">
@@ -1228,6 +1253,11 @@ button{font-family:inherit;color:inherit}
   <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:48px;line-height:.9;text-transform:uppercase">Season</div>
   <div style="font-family:'JetBrains Mono';font-size:11px;color:var(--muted);margin-top:10px">{{ seasonSub }}</div>
   <button class="share-btn" sc-camel-on-click="{{ openAwards }}" style="margin-top:12px">Season awards ›</button>
+  <nav class="jumps" aria-label="On this page" style="display:flex;flex-wrap:wrap;gap:6px;margin-top:12px">
+    <sc-for list="{{ seasonJumps }}" as="j" hint-placeholder-count="5">
+      <button sc-camel-on-click="{{ j.go }}" class="hov" style="min-height:32px;padding:0 12px;border:1px solid var(--line);border-radius:999px;background:transparent;color:var(--ink);font-size:13px;font-weight:600;cursor:pointer">{{ j.label }}</button>
+    </sc-for>
+  </nav>
 </div>
 <div class="tiles" style="display:grid;gap:10px;padding:18px 20px 0">
   <sc-for list="{{ seasonTiles }}" as="t" hint-placeholder-count="4">
@@ -1241,7 +1271,7 @@ button{font-family:inherit;color:inherit}
 
 <div class="cols season-grid">
 <div class="sg-c1">
-<div data-shot="standings" class="sg-st" style="padding:30px 20px 0">
+<div id="standings" data-shot="standings" class="sg-st" style="padding:30px 20px 0;scroll-margin-top:64px">
   <div class="sec-head">
     <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:26px;text-transform:uppercase">Standings</div>
     <span class="sec-btns no-shot"><button class="share-btn" sc-camel-on-click="{{ menuStandings }}" aria-label="Share the standings">Share</button></span>
@@ -1305,10 +1335,11 @@ button{font-family:inherit;color:inherit}
   </div>
   <div style="margin-top:10px;border-top:1px solid var(--line)">
     <sc-for list="{{ scenarios }}" as="s" hint-placeholder-count="10">
-      <div style="display:grid;grid-template-columns:26px minmax(0,1fr);gap:10px;align-items:start;padding:10px 0;border-bottom:1px solid var(--line)">
-        <div class="crest" style="width:26px;height:26px;background:{{ s.color }};color:var(--onAccent);display:flex;align-items:center;justify-content:center;font-family:'Big Shoulders Display';font-weight:800;font-size:11px;flex:none"><span class="ini" data-i="{{ s.init }}">{{ s.init }}</span></div>
+      <div style="padding:10px 0;border-bottom:1px solid var(--line)">
         <div style="min-width:0">
-          <div style="font-weight:600;font-size:15px">{{ s.m }} <span style="font-family:'JetBrains Mono';font-size:11px;color:var(--muted);font-weight:400">{{ s.wl }}</span></div>
+          <div style="display:flex;flex-wrap:wrap;gap:4px 12px">
+            <sc-for list="{{ s.teams }}" as="tm" hint-placeholder-count="1"><span style="display:inline-flex;align-items:center;gap:6px;font-weight:600;font-size:15px"><span class="crest" style="width:22px;height:22px;background:{{ tm.color }};color:var(--onAccent);display:inline-flex;align-items:center;justify-content:center;font-family:'Big Shoulders Display';font-weight:800;font-size:10px;flex:none"><span class="ini" data-i="{{ tm.init }}">{{ tm.init }}</span></span>{{ tm.m }} <span style="font-family:'JetBrains Mono';font-size:11px;color:var(--muted);font-weight:400">{{ tm.wl }}</span></span></sc-for>
+          </div>
           <sc-for list="{{ s.lines }}" as="l" hint-placeholder-count="1"><div style="font-size:14px;line-height:1.4;margin-top:2px">{{ l.t }}</div></sc-for>
         </div>
       </div>
@@ -1654,7 +1685,7 @@ button{font-family:inherit;color:inherit}
 </div>
 </div>
 
-<div class="heat-sec sg-hs" style="padding:30px 20px 0">
+<div id="weekly" class="heat-sec sg-hs" style="padding:30px 20px 0;scroll-margin-top:64px">
   <div style="display:flex;align-items:baseline;justify-content:space-between;gap:24px">
     <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:26px;text-transform:uppercase">Weekly scores</div>
     <div style="font-family:'JetBrains Mono';font-size:11px;color:var(--muted)">Darker = higher score</div>
@@ -1855,9 +1886,9 @@ button{font-family:inherit;color:inherit}
 <sc-for list="{{ awardGroups }}" as="g" hint-placeholder-count="4">
   <div style="padding:26px 20px 0">
     <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:26px;text-transform:uppercase">{{ g.group }}</div>
-    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,280px),1fr));gap:10px;margin-top:10px">
+    <div style="display:flex;flex-wrap:wrap;align-items:stretch;gap:10px;margin-top:10px">
       <sc-for list="{{ g.awards }}" as="a" hint-placeholder-count="4">
-        <div style="background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px">
+        <div style="flex:1 1 min(100%,{{ a.basis }});min-width:0;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px">
           <div style="font-family:'JetBrains Mono';font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)">{{ a.title }}</div>
           <div style="display:flex;align-items:center;gap:10px;margin-top:10px">
             <div class="crest" style="width:30px;height:30px;background:{{ a.color }};color:var(--onAccent);display:flex;align-items:center;justify-content:center;font-family:'Big Shoulders Display';font-weight:800;font-size:12px;flex:none"><span class="ini" data-i="{{ a.init }}">{{ a.init }}</span></div>
@@ -1897,11 +1928,24 @@ button{font-family:inherit;color:inherit}
   </sc-for>
 </div>
 <div style="padding:24px 20px 0">
-  <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));padding:4px;background:var(--surface);border:1px solid var(--line);border-radius:12px;gap:4px">
-    <sc-for list="{{ draftModes }}" as="dm" hint-placeholder-count="2">
+  <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));padding:4px;background:var(--surface);border:1px solid var(--line);border-radius:12px;gap:4px">
+    <sc-for list="{{ draftModes }}" as="dm" hint-placeholder-count="3">
       <button sc-camel-on-click="{{ dm.pick }}" style="min-height:40px;border:0;border-radius:9px;background:{{ dm.bg }};color:{{ dm.fg }};font-weight:600;font-size:14px;cursor:pointer">{{ dm.label }}</button>
     </sc-for>
   </div>
+  <sc-if value="{{ isBoard }}" hint-placeholder-val="{{ false }}">
+  <div class="scroll-x" style="margin-top:14px;padding-bottom:4px">
+    <div class="draft-board">
+      <span></span>
+      <sc-for list="{{ boardHead }}" as="bh" hint-placeholder-count="10"><div class="db-head"><span class="crest" style="width:22px;height:22px;background:{{ bh.color }};color:var(--onAccent);display:inline-flex;align-items:center;justify-content:center;font-family:'Big Shoulders Display';font-weight:800;font-size:10px"><span class="ini" data-i="{{ bh.init }}">{{ bh.init }}</span></span><span>{{ bh.m }}</span></div></sc-for>
+      <sc-for list="{{ boardRows }}" as="br" hint-placeholder-count="15">
+        <div class="db-r">{{ br.r }}</div>
+        <sc-for list="{{ br.cells }}" as="bc" hint-placeholder-count="10"><div class="db-cell" style="background:{{ bc.bg }}" title="{{ bc.pick }} {{ bc.full }}"><div class="db-n">{{ bc.name }}</div><div class="db-m">{{ bc.meta }}</div></div></sc-for>
+      </sc-for>
+    </div>
+  </div>
+  </sc-if>
+  <sc-if value="{{ notBoard }}" hint-placeholder-val="{{ true }}">
   <div style="display:flex;gap:6px;overflow-x:auto;margin-top:12px;padding-bottom:2px">
     <sc-for list="{{ draftChips }}" as="dc" hint-placeholder-count="15">
       <button sc-camel-on-click="{{ dc.pick }}" style="flex:none;min-width:44px;min-height:44px;padding:0 10px;border-radius:10px;border:1px solid {{ dc.border }};background:{{ dc.bg }};color:{{ dc.fg }};font-family:'Big Shoulders Display';font-weight:800;font-size:17px;cursor:pointer">{{ dc.label }}</button>
@@ -1920,6 +1964,7 @@ button{font-family:inherit;color:inherit}
       </div>
     </sc-for>
   </div>
+  </sc-if>
 </div>
 </sc-if>
 </sc-if>
@@ -1979,7 +2024,7 @@ button{font-family:inherit;color:inherit}
 </div>
 </div>
 
-<div class="wire-side">
+<div class="wire-side stick">
 <sc-if value="{{ wireSeason }}" hint-placeholder-val="{{ false }}">
   <div data-shot="wire" style="padding:24px 20px 0">
     <div class="shot-only" style="margin-bottom:14px;padding:14px;border-radius:14px;background:var(--accent);color:var(--onAccent);font-size:15px;line-height:1.4;font-weight:600">{{ wireRoast }}</div>
@@ -2131,7 +2176,7 @@ button{font-family:inherit;color:inherit}
   <div class="share-sheet" sc-camel-on-click="{{ closeTeamSheet }}" style="position:fixed;inset:0;z-index:60;background:rgba(0,0,0,.35);display:flex;align-items:flex-end;justify-content:center">
     <div role="dialog" aria-label="Your team" sc-camel-on-click="{{ stopTap }}" class="share-panel" style="width:100%;max-width:440px;background:var(--bg);border-radius:20px 20px 0 0;padding:16px 16px 28px">
       <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:24px;text-transform:uppercase">Your team</div>
-      <div style="font-size:13px;color:var(--muted);margin-top:4px;line-height:1.4;text-wrap:pretty">{{ teamSheetNote }} Remembered on this phone.</div>
+      <div style="font-size:13px;color:var(--muted);margin-top:4px;line-height:1.4;text-wrap:pretty">{{ teamSheetNote }} Remembered in this browser.</div>
       <div class="mgr-grid" style="margin-top:12px">
         <sc-for list="{{ teamSheetMgrs }}" as="tm" hint-placeholder-count="10">
           <button sc-camel-on-click="{{ tm.pick }}" aria-pressed="{{ tm.pressed }}" aria-label="{{ tm.m }}" style="display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 2px;border:2px solid {{ tm.ring }};border-radius:12px;background:transparent;cursor:pointer">
@@ -2169,9 +2214,9 @@ button{font-family:inherit;color:inherit}
   </div>
 </sc-if>
 
-<div class="tabbar" style="position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;z-index:30;background:var(--bg);border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(4,minmax(0,1fr));padding:6px 8px 18px">
+<nav class="tabbar" aria-label="Sections" style="position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;z-index:30;background:var(--bg);border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(4,minmax(0,1fr));padding:6px 8px 18px">
   <sc-for list="{{ tabs }}" as="tb" hint-placeholder-count="5">
-    <button class="{{ tb.cls }}" aria-current="{{ tb.cur }}" sc-camel-on-click="{{ tb.pick }}" style="min-height:52px;border:0;background:transparent;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;color:{{ tb.fg }}">
+    <button class="{{ tb.cls }}" aria-label="{{ tb.aria }}" aria-current="{{ tb.cur }}" sc-camel-on-click="{{ tb.pick }}" style="min-height:52px;border:0;background:transparent;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;color:{{ tb.fg }}">
       <sc-if value="{{ tb.isGameday }}" hint-placeholder-val="{{ false }}">
         <svg class="ti" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><g class="a-ball vb"><g transform="rotate(-45 24 24)"><ellipse cx="24" cy="24" rx="19" ry="11" style="fill:var(--accent)"></ellipse><path d="M17 24 H31 M20 20.5 V27.5 M24 20.5 V27.5 M28 20.5 V27.5"></path></g></g></svg>
       </sc-if>
@@ -2187,7 +2232,7 @@ button{font-family:inherit;color:inherit}
       <span style="font-family:'Big Shoulders Display';font-weight:800;font-size:16px;text-transform:uppercase;letter-spacing:.03em">{{ tb.label }}</span>
     </button>
   </sc-for>
-</div>
+</nav>
 
 </div>
 </div>
