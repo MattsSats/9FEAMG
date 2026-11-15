@@ -1877,12 +1877,16 @@ button{font-family:inherit;color:inherit}
 <sc-if value="{{ tabAwards }}" hint-placeholder-val="{{ false }}">
 <div style="padding:22px 20px 0">
   <button class="share-btn" sc-camel-on-click="{{ backToSeason }}" style="margin-bottom:14px">‹ Season</button>
-  <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:48px;line-height:.9;text-transform:uppercase">Season awards</div>
+  <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:12px">
+    <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:48px;line-height:.9;text-transform:uppercase">Season awards</div>
+    <sc-if value="{{ hasAwards }}" hint-placeholder-val="{{ true }}"><button class="share-btn" sc-camel-on-click="{{ menuAwards }}" aria-label="Share the season awards">Share</button></sc-if>
+  </div>
   <div style="font-family:'JetBrains Mono';font-size:11px;color:var(--muted);margin-top:10px">{{ awardsSub }}</div>
 </div>
 <sc-if value="{{ noAwards }}" hint-placeholder-val="{{ false }}">
   <div style="margin:16px 20px 0;padding:28px 16px;border:1px dashed var(--line);border-radius:16px;text-align:center;font-size:14px;color:var(--muted)">Loading the box scores…</div>
 </sc-if>
+<div data-shot="awards" data-shot-w="960" style="background:var(--bg);padding-bottom:4px">
 <sc-for list="{{ awardGroups }}" as="g" hint-placeholder-count="4">
   <div style="padding:26px 20px 0">
     <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:26px;text-transform:uppercase">{{ g.group }}</div>
@@ -1901,6 +1905,8 @@ button{font-family:inherit;color:inherit}
     </div>
   </div>
 </sc-for>
+<div class="shot-footer" style="padding:14px 20px 16px"><b>9FEAMG</b><span>{{ shotAwards }}</span></div>
+</div>
 </sc-if>
 
 <sc-if value="{{ tabDraft }}" hint-placeholder-val="{{ false }}">

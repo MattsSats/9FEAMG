@@ -1612,6 +1612,9 @@ class Component extends DCLogic {
       menuHero: this.shareMenu('This matchup', e => this.shareLink(location.origin + (hero ? `/s/w${S.week}-${teamSlug(hero.a.m)}-vs-${teamSlug(hero.b.m)}` : '/#w' + S.week), hero ? `9FEAMG · ${hero.a.m} vs ${hero.b.m}` : '9FEAMG · Week ' + S.week, e), e => this.share('hero', e)),
       // Season jump chips, like Gameday's (Matt, Nov 15, 2026).
       seasonJumps: [['Standings', 'standings'], ['Playoffs', 'odds'], ['Power', 'power'], ['Luck', 'luck'], ['Weekly scores', 'weekly']].map(([label, id]) => ({ label, go: () => this.jump(id) })),
+      // Season awards: the link (/s/awards, its own preview card) or an image of the page.
+      menuAwards: this.shareMenu('Season awards', e => this.shareLink(location.origin + '/s/awards', '9FEAMG · Season awards', e), e => this.share('awards', e)),
+      hasAwards: awardGroups.length > 0, shotAwards: `Season awards · through week ${NF}`,
       menuStandings: this.shareMenu('Standings', e => this.shareLink(location.origin + '/s/standings', '9FEAMG · Standings', e), e => this.share('standings', e)),
       menuOdds: this.shareMenu('Playoff odds', e => this.shareLink(location.origin + '/s/odds', '9FEAMG · Playoff odds', e), e => this.share('odds', e)),
       menuBracket: this.shareMenu('Playoff picture', e => this.shareLink(location.origin + '/s/bracket', '9FEAMG · Playoff picture', e), e => this.share('bracket', e)),
