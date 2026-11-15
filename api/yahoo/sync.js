@@ -80,19 +80,41 @@ export async function boxScores(token, key, w, teams) {
 // game; Yahoo's page zeroes him too). Within a few points of Yahoo's own page when checked. A team stays on Yahoo's
 // number if ESPN or the file can't be read, the file is for another week (so also in the playoffs,
 // where it has no projections), or an unfinished starter isn't in the file.
+// Reads JSON, or null when the answer isn't JSON (Nov 15, 2026: one of these fetches came back as an HTML
+// page on every pull from 17:45 to 18:32 UTC, so every live player read as Final). The failing URL,
+// status and the start of the body go to the log.
+async function getJson(url) {
+  let r, text = '';
+  try {
+    r = await fetch(url, { headers: { accept: 'application/json' } });
+    text = await r.text();
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    return JSON.parse(text);
+  } catch (e) {
+    console.error(`live projections: ${url} failed (${r ? r.status + ' ' + (r.headers.get('content-type') || '') : 'no answer'}): ${e.message} · ${text.slice(0, 120).replace(/\s+/g, ' ')}`);
+    return null;
+  }
+}
+// The last good copy of each, per server instance: a bad read falls back to it.
+const lastGood = { ros: null, sb: null };
 export async function addLiveProj(wk, w, season, origin) {
   if (wk.status != 'midevent' || !wk.box) return;
   try {
-    const [ros, sb] = await Promise.all([
-      fetch(new URL('/uploads/9feamg-rosters.json', dataOrigin(origin))).then(r => r.json()),
-      fetch(`https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard?seasontype=2&week=${w}&dates=${season}`).then(r => r.json())
-    ]);
-    const left = {}, playing = [], started = [];
+    const sbUrl = `https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard?seasontype=2&week=${w}&dates=${season}`;
+    let [ros, sb] = await Promise.all([getJson(new URL('/uploads/9feamg-rosters.json', dataOrigin(origin)).href), getJson(sbUrl)]);
+    if (ros?.teams) lastGood.ros = ros; else ros = lastGood.ros;
+    if (sb?.events && sb.week?.number == w) lastGood.sb = { at: Date.now(), w, sb }; else sb = lastGood.sb?.w == w ? lastGood.sb.sb : null;
+    if (!sb) return;
+    const left = {}, playing = [], started = [], clock = {};
     for (const e of sb.events || []) {
       const s = e.status, st = s.type.state, share = st == 'pre' ? 1 : st == 'post' ? 0 : Math.max(0, ((4 - s.period) * 900 + (s.clock || 0)) / 3600);
+      // Each team's game on ESPN's clock (Nov 15, 2026), for the lineup sheet's progress bars:
+      // s 'pre' | 'in' | 'post', q the quarter (5 = overtime), c the clock, h at halftime, f the share played.
+      const g = { s: st, q: s.period || 0, c: s.displayClock || '', f: +(1 - share).toFixed(3), ...(s.type.name == 'STATUS_HALFTIME' ? { h: 1 } : {}) };
       for (const c of e.competitions[0].competitors) {
         const t = c.team.abbreviation.toUpperCase(), names = t == 'WSH' ? [t, 'WAS'] : [t];
         left[t] = share;
+        for (const n of names) clock[n] = g;
         // For mergeYahoo (Nov 8, 2026): teams on the field now show Live instead of Final, and a
         // player whose game has started counts at his points even at 0.
         if (st == 'in') playing.push(...names);
@@ -100,7 +122,8 @@ export async function addLiveProj(wk, w, season, origin) {
       }
     }
     left.WAS ??= left.WSH;
-    wk.playing = playing; wk.started = started;
+    wk.playing = playing; wk.started = started; wk.clock = clock;
+    if (!ros) return;
     if (ros.week != w) return;
     for (const m of Object.keys(wk.teams)) {
       const players = ros.teams?.find(t => t.name == m)?.players || [], starters = wk.box[m]?.starters || [];

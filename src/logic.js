@@ -649,6 +649,56 @@ class Component extends DCLogic {
       return { slot: p.pos == 'WRT' ? 'FLEX' : p.pos, name: p.name, meta: (p.nfl ? p.nfl.toUpperCase() : '—') + (lp != null ? (PLAYING.has(p.name) ? ' · Live' : ' · Final') : live ? (pg => pg + (v != null && !nflGame(p.nfl, wk) && !onBye(p.nfl, wk) ? ' · proj' : ''))(this.preGame(p, wk)) : ''), pts: v != null ? f2(+v) : '—', ptsColor: lp != null ? (PLAYING.has(p.name) ? 'var(--ink)' : 'var(--accentInk)') : v != null && !live ? 'var(--ink)' : 'var(--muted)' };
     });
   }
+  // Lineup sheet (Matt, Nov 15, 2026 redesign): a manager's starters and bench for the week as
+  // { slot, pos, name, nfl, pts, proj, inj }. A final week reads its box score; the live week reads
+  // Yahoo's live lineup (LIVE.box, so a FLEX player keeps his real position and tags are current),
+  // else the rosters file. pts is null until the player's game starts.
+  sheetPlayers(m, wk) {
+    const bx = this.box(m, wk), slotOf = s => s == 'W/R/T' || s == 'WRT' ? 'FLEX' : s;
+    if (bx) { const row = ([slot, name, nfl, pos, pts, proj]) => ({ slot: slotOf(slot), pos, name, nfl, pts, proj, inj: null }); return { st: bx.starters.map(row), bn: bx.bench.map(row) }; }
+    if (wk != LW) return { st: this.starters(m, wk).map(p => ({ slot: p.slot, pos: p.slot, name: p.name, nfl: '', pts: p.pts == '—' ? null : +p.pts, proj: null, inj: null })), bn: [] };
+    const ros = this.players(m), by = Object.fromEntries(ros.map(p => [p.name, p]));
+    const projOf = n => { const p = by[n]; return p?.proj ?? p?.projected ?? p?.projections?.[wk] ?? PPROJ[n] ?? p?.espn ?? null; };
+    const ptsOf = n => LIVEPTS[n] ?? null, lb = LIVE?.box?.[m];
+    if (lb) { const row = ([slot, name, nfl, pos, , , inj]) => ({ slot: slotOf(slot), pos, name, nfl, pts: ptsOf(name), proj: projOf(name), inj: inj || null }); return { st: lb.starters.map(row), bn: lb.bench.map(row) }; }
+    // The rosters file keeps a FLEX starter as pos WRT: his real position comes from an earlier box score.
+    const realPos = n => { for (const w of Object.values(this.state.box?.weeks || {})) for (const t of Object.values(w)) { const r = [...t.starters, ...t.bench].find(x => x[1] == n); if (r) return r[3]; } return ''; };
+    const row = p => ({ slot: p.slot == 'IR' ? 'IR' : p.slot == 'starter' ? slotOf(p.pos) : 'BN', pos: p.pos == 'WRT' ? realPos(p.name) : p.pos, name: p.name, nfl: p.nfl, pts: ptsOf(p.name), proj: projOf(p.name), inj: p.inj || null });
+    return { st: ros.filter(p => p.slot == 'starter').map(row), bn: ros.filter(p => p.slot != 'starter').map(row) };
+  }
+  // One side of a sheet row: the state (pre, live, hurt, final, bye, empty) and what each shows.
+  sheetCell(p, wk) {
+    if (!p) return { empty: true, name: 'Empty', last: 'Empty', meta: '', num: '—', numCls: 'none', sub: '', subCls: '', inj: '', injCls: '', sideCls: 'ls-empty', hasBar: false, hasInj: false, dot: false };
+    const g = nflGame(p.nfl, wk), m = g && g.match(/·\s*(.+)$/), live = wk == LW;
+    const ck = live ? LIVE.clock?.[String(p.nfl).toUpperCase()] : null, inj = String(p.inj || '').toUpperCase();
+    const out = inj == 'O' || inj == 'IR' || inj == 'PUP', bye = onBye(p.nfl, wk);
+    const playing = live && !bye && (ck ? ck.s == 'in' : PLAYING.has(p.name));
+    const started = !live || (ck ? ck.s != 'pre' : p.pts != null);
+    const state = !live ? (p.pts == null ? 'none' : 'final') : bye ? 'bye' : playing ? (out ? 'hurt' : 'live') : started ? 'final' : 'pre';
+    const c = { name: p.name, last: lastName(p.name) || p.name, meta: (m ? m[1].toUpperCase() : String(p.nfl || '').toUpperCase()), empty: false,
+      inj: out ? 'OUT' : inj == 'Q' || inj == 'D' ? inj : '', injCls: out ? 'ls-out' : 'ls-q', sideCls: out && state != 'final' ? 'ls-hurtrow' : '', dot: state == 'live' || state == 'hurt', hasBar: false };
+    c.hasInj = !!c.inj;
+    if (state == 'bye') return { ...c, meta: String(p.nfl || '').toUpperCase(), num: '0.00', numCls: 'bye', sub: 'bye', subCls: '' };
+    if (state == 'pre') {
+      const k = g && kickoff(wk, g), today = k && k.toLocaleDateString('en-US', { timeZone: 'America/Chicago' }) == new Date().toLocaleDateString('en-US', { timeZone: 'America/Chicago' });
+      const t = k ? k.toLocaleString('en-US', { timeZone: 'America/Chicago', ...(today ? {} : { weekday: 'short' }), hour: 'numeric', minute: '2-digit' }).replace(/\s?[AP]M$/, '').replace(',', '') : '';
+      return { ...c, num: p.proj != null ? f2(+p.proj) : '—', numCls: 'pre', sub: today ? t + ' proj' : t || 'proj', subCls: '' };
+    }
+    if (state == 'live' || state == 'hurt') {
+      const bar = ck ? { hasBar: true, barW: Math.round(Math.min(1, Math.max(0, ck.f || 0)) * 100) + '%', barTxt: ck.h ? 'Half' : (ck.q >= 5 ? 'OT' : 'Q' + ck.q) + (ck.c && !ck.h ? ' ' + ck.c : '') } : {};
+      return { ...c, ...bar, num: f2(p.pts ?? 0), numCls: state, sub: state == 'hurt' ? 'left game' : p.proj != null ? 'of ' + f1(+p.proj) : 'live', subCls: state == 'hurt' ? 'neg' : '' };
+    }
+    if (state == 'none') return { ...c, num: '—', numCls: 'none', sub: '', subCls: '' };
+    const pts = p.pts ?? 0, d = p.proj == null ? null : pts - p.proj;
+    return { ...c, num: f2(pts), numCls: 'final', sub: d == null ? 'final' : 'final ' + sgn(d), subCls: d == null ? '' : d >= 0 ? 'pos' : 'neg' };
+  }
+  // The slot chip, tinted by position; a FLEX chip is split, each half its player's real position.
+  sheetChip(slot, pa, pb) {
+    const t = pos => ({ QB: 'var(--pQB)', RB: 'var(--pRB)', WR: 'var(--pWR)', TE: 'var(--pTE)', K: 'var(--pK)', DEF: 'var(--pDEF)' }[pos] || 'var(--surface2)');
+    if (slot == 'FLEX') return { label: 'FLEX', style: `background:linear-gradient(90deg,${t(pa?.pos)} 50%,${t(pb?.pos)} 50%)` };
+    if (slot == 'BN' || slot == 'IR') return { label: slot, style: 'background:var(--surface2);color:var(--muted)' };
+    return { label: slot, style: `background:${t(slot)}` };
+  }
   side(m, o, wk) {
     // In the playoffs a side reads by seed and regular-season record ("Seed 3 · 9–5").
     const place = ord(ST.findIndex(x => x.m == m) + 1), poInfo = wk > RW && BR?.seeds?.[m] ? `Seed ${BR.seeds[m]} · ${rec(m, NF)}` : null;
@@ -1344,20 +1394,42 @@ class Component extends DCLogic {
     const noMoves = txOk && !days.length;
 
     // Lineup sheet
+    // Lineup sheet (Matt, Nov 15, 2026 redesign, style A): points now and on-pace in the header, a bar
+    // split by on-pace totals, rows paired by slot with position-tinted chips, and each player's state
+    // (projection, live with his game's progress, final against his projection, bye, Out).
     let sheet = { a: {}, b: {}, rows: [], title: '', note: '' };
     if (S.sheet) {
-      const { a, b, wk: w } = S.sheet, A = this.side(a, b, w), B = this.side(b, a, w), sa = this.starters(a, w), sb = this.starters(b, w), n = Math.max(sa.length, sb.length);
-      const blankP = { name: '—', meta: '', pts: '' };
-      const pair = (x, y) => { const r = []; for (let i = 0; i < Math.max(x.length, y.length); i++) r.push({ slot: (x[i] || y[i]).slot, a: x[i] || blankP, b: y[i] || blankP }); return r; };
-      const rows = pair(sa, sb);
-      const ba = this.box(a, w), bb = this.box(b, w), hasBox = !!(ba && bb);
-      const bench = hasBox ? pair(this.boxPlayers(ba.bench), this.boxPlayers(bb.bench)).map(r => ({ ...r, slot: r.a.slot && r.b.slot && r.a.slot != r.b.slot ? '' : r.slot })) : [];
-      const missing = [...sa, ...sb].some(p => p.pts == '—'), live = w == LW;
+      const { a, b, wk: w } = S.sheet, A = this.side(a, b, w), B = this.side(b, a, w), live = w == LW;
+      const pa = this.sheetPlayers(a, w), pb = this.sheetPlayers(b, w);
+      // Slots in lineup order, both sides lined up by slot so an empty slot shows as Empty.
+      const LINE = ['QB', 'RB', 'WR', 'TE', 'FLEX', 'K', 'DEF'], rank = s => { const i = LINE.indexOf(s); return i < 0 ? 9 : i; };
+      // The league's lineup (QB, 2 RB, 2 WR, TE, FLEX, K, DEF) once either side has starters.
+      const MIN = pa.st.length || pb.st.length ? { QB: 1, RB: 2, WR: 2, TE: 1, FLEX: 1, K: 1, DEF: 1 } : {};
+      const slots = []; for (const s of LINE) { const n = Math.max(pa.st.filter(p => p.slot == s).length, pb.st.filter(p => p.slot == s).length, MIN[s] || 0); for (let i = 0; i < n; i++) slots.push([s, i]); }
+      for (const p of [...pa.st, ...pb.st]) if (rank(p.slot) == 9 && !slots.some(x => x[0] == p.slot)) slots.push([p.slot, 0]);
+      const nth = (list, s, i) => list.filter(p => p.slot == s)[i] || null;
+      const rows = slots.map(([s, i]) => { const x = nth(pa.st, s, i), y = nth(pb.st, s, i); return { chip: this.sheetChip(s, x, y), a: this.sheetCell(x, w), b: this.sheetCell(y, w) }; });
+      const bn = n => [...n.bn].sort((p, q) => (p.slot == 'IR') - (q.slot == 'IR'));
+      const ba = bn(pa), bb = bn(pb), bench = Array.from({ length: Math.max(ba.length, bb.length) }, (_, i) => {
+        const x = ba[i] || null, y = bb[i] || null, s = x && y && x.slot != y.slot ? 'BN' : (x || y).slot;
+        return { chip: this.sheetChip(s), a: this.sheetCell(x, w), b: this.sheetCell(y, w) };
+      });
+      // Header: points now, on pace (or the final), and how many starters are final, live or still to play.
+      const head = (m, side, p, o) => {
+        const now = live ? (LIVE.scores[m] || [0, 0])[0] : side.raw, pace = live ? (LIVE.scores[m] || [0, 0])[1] : side.raw;
+        const st = rows.map(r => r[p]).filter(c => !c.empty), n = k => st.filter(c => k.includes(c.numCls)).length;
+        const counts = live ? [n(['final']) + ' final', n(['live', 'hurt']) + ' live', n(['pre']) + ' left'].join(' · ') : '';
+        return { ...side, now: f2(now), pace: live ? (LIVE_STARTED ? 'On pace ' : 'Proj ') + f2(pace) : side.status + ' · ' + side.rec, paceRaw: pace, counts, hasCounts: !!counts,
+          nowColor: now < (live ? (LIVE.scores[o] || [0])[0] : scoreOf(o, w)) ? 'var(--muted)' : 'var(--ink)' };
+      };
+      const HA = head(a, A, 'a', b), HB = head(b, B, 'b', a), tot = HA.paceRaw + HB.paceRaw;
+      const missing = rows.some(r => r.a.num == '—' && !r.a.empty || r.b.num == '—' && !r.b.empty), hasBox = !!(this.box(a, w) && this.box(b, w));
       const asOf = S.rosters?.asOf ? shortDate(new Date(S.rosters.asOf)) : '';
-      const note = hasBox ? 'Final, from Yahoo. Green beat the projection by 8+, red missed it by 8+.'
-        : !S.rosters ? (S.loaded ? 'Couldn’t load rosters, so lineups aren’t available.' : 'Loading rosters…')
-        : (live ? LIVE.sheetNote : `Lineups shown are current rosters${asOf ? ' as of ' + asOf : ''}, not the Week ${w} lineups.`) + (missing ? ' — = no player ' + (live ? 'projection' : 'score') + ' in the data yet.' : '');
-      sheet = { a: A, b: B, rows, bench, hasBench: bench.length > 0, title: 'WEEK ' + w + (live ? ' · LIVE' : ' · FINAL'), ptsLabel: live ? 'PTS/PROJ' : 'PTS', note };
+      const note = hasBox ? 'Final, from Yahoo.'
+        : !S.rosters && !LIVE?.box ? (S.loaded ? 'Couldn’t load rosters, so lineups aren’t available.' : 'Loading rosters…')
+        : (live ? (LIVE.asOf ? asOfLabel(LIVE.asOf) + '.' : '') : `Lineups shown are current rosters${asOf ? ' as of ' + asOf : ''}, not the Week ${w} lineups.`) + (missing ? ' — = no ' + (live ? 'projection' : 'score') + ' in the data yet.' : '');
+      sheet = { a: HA, b: HB, barA: (tot > 0 ? HA.paceRaw / tot * 100 : 50).toFixed(1) + '%', barB: (tot > 0 ? HB.paceRaw / tot * 100 : 50).toFixed(1) + '%',
+        rows, bench, hasBench: bench.length > 0, title: 'WEEK ' + w + (live ? (LIVE_STARTED ? ' · LIVE' : ' · PREVIEW') : ' · FINAL'), live, note };
     }
 
     // Charts
