@@ -203,8 +203,6 @@ class Component extends DCLogic {
       if ((e.key == 'Enter' || e.key == ' ') && el?.getAttribute?.('role') == 'button' && el.tagName != 'BUTTON') { e.preventDefault(); el.click(); }
     });
     this.applyTheme();
-    // No pick saved: follow the phone when it switches between light and dark (at sunset, say).
-    try { window.matchMedia?.('(prefers-color-scheme: dark)').addEventListener('change', e => this.setState({ sysDark: e.matches })); } catch {}
     Promise.all(['uploads/9feamg-rosters.json', 'uploads/9feamg-draft-rosters.json', 'uploads/9feamg-transactions.json', 'uploads/9feamg-boxscores.json']
       .map(u => fetch(u, { cache: 'no-cache' }).then(r => r.ok ? r.json() : null).catch(() => null)))
       .then(([rosters, draft, tx, box]) => {
@@ -589,7 +587,7 @@ class Component extends DCLogic {
   theme() {
     if (this.state.theme) return this.state.theme;
     try { const t = localStorage.getItem('9feamg-theme'); if (t == 'light' || t == 'dark') return t; } catch {}
-    try { if (window.matchMedia?.('(prefers-color-scheme: dark)').matches) return 'dark'; } catch {}
+    // Light unless this phone picked Dark (Matt, Nov 15, 2026): the phone's own dark mode doesn't switch it.
     return this.props.theme ?? 'light';
   }
   applyTheme() {
