@@ -2041,11 +2041,14 @@ button{font-family:inherit;color:inherit}
   <div class="sheet-wrap" style="position:fixed;inset:0;z-index:50;display:flex;justify-content:center;align-items:flex-end">
     <div sc-camel-on-click="{{ closeSheet }}" style="position:absolute;inset:0;background:rgba(0,0,0,.55)"></div>
     <div class="sheet" style="position:relative;width:100%;max-height:86vh;overflow-y:auto;background:var(--bg);border-radius:22px 22px 0 0;border-top:1px solid var(--line);padding-bottom:28px">
+     <div data-shot="sheet" style="background:var(--bg)">
       <div style="position:sticky;top:0;background:var(--bg);padding:10px 12px 10px;border-bottom:1px solid var(--line);z-index:2">
-        <div style="width:40px;height:4px;border-radius:2px;background:var(--line);margin:0 auto 10px"></div>
-        <div style="display:flex;justify-content:space-between;align-items:center">
+        <div class="no-shot" style="width:40px;height:4px;border-radius:2px;background:var(--line);margin:0 auto 10px"></div>
+        <div style="display:flex;align-items:center;gap:8px">
           <span style="font-family:'JetBrains Mono';font-size:11px;letter-spacing:.1em;color:var(--accentInk);font-weight:600">{{ sheet.title }}</span>
-          <button sc-camel-on-click="{{ closeSheet }}" style="min-width:44px;min-height:36px;border:1px solid var(--line);border-radius:999px;background:var(--surface);cursor:pointer;font-size:13px;font-weight:600">Close</button>
+          <span style="flex:1"></span>
+          <button class="share-btn no-shot" sc-camel-on-click="{{ sheet.menu }}" style="min-height:36px">Share</button>
+          <button class="no-shot" sc-camel-on-click="{{ closeSheet }}" style="min-width:44px;min-height:36px;border:1px solid var(--line);border-radius:999px;background:var(--surface);cursor:pointer;font-size:13px;font-weight:600">Close</button>
         </div>
         <div class="ls-head">
           <div class="ls-h ls-ha">
@@ -2086,6 +2089,7 @@ button{font-family:inherit;color:inherit}
           </div>
         </sc-for>
         <sc-if value="{{ sheet.hasBench }}" hint-placeholder-val="{{ false }}">
+         <div class="no-shot">
           <div class="ls-bench-h">BENCH</div>
           <sc-for list="{{ sheet.bench }}" as="r" hint-placeholder-count="9">
           <div class="ls-row ls-bench">
@@ -2108,10 +2112,13 @@ button{font-family:inherit;color:inherit}
             </div>
           </div>
         </sc-for>
+         </div>
         </sc-if>
         <div class="ls-key"><span><b class="ls-k-pre">0.0</b> proj</span><span><span class="ls-dot"></span>live</span><span><b>0.0</b> final</span><span><b class="pos">+</b>/<b class="neg">−</b> vs proj</span><span><span class="ls-tag ls-q">Q</span>questionable</span><span><span class="ls-tag ls-out">OUT</span>out</span><span><span class="ls-dot ls-dot-hurt"></span>left game</span></div>
-        <div class="ls-note">{{ sheet.note }}</div>
+        <div class="ls-note no-shot">{{ sheet.note }}</div>
+        <div class="shot-footer"><b>9FEAMG</b><span>{{ sheet.shotLabel }}</span></div>
       </div>
+     </div>
     </div>
   </div>
 </sc-if>

@@ -448,6 +448,9 @@ class Component extends DCLogic {
     if (h == '#ledger') { this.setState({ tab: 'Gameday', week: HOME_WK, sheet: null }); setTimeout(() => document.getElementById('ledger')?.scrollIntoView({ block: 'start' }), 350); return; }
     if (h == '#booth') { this.setState({ tab: 'Gameday', week: BOOTH_WK, sheet: null }); setTimeout(() => document.getElementById('booth')?.scrollIntoView({ block: 'start' }), 350); return; }
     if (tm) { const t = MGR.find(x => teamSlug(x) == tm[1]); if (t) { this.setState({ tab: 'Teams', team: t, sheet: null }); window.scrollTo(0, 0); } return; }
+    // A matchup link (/s/w10-tony-vs-colin lands on #w10-tony-vs-colin) opens that matchup's lineup sheet.
+    const mu = h.match(/^#w(\d+)-([\w-]+?)-vs-([\w-]+)$/), ma = mu && MGR.find(x => teamSlug(x) == mu[2]), mb = mu && MGR.find(x => teamSlug(x) == mu[3]);
+    if (ma && mb) { this.setState({ tab: 'Gameday', week: +mu[1], sheet: { a: ma, b: mb, wk: +mu[1] } }); return; }
     const m = h.match(/^#w(\d+)-([\w-]+)$/);
     if (!m) return;
     this.setState({ tab: 'Gameday', week: +m[1], bustedOpen: true, unbetOpen: true, prOpen: { ...this.state.prOpen, [m[0].slice(1)]: true } });
@@ -1427,7 +1430,10 @@ class Component extends DCLogic {
         : !S.rosters && !LIVE?.box ? (S.loaded ? 'Couldn’t load rosters, so lineups aren’t available.' : 'Loading rosters…')
         : (live ? (LIVE.asOf ? asOfLabel(LIVE.asOf) + '.' : '') : `Lineups shown are current rosters${asOf ? ' as of ' + asOf : ''}, not the Week ${w} lineups.`) + (missing ? ' — = no ' + (live ? 'projection' : 'score') + ' in the data yet.' : '');
       sheet = { a: HA, b: HB, barA: (tot > 0 ? HA.paceRaw / tot * 100 : 50).toFixed(1) + '%', barB: (tot > 0 ? HB.paceRaw / tot * 100 : 50).toFixed(1) + '%',
-        rows, bench, hasBench: bench.length > 0, title: 'WEEK ' + w + (live ? (LIVE_STARTED ? ' · LIVE' : ' · PREVIEW') : ' · FINAL'), live, note };
+        rows, bench, hasBench: bench.length > 0, title: 'WEEK ' + w + (live ? (LIVE_STARTED ? ' · LIVE' : ' · PREVIEW') : ' · FINAL'), live, note,
+        // Share (Matt, Nov 15, 2026): any matchup's link (its preview card in chats; it opens this sheet) or an image of the starters.
+        menu: this.shareMenu(`${a} vs ${b}`, e => this.shareLink(location.origin + `/s/w${w}-${teamSlug(a)}-vs-${teamSlug(b)}`, `9FEAMG · ${a} vs ${b}`, e), e => this.share('sheet', e)),
+        shotLabel: `Week ${w} · ` + (live ? (LIVE.asOf ? asOfLabel(LIVE.asOf).replace('Scores as of ', '') : 'Live') : 'Final') };
     }
 
     // Charts

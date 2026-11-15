@@ -279,7 +279,7 @@ function matchupCard(M) {
 }
 
 async function matchupRoute(url, request, m) {
-  const wk = +m[1], dest = new URL('/#w' + wk, url.origin).href, fallback = () => Response.redirect(new URL('/og.png', url.origin).href, 302);
+  const wk = +m[1], dest = new URL(`/#w${wk}-${m[2]}-vs-${m[3]}`, url.origin).href, fallback = () => Response.redirect(new URL('/og.png', url.origin).href, 302);
   const isImg = url.searchParams.has('img'), person = !isImg && !BOTS.test(request.headers.get('user-agent') || '');
   let M;
   try {
