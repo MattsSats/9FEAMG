@@ -1,5 +1,17 @@
 [
   {
+    "when": "Nov 15, 9:18 am",
+    "yahooTeam": "Average Sports Enthusiast",
+    "manager": "Kurt",
+    "action": "add",
+    "player": "Aaron Jones Sr.",
+    "nfl": "Min",
+    "pos": "RB",
+    "faab": null,
+    "via": "Free Agency",
+    "notes": "Yahoo API Sun, Nov 15, 9:50 AM CT"
+  },
+  {
     "when": "Nov 14, 3:07 am",
     "yahooTeam": "Definitely not a Boomer",
     "manager": "Mr. G",

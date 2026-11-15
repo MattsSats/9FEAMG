@@ -1,5 +1,5 @@
 {
-  "asOf": "2026-11-15T14:58:02.650Z",
+  "asOf": "2026-11-15T15:50:07.050Z",
   "source": "Signed-in Yahoo Fantasy league 935526 team roster pages (full reconcile)",
   "week": 10,
   "baseline": "yahoo-live",
@@ -831,6 +831,7 @@
           "slot": "starter",
           "nfl": "NE",
           "proj": 22.24,
+          "inj": "O",
           "espn": 21.96
         },
         {
@@ -1250,6 +1251,13 @@
           "nfl": "Pit",
           "proj": 14.93,
           "espn": 14.19
+        },
+        {
+          "name": "Aaron Jones Sr.",
+          "nfl": "Min",
+          "slot": "starter",
+          "pos": "RB",
+          "espn": 7.48
         },
         {
           "name": "Zay Flowers",
@@ -2123,7 +2131,7 @@
   ],
   "espn": {
     "week": 10,
-    "asOf": "2026-11-15T14:59:03.745Z",
+    "asOf": "2026-11-15T15:50:59.194Z",
     "source": "ESPN fantasy projections, half-PPR (average of ESPN standard and PPR)"
   }
 }
