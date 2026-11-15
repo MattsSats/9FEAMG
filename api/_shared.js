@@ -641,7 +641,8 @@ export function seasonAwards(season, box) {
   if (games.length) {
     const b = best(games, g => g.gap), c = best(games, g => -g.gap), hi = best(teams, t => t.s), lo = best(teams, t => -t.s);
     add('Games', 'Biggest blowout', b.L, n(b.gap), `${b.W} beat ${b.L} ${score(b.sw, b.sl)} in Week ${b.w}.`);
-    add('Games', 'Closest game', c.L, n(c.gap), `${c.W} edged ${c.L} ${score(c.sw, c.sl)} in Week ${c.w}.`);
+    // The winner's crest and credit, not a loss pinned on the other side (Matt, Nov 15, 2026; the Booth's voice).
+    add('Games', 'Closest game', c.W, n(c.gap), `${c.W} held off ${c.L} ${score(c.sw, c.sl)} in Week ${c.w}, the closest finish of the season.`);
     add('Games', 'Unluckiest loss', lost.L, n(lost.sl), `${lost.L} lost to ${lost.W} ${score(lost.sl, lost.sw)} in Week ${lost.w}, a score that beat ${lost.beatL} of the other ${N - 1} teams.`);
     add('Games', 'Luckiest win', lucky.W, n(lucky.sw), `${lucky.W} beat ${lucky.L} ${score(lucky.sw, lucky.sl)} in Week ${lucky.w}, a score that beat ${lucky.beatW} of the other ${N - 1} teams.`);
     add('Games', 'Highest score', hi.m, n(hi.s), `${hi.m} in Week ${hi.w}, ${hi.won ? 'beating' : 'losing to'} ${hi.opp} (${n(hi.os)}).`);
