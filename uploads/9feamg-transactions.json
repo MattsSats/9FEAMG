@@ -1,5 +1,77 @@
 [
   {
+    "when": "Nov 15, 5:42 pm",
+    "yahooTeam": "C LAMBS BIGGEST HATER",
+    "manager": "Colin",
+    "action": "add",
+    "player": "Steelers",
+    "nfl": "Pit",
+    "pos": "DEF",
+    "faab": null,
+    "via": "Free Agency",
+    "notes": "Yahoo API Sun, Nov 15, 11:01 PM CT"
+  },
+  {
+    "when": "Nov 15, 5:42 pm",
+    "yahooTeam": "C LAMBS BIGGEST HATER",
+    "manager": "Colin",
+    "action": "drop",
+    "player": "Denzel Boston",
+    "nfl": "Cle",
+    "pos": "WR",
+    "faab": null,
+    "via": "Waivers",
+    "notes": "Yahoo API Sun, Nov 15, 11:01 PM CT"
+  },
+  {
+    "when": "Nov 15, 2:52 pm",
+    "yahooTeam": "Squirtle Squad",
+    "manager": "Tristan",
+    "action": "add",
+    "player": "Tyler Higbee",
+    "nfl": "LAR",
+    "pos": "TE",
+    "faab": null,
+    "via": "Free Agency",
+    "notes": "Yahoo API Sun, Nov 15, 11:01 PM CT"
+  },
+  {
+    "when": "Nov 15, 2:52 pm",
+    "yahooTeam": "Squirtle Squad",
+    "manager": "Tristan",
+    "action": "drop",
+    "player": "DeMario Douglas",
+    "nfl": "NE",
+    "pos": "WR",
+    "faab": null,
+    "via": "Waivers",
+    "notes": "Yahoo API Sun, Nov 15, 11:01 PM CT"
+  },
+  {
+    "when": "Nov 15, 1:11 pm",
+    "yahooTeam": "Definitely not a Boomer",
+    "manager": "Mr. G",
+    "action": "add",
+    "player": "Aaron Rodgers",
+    "nfl": "Pit",
+    "pos": "QB",
+    "faab": null,
+    "via": "Free Agency",
+    "notes": "Yahoo API Sun, Nov 15, 11:01 PM CT"
+  },
+  {
+    "when": "Nov 15, 1:11 pm",
+    "yahooTeam": "Definitely not a Boomer",
+    "manager": "Mr. G",
+    "action": "drop",
+    "player": "Tyler Shough",
+    "nfl": "NO",
+    "pos": "QB",
+    "faab": null,
+    "via": "Waivers",
+    "notes": "Yahoo API Sun, Nov 15, 11:01 PM CT"
+  },
+  {
     "when": "Nov 15, 10:55 am",
     "yahooTeam": "Average Sports Enthusiast",
     "manager": "Kurt",

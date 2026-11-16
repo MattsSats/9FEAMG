@@ -64,7 +64,7 @@ window.SEASON = {
     7: { Tony: 121.7, Tristan: 116.62, Andy: 123.4, Matt: 126.82, Kurt: 113.04, Jerger: 116.08, 'Mr. G': 119.45, Colin: 112.31, DLin: 99.49, Pablo: 116.21 },
     8: { Tony: 125.18, Tristan: 115.07, Andy: 121.03, Matt: 126.83, Kurt: 113.76, Jerger: 119.37, 'Mr. G': 117.03, Colin: 115.18, DLin: 101.06, Pablo: 111.12 },
     9: { Tony: 125.52, Tristan: 111.17, Andy: 123.81, Matt: 122.55, Kurt: 114.51, Jerger: 113.86, 'Mr. G': 117.83, Colin: 117.16, DLin: 101.53, Pablo: 109.9 },
-    10: { Tony: 125.91, Tristan: 114.3, Andy: 124.73, Matt: 120.88, Kurt: 108.03, Jerger: 107.08, 'Mr. G': 110.26, Colin: 117.67, DLin: 105.65, Pablo: 97.64 }
+    10: { Tony: 125.91, Tristan: 114.3, Andy: 124.73, Matt: 120.88, Kurt: 108.03, Jerger: 107.08, 'Mr. G': 110.26, Colin: 117.53, DLin: 105.65, Pablo: 97.26 }
   },
 
   // Final scores (Yahoo, two decimals), one per completed week.
@@ -84,27 +84,61 @@ window.SEASON = {
   // The week in progress. Set to null between weeks.
   live: {
     week: 10,
-    status: 'Live · noon games final · late games under way · SNF (PIT @ CIN) and MNF still to play',
+    status: 'Live · Sunday final · Monday LAC @ BAL',
     // When these numbers were pulled from Yahoo (Central); shows as "Scores as of Thu 10:19 PM".
-    asOf: '2026-11-12T19:01:00-06:00',
+    asOf: '2026-11-15T23:03:00-06:00',
     // [current points, projected final]
-    // Yahoo as of Thu Nov 12, 7:01 PM CT (Week 10 matchup pages).
+    // Yahoo as of Sun Nov 15, 11:03 PM CT (the site's Yahoo API, /api/live; Sunday final, PIT 18, CIN 38).
     scores: {
-      Matt: [0.00, 110.46], Pablo: [0.00, 90.55],
-      Tristan: [0.00, 114.12], Kurt: [0.00, 106.70],
-      Jerger: [0.00, 113.50], Andy: [0.00, 116.33],
-      Tony: [0.00, 118.98], Colin: [0.00, 117.67],
-      'Mr. G': [0.00, 111.47], DLin: [0.00, 105.90]
+      Tristan: [117.62, 133.81], Kurt: [120.56, 134.75],
+      Jerger: [134.62, 134.62], Andy: [153.38, 153.38],
+      Tony: [101.64, 101.64], Colin: [110.36, 117.97],
+      'Mr. G': [126.52, 126.52], DLin: [155.42, 155.42],
+      Matt: [145.66, 145.66], Pablo: [106.00, 106.00]
     },
     yahooWin: { Tony: 51, Tristan: 57, Andy: 52, Matt: 68, Kurt: 43, Jerger: 48, 'Mr. G': 55, Colin: 49, DLin: 45, Pablo: 32 },
     // Points so far for every player whose game has started (starters and bench).
     // Players listed in inProgress are still playing; the rest are final.
-    playerPoints: {},
+    playerPoints: {
+      'Patrick Mahomes': 35.42, 'Bijan Robinson': 15.70, 'Emmett Johnson': 32.10, 'A.J. Brown': 3.70,
+      'Caleb Douglas': 8.60, 'Sam LaPorta': 2.10, 'Evan McPherson': 8.00, 'Bills': 12.00,
+      'Bhayshul Tuten': 18.80, 'Mike Evans': 0.00, 'Mike Washington Jr.': 3.20, 'Tyler Higbee': 9.20,
+      'Carnell Tate': 0.00, 'Josh Jacobs': 0.00, 'Brock Purdy': 31.66, 'Jaylen Warren': 6.60,
+      'Aaron Jones Sr.': 12.00, 'Jameson Williams': 7.00, 'Brenton Strange': 7.90, 'Deebo Samuel Sr.': 24.40,
+      'Cam Little': 19.00, 'Colts': 12.00, 'Kenneth Walker III': 0.00, 'Jacory Croskey-Merritt': 0.00,
+      'Dak Prescott': 35.42, 'James Cook III': 21.70, 'Blake Corum': 19.40, 'Chris Olave': 4.50,
+      'Malik Nabers': 4.90, 'Travis Kelce': 4.00, 'CeeDee Lamb': 16.70, 'Matt Gay': 8.00,
+      'Vikings': 20.00, 'Tucker Kraft': 2.40, 'Braelon Allen': 5.10, 'Bryce Young': 8.10,
+      'Jalen Coker': 0.30, 'David Montgomery': 0.00, 'Germie Bernard': 1.00, 'Trevor Lawrence': 27.78,
+      'Jahmyr Gibbs': 40.70, 'Javonte Williams': 7.20, 'Drake London': 13.90, 'DJ Moore': 17.40,
+      'Isaiah Likely': 23.20, 'KC Concepcion Jr.': 10.20, 'Tyler Bass': 7.00, 'Texans': 6.00,
+      'Hunter Henry': 3.20, 'Tre Tucker': 1.40, 'Bengals': 4.00, 'Josh Allen': 23.34,
+      'Ollie Gordon II': 13.50, 'Tyler Allgeier': 1.40, 'Matthew Golden': 9.50, 'Jaxon Smith-Njigba': 27.10,
+      'George Kittle': 10.40, 'Tyler Warren': 1.40, 'Will Reichard': 12.00, 'Jaguars': 3.00,
+      'Jakobi Meyers': 4.90, 'Tank Dell': 3.60, 'Ryan Flournoy': 16.10, 'Joe Burrow': 33.16,
+      'Kyren Williams': 4.20, 'Zach Charbonnet': 9.40, "Ja'Marr Chase": 28.60, 'Rashee Rice': 10.70,
+      'Brock Bowers': 2.80, 'Jordyn Tyson': 13.50, 'Spencer Shrader': 8.00, 'Jadarian Price': 10.90,
+      'Keenan Allen': 8.60, 'Jordan Mason': 5.90, 'Travis Etienne Jr.': 4.90, 'Davante Adams': 0.00,
+      'Steelers': -3.00, 'Drake Maye': 3.02, 'Chase Brown': 24.30, 'Woody Marks': 7.00,
+      'Amon-Ra St. Brown': 23.80, 'Parker Washington': 24.70, 'Dalton Kincaid': 6.80, 'Nico Collins': 19.90,
+      "Ka'imi Fairbairn": 7.00, 'Seahawks': 10.00, 'Rhamondre Stevenson': 1.00, 'DK Metcalf': 14.40,
+      'Mike Gesicki': 1.40, 'Corey Kiner': 2.50, 'Aaron Rodgers': 15.62, 'T.J. Hockenson': 0.00,
+      'Jeremiyah Love': 0.00, 'Jared Goff': 22.42, 'Jonathan Taylor': 11.30, 'Cam Skattebo': 25.70,
+      'Tee Higgins': 9.10, 'George Pickens': 38.00, 'Harold Fannin Jr.': 12.60, 'Stefon Diggs': 17.30,
+      'Eddy Pineiro': 8.00, 'Chiefs': 11.00, 'Michael Wilson': 0.00, 'Jake Ferguson': 0.00,
+      'Rico Dowdle': 4.40, 'Drew Lock': 15.60, 'Jayden Daniels': 22.76, 'Chuba Hubbard': 31.70,
+      'Christian McCaffrey': 44.30, 'Christian Watson': 5.20, 'Justin Jefferson': 11.90, 'Trey McBride': 6.20,
+      'Quinshon Judkins': 14.60, 'Jake Bates': 5.00, 'Packers': 4.00, 'Jordan Love': 11.80,
+      'Garrett Wilson': 12.10, 'Josh Downs': 13.30, 'Xavier Worthy': 0.00, 'Alvin Kamara': 14.90,
+      'C.J. Stroud': 21.44, 'Tony Pollard': 19.90, 'Ashton Jeanty': 8.40, 'Tetairoa McMillan': 5.00,
+      'Malik Washington': 11.86, 'Juwan Johnson': 3.80, 'Dalton Schultz': 7.60, 'Brandon Aubrey': 12.00,
+      'Rams': 16.00, 'Breece Hall': 12.80, 'Puka Nacua': 0.00
+    },
     inProgress: [],
     // Players Matt reported leaving their game before ESPN's play-by-play logged it (Yahoo name: when, Central).
     // Counted at their points from then, unless ESPN later says they returned (addLiveProj in api/yahoo/sync.js).
     leftGame: { 'Brock Bowers': '2026-11-15T16:04-06:00' },
-    sheetNote: 'Week 10 projections as of Thu 7:01 PM CT. Each player is tagged Final, Live or proj.'
+    sheetNote: 'Yahoo as of Sun 11:03 PM CT (Sunday final). Each player is tagged Final, Live or proj.'
   },
 
   // The NFL week: every game ('Sun 12:00 PM · CHI @ GB', kickoff Central, same form as parlay legs)

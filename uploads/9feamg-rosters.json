@@ -1,5 +1,5 @@
 {
-  "asOf": "2026-11-15T18:24:35.208Z",
+  "asOf": "2026-11-16T05:01:44.696Z",
   "source": "Signed-in Yahoo Fantasy league 935526 team roster pages (full reconcile)",
   "week": 10,
   "baseline": "yahoo-live",
@@ -43,6 +43,7 @@
           "slot": "starter",
           "nfl": "Atl",
           "proj": 13.66,
+          "inj": "Q",
           "espn": 12.08
         },
         {
@@ -243,12 +244,11 @@
           "espn": 5.75
         },
         {
-          "name": "DeMario Douglas",
-          "pos": "WR",
+          "name": "Tyler Higbee",
+          "nfl": "LAR",
           "slot": "bench",
-          "nfl": "NE",
-          "proj": 8.71,
-          "espn": 8.42
+          "pos": "TE",
+          "espn": 6.05
         },
         {
           "name": "Carnell Tate",
@@ -331,6 +331,7 @@
           "slot": "starter",
           "nfl": "LV",
           "proj": 12.36,
+          "inj": "Q",
           "espn": 12.44
         },
         {
@@ -354,14 +355,6 @@
           "slot": "starter",
           "nfl": "Bal",
           "proj": 7.61
-        },
-        {
-          "name": "Denzel Boston",
-          "pos": "WR",
-          "slot": "bench",
-          "nfl": "Cle",
-          "proj": 9.5,
-          "espn": 10.8
         },
         {
           "name": "Jadarian Price",
@@ -412,6 +405,13 @@
           "proj": 0,
           "inj": "IR",
           "espn": 0
+        },
+        {
+          "name": "Steelers",
+          "nfl": "Pit",
+          "slot": "bench",
+          "pos": "DEF",
+          "espn": 5.46
         }
       ]
     },
@@ -653,8 +653,8 @@
           "slot": "bench",
           "nfl": "LAC",
           "proj": 8.23,
-          "inj": "Q",
-          "espn": 8.53
+          "inj": "O",
+          "espn": 0
         },
         {
           "name": "Puka Nacua",
@@ -679,7 +679,7 @@
           "slot": "bench",
           "nfl": "LAC",
           "proj": 6,
-          "espn": 5.5
+          "espn": 6.95
         },
         {
           "name": "Cairo Santos",
@@ -774,7 +774,7 @@
           "slot": "bench",
           "nfl": "LAC",
           "proj": 7.67,
-          "espn": 7.23
+          "espn": 7.26
         },
         {
           "name": "Jakobi Meyers",
@@ -831,7 +831,7 @@
           "nfl": "NE",
           "proj": 22.24,
           "inj": "Q",
-          "espn": 21.96
+          "espn": 21.97
         },
         {
           "name": "Chase Brown",
@@ -847,6 +847,7 @@
           "slot": "starter",
           "nfl": "Hou",
           "proj": 10.2,
+          "inj": "D",
           "espn": 13.2
         },
         {
@@ -928,20 +929,19 @@
           "espn": 6.22
         },
         {
-          "name": "Tyler Shough",
-          "pos": "QB",
-          "slot": "bench",
-          "nfl": "NO",
-          "proj": 19.69,
-          "espn": 17.47
-        },
-        {
           "name": "Corey Kiner",
           "pos": "RB",
           "slot": "bench",
           "nfl": "NE",
           "proj": 10.04,
           "espn": 6.48
+        },
+        {
+          "name": "Aaron Rodgers",
+          "nfl": "Pit",
+          "slot": "bench",
+          "pos": "QB",
+          "espn": 14.79
         },
         {
           "name": "T.J. Hockenson",
@@ -1152,7 +1152,6 @@
           "slot": "starter",
           "nfl": "KC",
           "proj": 9.83,
-          "inj": "Q",
           "espn": 9.41
         },
         {
@@ -2128,7 +2127,7 @@
   ],
   "espn": {
     "week": 10,
-    "asOf": "2026-11-15T18:35:07.302Z",
+    "asOf": "2026-11-16T05:04:59.821Z",
     "source": "ESPN fantasy projections, half-PPR (average of ESPN standard and PPR)"
   }
 }
