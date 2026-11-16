@@ -569,6 +569,24 @@ button{font-family:inherit;color:inherit}
 @media (min-width:1320px){
   .cols.season-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
+/* Season awards (Matt, Nov 15, 2026): one column on phones, two on tablets (a lone last card spans both),
+   three on desktop; equal heights per row, the runner-up pinned to the bottom of each card. */
+.aw-grid{display:grid;grid-template-columns:minmax(0,1fr);gap:10px;margin-top:10px}
+.aw-card{display:flex;flex-direction:column;min-width:0;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px}
+.aw-next{display:flex;align-items:center;gap:6px;margin-top:12px;padding-top:10px;border-top:1px dashed var(--line);font-family:'JetBrains Mono';font-size:11px;color:var(--muted)}
+.aw-next b{color:var(--ink);font-weight:600}
+.aw-case{display:grid;grid-template-columns:minmax(0,1fr);gap:8px;margin-top:10px}
+.aw-team{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px}
+.aw-team[data-none="true"]{background:transparent;border-style:dashed}
+.aw-legend{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.aw-pill{font-family:'JetBrains Mono';font-size:10.5px;line-height:1;padding:4px 7px;border-radius:999px;border:1px solid var(--line);color:var(--ink);max-width:100%}
+.aw-pill.aw-good{border-color:var(--accentInk);color:var(--accentInk);background:color-mix(in oklch, var(--accentInk) 8%, transparent)}
+.aw-pill.aw-rough{border-style:dashed;color:var(--muted)}
+@media (min-width:640px){
+  .aw-grid,.aw-case{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .aw-grid>.aw-card:last-child:nth-child(odd){grid-column:1 / -1}
+}
+@media (min-width:1320px){ .aw-case{grid-template-columns:repeat(5,minmax(0,1fr))} }
 /* Wide desktop: three columns on Gameday (featured + Booth | matchups | parlays). */
 @media (min-width:1320px){
   .app,.tabbar{max-width:1440px}
@@ -587,6 +605,9 @@ button{font-family:inherit;color:inherit}
   .cols.two.wire-cols{grid-template-columns:minmax(0,3fr) minmax(0,2fr)}
   .wire-cols>.wire-side{order:0}
   .stick{position:sticky;top:64px;align-self:start}
+  .aw-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+  .aw-grid>.aw-card:last-child:nth-child(odd){grid-column:auto!important}
+
   /* Gameday cards: the odds and pick chips stay on one line, so every card is the same height. */
   .mu-chips{flex-wrap:nowrap!important;min-width:0}
   .mu-chips .chip-t{font-size:11px!important;padding:4px 7px!important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;flex:0 1 auto}
@@ -1896,19 +1917,43 @@ button{font-family:inherit;color:inherit}
   <div style="margin:16px 20px 0;padding:28px 16px;border:1px dashed var(--line);border-radius:16px;text-align:center;font-size:14px;color:var(--muted)">Loading the box scores…</div>
 </sc-if>
 <div data-shot="awards" data-shot-w="960" style="background:var(--bg);padding-bottom:4px">
+<!-- Trophy case (Matt, Nov 15, 2026): each team's awards as pills; good ones in the accent color, rough ones muted. -->
+<sc-if value="{{ hasTrophy }}" hint-placeholder-val="{{ true }}">
+  <div style="padding:22px 20px 0">
+    <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:26px;text-transform:uppercase">Trophy case</div>
+    <div class="aw-legend"><span class="aw-pill aw-good">Bragging rights</span><span class="aw-pill aw-neutral">Neither</span><span class="aw-pill aw-rough">Ouch</span></div>
+    <div class="aw-case">
+      <sc-for list="{{ trophyCase }}" as="t" hint-placeholder-count="10">
+        <div class="aw-team" data-none="{{ t.none }}">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div class="crest" style="width:30px;height:30px;background:{{ t.color }};color:var(--onAccent);display:flex;align-items:center;justify-content:center;font-family:'Big Shoulders Display';font-weight:800;font-size:12px;flex:none"><span class="ini" data-i="{{ t.init }}">{{ t.init }}</span></div>
+            <div style="font-weight:600;font-size:15px;min-width:0;flex:1">{{ t.m }}</div>
+            <div style="font-family:'JetBrains Mono';font-size:11px;color:var(--muted);white-space:nowrap">{{ t.count }}</div>
+          </div>
+          <div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:8px">
+            <sc-for list="{{ t.pills }}" as="p" hint-placeholder-count="2"><span class="aw-pill {{ p.cls }}">{{ p.t }}</span></sc-for>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+</sc-if>
 <sc-for list="{{ awardGroups }}" as="g" hint-placeholder-count="4">
   <div style="padding:26px 20px 0">
     <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:26px;text-transform:uppercase">{{ g.group }}</div>
-    <div style="display:flex;flex-wrap:wrap;align-items:stretch;gap:10px;margin-top:10px">
-      <sc-for list="{{ g.awards }}" as="a" hint-placeholder-count="4">
-        <div style="flex:1 1 min(100%,{{ a.basis }});min-width:0;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px">
+    <div class="aw-grid">
+      <sc-for list="{{ g.awards }}" as="a" hint-placeholder-count="3">
+        <div class="aw-card">
           <div style="font-family:'JetBrains Mono';font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)">{{ a.title }}</div>
           <div style="display:flex;align-items:center;gap:10px;margin-top:10px">
-            <div class="crest" style="width:30px;height:30px;background:{{ a.color }};color:var(--onAccent);display:flex;align-items:center;justify-content:center;font-family:'Big Shoulders Display';font-weight:800;font-size:12px;flex:none"><span class="ini" data-i="{{ a.init }}">{{ a.init }}</span></div>
-            <div style="font-weight:600;font-size:16px;min-width:0;flex:1">{{ a.m }}</div>
-            <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:30px;line-height:1;color:var(--accentInk)">{{ a.value }}</div>
+            <div class="crest" style="width:34px;height:34px;background:{{ a.color }};color:var(--onAccent);display:flex;align-items:center;justify-content:center;font-family:'Big Shoulders Display';font-weight:800;font-size:13px;flex:none"><span class="ini" data-i="{{ a.init }}">{{ a.init }}</span></div>
+            <div style="font-weight:700;font-size:17px;min-width:0;flex:1">{{ a.m }}</div>
+            <div style="text-align:right;flex:none"><div style="font-family:'Big Shoulders Display';font-weight:900;font-size:32px;line-height:1;color:var(--ink)">{{ a.value }}</div><div style="font-family:'JetBrains Mono';font-size:10.5px;color:var(--muted);margin-top:3px">{{ a.unit }}</div></div>
           </div>
-          <div style="font-size:14px;line-height:1.4;margin-top:10px;text-wrap:pretty">{{ a.line }}</div>
+          <div style="flex:1;font-size:14px;line-height:1.45;margin-top:10px;text-wrap:pretty">{{ a.line }}</div>
+          <sc-if value="{{ a.hasNext }}" hint-placeholder-val="{{ true }}">
+            <div class="aw-next"><span>Next</span><div class="crest" style="width:18px;height:18px;background:{{ a.nextColor }};color:var(--onAccent);display:flex;align-items:center;justify-content:center;font-family:'Big Shoulders Display';font-weight:800;font-size:8px;flex:none"><span class="ini" data-i="{{ a.nextInit }}">{{ a.nextInit }}</span></div><b>{{ a.nextM }}</b><span>{{ a.nextText }}</span></div>
+          </sc-if>
         </div>
       </sc-for>
     </div>

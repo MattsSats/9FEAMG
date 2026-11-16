@@ -104,9 +104,9 @@ else out.push('Playoff odds (playoffs/bye/last): ' + Object.entries(OD.teams).so
 const SCN = playoffScenarios(S);
 if (SCN) out.push(`Playoff scenarios (a win or loss means Week ${SCN.week}):` + Object.entries(SCN.teams).map(([m, t]) => `
   ${m}: ${t.lines.join(' ')}`).join(''));
-const AW = seasonAwards(S, scores);
+const AW = seasonAwards(S, scores, { tx });
 if (AW) out.push(`Season awards (through Week ${AW.through}):` + AW.awards.map(a => `
-  ${a.title}: ${a.m}, ${a.value}. ${a.line}`).join(''));
+  ${a.title}: ${a.m}, ${a.value} ${a.unit}. ${a.line}${a.next ? ` Next: ${a.next.m}, ${a.next.value}${a.next.w ? ` (Week ${a.next.w})` : ''}.` : ''}`).join(''));
 const pts = (n, w) => pointsOf(S, scores, n, w);
 out.push('Wire, this week: ' + wireOf(S, tx, pts, 'week').line);
 out.push('Wire, season:    ' + wireOf(S, tx, pts, 'season').line);

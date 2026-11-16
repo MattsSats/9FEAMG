@@ -641,10 +641,13 @@ export function pointSources(season, box, draft, tx) {
 // A bench swap only counts where the benched player could have played: same position, or a RB, WR or
 // TE into the FLEX. The worst bench decision is the biggest swap that would have turned a loss into a
 // win; if no swap ever did, the biggest swap.
-export function seasonAwards(season, box) {
+export function seasonAwards(season, box, { tx } = {}) {
   const st = seasonStats(season, box), NF = Math.min(st.NF, season.regularSeasonWeeks || 14), SC = season.scores, PAIRS = season.schedule || {};
   if (!NF) return null;
-  const n = x => (x < 0 ? '−' : '') + Math.abs(x).toFixed(2), best = (l, f) => l.reduce((a, x) => (!a || f(x) > f(a) ? x : a), null);
+  const n = x => (x < 0 ? '−' : '') + Math.abs(x).toFixed(2), sign = x => (x > 0 ? '+' : '') + n(x);
+  const rank = (l, f) => [...l].sort((a, b) => f(b) - f(a));
+  // "an 18.53 projection", "a 15.04 projection": eight, eleven and eighteen take "an".
+  const an = v => (/^(8|11\.|18\.)/.test(v) ? 'an ' : 'a ') + v;
   const score = (a, b) => `${n(a)}–${n(b)}`, N = season.managers.length;
   const games = [];
   for (let w = 1; w <= NF; w++) for (const [a, b] of PAIRS[w] || []) {
@@ -655,18 +658,20 @@ export function seasonAwards(season, box) {
     games.push({ w, W, L, sw, sl, gap: sw - sl, beatL: beat(sl, L), beatW: beat(sw, W) });
   }
   const teams = games.flatMap(g => [{ w: g.w, m: g.W, s: g.sw, opp: g.L, os: g.sl, won: true }, { w: g.w, m: g.L, s: g.sl, opp: g.W, os: g.sw, won: false }]);
-  const out = [], add = (group, title, m, value, line) => out.push({ group, title, m, value, line });
-  const lost = games.length ? best(games, g => g.sl) : null, lucky = games.length ? best(games, g => -g.sw) : null;
+  // Each award: the leader, a unit for its number, a tone (good, rough or neutral, for the trophy case)
+  // and the runner-up (`next`), since the race moves every week (Matt, Nov 15, 2026).
+  const out = [], add = (group, title, tone, unit, m, value, line, next) => out.push({ group, title, tone, unit, m, value, line, next: next || null });
+  const nx = (m, value, w) => (m ? { m, value, w: w ?? null } : null);
   if (games.length) {
-    const b = best(games, g => g.gap), c = best(games, g => -g.gap), hi = best(teams, t => t.s), lo = best(teams, t => -t.s);
-    // Like Closest game: the winner's crest and credit (Matt, Nov 15, 2026).
-    add('Games', 'Biggest blowout', b.W, n(b.gap), `${b.W} beat ${b.L} ${score(b.sw, b.sl)} in Week ${b.w}, the biggest margin of the season.`);
-    // The winner's crest and credit, not a loss pinned on the other side (Matt, Nov 15, 2026; the Booth's voice).
-    add('Games', 'Closest game', c.W, n(c.gap), `${c.W} held off ${c.L} ${score(c.sw, c.sl)} in Week ${c.w}, the closest finish of the season.`);
-    add('Games', 'Unluckiest loss', lost.L, n(lost.sl), `${lost.L} lost to ${lost.W} ${score(lost.sl, lost.sw)} in Week ${lost.w}, a score that beat ${lost.beatL} of the other ${N - 1} teams.`);
-    add('Games', 'Luckiest win', lucky.W, n(lucky.sw), `${lucky.W} beat ${lucky.L} ${score(lucky.sw, lucky.sl)} in Week ${lucky.w}, a score that beat ${lucky.beatW} of the other ${N - 1} teams.`);
-    add('Games', 'Highest score', hi.m, n(hi.s), `${hi.m} in Week ${hi.w}, ${hi.won ? 'beating' : 'losing to'} ${hi.opp} (${n(hi.os)}).`);
-    add('Games', 'Lowest score', lo.m, n(lo.s), `${lo.m} in Week ${lo.w}, ${lo.won ? 'beating' : 'losing to'} ${lo.opp} (${n(lo.os)}).`);
+    const b = rank(games, g => g.gap), c = rank(games, g => -g.gap), hi = rank(teams, t => t.s), lo = rank(teams, t => -t.s);
+    const lost = rank(games, g => g.sl), lucky = rank(games, g => -g.sw);
+    // The winner's crest and credit on blowouts and close games (Matt, Nov 15, 2026).
+    add('Games', 'Biggest blowout', 'good', 'margin', b[0].W, n(b[0].gap), `${b[0].W} beat ${b[0].L} ${score(b[0].sw, b[0].sl)} in Week ${b[0].w}, the biggest margin of the season.`, b[1] && nx(b[1].W, n(b[1].gap), b[1].w));
+    add('Games', 'Closest game', 'good', 'margin', c[0].W, n(c[0].gap), `${c[0].W} held off ${c[0].L} ${score(c[0].sw, c[0].sl)} in Week ${c[0].w}, the closest finish of the season.`, c[1] && nx(c[1].W, n(c[1].gap), c[1].w));
+    add('Games', 'Highest score', 'good', 'points', hi[0].m, n(hi[0].s), `${hi[0].m} scored ${n(hi[0].s)} against ${hi[0].opp} in Week ${hi[0].w}, the best score of the season.`, hi[1] && nx(hi[1].m, n(hi[1].s), hi[1].w));
+    add('Games', 'Lowest score', 'rough', 'points', lo[0].m, n(lo[0].s), `${lo[0].m} scored ${n(lo[0].s)} against ${lo[0].opp} in Week ${lo[0].w}, the lowest score of the season.`, lo[1] && nx(lo[1].m, n(lo[1].s), lo[1].w));
+    add('Games', 'Unluckiest loss', 'rough', 'points in a loss', lost[0].L, n(lost[0].sl), `${lost[0].L} lost to ${lost[0].W} ${score(lost[0].sl, lost[0].sw)} in Week ${lost[0].w}, with a score that beat ${lost[0].beatL} of the other ${N - 1} teams.`, lost[1] && nx(lost[1].L, n(lost[1].sl), lost[1].w));
+    add('Games', 'Luckiest win', 'neutral', 'points in a win', lucky[0].W, n(lucky[0].sw), `${lucky[0].W} beat ${lucky[0].L} ${score(lucky[0].sw, lucky[0].sl)} in Week ${lucky[0].w}, with a score that beat ${lucky[0].beatW} of the other ${N - 1} teams.`, lucky[1] && nx(lucky[1].W, n(lucky[1].sw), lucky[1].w));
   }
   // Lineups and players, for the weeks with a box score.
   const swaps = [], left = [], starts = [], total = {};
@@ -675,32 +680,58 @@ export function seasonAwards(season, box) {
     const opt = optimalLineup([...bx.starters, ...bx.bench]);
     left.push({ w, m: t.m, s: t.s, opt, gap: opt - t.s });
     (total[t.m] ||= { s: 0, opt: 0, wk: 0 }); total[t.m].s += t.s; total[t.m].opt += opt; total[t.m].wk++;
-    for (const r of bx.starters) if (r[5] > 0) starts.push({ w, m: t.m, name: r[1], pts: r[4], proj: r[5], over: r[4] - r[5] });
+    for (const r of bx.starters) starts.push({ w, m: t.m, name: r[1], pts: r[4] || 0, proj: r[5] || 0, over: (r[4] || 0) - (r[5] || 0) });
     for (const bn of bx.bench.filter(r => r[0] == 'BN')) for (const s of bx.starters) {
       if (!(s[0] == bn[3] || (s[0] == 'W/R/T' && FLEX_POS.includes(bn[3])))) continue;
       const gain = bn[4] - s[4];
       if (gain > 0) swaps.push({ w, m: t.m, bn: bn[1], bp: bn[4], st: s[1], sp: s[4], gain, flips: !t.won && gain > t.os - t.s, by: t.os - t.s, opp: t.opp });
     }
   }
-  const worst = best(swaps.filter(s => s.flips), s => s.gain) || best(swaps, s => s.gain);
-  if (worst) add('Lineups', 'Worst bench decision', worst.m, n(worst.gain), `${worst.m} started ${worst.st} (${n(worst.sp)}) over ${worst.bn} (${n(worst.bp)}) in Week ${worst.w}.` + (worst.flips ? ` Lost to ${worst.opp} by ${n(worst.by)}; that swap wins it.` : ''));
-  if (left.length) { const l = best(left, x => x.gap); add('Lineups', 'Most points left on the bench', l.m, n(l.gap), `${l.m} scored ${n(l.s)} in Week ${l.w}; the best possible lineup scored ${n(l.opt)}.`); }
+  // The worst bench decision is the biggest swap that would have turned a loss into a win (if none ever
+  // did, the biggest swap), one per team-week so the runner-up is a different week.
+  const flips = swaps.filter(s => s.flips), pool = rank(flips.length ? flips : swaps, s => s.gain).filter((s, i, l) => l.findIndex(x => x.w == s.w && x.m == s.m) == i);
+  const worst = pool[0];
+  if (worst) add('Lineups and moves', 'Worst bench decision', 'rough', 'point swing', worst.m, n(worst.gain), `${worst.m} started ${worst.st} (${n(worst.sp)}) over ${worst.bn} (${n(worst.bp)}) in Week ${worst.w}` + (worst.flips ? ` and lost to ${worst.opp} by ${n(worst.by)}. The swap would have won it.` : '.'), pool[1] && nx(pool[1].m, n(pool[1].gain), pool[1].w));
+  if (left.length) { const l = rank(left, x => x.gap); add('Lineups and moves', 'Most points left on the bench', 'rough', 'points left', l[0].m, n(l[0].gap), `${l[0].m} scored ${n(l[0].s)} in Week ${l[0].w}, when the best possible lineup scored ${n(l[0].opt)}.`, l[1] && nx(l[1].m, n(l[1].gap), l[1].w)); }
   const eff = Object.entries(total).map(([m, t]) => ({ m, ...t, pct: t.s / t.opt }));
   if (eff.length) {
-    const say = e => `${e.m} scored ${n(e.s)} of a possible ${n(e.opt)}.`, pc = e => (e.pct * 100).toFixed(1) + '%';
-    const hi = best(eff, e => e.pct), lo = best(eff, e => -e.pct);
-    add('Lineups', 'Best lineup setter', hi.m, pc(hi), say(hi)); add('Lineups', 'Worst lineup setter', lo.m, pc(lo), say(lo));
+    const say = e => `${e.m} scored ${n(e.s)} of a possible ${n(e.opt)} points.`, pc = e => (e.pct * 100).toFixed(1) + '%';
+    const hi = rank(eff, e => e.pct), lo = rank(eff, e => -e.pct);
+    add('Lineups and moves', 'Best lineup setter', 'good', 'of possible points', hi[0].m, pc(hi[0]), say(hi[0]), hi[1] && nx(hi[1].m, pc(hi[1])));
+    add('Lineups and moves', 'Worst lineup setter', 'rough', 'of possible points', lo[0].m, pc(lo[0]), say(lo[0]), lo[1] && nx(lo[1].m, pc(lo[1])));
+  }
+  // Pickups (needs the transactions): started points from players added off waivers or free agency
+  // (kickers and defenses left out, as streams), and adds made, both through the last final week.
+  if (tx?.length) {
+    const end = weekEndAt(season, NF).getTime(), boxNF = { weeks: Object.fromEntries(Object.entries(box?.weeks || {}).filter(([w]) => +w <= NF)) };
+    const by = {};
+    for (const a of acquisitionsOf(season, boxNF, null, tx)) if (a.how == 'add' && !isStream(a) && a.started > 0) {
+      const p = (by[a.m + '|' + a.player] ||= { m: a.m, player: a.player, started: 0, starts: 0 }); p.started += a.started; p.starts += a.starts;
+    }
+    const pk = rank(Object.values(by), p => p.started);
+    if (pk[0]) add('Lineups and moves', 'Best pickup', 'good', 'started points', pk[0].m, n(pk[0].started), `${pk[0].m} added ${pk[0].player}, who has scored ${n(pk[0].started)} in ${pk[0].starts} start${pk[0].starts == 1 ? '' : 's'} since.`, pk[1] && nx(pk[1].m, n(pk[1].started)));
+    const adds = {};
+    for (const t of tx) if (t.action == 'add' && t.manager) { const at = parseCT(t.when, season.year); if (at && at.getTime() <= end) adds[t.manager] = (adds[t.manager] || 0) + 1; }
+    const ad = rank(Object.entries(adds), e => e[1]);
+    if (ad[0]) add('Lineups and moves', 'Most adds', 'neutral', 'adds', ad[0][0], String(ad[0][1]), `${ad[0][0]} made ${ad[0][1]} adds through Week ${NF}` + (ad[1] ? `, ${ad[0][1] - ad[1][1]} more than anyone else.` : '.'), ad[1] && nx(ad[1][0], String(ad[1][1])));
   }
   if (starts.length) {
-    const up = best(starts, x => x.over), dn = best(starts, x => -x.over);
-    add('Players', 'Biggest boom', up.m, '+' + n(up.over), `${up.name} scored ${n(up.pts)} on a ${n(up.proj)} projection for ${up.m} in Week ${up.w}.`);
-    add('Players', 'Biggest bust', dn.m, n(dn.over), `${dn.name} scored ${n(dn.pts)} on a ${n(dn.proj)} projection for ${dn.m} in Week ${dn.w}.`);
+    const top = rank(starts, x => x.pts), proj = starts.filter(x => x.proj > 0), up = rank(proj, x => x.over), dn = rank(proj, x => -x.over);
+    add('Players', 'Top player week', 'good', 'points', top[0].m, n(top[0].pts), `${top[0].name} scored ${n(top[0].pts)} for ${top[0].m} in Week ${top[0].w}, the best start of the season.`, top[1] && nx(top[1].m, n(top[1].pts), top[1].w));
+    if (up[0]) add('Players', 'Biggest boom', 'good', 'vs projection', up[0].m, '+' + n(up[0].over), `${up[0].name} scored ${n(up[0].pts)} on ${an(n(up[0].proj))} projection for ${up[0].m} in Week ${up[0].w}.`, up[1] && nx(up[1].m, '+' + n(up[1].over), up[1].w));
+    if (dn[0]) add('Players', 'Biggest bust', 'rough', 'vs projection', dn[0].m, n(dn[0].over), `${dn[0].name} scored ${n(dn[0].pts)} on ${an(n(dn[0].proj))} projection for ${dn[0].m} in Week ${dn[0].w}.`, dn[1] && nx(dn[1].m, n(dn[1].over), dn[1].w));
   }
-  const rec = r => `${r.w}–${r.l} on ${r.xw.toFixed(2)} expected wins`, sign = x => (x > 0 ? '+' : '') + n(x);
-  const lk = best(st.rows, r => r.luck), ul = best(st.rows, r => -r.luck), pa = best(st.rows, r => r.pa);
-  add('Season', 'Luckiest team', lk.m, sign(lk.luck), `${lk.m} is ${rec(lk)}.`);
-  add('Season', 'Unluckiest team', ul.m, sign(ul.luck), `${ul.m} is ${rec(ul)}.`);
-  add('Season', 'Most points against', pa.m, n(pa.pa), `Opponents have scored the most against ${pa.m}, ${(pa.pa / NF).toFixed(2)} a week.`);
+  const rec = r => `${r.w}–${r.l} on ${r.xw.toFixed(2)} expected wins`;
+  const lk = rank(st.rows, r => r.luck), ul = rank(st.rows, r => -r.luck), pa = rank(st.rows, r => r.pa), fa = rank(st.rows, r => -r.pa);
+  add('Season', 'Luckiest team', 'neutral', 'wins vs expected', lk[0].m, sign(lk[0].luck), `${lk[0].m} is ${rec(lk[0])}.`, nx(lk[1].m, sign(lk[1].luck)));
+  add('Season', 'Unluckiest team', 'rough', 'wins vs expected', ul[0].m, sign(ul[0].luck), `${ul[0].m} is ${rec(ul[0])}.`, nx(ul[1].m, sign(ul[1].luck)));
+  add('Season', 'Most points against', 'rough', 'points against', pa[0].m, n(pa[0].pa), `Opponents have scored the most against ${pa[0].m}, ${n(pa[0].pa / NF)} a week.`, nx(pa[1].m, n(pa[1].pa)));
+  add('Season', 'Easiest schedule', 'neutral', 'points against', fa[0].m, n(fa[0].pa), `Opponents have scored the fewest against ${fa[0].m}, ${n(fa[0].pa / NF)} a week.`, nx(fa[1].m, n(fa[1].pa)));
+  // Steadiest and streakiest: the standard deviation of each team's weekly scores.
+  const sd = season.managers.map(x => { const s = SC[x.m].slice(0, NF), avg = s.reduce((a, b) => a + b, 0) / s.length; return { m: x.m, avg, sd: Math.sqrt(s.reduce((a, b) => a + (b - avg) ** 2, 0) / s.length) }; });
+  const steady = rank(sd, x => -x.sd), wild = rank(sd, x => x.sd);
+  add('Season', 'Most consistent', 'good', 'typical swing', steady[0].m, '±' + n(steady[0].sd), `${steady[0].m} averages ${n(steady[0].avg)} a week and usually lands within ${n(steady[0].sd)} of it, the steadiest in the league.`, nx(steady[1].m, '±' + n(steady[1].sd)));
+  add('Season', 'Wildest swings', 'neutral', 'typical swing', wild[0].m, '±' + n(wild[0].sd), `${wild[0].m} averages ${n(wild[0].avg)} a week but usually lands ${n(wild[0].sd)} away from it, the widest swings in the league.`, nx(wild[1].m, '±' + n(wild[1].sd)));
   return { through: NF, awards: out };
 }
 
