@@ -10,7 +10,7 @@ import { loadSeason, escapeHtml, hash, anchorFor, describe, BOTS, goTo } from '.
 import { readJson, readData, dataOrigin } from './_yahoo.js';
 import { seasonStats, loadBox, powerRanks } from './_stats.js';
 import { loadTx, wireOf } from './_wire.js';
-import { lineupIssues, playoffOdds, oddsPct, pickChip, seasonAwards, raceText, matchupOdds, pointSources, liveRosters, faabOf, roastOf, playoffBracket, byStandings, paRankLabel } from './_shared.js';
+import { lineupIssues, playoffOdds, oddsPct, pickChip, seasonAwards, raceText, matchupOdds, pointSources, liveRosters, faabOf, roastOf, playoffBracket, byStandings, paRankLabel, spreadDots, scatterPad } from './_shared.js';
 import { C, F, h, fonts, mgrColor } from './_ogkit.js';
 
 const CHARTS = { luck: 'Luck', xw: 'Expected wins', src: 'Where the points come from', bench: 'Points left on bench', pfpa: 'Points for vs against', ledger: 'Parlay ledger' };
@@ -135,17 +135,15 @@ function benchChart(st) {
 function pfpaChart(st) {
   const r = st.rows, pfs = r.map(x => x.pf), pas = r.map(x => x.pa);
   const x0 = Math.floor(Math.min(...pfs) / 10) * 10 - 5, x1 = Math.ceil(Math.max(...pfs) / 10) * 10 + 5;
-  // Extra room above and below keeps the top and bottom dots clear of the corner labels.
-  const y0 = Math.floor(Math.min(...pas) / 10) * 10 - 45, y1 = Math.ceil(Math.max(...pas) / 10) * 10 + 45;
   const W = 1010, H = 360, D = 50, avg = a => a.reduce((s, v) => s + v, 0) / a.length;
-  // Nudge overlapping dots apart, as the site does.
-  const pts = r.map(x => ({ x: (x.pf - x0) / (x1 - x0), y: (y1 - x.pa) / (y1 - y0) })), DX = (D + 6) / W, DY = (D + 26) / H; // up and down, room for the luck number under each dot
-  for (let it = 0; it < 80; it++) for (let i = 0; i < pts.length; i++) for (let j = i + 1; j < pts.length; j++) {
-    const a = pts[i], b = pts[j], dx = (b.x - a.x) / DX, dy = (b.y - a.y) / DY, d = Math.hypot(dx, dy);
-    if (d >= 1) continue;
-    const push = (1 - d) / 2, ux = d ? dx / d : 1, uy = d ? dy / d : 0;
-    a.x -= ux * push * DX; b.x += ux * push * DX; a.y -= uy * push * DY; b.y += uy * push * DY;
-  }
+  // Room above and below keeps the top and bottom dots clear of the corner labels (16px type, 10px
+  // in from the edges): the label, half the dot (or its lower half and the luck number) and a gap.
+  const keepTop = (10 + 20 + D / 2 + 4) / H, keepBottom = (10 + 20 + D / 2 + 20 + 4) / H;
+  const paLo = Math.floor(Math.min(...pas) / 10) * 10, paHi = Math.ceil(Math.max(...pas) / 10) * 10, yPad = scatterPad(paHi - paLo, keepBottom);
+  const y0 = paLo - yPad, y1 = paHi + yPad;
+  // Nudge overlapping dots apart, as the site does (up and down, room for the luck number under each dot).
+  const pts = spreadDots(r.map(x => ({ x: (x.pf - x0) / (x1 - x0), y: (y1 - x.pa) / (y1 - y0) })), (D + 6) / W, (D + 26) / H,
+    { xSpan: (12 + 225 + D / 2 + 6) / W, top: keepTop, bottom: keepBottom });
   const clamp = v => Math.min(0.96, Math.max(0.04, v));
   const corner = (text, color, pos) => h('div', { position: 'absolute', ...pos, fontFamily: F.mono, fontSize: 16, fontWeight: 600, letterSpacing: 2, color }, text);
   const axis = (text, pos) => h('div', { position: 'absolute', ...pos, fontFamily: F.mono, fontSize: 16, fontWeight: 600, color: C.muted }, text);

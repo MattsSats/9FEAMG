@@ -538,8 +538,14 @@ button{font-family:inherit;color:inherit}
 .heat-wrap{min-width:var(--hmin-m)}
 .heat-cell{height:38px;border-radius:8px;display:flex;align-items:center;justify-content:center;gap:4px;font-family:'JetBrains Mono';font-size:12px;font-weight:600;padding:0 4px;white-space:nowrap}
 .heat-grid>.heat-fut{display:none}
-/* Phones: the live week's LIVE tag sits under the points so the column stays narrow. */
-@media (max-width:899px){.heat-live{flex-direction:column;gap:1px!important;line-height:1}.heat-cell{font-size:11px;gap:2px;padding:0 2px}.heat-cell>span{font-size:8px!important}}
+/* The live week's LIVE tag sits under the points at every width: side by side they don't fit the
+   cell, even on desktop (Matt, Nov 15, 2026). */
+.heat-live{flex-direction:column;gap:1px!important;line-height:1}
+/* Phones: the grid scrolls sideways. It opens on the latest weeks (a right-to-left scroller starts
+   at its right end; the grid inside reads left to right as usual) and the names stay pinned. */
+@media (max-width:899px){.heat-cell{font-size:11px;gap:2px;padding:0 2px}.heat-cell>span{font-size:8px!important}
+  .heat-scroll{direction:rtl}.heat-scroll>.heat-wrap{direction:ltr}
+  .heat-grid>span:first-child{position:sticky;left:0;z-index:2;background:var(--bg);align-self:stretch;display:flex;align-items:center;box-shadow:4px 0 0 var(--bg)}}
 @media (min-width:900px){
   /* Standings, odds, scenarios and the playoff picture make column 1 long, so column 2 stacks Power
      rankings, then PF vs PA, Luck and How to read this, instead of leaving a gap beside it (Nov 15, 2026). */
@@ -1692,7 +1698,7 @@ button{font-family:inherit;color:inherit}
   </div>
   <!-- Every week of the regular season on desktop (future weeks faint); phones show the weeks so
        far and one "6–14" cell. The live week shows current points with a LIVE tag. -->
-  <div class="scroll-x">
+  <div class="scroll-x heat-scroll">
   <div class="heat-wrap" style="--heat-m:{{ heatColsM }};--heat-d:{{ heatColsD }};--hmin-m:{{ heatMinM }};--hmin-d:{{ heatMinD }}">
   <div class="heat-grid" style="padding:12px 0 6px;font-family:'JetBrains Mono';font-size:11px;color:var(--muted);letter-spacing:.06em">
     <span></span>

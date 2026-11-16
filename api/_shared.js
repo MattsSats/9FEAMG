@@ -205,6 +205,25 @@ export function seasonStats(season, box) {
 // A points-against rank (1 = fewest of n) in words: "3rd fewest", or "2nd most" for the top half,
 // since allowing a lot is the story there (Matt, Nov 10, 2026). ord turns 2 into "2nd".
 export const paRankLabel = (rank, n, ord) => rank == 1 ? 'fewest in league' : rank == n ? 'most in league' : rank > n / 2 ? ord(n + 1 - rank) + ' most' : ord(rank) + ' fewest';
+// Points for vs against scatter (the Season tab and its share card). Each dot carries its luck
+// number underneath, so a dot's footprint is a box DX wide and DY tall (fractions of the plot).
+// spreadDots nudges boxes apart until none overlap (the old round test let a neighbour sit on a
+// number), and keeps any dot above or below a corner label (the outer xSpan of the width) at least
+// top / bottom away from that edge. scatterPad is the room to add above and below the PA range so
+// the highest and lowest dots clear those labels at their true positions (Matt, Nov 15, 2026).
+export function spreadDots(pts, DX, DY, { xSpan = 0, top = 0, bottom = 0 } = {}) {
+  for (let it = 0; it < 120; it++) {
+    for (let i = 0; i < pts.length; i++) for (let j = i + 1; j < pts.length; j++) {
+      const a = pts[i], b = pts[j], dx = b.x - a.x, dy = b.y - a.y, ox = DX - Math.abs(dx), oy = DY - Math.abs(dy);
+      if (ox <= 0 || oy <= 0) continue;
+      if (ox / DX <= oy / DY) { const s = dx >= 0 ? 1 : -1; a.x -= s * ox / 2; b.x += s * ox / 2; }
+      else { const s = dy >= 0 ? 1 : -1; a.y -= s * oy / 2; b.y += s * oy / 2; }
+    }
+    for (const p of pts) if (p.x < xSpan || p.x > 1 - xSpan) p.y = Math.min(1 - bottom, Math.max(top, p.y));
+  }
+  return pts;
+}
+export const scatterPad = (range, keep, min = 45) => Math.max(min, Math.ceil(keep * range / (1 - 2 * keep) / 5) * 5);
 // Standings order: wins, then points for.
 export const byStandings = (a, b) => b.w - a.w || b.pf - a.pf;
 // The league's week-to-week spread: how far a team's weekly score lands from its own average

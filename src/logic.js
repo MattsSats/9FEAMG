@@ -1509,8 +1509,7 @@ class Component extends DCLogic {
 
     // Charts
     const hl = S.hl, dim = m => hl && hl != m ? .3 : 1, pickHl = m => () => this.setState({ hl: S.hl == m ? null : m });
-    // Extra room above and below keeps the top and bottom dots clear of the corner labels.
-    const pfs = ST.map(x => x.pf), pas = ST.map(x => x.pa), x0 = Math.floor(Math.min(...pfs) / 10) * 10 - 5, x1 = Math.ceil(Math.max(...pfs) / 10) * 10 + 5, y0 = Math.floor(Math.min(...pas) / 10) * 10 - 45, y1 = Math.ceil(Math.max(...pas) / 10) * 10 + 45; // room above and below keeps dots clear of the corner labels
+    const pfs = ST.map(x => x.pf), pas = ST.map(x => x.pa), x0 = Math.floor(Math.min(...pfs) / 10) * 10 - 5, x1 = Math.ceil(Math.max(...pfs) / 10) * 10 + 5;
     const avg = a => a.reduce((s, v) => s + v, 0) / a.length, sx = v => ((v - x0) / (x1 - x0) * 100).toFixed(1) + '%', sy = v => ((y1 - v) / (y1 - y0) * 100).toFixed(1) + '%';
     // Nudge overlapping dots apart so every crest stays readable and tappable. DX/DY are a
     // 30px dot plus a gap (and, up and down, the luck number under it), as a share of the plot:
@@ -1518,13 +1517,13 @@ class Component extends DCLogic {
     // the chart's column is 1/3 of the page (wide) or half of it.
     const vw = window.innerWidth || 440, plotH = vw >= 900 ? 460 : 340;
     const plotW = vw >= 1320 ? Math.min(vw, 1440) / 3 - 106 : vw >= 900 ? Math.min(vw, 1080) / 2 - 106 : Math.max(200, Math.min(vw, 440) - 94);
-    const pts = ST.map(x => ({ x: (x.pf - x0) / (x1 - x0), y: (y1 - x.pa) / (y1 - y0) })), DX = 36 / plotW, DY = 46 / plotH;
-    for (let it = 0; it < 80; it++) for (let i = 0; i < pts.length; i++) for (let j = i + 1; j < pts.length; j++) {
-      const a = pts[i], b = pts[j], dx = (b.x - a.x) / DX, dy = (b.y - a.y) / DY, d = Math.hypot(dx, dy);
-      if (d >= 1) continue;
-      const push = (1 - d) / 2, ux = d ? dx / d : 1, uy = d ? dy / d : 0;
-      a.x -= ux * push * DX; b.x += ux * push * DX; a.y -= uy * push * DY; b.y += uy * push * DY;
-    }
+    // The corner labels are 11px type, 6px in from the edges: one line on desktop, two on phones.
+    // A dot under one needs the label, half the dot (or the dot's lower half and its number) and a gap.
+    const labelH = vw >= 900 ? 14 : 27, keepTop = (6 + labelH + 15 + 3) / plotH, keepBottom = (6 + labelH + 28 + 3) / plotH;
+    const paLo = Math.floor(Math.min(...pas) / 10) * 10, paHi = Math.ceil(Math.max(...pas) / 10) * 10, yPad = scatterPad(paHi - paLo, keepBottom);
+    const y0 = paLo - yPad, y1 = paHi + yPad;
+    const pts = spreadDots(ST.map(x => ({ x: (x.pf - x0) / (x1 - x0), y: (y1 - x.pa) / (y1 - y0) })), 36 / plotW, 46 / plotH,
+      { xSpan: Math.min(0.46, 171 / plotW), top: keepTop, bottom: keepBottom });
     const plotPos = v => (Math.min(0.97, Math.max(0.03, v)) * 100).toFixed(1) + '%';
     // Each dot's ring and small number are its luck (W − xW), the same as the Luck chart.
     const luckCol = l => l > 0 ? 'var(--pos)' : l < 0 ? 'var(--neg)' : 'var(--muted)';
