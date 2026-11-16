@@ -1273,7 +1273,7 @@ class Component extends DCLogic {
       });
     const oddsSub = !OD ? '' : !OD.now ? 'Odds start once the rest of the regular season is on the schedule.'
       : oddsDone ? 'The regular season is over.'
-      : `${OD.now.sims.toLocaleString('en-US')} simulated seasons · ${OD.now.live ? `Week ${LW} from Yahoo’s projections · ` : ''}${OD.prev ? '± since last week' : ''}`;
+      : `${OD.now.sims.toLocaleString('en-US')} simulated seasons · ${OD.now.live ? `Week ${LW} from ${LIVE_STARTED ? 'live scores and what’s left to play' : 'Yahoo’s projections'} · ` : ''}${OD.prev ? '± since last week' : ''}`;
     // Season awards (seasonAwards in api/_shared.js), once the box scores have loaded.
     const seasonAw = S.tab == 'Awards' && S.box ? seasonAwards(D, S.box) : null;
     // Cards grow to fill each row (no orphan gaps; Matt, Nov 15, 2026); a group that would leave one card alone
@@ -1611,7 +1611,7 @@ class Component extends DCLogic {
       // The matchup link goes through /s/w5-andy-vs-pablo so chats show a picture of it (api/section.js).
       menuHero: this.shareMenu('This matchup', e => this.shareLink(location.origin + (hero ? `/s/w${S.week}-${teamSlug(hero.a.m)}-vs-${teamSlug(hero.b.m)}` : '/#w' + S.week), hero ? `9FEAMG · ${hero.a.m} vs ${hero.b.m}` : '9FEAMG · Week ' + S.week, e), e => this.share('hero', e)),
       // Season jump chips, like Gameday's (Matt, Nov 15, 2026).
-      seasonJumps: [['Standings', 'standings'], ['Playoffs', 'odds'], ['Power', 'power'], ['Luck', 'luck'], ['Weekly scores', 'weekly']].map(([label, id]) => ({ label, go: () => this.jump(id) })),
+      seasonJumps: [['Standings', 'standings'], ['Playoffs', 'odds'], ['Power', 'power'], ['Luck', 'luck'], ['Bench', 'bench'], ['Point sources', 'src'], ['Weekly scores', 'weekly']].map(([label, id]) => ({ label, go: () => this.jump(id) })),
       // Season awards: the link (/s/awards, its own preview card) or an image of the page.
       menuAwards: this.shareMenu('Season awards', e => this.shareLink(location.origin + '/s/awards', '9FEAMG · Season awards', e), e => this.share('awards', e)),
       hasAwards: awardGroups.length > 0, shotAwards: `Season awards · through week ${NF}`,
