@@ -897,7 +897,7 @@ class Component extends DCLogic {
       const pk = D.boothPicks?.[wk]?.[i], fin = doneWk(wk), won = fin && PAIRS[wk]?.[i] ? (([x, y]) => scoreOf(x, wk) > scoreOf(y, wk) ? x : scoreOf(y, wk) > scoreOf(x, wk) ? y : null)(PAIRS[wk][i]) : null;
       const pickTag = !pk ? '' : label == 'Preview' ? ` · Preview pick: ${pk[0]} ${pk[1]}%` : label == 'Recap' && fin ? ` · Preview pick: ${pk[0]} ${won == pk[0] ? '✓' : '✗'}` : '';
       return { crests: pair.map(m => ({ m, init: INIT[m], color: col(m) })), matchup: pair.join(' vs '),
-        text: line[1] + (c ? ' *' : ''), label: label + (when ? ' · ' + when : '') + pickTag, draft: c };
+        text: line[1] + (c ? ' *' : ''), label: label == 'Preview' && pk ? pickTag.slice(3) : label + (when ? ' · ' + when : '') + pickTag, draft: c };
     });
     // Same order as the matchup cards: the featured one, then the rest.
     const cardOrder = hasWeek ? [hero, ...matchups].map(x => x.a.m) : [];
@@ -1359,7 +1359,8 @@ class Component extends DCLogic {
     // The playoff race on the team card: odds to make it and for a bye, then what the next game is worth.
     const teamOD = S.tab == 'Teams' ? this.odds(false)?.now : null, to = teamOD?.teams?.[tm], tDone = teamOD?.weeksLeft == 0;
     const race = !to ? '' : `Playoffs ${raceText(to, 'playoffs', tDone)} · Bye ${raceText(to, 'bye', tDone)}`;
-    const raceSwing = to && to.playoffsSure == null && teamOD.swingWeek ? `Week ${teamOD.swingWeek}: ` + swingOf(teamOD, tm).replace(/^Playoffs: /, '') : '';
+    const swingTxt = to && to.playoffsSure == null && teamOD.swingWeek ? swingOf(teamOD, tm).replace(/^Playoffs: /, '') : '';
+    const raceSwing = swingTxt ? `Week ${teamOD.swingWeek}: ` + swingTxt : '';
     const teamAcq = ACQ.filter(a => a.m == tm && a.weeks > 0).sort((a, b) => b.started - a.started || b.bench - a.bench);
     const srcTotal = teamAcq.reduce((t, a) => t + a.started, 0), srcOf = ok => teamAcq.filter(ok).reduce((t, a) => t + a.started, 0);
     // Streams: kickers and defenses added (api/_shared.js isStream), split from the real pickups.
@@ -1381,7 +1382,7 @@ class Component extends DCLogic {
       lineupTitle: `${tm}’s Week ${lineupWeek} lineup`, proj: LW ? 'Proj ' + f2(PROJ[tm]) : '',
       stats: [{ label: 'PF', value: f1(s.pf), sub: ord(pfRank) + ' in league' }, { label: 'PA', value: f1(s.pa), sub: paRankLabel(paRank, ST.length, ord) }, { label: 'Luck', value: sgn(s.luck), sub: 'W − xW', color: s.luck > 0 ? 'var(--pos)' : s.luck < 0 ? 'var(--neg)' : 'var(--ink)' }, { label: 'xW', value: s.xw.toFixed(2), sub: 'vs ' + s.w + ' real wins' }, { label: 'Max PF', value: maxOk ? f1(s.max) : '—', sub: maxOk ? ord(maxRank) + ' best possible' : 'Best possible lineup' }, { label: 'Bench', value: maxOk ? f1(bn) : '—', sub: 'Points left sitting' }, { label: 'FAAB left', value: txOk ? '$' + (budget - spent[tm]) : '—', sub: 'of $' + budget }, { label: 'Adds', value: txOk ? String(adds[tm]) : '—', sub: 'This season' }].map(x => ({ color: 'var(--ink)', isLuck: x.label == 'Luck', isBench: x.label == 'Bench', ...x })),
       log, rest, hasRest: rest.length > 0, restSub, race, raceSwing, hasRace: !!race, hasRaceSwing: !!raceSwing, starters: this.starters(tm, lineupWeek), alerts: this.lineupAlerts(tm, lineupWeek).map(t => ({ t })), hasAlerts: this.lineupAlerts(tm, lineupWeek).length > 0,
-      bench: pl.filter(p => p.slot != 'starter').map(p => { const lp = LIVEPTS[p.name]; const v = lp ?? p.proj ?? p.projected ?? p.projections?.[lineupWeek] ?? PPROJ[p.name] ?? (lineupWeek == LW ? p.espn : null); return { slot: p.slot == 'IR' ? 'IR' : p.pos, name: p.name, meta: (p.nfl || '').toUpperCase() + (lp == null && p.slot != 'IR' && lineupWeek == LW ? this.preGame(p, lineupWeek) : '') + (lp == null && v != null && p.slot != 'IR' && !(lineupWeek == LW && (nflGame(p.nfl, lineupWeek) || onBye(p.nfl, lineupWeek))) ? ' · proj' : lp != null ? (PLAYING.has(p.name) ? ' · live' : ' · Final') : ''), pts: p.slot == 'IR' ? '' : (v != null ? f2(+v) : '—') }; }),
+      bench: pl.filter(p => p.slot != 'starter').sort((a, b) => (a.slot == 'IR') - (b.slot == 'IR')).map(p => { const lp = LIVEPTS[p.name]; const v = lp ?? p.proj ?? p.projected ?? p.projections?.[lineupWeek] ?? PPROJ[p.name] ?? (lineupWeek == LW ? p.espn : null); return { slot: p.slot == 'IR' ? 'IR' : p.pos, name: p.name, meta: (p.nfl || '').toUpperCase() + (lp == null && p.slot != 'IR' && lineupWeek == LW ? this.preGame(p, lineupWeek) : '') + (lp == null && v != null && p.slot != 'IR' && !(lineupWeek == LW && (nflGame(p.nfl, lineupWeek) || onBye(p.nfl, lineupWeek))) ? ' · proj' : lp != null ? (PLAYING.has(p.name) ? ' · Live' : ' · Final') : ''), pts: p.slot == 'IR' ? '' : (v != null ? f2(+v) : '—') }; }),
       // Bench and IR counted apart ("BENCH · 6 · IR 1"): the IR slot isn't a bench spot.
       benchCount: pl.filter(p => p.slot != 'starter' && p.slot != 'IR').length + (pl.some(p => p.slot == 'IR') ? ' · IR ' + pl.filter(p => p.slot == 'IR').length : ''), lineupMsg, hasLineup: !lineupMsg, src
     };
