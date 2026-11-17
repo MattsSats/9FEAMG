@@ -317,6 +317,13 @@ window.SEASON = {
       ['Jerger', 'The Booth took the champ. Jerger started Kraft for 1.40 with Kelce’s 15.30 on the bench and lost to Pablo by 7.54. Three straight for Pablo. The rental on sixth has been renewed.', '2026-11-10T19:37-06:00'],
       ['Andy', 'Andy was the Booth’s surest pick of the week at 72%. Andy benched Swift’s 26.90 in Week 8, started Swift for 3.10 in Week 9 and lost to Kurt by 14.00. Kurt’s bad luck took the week off.', '2026-11-10T19:37-06:00'],
       ['Mr. G', 'Mr. G scored 118.76, the best Mr. G week since Week 1, and ran into Colin’s 125.24, second-best of the week. Opponents save their best for Mr. G: 1074.44 against, most in the league.', '2026-11-10T19:37-06:00']
+    ],
+    10: [
+      ['Pablo', 'CMC scored 44.30 for Matt, more than Pablo’s top two starters combined, and Matt won by 39.66. Even a Malik Washington touchdown pass couldn’t keep up.', '2026-11-16T22:34-06:00'],
+      ['Tristan', 'The Booth took Kurt, and Kurt left 0.00 on the bench. Tristan won anyway, 134.12–128.96, behind Mahomes’ 35.42. A perfect lineup, one Mahomes short.', '2026-11-16T22:34-06:00'],
+      ['Andy', 'Corum scored 19.40 for Jerger, just as Jerger promised. Gibbs scored 40.70 for Andy, and Andy won by 18.76. It was, as advertised, gibbing time.', '2026-11-16T22:34-06:00'],
+      ['Tony', 'Tony benched Hampton’s 17.00, started Allgeier for 1.40 and lost to Colin by 10.72 with the week’s lowest score. 11 Shots In, and the best one stayed on the bench.', '2026-11-16T22:34-06:00'],
+      ['DLin', 'The Booth took Mr. G at 59%. DLin answered with 155.42, the highest score of the season, 0.90 past Tony’s Week 2. Toilet Bowl King, scoring like the other bowl.', '2026-11-16T22:34-06:00']
     ]
   },
   // The day each week's previews were written; each line's own time (third field) wins when it has one.
@@ -798,6 +805,18 @@ window.SEASON = {
       Kurt: 'Up one to 8th. Kurt’s three wins came by 60.82, 51.18 and 14.00, and the one close game was a 1.44 loss. Right points, wrong weeks.',
       'Mr. G': 'Up one to 9th, out of last for the first time since Week 6. Three losses came by 2.56, 6.12 and 6.48. Mr. G is about 15 points from 5–4.',
       DLin: 'Down two to last after 79.40 beat nobody. The fewest points in the league, 855.48. The King is home.'
+    },
+    10: {
+      Tony: 'Still 1st after the week’s lowest score, 101.64. A 58–32 all-play record, three wins clear of anyone. The worst week of the year cost Tony nothing here.',
+      Matt: 'Up one to 2nd, five spots above the standings, after a third straight week with the league’s third-best score. The record says 4–6; the scoring keeps disagreeing.',
+      Andy: 'Up three to 3rd, the week’s biggest climb, on 153.38, second-best of the week, with Gibbs at 40.70. When it’s gibbing time, it’s really gibbing time.',
+      Colin: 'Down two to 4th on a third straight win: 112.36 was 8th of the week. Winning ugly still counts as winning, just not here.',
+      Jerger: 'Down one to 5th after a third straight loss, this one with the week’s 4th-best score, 134.62. A 50–40 all-play record and a 5–5 record. Bad timing, not a bad team.',
+      Tristan: 'Up one to 6th on a second straight win. 134.12 was Tristan’s best score since Week 1, with Mahomes at 35.42.',
+      Kurt: 'Up one to 7th. The league’s best lineup efficiency, 94.5%, and Week 10 was another clean one: 0.00 left on the bench in a 5.16 loss.',
+      DLin: 'Up two to 8th and off the bottom on the season high, 155.42, with Pickens at 38.00. One week can only do so much, and this one did plenty.',
+      Pablo: 'Down four to 9th, the week’s biggest drop, after 106.00, 9th of the week. Still 6th in the standings, holding the last playoff spot.',
+      'Mr. G': 'Down one to 10th, but Mr. G’s score has gone up four weeks in a row, to 126.52, the second-best Mr. G week of the season. It ran into the season high.'
     }
   },
 
@@ -827,6 +846,18 @@ window.SEASON = {
       Colin: '5–4 with five weeks over 120, second only to Tony, and two weeks dead last. C Lambs Biggest Hater has no middle setting.',
       DLin: '3–6 without a 120-point week all season, the only team that can say so, and the full waiver budget still unspent. Toilet Bowl King is saving up for something.',
       Pablo: '6th at 5–4 despite three weeks under 90, thanks to a 3–1 record in games decided by under 10. He was #1. Sixth still gets in.'
+    },
+    10: {
+      Tony: 'Both losses came in the two weeks Tony posted the league’s lowest score. Beating Tony takes Tony’s help.',
+      Andy: '7–3 with five top-two weeks and five in the bottom four. Andy doesn’t do average; it’s gibbing time or it’s nap time.',
+      Colin: '43 adds, the most in the league, and three straight wins. C Lambs Biggest Hater, finally getting a return on all that churn.',
+      Tristan: 'Two straight wins, and Week 10’s 134.12 was the best Squirtle Squad score since Week 1. Back in the playoff spots at 6–4.',
+      Jerger: '5–5 with the fourth-best all-play record, 50–40, and three straight losses anyway. The champ’s points are fine; the calendar isn’t.',
+      Pablo: '6th at 5–5 with the 8th-best all-play record, 38–52. He was #1, and Pablo is still holding the last playoff spot.',
+      Matt: '4–6 and 7th, with the league’s worst luck, −2.11, and 2nd in the power rankings. There is no 2nd best. The power rankings beg to differ.',
+      DLin: '4–6 with the season’s highest score, 155.42, and the whole waiver budget still unspent. Toilet Bowl King, saving up and scoring big.',
+      Kurt: 'Seven losses, all of them to one of the week’s five best scores. Average Sports Enthusiast keeps drawing the above-average ones.',
+      'Mr. G': 'Drew the week’s top score five times in ten weeks; nobody else has drawn it more than twice. Definitely not a Boomer, definitely everyone’s favorite opponent.'
     }
   }
 };
