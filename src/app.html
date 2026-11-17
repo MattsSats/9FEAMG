@@ -584,7 +584,8 @@ button{font-family:inherit;color:inherit}
 /* The section image gets its own header and footer; the whole-page image keeps neither. */
 .aw-kick,.aw-foot{display:none}
 .capturing.aw-sec>.aw-kick{display:block}
-.capturing.aw-sec>.aw-foot{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:14px 0 16px;font-family:'JetBrains Mono';font-size:11px;letter-spacing:.08em;color:var(--muted)}
+.capturing.aw-shot{display:block!important}
+.capturing.aw-sec>.aw-foot,.capturing.aw-shot>.aw-foot{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:14px 0 16px;font-family:'JetBrains Mono';font-size:11px;letter-spacing:.08em;color:var(--muted)}
 .aw-foot b{font-family:'Big Shoulders Display';font-weight:900;font-size:15px;letter-spacing:.02em;color:var(--ink)}
 .aw-case{display:grid;grid-template-columns:minmax(0,1fr);gap:8px;margin-top:10px}
 .aw-team{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px}
@@ -1932,7 +1933,41 @@ button{font-family:inherit;color:inherit}
 <sc-if value="{{ noAwards }}" hint-placeholder-val="{{ false }}">
   <div style="margin:16px 20px 0;padding:28px 16px;border:1px dashed var(--line);border-radius:16px;text-align:center;font-size:14px;color:var(--muted)">Loading the box scores…</div>
 </sc-if>
-<div data-shot="awards" data-shot-w="960" style="background:var(--bg);padding-bottom:4px">
+<!-- The share image (Matt, Nov 16, 2026): hidden on the page; like the link preview, a header, the trophy case,
+     the six headline awards and the footer. -->
+<div class="aw-shot" data-shot="awards" data-shot-w="960" style="display:none;background:var(--bg);padding:20px 20px 0">
+  <div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px">
+    <div style="font-family:'JetBrains Mono';font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--accentInk)">Season awards · through Week {{ awardsThrough }}</div>
+    <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:24px;line-height:1">9FEAMG</div>
+  </div>
+  <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:22px;text-transform:uppercase;margin-top:12px">Trophy case</div>
+  <div style="display:grid;grid-template-columns:repeat(10,minmax(0,1fr));gap:4px;margin-top:6px">
+    <sc-for list="{{ trophyCase }}" as="t" hint-placeholder-count="10">
+      <div style="display:flex;flex-direction:column;align-items:center;gap:4px">
+        <div class="crest" style="width:30px;height:30px;background:{{ t.color }};color:var(--onAccent);display:flex;align-items:center;justify-content:center;font-family:'Big Shoulders Display';font-weight:800;font-size:12px"><span class="ini" data-i="{{ t.init }}">{{ t.init }}</span></div>
+        <div style="font-family:'JetBrains Mono';font-size:10.5px;font-weight:600;color:{{ t.countColor }};white-space:nowrap">{{ t.short }}</div>
+      </div>
+    </sc-for>
+  </div>
+  <div class="aw-grid">
+    <sc-for list="{{ awardHeadlineCards }}" as="a" hint-placeholder-count="6">
+        <div class="aw-card">
+          <div style="font-family:'JetBrains Mono';font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)">{{ a.title }}</div>
+          <div style="display:flex;align-items:center;gap:10px;margin-top:10px">
+            <div class="crest" style="width:34px;height:34px;background:{{ a.color }};color:var(--onAccent);display:flex;align-items:center;justify-content:center;font-family:'Big Shoulders Display';font-weight:800;font-size:13px;flex:none"><span class="ini" data-i="{{ a.init }}">{{ a.init }}</span></div>
+            <div style="font-weight:700;font-size:17px;min-width:0;flex:1">{{ a.m }}</div>
+            <div style="text-align:right;flex:none"><div style="font-family:'Big Shoulders Display';font-weight:900;font-size:32px;line-height:1;color:var(--ink)">{{ a.value }}</div><div style="font-family:'JetBrains Mono';font-size:10.5px;color:var(--muted);margin-top:3px">{{ a.unit }}</div></div>
+          </div>
+          <div style="flex:1;font-size:14px;line-height:1.45;margin-top:10px;text-wrap:pretty">{{ a.line }}</div>
+          <sc-if value="{{ a.hasNext }}" hint-placeholder-val="{{ true }}">
+            <div class="aw-next"><span>Next</span><div class="crest" style="width:18px;height:18px;background:{{ a.nextColor }};color:var(--onAccent);display:flex;align-items:center;justify-content:center;font-family:'Big Shoulders Display';font-weight:800;font-size:8px;flex:none"><span class="ini" data-i="{{ a.nextInit }}">{{ a.nextInit }}</span></div><b>{{ a.nextM }}</b><span>{{ a.nextText }}</span></div>
+          </sc-if>
+        </div>
+    </sc-for>
+  </div>
+  <div class="aw-foot"><b>9FEAMG</b><span>{{ awardsSub }}</span></div>
+</div>
+<div style="background:var(--bg);padding-bottom:4px">
 <!-- Trophy case (Matt, Nov 15, 2026): each team's awards as pills; good ones in the accent color, rough ones muted. -->
 <sc-if value="{{ hasTrophy }}" hint-placeholder-val="{{ true }}">
   <div class="aw-sec" id="aw-trophy" data-shot="aw-trophy" data-shot-w="960" style="padding:22px 20px 0;background:var(--bg)">

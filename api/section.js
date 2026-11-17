@@ -10,7 +10,7 @@ import { loadSeason, escapeHtml, hash, anchorFor, describe, BOTS, goTo } from '.
 import { readJson, readData, dataOrigin } from './_yahoo.js';
 import { seasonStats, loadBox, powerRanks } from './_stats.js';
 import { loadTx, wireOf } from './_wire.js';
-import { lineupIssues, playoffOdds, oddsPct, pickChip, seasonAwards, raceText, matchupOdds, pointSources, liveRosters, faabOf, roastOf, playoffBracket, byStandings, paRankLabel, spreadDots, scatterPad } from './_shared.js';
+import { lineupIssues, playoffOdds, oddsPct, pickChip, seasonAwards, awardHeadline, raceText, matchupOdds, pointSources, liveRosters, faabOf, roastOf, playoffBracket, byStandings, paRankLabel, spreadDots, scatterPad } from './_shared.js';
 import { C, F, h, fonts, mgrColor } from './_ogkit.js';
 
 const CHARTS = { luck: 'Luck', xw: 'Expected wins', src: 'Where the points come from', bench: 'Points left on bench', pfpa: 'Points for vs against', ledger: 'Parlay ledger' };
@@ -484,7 +484,6 @@ function boothOf(season) {
 
 // Season awards (/s/awards, Matt, Nov 15, 2026): six of the season's awards in a 3 × 2 grid, the headline
 // ones first (seasonAwards in api/_shared.js).
-const AWARD_PICKS = ['Highest score', 'Biggest blowout', 'Closest game', 'Luckiest team', 'Unluckiest team', 'Most points left on the bench'];
 const awSlug = g => g.toLowerCase().replace(/[^a-z]+/g, '-');
 function awardsOf(season, box, sec, tx, st) {
   const A = seasonAwards(season, box, { tx }); if (!A) return null;
@@ -493,7 +492,7 @@ function awardsOf(season, box, sec, tx, st) {
   if (sec && sec != 'trophy' && !group) return null;
   const section = sec == 'trophy' ? 'Trophy case' : group;
   const cards = group ? A.awards.filter(a => a.group == group).slice(0, 6)
-    : [...AWARD_PICKS.map(t => A.awards.find(a => a.title.toLowerCase() == t.toLowerCase())).filter(Boolean), ...A.awards].filter((a, i, l) => l.indexOf(a) == i).slice(0, 6);
+    : awardHeadline(A.awards);
   // The trophy case, as on the page: most good awards first, then most awards, then the standings.
   const order = st ? [...st.rows].sort((x, y) => y.w - x.w || y.pf - x.pf).map(r => r.m) : season.managers.map(x => x.m);
   const trophy = group ? null : order.map(m => { const mine = A.awards.filter(a => a.m == m); return { mg: look[m], m, n: mine.length, good: mine.filter(a => a.tone == 'good').length }; })

@@ -1287,15 +1287,19 @@ class Component extends DCLogic {
     // Each section shares on its own (Matt, Nov 16, 2026): an image of just that section, or the awards link.
     const awSlug = g => 'aw-' + g.toLowerCase().replace(/[^a-z]+/g, '-'), awMenu = (g, shot) => this.shareMenu('Season awards · ' + g,
       e => this.shareLink(location.origin + '/s/awards-' + shot.slice(3), '9FEAMG · Season awards · ' + g, e), e => this.share(shot, e));
+    const awCard = a => ({ ...a, init: INIT[a.m], color: col(a.m), hasNext: !!a.next,
+      nextM: a.next?.m || '', nextInit: INIT[a.next?.m] || '', nextColor: a.next ? col(a.next.m) : 'transparent',
+      nextText: a.next ? a.next.value + (a.next.w ? ' · Week ' + a.next.w : '') : '' });
     const awardGroups = !seasonAw ? [] : [...new Set(seasonAw.awards.map(a => a.group))].map(group => ({ group, shot: awSlug(group), menu: awMenu(group, awSlug(group)),
-      awards: seasonAw.awards.filter(a => a.group == group).map(a => ({ ...a, init: INIT[a.m], color: col(a.m), hasNext: !!a.next,
-        nextM: a.next?.m || '', nextInit: INIT[a.next?.m] || '', nextColor: a.next ? col(a.next.m) : 'transparent',
-        nextText: a.next ? a.next.value + (a.next.w ? ' · Week ' + a.next.w : '') : '' })) }));
+      awards: seasonAw.awards.filter(a => a.group == group).map(awCard) }));
+    // The page's share image (Matt, Nov 16, 2026): like the link preview, the trophy case and the six headline awards.
+    const awardHeadlineCards = !seasonAw ? [] : awardHeadline(seasonAw.awards).map(awCard);
     // Trophy case: every team's awards in one place, most good ones first, then most awards, then standings.
     const TONE = { good: 'aw-good', rough: 'aw-rough', neutral: 'aw-neutral' };
     const trophyCase = !seasonAw ? [] : STAND.map(m => { const mine = seasonAw.awards.filter(a => a.m == m);
       return { m, init: INIT[m], color: col(m), good: mine.filter(a => a.tone == 'good').length, n: mine.length,
         count: mine.length ? mine.length + (mine.length == 1 ? ' award' : ' awards') : 'No awards yet', none: !mine.length,
+        short: mine.length ? mine.length + (mine.length == 1 ? ' award' : ' awards') : 'none yet', countColor: mine.some(a => a.tone == 'good') ? 'var(--accentInk)' : 'var(--muted)',
         pills: mine.map(a => ({ t: a.title, cls: TONE[a.tone] || 'aw-neutral' })) }; })
       .sort((a, b) => b.good - a.good || b.n - a.n || STAND.indexOf(a.m) - STAND.indexOf(b.m));
     // Playoff scenarios (playoffScenarios in api/_shared.js), once per set of final scores.
@@ -1586,7 +1590,7 @@ class Component extends DCLogic {
       themeLabel, toggleTheme,
       draftIconCls: S.tab == 'Draft' ? 'hi play inv' : 'hi', goHome: e => this.goHome(e), openDraft: () => { this.setState({ tab: 'Draft' }); window.scrollTo(0, 0); },
       draftBtnBg: S.tab == 'Draft' ? 'var(--accent)' : 'var(--surface)', draftBtnFg: S.tab == 'Draft' ? 'var(--onAccent)' : 'var(--ink)', draftBtnBorder: S.tab == 'Draft' ? 'var(--accent)' : 'var(--line)',
-      tabs, tabGameday: S.tab == 'Gameday', tabSeason: S.tab == 'Season', tabTeams: S.tab == 'Teams', tabDraft: S.tab == 'Draft', tabWire: S.tab == 'Wire', tabAwards: S.tab == 'Awards', openAwards: () => { this.setState({ tab: 'Awards' }); window.scrollTo(0, 0); }, backToSeason: () => { this.setState({ tab: 'Season' }); window.scrollTo(0, 0); }, awardGroups, trophyCase, hasTrophy: trophyCase.length > 0, awardsSub: seasonAw ? `Regular season through Week ${seasonAw.through} · updates when each week goes final` : '', hasAwards: awardGroups.length > 0, noAwards: !awardGroups.length,
+      tabs, tabGameday: S.tab == 'Gameday', tabSeason: S.tab == 'Season', tabTeams: S.tab == 'Teams', tabDraft: S.tab == 'Draft', tabWire: S.tab == 'Wire', tabAwards: S.tab == 'Awards', openAwards: () => { this.setState({ tab: 'Awards' }); window.scrollTo(0, 0); }, backToSeason: () => { this.setState({ tab: 'Season' }); window.scrollTo(0, 0); }, awardGroups, awardHeadlineCards, awardsThrough: seasonAw?.through || '', trophyCase, hasTrophy: trophyCase.length > 0, awardsSub: seasonAw ? `Regular season through Week ${seasonAw.through} · updates when each week goes final` : '', hasAwards: awardGroups.length > 0, noAwards: !awardGroups.length,
       // Gameday header, jump links, your-team prompt, scores time, request toggle, share sheet.
       gamedaySub: hasRecap ? (isFinal ? 'Week recap · scores + Booth' : LIVE_STARTED ? 'Live week · scores + Booth' : 'Week preview · projections + Booth') : '9 Fantasy Experts & Mr. Glenn',
       gamedayShare: hasRecap ? this.shareMenu(`Week ${wk}`, e => this.shareLink(location.origin + '/s/w' + wk, '9FEAMG · Week ' + wk, e), e => this.share('recap', e)) : null, hasGamedayShare: !!hasRecap,

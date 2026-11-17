@@ -641,6 +641,9 @@ export function pointSources(season, box, draft, tx) {
 // A bench swap only counts where the benched player could have played: same position, or a RB, WR or
 // TE into the FLEX. The worst bench decision is the biggest swap that would have turned a loss into a
 // win; if no swap ever did, the biggest swap.
+// The six headline awards, in this order, for the awards link preview and the page's share image (Matt, Nov 16, 2026).
+export const AWARD_HEADLINE = ['Highest score', 'Biggest blowout', 'Closest game', 'Luckiest team', 'Unluckiest team', 'Most points left on the bench'];
+export const awardHeadline = awards => [...AWARD_HEADLINE.map(t => awards.find(a => a.title == t)).filter(Boolean), ...awards].filter((a, i, l) => l.indexOf(a) == i).slice(0, 6);
 export function seasonAwards(season, box, { tx } = {}) {
   const st = seasonStats(season, box), NF = Math.min(st.NF, season.regularSeasonWeeks || 14), SC = season.scores, PAIRS = season.schedule || {};
   if (!NF) return null;
