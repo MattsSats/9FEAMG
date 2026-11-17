@@ -1278,7 +1278,10 @@ class Component extends DCLogic {
     const seasonAw = S.tab == 'Awards' && S.box ? seasonAwards(D, S.box, { tx: S.tx }) : null;
     // Award cards (Matt, Nov 15, 2026): the number with its unit, the sentence, and the runner-up underneath,
     // since the race moves every week. Groups come in threes, so the grid has no orphan cards.
-    const awardGroups = !seasonAw ? [] : [...new Set(seasonAw.awards.map(a => a.group))].map(group => ({ group,
+    // Each section shares on its own (Matt, Nov 16, 2026): an image of just that section, or the awards link.
+    const awSlug = g => 'aw-' + g.toLowerCase().replace(/[^a-z]+/g, '-'), awMenu = (g, shot) => this.shareMenu('Season awards · ' + g,
+      e => this.shareLink(location.origin + '/s/awards', '9FEAMG · Season awards', e), e => this.share(shot, e));
+    const awardGroups = !seasonAw ? [] : [...new Set(seasonAw.awards.map(a => a.group))].map(group => ({ group, shot: awSlug(group), menu: awMenu(group, awSlug(group)),
       awards: seasonAw.awards.filter(a => a.group == group).map(a => ({ ...a, init: INIT[a.m], color: col(a.m), hasNext: !!a.next,
         nextM: a.next?.m || '', nextInit: INIT[a.next?.m] || '', nextColor: a.next ? col(a.next.m) : 'transparent',
         nextText: a.next ? a.next.value + (a.next.w ? ' · Week ' + a.next.w : '') : '' })) }));
@@ -1622,6 +1625,7 @@ class Component extends DCLogic {
       // Season jump chips, like Gameday's (Matt, Nov 15, 2026).
       seasonJumps: [['Standings', 'standings'], ['Playoffs', 'odds'], ['Power', 'power'], ['Luck', 'luck'], ['Bench', 'bench'], ['Point sources', 'src'], ['Weekly scores', 'weekly']].map(([label, id]) => ({ label, go: () => this.jump(id) })),
       // Season awards: the link (/s/awards, its own preview card) or an image of the page.
+      menuTrophy: this.shareMenu('Season awards · Trophy case', e => this.shareLink(location.origin + '/s/awards', '9FEAMG · Season awards', e), e => this.share('aw-trophy', e)),
       menuAwards: this.shareMenu('Season awards', e => this.shareLink(location.origin + '/s/awards', '9FEAMG · Season awards', e), e => this.share('awards', e)),
       hasAwards: awardGroups.length > 0, shotAwards: `Season awards · through week ${NF}`,
       menuStandings: this.shareMenu('Standings', e => this.shareLink(location.origin + '/s/standings', '9FEAMG · Standings', e), e => this.share('standings', e)),

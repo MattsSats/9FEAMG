@@ -575,6 +575,16 @@ button{font-family:inherit;color:inherit}
 .aw-card{display:flex;flex-direction:column;min-width:0;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px}
 .aw-next{display:flex;align-items:center;gap:6px;margin-top:12px;padding-top:10px;border-top:1px dashed var(--line);font-family:'JetBrains Mono';font-size:11px;color:var(--muted)}
 .aw-next b{color:var(--ink);font-weight:600}
+/* A shared section is always 960px wide: three cards across, the trophy case two across, whatever screen shared it. */
+.capturing .aw-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+.capturing .aw-grid>.aw-card:last-child:nth-child(odd){grid-column:auto!important}
+.capturing .aw-case{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+.capturing.aw-sec{padding-top:18px!important}
+/* The section image gets its own header and footer; the whole-page image keeps neither. */
+.aw-kick,.aw-foot{display:none}
+.capturing.aw-sec>.aw-kick{display:block}
+.capturing.aw-sec>.aw-foot{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:14px 0 16px;font-family:'JetBrains Mono';font-size:11px;letter-spacing:.08em;color:var(--muted)}
+.aw-foot b{font-family:'Big Shoulders Display';font-weight:900;font-size:15px;letter-spacing:.02em;color:var(--ink)}
 .aw-case{display:grid;grid-template-columns:minmax(0,1fr);gap:8px;margin-top:10px}
 .aw-team{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px}
 .aw-team[data-none="true"]{background:transparent;border-style:dashed}
@@ -1924,8 +1934,12 @@ button{font-family:inherit;color:inherit}
 <div data-shot="awards" data-shot-w="960" style="background:var(--bg);padding-bottom:4px">
 <!-- Trophy case (Matt, Nov 15, 2026): each team's awards as pills; good ones in the accent color, rough ones muted. -->
 <sc-if value="{{ hasTrophy }}" hint-placeholder-val="{{ true }}">
-  <div style="padding:22px 20px 0">
-    <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:26px;text-transform:uppercase">Trophy case</div>
+  <div class="aw-sec" data-shot="aw-trophy" data-shot-w="960" style="padding:22px 20px 0;background:var(--bg)">
+    <div class="aw-kick" style="font-family:'JetBrains Mono';font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:4px">9FEAMG · Season awards</div>
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:12px">
+      <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:26px;text-transform:uppercase">Trophy case</div>
+      <button class="share-btn no-shot" sc-camel-on-click="{{ menuTrophy }}" aria-label="Share the trophy case">Share</button>
+    </div>
     <div class="aw-legend"><span class="aw-pill aw-good">Bragging rights</span><span class="aw-pill aw-neutral">Neither</span><span class="aw-pill aw-rough">Ouch</span></div>
     <div class="aw-case">
       <sc-for list="{{ trophyCase }}" as="t" hint-placeholder-count="10">
@@ -1941,11 +1955,16 @@ button{font-family:inherit;color:inherit}
         </div>
       </sc-for>
     </div>
+    <div class="aw-foot"><b>9FEAMG</b><span>{{ awardsSub }}</span></div>
   </div>
 </sc-if>
 <sc-for list="{{ awardGroups }}" as="g" hint-placeholder-count="4">
-  <div style="padding:26px 20px 0">
-    <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:26px;text-transform:uppercase">{{ g.group }}</div>
+  <div class="aw-sec" data-shot="{{ g.shot }}" data-shot-w="960" style="padding:26px 20px 0;background:var(--bg)">
+    <div class="aw-kick" style="font-family:'JetBrains Mono';font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:4px">9FEAMG · Season awards</div>
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:12px">
+      <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:26px;text-transform:uppercase">{{ g.group }}</div>
+      <button class="share-btn no-shot" sc-camel-on-click="{{ g.menu }}" aria-label="Share this section">Share</button>
+    </div>
     <div class="aw-grid">
       <sc-for list="{{ g.awards }}" as="a" hint-placeholder-count="3">
         <div class="aw-card">
@@ -1962,6 +1981,7 @@ button{font-family:inherit;color:inherit}
         </div>
       </sc-for>
     </div>
+    <div class="aw-foot"><b>9FEAMG</b><span>{{ awardsSub }}</span></div>
   </div>
 </sc-for>
 <div class="shot-footer" style="padding:14px 20px 16px"><b>9FEAMG</b><span>{{ shotAwards }}</span></div>
