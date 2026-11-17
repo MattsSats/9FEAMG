@@ -455,6 +455,10 @@ class Component extends DCLogic {
     if (['#power', '#odds', '#bracket', '#pfpa', '#luck', '#xw', '#bench', '#src'].includes(h)) { this.setState({ tab: 'Season', sheet: null }); setTimeout(() => document.getElementById(h.slice(1))?.scrollIntoView({ block: 'start' }), 350); return; }
     if (h == '#ledger') { this.setState({ tab: 'Gameday', week: HOME_WK, sheet: null }); setTimeout(() => document.getElementById('ledger')?.scrollIntoView({ block: 'start' }), 350); return; }
     if (h == '#booth') { this.setState({ tab: 'Gameday', week: BOOTH_WK, sheet: null }); setTimeout(() => document.getElementById('booth')?.scrollIntoView({ block: 'start' }), 350); return; }
+    // #team-tony-awards (and -weeks, -h2h) opens the team page scrolled to that section (Matt, Nov 16, 2026).
+    const ts = h.match(/^#team-([\w-]+?)-(awards|weeks|h2h)$/), tt = ts && MGR.find(x => teamSlug(x) == ts[1]);
+    if (tt) { this.setState({ tab: 'Teams', team: tt, sheet: null }); let n = 0; const go = () => { const el = document.getElementById('tm-' + ts[2]);
+      if (el) { el.scrollIntoView({ block: 'start' }); el.classList.remove('flash'); void el.offsetWidth; el.classList.add('flash'); } else if (++n < 40) setTimeout(go, 150); }; setTimeout(go, 200); return; }
     if (tm) { const t = MGR.find(x => teamSlug(x) == tm[1]); if (t) { this.setState({ tab: 'Teams', team: t, sheet: null }); window.scrollTo(0, 0); } return; }
     // A matchup link (/s/w10-tony-vs-colin lands on #w10-tony-vs-colin) opens that matchup's lineup sheet.
     const mu = h.match(/^#w(\d+)-([\w-]+?)-vs-([\w-]+)$/), ma = mu && MGR.find(x => teamSlug(x) == mu[2]), mb = mu && MGR.find(x => teamSlug(x) == mu[3]);
@@ -603,6 +607,7 @@ class Component extends DCLogic {
     if (want == null || h == want) return;
     if (S.tab == 'Gameday' && (h == '#w' + S.week || h.startsWith('#w' + S.week + '-') || h == '#ledger' || (h == '#booth' && S.week == BOOTH_WK))) return;
     if (S.tab == 'Awards' && /^#awards-[a-z-]+$/.test(h)) return;
+    if (S.tab == 'Teams' && /^-(awards|weeks|h2h)$/.test(h.slice(('#team-' + teamSlug(S.team)).length)) && h.startsWith('#team-' + teamSlug(S.team) + '-')) return;
     if (S.tab == 'Season' && ['#power', '#odds', '#bracket', '#pfpa', '#luck', '#xw', '#bench', '#src'].includes(h)) return;
     if (!want && !h) return;
     history.pushState(null, '', want || location.pathname + location.search);
@@ -1688,8 +1693,8 @@ class Component extends DCLogic {
       menuSchedule: this.shareMenu(`${S.team} · schedule`, e => this.shareLink(location.origin + '/s/team-' + teamSlug(S.team), '9FEAMG · ' + S.team, e), e => this.share('schedule', e)),
       shotLineup: [tm, rt?.team].filter(Boolean).join(' · '),
       // The team page's newer sections share too (Matt, Nov 16, 2026); their links go to the team page.
-      ...Object.fromEntries([['menuTeamAwards', 'awards', 'tm-awards'], ['menuTeamChart', 'week by week', 'tm-chart'], ['menuTeamH2h', 'head-to-head', 'tm-h2h']].map(([k, label, shot]) =>
-        [k, this.shareMenu(`${S.team} · ${label}`, e => this.shareLink(location.origin + '/s/team-' + teamSlug(S.team), '9FEAMG · ' + S.team, e), e => this.share(shot, e))])),
+      ...Object.fromEntries([['menuTeamAwards', 'awards', 'tm-awards', 'awards'], ['menuTeamChart', 'week by week', 'tm-chart', 'weeks'], ['menuTeamH2h', 'head-to-head', 'tm-h2h', 'h2h']].map(([k, label, shot, sec]) =>
+        [k, this.shareMenu(`${S.team} · ${label}`, e => this.shareLink(location.origin + '/s/team-' + teamSlug(S.team) + '-' + sec, '9FEAMG · ' + S.team + ' · ' + label, e), e => this.share(shot, e))])),
       shotTeamAwards: `${tm} · awards · through week ${NF}`, shotTeamChart: `${tm} · ${s.w}–${s.l}, ${ord(place)} · through week ${NF}`, shotTeamH2h: `${tm} · head-to-head · through week ${NF}`,
       shotSchedule: `${tm} · ${s.w}–${s.l}, ${ord(place)} · through week ${NF}`,
       // Wire: the view on screen (this fantasy week or the season), as a link preview or an image.

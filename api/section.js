@@ -566,26 +566,84 @@ function bracketCard(B) {
   return frame(B.champion ? `CHAMPION: ${B.champion.toUpperCase()} · TOILET BOWL KING: ${String(B.king || '').toUpperCase()}` : B.games ? 'THE PLAYOFFS' : `IF THE SEASON ENDED TODAY · THROUGH WEEK ${B.NF}`, 'Playoff picture', null, panel(body, 10));
 }
 
+// Team page sections (/s/team-tony-awards, -weeks, -h2h; Matt, Nov 16, 2026): the team's awards, its
+// week-by-week scores and its head-to-head records, as on the team page.
+function teamSecOf(season, st, box, tx, slug, sec) {
+  const mg = season.managers.find(x => slugOf(x.m) == slug); if (!mg || !st.NF) return null;
+  const m = mg.m, look = Object.fromEntries(season.managers.map(x => [x.m, x])), r = st.rows.find(x => x.m == m);
+  const finals = [...Array(st.NF).keys()].map(i => i + 1), sc = (x, w) => season.scores[x]?.[w - 1] ?? 0;
+  const opp = w => { const p = (season.schedule[w] || []).find(p => p.includes(m)); return p ? (p[0] == m ? p[1] : p[0]) : null; };
+  const base = { mg, m, slug, sec, rec: `${r.w}–${r.l}`, NF: st.NF };
+  if (sec == 'awards') { const A = seasonAwards(season, box, { tx }); return A ? { ...base, through: A.through, awards: A.awards.filter(a => a.m == m) } : null; }
+  if (sec == 'weeks') return { ...base, weeks: finals.filter(opp).map(w => { const o = opp(w), a = sc(m, w), b = sc(o, w);
+    return { w, o, a, b, win: a > b, avg: season.managers.reduce((t, x) => t + sc(x.m, w), 0) / season.managers.length }; }) };
+  const order = [...st.rows].sort((a, b) => b.w - a.w || b.pf - a.pf).map(x => x.m);
+  return { ...base, rows: order.filter(x => x != m).map(x => { const met = finals.filter(w => opp(w) == x), hw = met.filter(w => sc(m, w) > sc(x, w)).length;
+    return { mg: look[x], m: x, met, hw, hl: met.length - hw, apw: finals.filter(w => sc(m, w) > sc(x, w)).length, apl: finals.filter(w => sc(m, w) < sc(x, w)).length }; }) };
+}
+function teamSecCard(T) {
+  const kick = `${T.m.toUpperCase()} · ${T.rec} · THROUGH WEEK ${T.NF}`, tone = (p, q) => p > q ? C.pos : p < q ? C.neg : C.muted;
+  if (T.sec == 'awards') {
+    const card = a => h('div', { width: 348, height: 200, flexDirection: 'column', background: '#FFFFFF', border: `${a.tone == 'good' ? 2 : 1}px solid ${a.tone == 'good' ? C.accentInk : C.line}`, borderRadius: 16, padding: '14px 16px' },
+      h('div', { fontFamily: F.mono, fontSize: 14, fontWeight: 600, letterSpacing: 2, color: C.muted }, a.title.toUpperCase()),
+      h('div', { alignItems: 'baseline', gap: 10, marginTop: 8 },
+        h('div', { fontFamily: F.display, fontSize: 50, fontWeight: 900, lineHeight: 1, color: C.ink }, String(a.value)),
+        h('div', { fontFamily: F.mono, fontSize: 14, fontWeight: 600, color: C.muted }, a.unit || '')),
+      h('div', { marginTop: 10, maxHeight: 72, overflow: 'hidden', fontFamily: F.sans, fontSize: 18, lineHeight: 1.3, color: C.muted }, a.line || ''));
+    const body = T.awards.length ? h('div', { flexWrap: 'wrap', gap: 12, marginTop: 18 }, ...T.awards.slice(0, 6).map(card))
+      : panel(h('div', { height: 200, alignItems: 'center', justifyContent: 'center', fontFamily: F.sans, fontSize: 30, color: C.muted }, 'No awards yet.'));
+    return frame(kick, 'Awards', T.awards.length > 6 ? `6 of ${T.awards.length} awards` : null, body);
+  }
+  if (T.sec == 'weeks') {
+    const H = 290, top = Math.max(1, ...T.weeks.flatMap(x => [x.a, x.b, x.avg])) * 1.04, px = v => Math.round(v / top * H), small = T.weeks.length > 12;
+    const col = x => h('div', { flex: 1, flexDirection: 'column', alignItems: 'center' },
+      h('div', { position: 'relative', width: '100%', height: H },
+        h('div', { position: 'absolute', left: '16%', width: '68%', bottom: 0, height: px(x.a), borderRadius: '8px 8px 3px 3px', background: x.win ? C.accent : '#D8D3CA' }),
+        h('div', { position: 'absolute', left: 0, width: '100%', bottom: px(x.avg), height: 0, borderTop: `3px dashed ${C.muted}` }),
+        h('div', { position: 'absolute', left: '6%', width: '88%', bottom: px(x.b) - 2, height: 4, background: C.ink })),
+      h('div', { fontFamily: F.mono, fontSize: small ? 15 : 19, fontWeight: 600, color: C.ink, marginTop: 8 }, x.a.toFixed(1)),
+      h('div', { fontFamily: F.mono, fontSize: 15, fontWeight: 600, color: C.muted, marginTop: 2 }, 'W' + x.w));
+    const key = (sw, label) => h('div', { alignItems: 'center', gap: 8 }, sw, label);
+    const legend = h('div', { gap: 26, marginTop: 12, fontFamily: F.mono, fontSize: 16, fontWeight: 600, color: C.muted },
+      key(h('div', { width: 16, height: 16, borderRadius: 4, background: C.accent }), 'Win'), key(h('div', { width: 16, height: 16, borderRadius: 4, background: '#D8D3CA' }), 'Loss'),
+      key(h('div', { width: 22, height: 4, background: C.ink }), 'Opponent'), key(h('div', { width: 22, height: 0, borderTop: `3px dashed ${C.muted}` }), 'League average'));
+    const hi = T.weeks.reduce((p, q) => q.a > p.a ? q : p), lo = T.weeks.reduce((p, q) => q.a < p.a ? q : p), above = T.weeks.filter(x => x.a > x.avg).length;
+    return frame(kick, 'Week by week', `High ${hi.a.toFixed(2)} · low ${lo.a.toFixed(2)} · ${above} of ${T.weeks.length} above avg`,
+      panel(h('div', { flexDirection: 'column', paddingTop: 16 }, h('div', { gap: 6 }, ...T.weeks.map(col)), legend), 12));
+  }
+  const row = x => h('div', { alignItems: 'center', height: 74, borderTop: `1px solid ${C.line}` }, crest(x.mg, 36),
+    h('div', { flexDirection: 'column', flex: 1, marginLeft: 14 },
+      h('div', { fontFamily: F.sans, fontSize: 25, fontWeight: 600, color: C.ink }, x.m),
+      h('div', { fontFamily: F.mono, fontSize: 15, fontWeight: 600, color: C.muted, marginTop: 2 }, x.met.length ? 'Met ' + x.met.map(w => 'W' + w).join(', ') : 'Not met yet')),
+    mono(90, x.met.length ? `${x.hw}–${x.hl}` : '—', x.met.length ? tone(x.hw, x.hl) : C.muted, 25), mono(120, `${x.apw}–${x.apl}`, tone(x.apw, x.apl), 25));
+  const head = h('div', { paddingTop: 10, paddingBottom: 6, fontFamily: F.mono, fontSize: 15, fontWeight: 600, letterSpacing: 2, color: C.muted },
+    h('div', { flex: 1 }, 'VS'), mono(90, 'GAMES', C.muted, 15), mono(120, 'ALL-PLAY', C.muted, 15));
+  const half = Math.ceil(T.rows.length / 2), colOf = rs => h('div', { flexDirection: 'column', flex: 1 }, head, ...rs.map(row));
+  return frame(kick, 'Head-to-head', 'Real games · all-play every week', panel(h('div', { gap: 36 }, colOf(T.rows.slice(0, half)), colOf(T.rows.slice(half))), 6));
+}
+
 async function sectionRoute(url, request, name) {
-  const team = name.match(/^team-([a-z0-9-]+)$/), wkm = name.match(/^w(\d+)$/), aws = name.match(/^awards-([a-z-]+)$/);
-  const kind = name == 'standings' || name == 'power' || name == 'booth' || name == 'odds' || name == 'bracket' || name == 'awards' ? name : aws ? 'awards' : name == 'wire-week' || name == 'wire-season' ? 'wire' : team ? 'team' : wkm ? 'week' : null;
+  const tsec = name.match(/^team-([a-z0-9-]+?)-(awards|weeks|h2h)$/);
+  const team = !tsec && name.match(/^team-([a-z0-9-]+)$/), wkm = name.match(/^w(\d+)$/), aws = name.match(/^awards-([a-z-]+)$/);
+  const kind = name == 'standings' || name == 'power' || name == 'booth' || name == 'odds' || name == 'bracket' || name == 'awards' ? name : aws ? 'awards' : name == 'wire-week' || name == 'wire-season' ? 'wire' : tsec ? 'teamsec' : team ? 'team' : wkm ? 'week' : null;
   if (!kind) return null;
-  const dest = new URL(kind == 'awards' ? (aws ? '/#awards-' + aws[1] : '/#awards') : kind == 'standings' ? '/#season' : kind == 'power' ? '/#power' : kind == 'odds' ? '/#odds' : kind == 'bracket' ? '/#bracket' : kind == 'booth' ? '/#booth' : kind == 'wire' ? (name == 'wire-season' ? '/#wire-season' : '/#wire') : kind == 'team' ? '/#team-' + team[1] : '/#w' + wkm[1], url.origin).href;
+  const dest = new URL(kind == 'awards' ? (aws ? '/#awards-' + aws[1] : '/#awards') : kind == 'standings' ? '/#season' : kind == 'power' ? '/#power' : kind == 'odds' ? '/#odds' : kind == 'bracket' ? '/#bracket' : kind == 'booth' ? '/#booth' : kind == 'wire' ? (name == 'wire-season' ? '/#wire-season' : '/#wire') : kind == 'team' ? '/#team-' + team[1] : kind == 'teamsec' ? `/#team-${tsec[1]}-${tsec[2]}` : '/#w' + wkm[1], url.origin).href;
   const fallback = () => Response.redirect(new URL('/og.png', url.origin).href, 302), isImg = url.searchParams.has('img');
   const person = !isImg && !BOTS.test(request.headers.get('user-agent') || '');
   let season, st, data = null;
   try { season = await loadSeason(url.origin); st = seasonStats(season, null); } catch { return person ? Response.redirect(dest, 302) : fallback(); }
   if (kind == 'team') { const [box, tx, yahoo] = await Promise.all([loadBox(url.origin).catch(() => null), loadTx(url.origin), readData().catch(() => null)]); data = teamOf(season, seasonStats(season, box), team[1], tx, yahoo); }
+  if (kind == 'teamsec') { const [box, tx] = await Promise.all([loadBox(url.origin).catch(() => null), loadTx(url.origin).catch(() => null)]); data = teamSecOf(season, seasonStats(season, box), box, tx, tsec[1], tsec[2]); }
   if (kind == 'week') data = weekOf(season, st, +wkm[1]);
   if (kind == 'booth') data = boothOf(season);
   if (kind == 'odds') data = oddsOf(season, st);
   if (kind == 'bracket') data = bracketOf(season, st);
   if (kind == 'awards') { const [box, tx] = await Promise.all([loadBox(url.origin).catch(() => null), loadTx(url.origin).catch(() => null)]); data = awardsOf(season, box, aws?.[1], tx, st); }
   if (kind == 'wire') { const tx = await loadTx(url.origin); if (!tx) return isImg ? fallback() : Response.redirect(dest, 302); data = wireOf(season, tx, await loadBox(url.origin), name == 'wire-season' ? 'season' : 'week'); }
-  if ((kind == 'team' || kind == 'week' || kind == 'booth' || kind == 'odds' || kind == 'awards') && !data) return isImg ? fallback() : Response.redirect(dest, 302);
+  if ((kind == 'team' || kind == 'teamsec' || kind == 'week' || kind == 'booth' || kind == 'odds' || kind == 'awards') && !data) return isImg ? fallback() : Response.redirect(dest, 302);
   if (!st.NF && kind != 'week' && kind != 'booth') return isImg ? fallback() : Response.redirect(dest, 302);
   if (isImg) {
-    const card = kind == 'awards' ? awardsCard(data) : kind == 'standings' ? standingsCard(season, st) : kind == 'power' ? powerCard(season, st) : kind == 'odds' ? oddsCard(data) : kind == 'bracket' ? bracketCard(data) : kind == 'wire' ? wireCard(data) : kind == 'team' ? teamCard(data) : kind == 'booth' ? boothCard(data) : weekCard(data);
+    const card = kind == 'awards' ? awardsCard(data) : kind == 'standings' ? standingsCard(season, st) : kind == 'power' ? powerCard(season, st) : kind == 'odds' ? oddsCard(data) : kind == 'bracket' ? bracketCard(data) : kind == 'wire' ? wireCard(data) : kind == 'team' ? teamCard(data) : kind == 'teamsec' ? teamSecCard(data) : kind == 'booth' ? boothCard(data) : weekCard(data);
     return new ImageResponse(card, { width: 1200, height: 630, fonts: await fonts(), headers: { 'cache-control': 'public, max-age=300, s-maxage=300' } });
   }
   let title, desc, ver;
@@ -621,6 +679,14 @@ async function sectionRoute(url, request, name) {
     title = `The Booth · Week ${data.wk} · ${data.label} · 9FEAMG`;
     desc = data.rows[0]?.text || '';
     ver = [data.wk, data.label, data.when, data.rows.map(r => r.text)];
+  } else if (kind == 'teamsec') {
+    const label = { awards: 'awards', weeks: 'week by week', h2h: 'head-to-head' }[data.sec];
+    title = `${data.m} · ${label} · through week ${data.NF} · 9FEAMG`;
+    if (data.sec == 'awards') { desc = data.awards.length ? data.awards.slice(0, 3).map(a => `${a.title}: ${a.value}${a.unit ? ' ' + a.unit : ''}`).join(' · ') + (data.awards.length > 3 ? ` · ${data.awards.length - 3} more` : '') + '.' : 'No awards yet.'; ver = data.awards.map(a => [a.title, a.value]); }
+    else if (data.sec == 'weeks') { const W = data.weeks, hi = W.reduce((p, q) => q.a > p.a ? q : p), lo = W.reduce((p, q) => q.a < p.a ? q : p);
+      desc = `${data.rec}. High ${hi.a.toFixed(2)} in Week ${hi.w}, low ${lo.a.toFixed(2)} in Week ${lo.w}. Above the league average in ${W.filter(x => x.a > x.avg).length} of ${W.length} weeks.`; ver = W.map(x => [x.w, x.a, x.b]); }
+    else { const R = data.rows, best = R.reduce((p, q) => q.apw - q.apl > p.apw - p.apl ? q : p), worst = R.reduce((p, q) => q.apw - q.apl < p.apw - p.apl ? q : p);
+      desc = `Real games ${data.rec}. All-play: best against ${best.m} (${best.apw}–${best.apl}), worst against ${worst.m} (${worst.apw}–${worst.apl}).`; ver = R.map(x => [x.m, x.hw, x.hl, x.apw, x.apl]); }
   } else if (kind == 'team') {
     title = `${data.m} · ${data.rec}, ${ordinal(data.place)} · 9FEAMG`;
     desc = [`PF ${data.pf.toFixed(1)} (${ordinal(data.pfRank)}), PA ${data.pa.toFixed(1)}, luck ${signed(data.luck)}.`, data.week ? data.week + '.' : '', data.roast].filter(Boolean).join(' ');
