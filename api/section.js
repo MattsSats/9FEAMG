@@ -529,11 +529,11 @@ function awardsCard(A) {
 function boothCard(B) {
   // Sized for a chat thumbnail (Matt, Nov 10, 2026): the crests stack so the line gets the width, and
   // three lines of 25px type hold a full Booth line.
-  const row = r => h('div', { alignItems: 'center', gap: 18, height: 101, borderTop: `1px solid ${C.line}` },
+  const row = (r, i) => h('div', { alignItems: 'center', gap: 18, height: 99, borderTop: i ? `1px solid ${C.line}` : 'none' },
     h('div', { flexDirection: 'column', gap: 4, width: 40, flexShrink: 0 }, ...r.pair.map(m => crest(m, 40))),
     h('div', { flex: 1, maxHeight: 93, overflow: 'hidden', fontFamily: F.sans, fontSize: 25, fontWeight: 600, lineHeight: 1.24, color: C.ink }, r.text));
   return frame(`THE BOOTH · WEEK ${B.wk} · ${B.label.toUpperCase()}${B.when ? ' · ' + B.when.toUpperCase() : ''}`, null, null,
-    h('div', { flexDirection: 'column', marginTop: 16 }, ...B.rows.map(row)));
+    h('div', { flexDirection: 'column', marginTop: 14, padding: '0 22px', background: '#FFFFFF', border: `1px solid ${C.line}`, borderRadius: 16 }, ...B.rows.map(row)));
 }
 
 // Playoff picture (/s/bracket, Matt, Oct 31, 2026): the bracket if the season ended today, seeded by the

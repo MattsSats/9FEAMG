@@ -588,6 +588,8 @@ button{font-family:inherit;color:inherit}
 .capturing.aw-sec>.aw-foot,.capturing.aw-shot>.aw-foot{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:14px 0 16px;font-family:'JetBrains Mono';font-size:11px;letter-spacing:.08em;color:var(--muted)}
 .aw-foot b{font-family:'Big Shoulders Display';font-weight:900;font-size:15px;letter-spacing:.02em;color:var(--ink)}
 .wsh-row{display:grid;grid-template-columns:24px 64px minmax(0,1fr) 28px 46px 46px;gap:8px}
+.bsh-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:12px}
+.bsh-grid>.aw-card:last-child:nth-child(odd){grid-column:1 / -1}
 .aw-case{display:grid;grid-template-columns:minmax(0,1fr);gap:8px;margin-top:10px}
 .aw-team{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px}
 .aw-team[data-none="true"]{background:transparent;border-style:dashed}
@@ -911,7 +913,31 @@ button{font-family:inherit;color:inherit}
 
 <div class="gd-booth stick">
   <sc-if value="{{ hasBooth }}" hint-placeholder-val="{{ true }}">
-    <div id="booth" class="jump-to" data-shot="booth" style="padding:28px 20px 0;background:var(--bg)">
+    <!-- The share image (Matt, Nov 16, 2026): hidden on the page; the awards style, with a header, each matchup's
+         line in a white card, two across, and the footer. -->
+    <div class="aw-shot" data-shot="booth" data-shot-w="960" style="display:none;background:var(--bg);padding:20px 20px 0">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px">
+        <div style="font-family:'JetBrains Mono';font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--accentInk)">{{ boothShotLabel }}</div>
+        <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:24px;line-height:1">9FEAMG</div>
+      </div>
+      <div style="margin-top:6px;font-size:13px;color:var(--muted)">{{ boothNote }}</div>
+      <div class="bsh-grid">
+        <sc-for list="{{ booth }}" as="b" hint-placeholder-count="5">
+          <div class="aw-card">
+            <div style="display:flex;align-items:center;gap:6px">
+              <sc-for list="{{ b.crests }}" as="c" hint-placeholder-count="2">
+                <div class="crest" style="width:30px;height:30px;background:{{ c.color }};color:var(--onAccent);display:flex;align-items:center;justify-content:center;font-family:'Big Shoulders Display';font-weight:800;font-size:12px;flex:none"><span class="ini" data-i="{{ c.init }}">{{ c.init }}</span></div>
+              </sc-for>
+              <span style="font-family:'JetBrains Mono';font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-left:2px;white-space:nowrap">{{ b.matchup }}</span>
+              <span style="margin-left:auto;font-family:'JetBrains Mono';font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--accentInk);white-space:nowrap">{{ b.label }}</span>
+            </div>
+            <div style="margin-top:10px;font-size:16px;line-height:1.45;font-weight:500;text-wrap:pretty">{{ b.text }}</div>
+          </div>
+        </sc-for>
+      </div>
+      <div class="aw-foot"><b>9FEAMG</b><span>The Booth · 9feamg.cloud</span></div>
+    </div>
+    <div id="booth" class="jump-to" style="padding:28px 20px 0;background:var(--bg)">
       <div style="display:flex;align-items:baseline;justify-content:space-between">
         <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:26px;text-transform:uppercase;display:flex;align-items:center;gap:8px"><svg class="hi play" width="26" height="26" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="18" y="5" width="12" height="21" rx="6" style="fill:var(--hi-a)"></rect><path d="M12 22 a12 12 0 0 0 24 0 M24 34 V42 M17 42 H31"></path><path class="a-wr" d="M38 12 q4 6 0 12"></path><path class="a-wr a-w2" d="M42 8 q7 10 0 20"></path><path class="a-wl" d="M10 12 q-4 6 0 12"></path><path class="a-wl a-w2" d="M6 8 q-7 10 0 20"></path></svg>The Booth</div>
         <sc-if value="{{ boothCanShare }}" hint-placeholder-val="{{ true }}"><span style="display:flex;align-items:center;gap:10px"><button class="share-btn no-shot" sc-camel-on-click="{{ menuBooth }}" aria-label="Share the Booth">Share</button></span></sc-if>
@@ -982,7 +1008,6 @@ button{font-family:inherit;color:inherit}
           </sc-if>
         </div>
       </sc-if>
-      <div class="shot-footer" style="padding:4px 0 14px"><b>9FEAMG</b><span>{{ boothShotLabel }}</span></div>
     </div>
   </sc-if>
 </div>
