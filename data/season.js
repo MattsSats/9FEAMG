@@ -320,7 +320,7 @@ window.SEASON = {
     ],
     10: [
       ['Pablo', 'CMC scored 44.30 for Matt, more than Pablo’s top two starters combined, and Matt won by 39.66. Even a Malik Washington touchdown pass couldn’t keep up.', '2026-11-16T22:34-06:00'],
-      ['Tristan', 'The Booth took Kurt, and Kurt left 0.00 on the bench. Tristan won anyway, 134.12–128.96, behind Mahomes’ 35.42. A perfect lineup, one Mahomes short.', '2026-11-16T22:34-06:00'],
+      ['Tristan', 'Kurt led into Monday night and left 0.00 on the bench. Then Henry scored in the fourth quarter, and Tristan won 134.12–128.96. A perfect lineup, one touchdown short.', '2026-11-16T22:43-06:00'],
       ['Andy', 'Corum scored 19.40 for Jerger, just as Jerger promised. Gibbs scored 40.70 for Andy, and Andy won by 18.76. It was, as advertised, gibbing time.', '2026-11-16T22:34-06:00'],
       ['Tony', 'Tony benched Hampton’s 17.00, started Allgeier for 1.40 and lost to Colin by 10.72 with the week’s lowest score. 11 Shots In, and the best one stayed on the bench.', '2026-11-16T22:34-06:00'],
       ['DLin', 'The Booth took Mr. G at 59%. DLin answered with 155.42, the highest score of the season, 0.90 past Tony’s Week 2. Toilet Bowl King, scoring like the other bowl.', '2026-11-16T22:34-06:00']
