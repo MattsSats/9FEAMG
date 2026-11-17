@@ -719,9 +719,19 @@ export function seasonAwards(season, box, { tx } = {}) {
     const top = rank(starts, x => x.pts), proj = starts.filter(x => x.proj > 0), up = rank(proj, x => x.over),
       // A starter who got hurt during the game (hurtInGame, from ESPN) did not bust (Matt, Nov 16, 2026).
       hurt = w => new Set(season.hurtInGame?.[w] || []), dn = rank(proj.filter(x => !hurt(x.w).has(x.name)), x => -x.over);
-    add('Players', 'Top player week', 'good', 'points', top[0].m, n(top[0].pts), `${top[0].name} scored ${n(top[0].pts)} for ${top[0].m} in Week ${top[0].w}, the best start of the season.`, top[1] && nx(top[1].m, n(top[1].pts), top[1].w));
-    if (up[0]) add('Players', 'Biggest boom', 'good', 'vs projection', up[0].m, '+' + n(up[0].over), `${up[0].name} scored ${n(up[0].pts)} on ${an(n(up[0].proj))} projection for ${up[0].m} in Week ${up[0].w}.`, up[1] && nx(up[1].m, '+' + n(up[1].over), up[1].w));
-    if (dn[0]) add('Players', 'Biggest bust', 'rough', 'vs projection', dn[0].m, n(dn[0].over), `${dn[0].name} scored ${n(dn[0].pts)} on ${an(n(dn[0].proj))} projection for ${dn[0].m} in Week ${dn[0].w}.`, dn[1] && nx(dn[1].m, n(dn[1].over), dn[1].w));
+    add('Player weeks', 'Top player week', 'good', 'points', top[0].m, n(top[0].pts), `${top[0].name} scored ${n(top[0].pts)} for ${top[0].m} in Week ${top[0].w}, the best start of the season.`, top[1] && nx(top[1].m, n(top[1].pts), top[1].w));
+    if (up[0]) add('Player weeks', 'Biggest boom', 'good', 'vs projection', up[0].m, '+' + n(up[0].over), `${up[0].name} scored ${n(up[0].pts)} on ${an(n(up[0].proj))} projection for ${up[0].m} in Week ${up[0].w}.`, up[1] && nx(up[1].m, '+' + n(up[1].over), up[1].w));
+    if (dn[0]) add('Player weeks', 'Biggest bust', 'rough', 'vs projection', dn[0].m, n(dn[0].over), `${dn[0].name} scored ${n(dn[0].pts)} on ${an(n(dn[0].proj))} projection for ${dn[0].m} in Week ${dn[0].w}.`, dn[1] && nx(dn[1].m, n(dn[1].over), dn[1].w));
+    // The same three over the season (Matt, Nov 16, 2026): one player for one team, summed over his starts.
+    // The bust leaves out the weeks he left a game hurt, like the weekly bust.
+    const sum = list => Object.values(list.reduce((o, x) => { const k = x.m + '|' + x.name, y = (o[k] ||= { m: x.m, name: x.name, pts: 0, proj: 0, starts: 0 });
+      y.pts += x.pts; y.proj += x.proj; y.starts++; return o; }, {})).map(y => ({ ...y, over: y.pts - y.proj }));
+    const st = c => c + (c == 1 ? ' start' : ' starts');
+    const all = sum(proj), healthy = sum(proj.filter(x => !hurt(x.w).has(x.name)));
+    const sTop = rank(sum(starts), y => y.pts), sUp = rank(all, y => y.over), sDn = rank(healthy, y => -y.over);
+    add('Player seasons', 'Top player season', 'good', 'points', sTop[0].m, n(sTop[0].pts), `${sTop[0].name} has scored ${n(sTop[0].pts)} for ${sTop[0].m} in ${st(sTop[0].starts)}, the most by one player for one team.`, sTop[1] && nx(sTop[1].m, n(sTop[1].pts) + ' · ' + sTop[1].name));
+    if (sUp[0]) add('Player seasons', 'Season boom', 'good', 'vs projection', sUp[0].m, '+' + n(sUp[0].over), `${sUp[0].name} has scored ${n(sUp[0].pts)} on ${n(sUp[0].proj)} projected for ${sUp[0].m} in ${st(sUp[0].starts)}.`, sUp[1] && nx(sUp[1].m, '+' + n(sUp[1].over) + ' · ' + sUp[1].name));
+    if (sDn[0]) add('Player seasons', 'Season bust', 'rough', 'vs projection', sDn[0].m, n(sDn[0].over), `${sDn[0].name} has scored ${n(sDn[0].pts)} on ${n(sDn[0].proj)} projected for ${sDn[0].m} in ${st(sDn[0].starts)}` + (sDn[0] && proj.some(x => x.m == sDn[0].m && x.name == sDn[0].name && hurt(x.w).has(x.name)) ? ', not counting the game he left hurt.' : '.'), sDn[1] && nx(sDn[1].m, n(sDn[1].over) + ' · ' + sDn[1].name));
   }
   const rec = r => `${r.w}–${r.l} on ${r.xw.toFixed(2)} expected wins`;
   const lk = rank(st.rows, r => r.luck), ul = rank(st.rows, r => -r.luck), pa = rank(st.rows, r => r.pa), fa = rank(st.rows, r => -r.pa);
