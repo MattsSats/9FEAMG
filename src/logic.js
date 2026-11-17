@@ -814,7 +814,7 @@ class Component extends DCLogic {
     if (!D) return { ok: false, dataError: true, themeLabel, toggleTheme };
     const wk = S.week, boothOn = this.props.trashTalk ?? true;
     // Draft lives in the header (it's rarely used), so the tab bar has four tabs.
-    const tabsL = ['Gameday', 'Season', 'Teams', 'Wire'];
+    const tabsL = ['Gameday', 'Season', 'Teams', 'Wire', 'Awards'];
     const tabs = tabsL.map(t => ({ label: t, aria: t, fg: S.tab == t ? 'var(--ink)' : 'var(--muted)', cls: S.tab == t ? 'tab on' : 'tab', cur: S.tab == t ? 'page' : 'false', ['is' + t]: true, pick: t == 'Gameday' ? e => this.goHome(e) : () => { this.setState({ tab: t }); window.scrollTo(0, 0); } }));
 
     // Gameday

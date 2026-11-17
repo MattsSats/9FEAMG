@@ -658,6 +658,8 @@ button{font-family:inherit;color:inherit}
 .tab.on .a-jersey{animation:ti-swing 1s ease-in-out 1}
 .tab.on .a-swap1{animation:ti-r .9s ease-in-out 1}
 .tab.on .a-swap2{animation:ti-l .9s ease-in-out 1}
+.a-cup{transform-origin:24px 42px}
+.tab.on .a-cup{animation:ti-swing 1s ease-in-out 1}
 @media (prefers-reduced-motion:reduce){.ti *{animation:none!important}*{transition-duration:0s!important;scroll-behavior:auto!important}}
 /* Section and stat icons: same drawing rules as the tab bar; they play once
    when they appear (Draft's stopwatch when Draft opens). Live loops. --hi-a/--hi-b
@@ -1303,7 +1305,6 @@ button{font-family:inherit;color:inherit}
     <sc-for list="{{ seasonJumps }}" as="j" hint-placeholder-count="5">
       <button sc-camel-on-click="{{ j.go }}" class="hov" style="min-height:32px;padding:0 12px;border:1px solid var(--line);border-radius:999px;background:transparent;color:var(--ink);font-size:13px;font-weight:600;cursor:pointer">{{ j.label }}</button>
     </sc-for>
-    <button sc-camel-on-click="{{ openAwards }}" class="hov" style="min-height:32px;padding:0 12px;border:1px solid var(--accentInk);border-radius:999px;background:transparent;color:var(--accentInk);font-size:13px;font-weight:600;cursor:pointer">Season awards ›</button>
   </nav>
 </div>
 <div class="tiles" style="display:grid;gap:10px;padding:18px 20px 0">
@@ -1920,10 +1921,9 @@ button{font-family:inherit;color:inherit}
 </div>
 </sc-if>
 
-<!-- Season awards (Matt, Nov 8, 2026): seasonAwards in api/_shared.js. Not in the tab bar; linked from Season, at #awards. -->
+<!-- Season awards (Matt, Nov 8, 2026): seasonAwards in api/_shared.js. Its own tab since Nov 16, 2026, at #awards. -->
 <sc-if value="{{ tabAwards }}" hint-placeholder-val="{{ false }}">
 <div style="padding:22px 20px 0">
-  <button class="share-btn" sc-camel-on-click="{{ backToSeason }}" style="margin-bottom:14px">‹ Season</button>
   <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:12px">
     <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:48px;line-height:.9;text-transform:uppercase">Season awards</div>
     <sc-if value="{{ hasAwards }}" hint-placeholder-val="{{ true }}"><button class="share-btn" sc-camel-on-click="{{ menuAwards }}" aria-label="Share the season awards">Share</button></sc-if>
@@ -2335,7 +2335,7 @@ button{font-family:inherit;color:inherit}
   </div>
 </sc-if>
 
-<nav class="tabbar" aria-label="Sections" style="position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;z-index:30;background:var(--bg);border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(4,minmax(0,1fr));padding:6px 8px 18px">
+<nav class="tabbar" aria-label="Sections" style="position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;z-index:30;background:var(--bg);border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(5,minmax(0,1fr));padding:6px 4px 18px">
   <sc-for list="{{ tabs }}" as="tb" hint-placeholder-count="5">
     <button class="{{ tb.cls }}" aria-label="{{ tb.aria }}" aria-current="{{ tb.cur }}" sc-camel-on-click="{{ tb.pick }}" style="min-height:52px;border:0;background:transparent;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;color:{{ tb.fg }}">
       <sc-if value="{{ tb.isGameday }}" hint-placeholder-val="{{ false }}">
@@ -2349,6 +2349,9 @@ button{font-family:inherit;color:inherit}
       </sc-if>
       <sc-if value="{{ tb.isWire }}" hint-placeholder-val="{{ false }}">
         <svg class="ti" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><g class="a-swap1"><path d="M8 16 H38 M31 9 L38 16 L31 23" style="stroke:var(--accent)"></path></g><g class="a-swap2"><path d="M40 32 H10 M17 25 L10 32 L17 39"></path></g></svg>
+      </sc-if>
+      <sc-if value="{{ tb.isAwards }}" hint-placeholder-val="{{ false }}">
+        <svg class="ti" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><g class="a-cup"><path d="M14 6 H34 V18 Q34 29 24 29 Q14 29 14 18 Z" style="fill:var(--accent)"></path><path d="M14 10 H7 Q7 20 15 22 M34 10 H41 Q41 20 33 22"></path><path d="M24 29 V36 M16 42 H32 L30 36 H18 Z"></path></g></svg>
       </sc-if>
       <span style="font-family:'Big Shoulders Display';font-weight:800;font-size:16px;text-transform:uppercase;letter-spacing:.03em">{{ tb.label }}</span>
     </button>
