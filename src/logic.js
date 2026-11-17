@@ -1293,7 +1293,7 @@ class Component extends DCLogic {
       : oddsDone ? 'The regular season is over.'
       : `${OD.now.sims.toLocaleString('en-US')} simulated seasons · ${OD.now.live ? `Week ${LW} from ${LIVE_STARTED ? 'live scores and what’s left to play' : 'Yahoo’s projections'} · ` : ''}${OD.prev ? '± since last week' : ''}`;
     // Season awards (seasonAwards in api/_shared.js), once the box scores have loaded.
-    const seasonAw = S.tab == 'Awards' && S.box ? seasonAwards(D, S.box, { tx: S.tx }) : null;
+    const seasonAw = (S.tab == 'Awards' || S.tab == 'Teams') && S.box ? seasonAwards(D, S.box, { tx: S.tx }) : null;
     // Award cards (Matt, Nov 15, 2026): the number with its unit, the sentence, and the runner-up underneath,
     // since the race moves every week. Groups come in threes, so the grid has no orphan cards.
     // Each section shares on its own (Matt, Nov 16, 2026): an image of just that section, or the awards link.
@@ -1376,7 +1376,7 @@ class Component extends DCLogic {
     const logWeeks = [...Array(NF).keys()].map(i => i + 1).concat(Object.keys(PO?.scores || {}).map(Number).sort((a, b) => a - b)).concat(LW && !doneWk(LW) ? [LW] : []);
     const log = logWeeks.filter(w => opp(tm, w)).map(w => {
       const o = opp(tm, w);
-      if (w == LW) { const a = LIVE.scores[tm] || [0, 0], b = LIVE.scores[o] || [0, 0]; return { w, opp: o, color: col(o), sub: LIVE.status == 'Preview' ? 'Preview · projected' : 'Live · now ' + f2(a[0]) + '–' + f2(b[0]), score: f2(a[1]) + '–' + f2(b[1]), r: '·', rbg: 'var(--surface2)', rfg: 'var(--muted)', open: () => this.setState({ sheet: { a: tm, b: o, wk: w } }) }; }
+      if (w == LW) { const a = LIVE.scores[tm] || [0, 0], b = LIVE.scores[o] || [0, 0]; return { w, opp: o, color: col(o), sub: LIVE.status == 'Preview' ? 'Preview · projected' : a[0] == a[1] && b[0] == b[1] ? 'Live · both done, waiting on the final' : 'Live · proj ' + f2(a[1]) + '–' + f2(b[1]), score: LIVE.status == 'Preview' ? f2(a[1]) + '–' + f2(b[1]) : f2(a[0]) + '–' + f2(b[0]), r: '·', rbg: 'var(--surface2)', rfg: 'var(--muted)', open: () => this.setState({ sheet: { a: tm, b: o, wk: w } }) }; }
       const ap = w <= RW ? allPlay(tm, w) : null, win = won(tm, w);
       return { w, opp: o, color: col(o), sub: ap ? ord(ap.rank) + ' of ' + MGR.length + ' · all-play ' + ap.w + '–' + ap.l : roundOf(w, tm)?.label || 'Playoffs', score: f2(scoreOf(tm, w)) + '–' + f2(scoreOf(o, w)), r: win ? 'W' : 'L', rbg: win ? 'var(--accent)' : 'var(--surface2)', rfg: win ? 'var(--onAccent)' : 'var(--muted)', open: () => this.setState({ sheet: { a: tm, b: o, wk: w } }) };
     });
@@ -1388,7 +1388,7 @@ class Component extends DCLogic {
     const sosOf = m => { const o = restWks(m).map(w => opp(m, w)); return o.length ? o.reduce((t, x) => t + perWeek(x), 0) / o.length : 0; };
     const rest = restWks(tm).map(w => { const o = opp(tm, w), lm = lastMeet(tm, o, w);
       return { w, opp: o, color: col(o), sub: recPlace(o) + (NF ? ' · ' + f1(perWeek(o)) + ' a week' : ''),
-        prev: lm ? (lm.sa > lm.sb ? 'W ' : 'L ') + f2(lm.sa) + '–' + f2(lm.sb) : '—', prevSub: lm ? 'Week ' + lm.w : 'first meeting' }; });
+        prev: lm ? (lm.sa > lm.sb ? 'W ' : 'L ') + f2(lm.sa) + '–' + f2(lm.sb) : '—', prevSub: lm ? 'Last met Week ' + lm.w : 'first meeting' }; });
     const restSub = rest.length && NF ? `Opponents average ${f1(sosOf(tm))} a week · ${ord([...MGR].sort((x, y) => sosOf(y) - sosOf(x)).indexOf(tm) + 1)} toughest left` : '';
     // The playoff race on the team card: odds to make it and for a bye, then what the next game is worth.
     const teamOD = S.tab == 'Teams' ? this.odds(false)?.now : null, to = teamOD?.teams?.[tm], tDone = teamOD?.weeksLeft == 0;
@@ -1410,15 +1410,40 @@ class Component extends DCLogic {
     const pl = this.players(tm), lineupWeek = LW ?? NF + 1;
     const lineupMsg = !S.loaded ? 'Loading rosters…' : !S.rosters ? 'Couldn’t load rosters. Try refreshing in a minute.'
       : LW > RW && !opp(tm, LW) ? (LW == RW + 1 && BR?.seeds?.[tm] <= 2 ? `A Week ${LW} bye: the top two seeds skip the quarterfinals.` : `No game in Week ${LW}.`) : '';
+    // Week by week (Matt, Nov 16, 2026): each final week's score as a bar, filled on a win, with a tick at the
+    // opponent's score and a dashed mark at the league's average that week (regular season).
+    const chartWks = logWeeks.filter(w => w != LW && opp(tm, w));
+    const lgAvg = w => w <= NF ? MGR.reduce((t, m) => t + scoreOf(m, w), 0) / MGR.length : null;
+    const top = Math.max(1, ...chartWks.flatMap(w => [scoreOf(tm, w), scoreOf(opp(tm, w), w), lgAvg(w) || 0])) * 1.04, pc = v => (v / top * 100).toFixed(1) + '%';
+    const chart = chartWks.map(w => { const a = scoreOf(tm, w), b = scoreOf(opp(tm, w), w), win = won(tm, w), avg = lgAvg(w);
+      return { w, label: 'W' + w, pts: f1(a), h: pc(a), opp: pc(b), hasAvg: avg != null, avg: pc(avg || 0), bg: win ? 'var(--accent)' : 'color-mix(in oklch, var(--muted) 30%, transparent)',
+        tip: `Week ${w}: ${f2(a)}–${f2(b)} vs ${opp(tm, w)}` + (avg != null ? ` · league average ${f2(avg)}` : '') }; });
+    const hiW = chartWks.reduce((x, y) => x == null || scoreOf(tm, y) > scoreOf(tm, x) ? y : x, null), loW = chartWks.reduce((x, y) => x == null || scoreOf(tm, y) < scoreOf(tm, x) ? y : x, null);
+    const aboveAvg = chartWks.filter(w => w <= NF && scoreOf(tm, w) > lgAvg(w)).length;
+    const chartSub = hiW == null ? '' : `High ${f2(scoreOf(tm, hiW))} (W${hiW}) · low ${f2(scoreOf(tm, loW))} (W${loW}) · above average ${aboveAvg} of ${chartWks.filter(w => w <= NF).length}`;
+    // The team's season awards (seasonAwards, as on the Awards tab).
+    const teamAwards = !seasonAw ? [] : seasonAw.awards.filter(a => a.m == tm).map(a => ({ ...awCard(a), tone: a.tone || 'neutral' }));
+    // Head-to-head (Matt, Nov 16, 2026): the real games against each manager, and the all-play record
+    // against them (every final week, whether they met or not).
+    const finals = [...Array(NF).keys()].map(i => i + 1);
+    const h2h = STAND.filter(m => m != tm).map(x => { const met = finals.filter(w => opp(tm, w) == x), hw = met.filter(w => won(tm, w)).length;
+      const apw = finals.filter(w => scoreOf(tm, w) > scoreOf(x, w)).length, apl = finals.filter(w => scoreOf(tm, w) < scoreOf(x, w)).length;
+      const tone = (p, q) => p > q ? 'var(--pos)' : p < q ? 'var(--neg)' : 'var(--muted)';
+      return { m: x, init: INIT[x], color: col(x), rec: met.length ? hw + '–' + (met.length - hw) : '—', recColor: met.length ? tone(hw, met.length - hw) : 'var(--muted)',
+        ap: apw + '–' + apl, apColor: tone(apw, apl), sub: met.length ? 'Met ' + met.map(w => 'W' + w).join(', ') : 'Haven’t met yet' }; });
     const team = {
       m: tm, init: INIT[tm], color: col(tm), teamName: rt?.team ?? '', roast: roastOf(D, tm, NF), hasRoast: boothOn && !!roastOf(D, tm, NF),
       line: `${s.w}–${s.l} · ${ord(place)} place` + (NF ? ` · ${res[res.length - 1]}${k} streak` : ''),
-      lineupTitle: `${tm}’s Week ${lineupWeek} lineup`, proj: LW ? 'Proj ' + f2(PROJ[tm]) : '',
+      lineupTitle: `${tm}’s Week ${lineupWeek} lineup`, proj: !LW ? '' : LIVE.status == 'Preview' ? 'Proj ' + f2(PROJ[tm]) : (n => n == null ? 'Proj ' + f2(PROJ[tm]) : f2(n) == f2(PROJ[tm]) ? 'Now ' + f2(n) + ' · all games done' : 'Now ' + f2(n) + ' · proj ' + f2(PROJ[tm]))(LIVE.scores[tm]?.[0]),
       stats: [{ label: 'PF', value: f1(s.pf), sub: ord(pfRank) + ' in league' }, { label: 'PA', value: f1(s.pa), sub: paRankLabel(paRank, ST.length, ord) }, { label: 'Luck', value: sgn(s.luck), sub: 'W − xW', color: s.luck > 0 ? 'var(--pos)' : s.luck < 0 ? 'var(--neg)' : 'var(--ink)' }, { label: 'xW', value: s.xw.toFixed(2), sub: 'vs ' + s.w + ' real wins' }, { label: 'Max PF', value: maxOk ? f1(s.max) : '—', sub: maxOk ? ord(maxRank) + ' best possible' : 'Best possible lineup' }, { label: 'Bench', value: maxOk ? f1(bn) : '—', sub: 'Points left sitting' }, { label: 'FAAB left', value: txOk ? '$' + (budget - spent[tm]) : '—', sub: 'of $' + budget }, { label: 'Adds', value: txOk ? String(adds[tm]) : '—', sub: 'This season' }].map(x => ({ color: 'var(--ink)', isLuck: x.label == 'Luck', isBench: x.label == 'Bench', ...x })),
       log, rest, hasRest: rest.length > 0, restSub, race, raceSwing, hasRace: !!race, hasRaceSwing: !!raceSwing, starters: this.starters(tm, lineupWeek), alerts: this.lineupAlerts(tm, lineupWeek).map(t => ({ t })), hasAlerts: this.lineupAlerts(tm, lineupWeek).length > 0,
       bench: pl.filter(p => p.slot != 'starter').sort((a, b) => (a.slot == 'IR') - (b.slot == 'IR')).map(p => { const lp = LIVEPTS[p.name]; const v = lp ?? p.proj ?? p.projected ?? p.projections?.[lineupWeek] ?? PPROJ[p.name] ?? (lineupWeek == LW ? p.espn : null); return { slot: p.slot == 'IR' ? 'IR' : p.pos, name: p.name, meta: (p.nfl || '').toUpperCase() + (lp == null && p.slot != 'IR' && lineupWeek == LW ? this.preGame(p, lineupWeek) : '') + (lp == null && v != null && p.slot != 'IR' && !(lineupWeek == LW && (nflGame(p.nfl, lineupWeek) || onBye(p.nfl, lineupWeek))) ? ' · proj' : lp != null ? (PLAYING.has(p.name) ? ' · Live' : ' · Final') : ''), pts: p.slot == 'IR' ? '' : (v != null ? f2(+v) : '—') }; }),
       // Bench and IR counted apart ("BENCH · 6 · IR 1"): the IR slot isn't a bench spot.
-      benchCount: pl.filter(p => p.slot != 'starter' && p.slot != 'IR').length + (pl.some(p => p.slot == 'IR') ? ' · IR ' + pl.filter(p => p.slot == 'IR').length : ''), lineupMsg, hasLineup: !lineupMsg, src
+      benchCount: pl.filter(p => p.slot != 'starter' && p.slot != 'IR').length + (pl.some(p => p.slot == 'IR') ? ' · IR ' + pl.filter(p => p.slot == 'IR').length : ''), lineupMsg, hasLineup: !lineupMsg, src,
+      chart, hasChart: chart.length > 0, chartMany: chart.length > 10, chartSub, awards: teamAwards, hasAwardsOn: !!seasonAw, hasTeamAwards: teamAwards.length > 0, noTeamAwards: !!seasonAw && !teamAwards.length,
+      awardsSub: !seasonAw ? '' : teamAwards.length ? teamAwards.length + (teamAwards.length == 1 ? ' award' : ' awards') + ' · through Week ' + seasonAw.through : 'Through Week ' + seasonAw.through,
+      goAwards: () => { this.setState({ tab: 'Awards' }); window.scrollTo(0, 0); },
+      h2h, hasH2h: NF > 0, h2hSub: 'Real games and all-play · through Week ' + NF
     };
     const teamPicker = STAND.map(m => ({ m, init: INIT[m], color: col(m), ring: m == tm ? '2px solid var(--accent)' : '2px solid transparent', ringFill: m == tm ? 'var(--accent)' : 'transparent', op: m == tm ? 1 : .75, fg: m == tm ? 'var(--ink)' : 'var(--muted)', pick: () => this.setState({ team: m }) }));
 
