@@ -601,7 +601,8 @@ button{font-family:inherit;color:inherit}
 .scw-wrap.flat>.scw-kick{padding:20px 20px 0;margin-bottom:0}
 .scw-wrap.flat>.shot-footer{padding:14px 20px 16px!important}
 .scw-wrap.flat>[data-shot="team"]>div:first-child{margin-top:10px!important}
-.scw-wrap.flat>[data-shot="schedule"]>div:first-child,.scw-wrap.flat>[data-shot="lineup"]{padding-top:10px!important}
+.scw-wrap.flat>[data-shot="schedule"]>div:first-child,.scw-wrap.flat>[data-shot="lineup"],.scw-wrap.flat>[data-shot^="tm-"]{padding-top:10px!important}
+.capturing .tm-aw{grid-template-columns:repeat(2,minmax(0,1fr))!important}
 /* Team page (Matt, Nov 16, 2026): white cards, the week-by-week chart, the team's awards. */
 .tm-card{margin-top:8px;background:var(--surface);border:1px solid var(--line);border-radius:16px;overflow:hidden}
 .tm-list{margin-top:-1px}
@@ -1868,10 +1869,10 @@ button{font-family:inherit;color:inherit}
 </div>
 <!-- The team's awards and its week-by-week chart (Matt, Nov 16, 2026). -->
 <sc-if value="{{ team.hasAwardsOn }}" hint-placeholder-val="{{ false }}">
-<div style="padding:28px 20px 0">
+<div data-shot="tm-awards" data-shot-w="520" data-shot-card="wrap" data-shot-kick="9FEAMG · {{ team.m }}" style="padding:28px 20px 0">
   <div class="sec-head">
     <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:26px;text-transform:uppercase">Awards</div>
-    <span class="sec-btns"><button class="share-btn" sc-camel-on-click="{{ team.goAwards }}">All awards ›</button></span>
+    <span class="sec-btns no-shot" style="display:flex;gap:6px"><button class="share-btn" sc-camel-on-click="{{ team.goAwards }}">All awards ›</button><button class="share-btn" sc-camel-on-click="{{ menuTeamAwards }}" aria-label="Share this team's awards">Share</button></span>
     <div class="sec-cap">{{ team.awardsSub }}</div>
   </div>
   <sc-if value="{{ team.hasTeamAwards }}" hint-placeholder-val="{{ true }}">
@@ -1888,12 +1889,14 @@ button{font-family:inherit;color:inherit}
   <sc-if value="{{ team.noTeamAwards }}" hint-placeholder-val="{{ false }}">
     <div style="margin-top:10px;padding:16px;border:1px dashed var(--line);border-radius:14px;text-align:center;font-size:13px;color:var(--muted)">No awards yet.</div>
   </sc-if>
+  <div class="shot-footer"><b>9FEAMG</b><span>{{ shotTeamAwards }}</span></div>
 </div>
 </sc-if>
 <sc-if value="{{ team.hasChart }}" hint-placeholder-val="{{ true }}">
-<div style="padding:28px 20px 0">
+<div data-shot="tm-chart" data-shot-w="460" data-shot-card="wrap" data-shot-kick="9FEAMG · {{ team.m }}" style="padding:28px 20px 0">
   <div class="sec-head">
     <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:26px;text-transform:uppercase">Week by week</div>
+    <span class="sec-btns no-shot"><button class="share-btn" sc-camel-on-click="{{ menuTeamChart }}" aria-label="Share this team's week by week">Share</button></span>
     <div class="sec-cap">{{ team.chartSub }}</div>
   </div>
   <div class="tm-card" style="padding:14px 12px 10px">
@@ -1912,6 +1915,7 @@ button{font-family:inherit;color:inherit}
     </div>
     <div class="tm-legend"><span><i style="background:var(--accent)"></i>Win</span><span><i style="background:color-mix(in oklch, var(--muted) 30%, transparent)"></i>Loss</span><span><i class="tm-l-opp"></i>Opponent</span><span><i class="tm-l-avg"></i>League average</span></div>
   </div>
+  <div class="shot-footer"><b>9FEAMG</b><span>{{ shotTeamChart }}</span></div>
 </div>
 </sc-if>
 <!-- Schedule share (Matt, Oct 31, 2026): the game log and the rest of the schedule as one image. -->
@@ -1998,9 +2002,10 @@ button{font-family:inherit;color:inherit}
 </div>
 <!-- Head-to-head (Matt, Nov 16, 2026): the real games against each manager and the all-play record. -->
 <sc-if value="{{ team.hasH2h }}" hint-placeholder-val="{{ true }}">
-<div style="padding:28px 20px 0">
+<div data-shot="tm-h2h" data-shot-card="wrap" data-shot-kick="9FEAMG · {{ team.m }}" style="padding:28px 20px 0">
   <div class="sec-head">
     <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:26px;text-transform:uppercase">Head-to-head</div>
+    <span class="sec-btns no-shot"><button class="share-btn" sc-camel-on-click="{{ menuTeamH2h }}" aria-label="Share this team's head-to-head">Share</button></span>
     <div class="sec-cap">{{ team.h2hSub }}</div>
   </div>
   <div class="tm-card"><div class="tm-list">
@@ -2016,6 +2021,7 @@ button{font-family:inherit;color:inherit}
       </div>
     </sc-for>
   </div></div>
+  <div class="shot-footer"><b>9FEAMG</b><span>{{ shotTeamH2h }}</span></div>
 </div>
 </sc-if>
 

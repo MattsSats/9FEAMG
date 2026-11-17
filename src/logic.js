@@ -1687,6 +1687,10 @@ class Component extends DCLogic {
       menuLineup: this.shareMenu(`${S.team} · Week ${lineupWeek} lineup`, e => this.shareLink(location.origin + '/s/team-' + teamSlug(S.team), '9FEAMG · ' + S.team, e), e => this.share('lineup', e)),
       menuSchedule: this.shareMenu(`${S.team} · schedule`, e => this.shareLink(location.origin + '/s/team-' + teamSlug(S.team), '9FEAMG · ' + S.team, e), e => this.share('schedule', e)),
       shotLineup: [tm, rt?.team].filter(Boolean).join(' · '),
+      // The team page's newer sections share too (Matt, Nov 16, 2026); their links go to the team page.
+      ...Object.fromEntries([['menuTeamAwards', 'awards', 'tm-awards'], ['menuTeamChart', 'week by week', 'tm-chart'], ['menuTeamH2h', 'head-to-head', 'tm-h2h']].map(([k, label, shot]) =>
+        [k, this.shareMenu(`${S.team} · ${label}`, e => this.shareLink(location.origin + '/s/team-' + teamSlug(S.team), '9FEAMG · ' + S.team, e), e => this.share(shot, e))])),
+      shotTeamAwards: `${tm} · awards · through week ${NF}`, shotTeamChart: `${tm} · ${s.w}–${s.l}, ${ord(place)} · through week ${NF}`, shotTeamH2h: `${tm} · head-to-head · through week ${NF}`,
       shotSchedule: `${tm} · ${s.w}–${s.l}, ${ord(place)} · through week ${NF}`,
       // Wire: the view on screen (this fantasy week or the season), as a link preview or an image.
       menuWire: this.shareMenu(seasonMode ? 'Wire · season' : 'Wire · Week ' + wireWk, e => this.shareLink(location.origin + (seasonMode ? '/s/wire-season' : '/s/wire-week'), seasonMode ? '9FEAMG · Wire · season' : '9FEAMG · Wire · Week ' + wireWk, e), e => this.share('wire', e)),
