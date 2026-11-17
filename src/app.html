@@ -599,6 +599,11 @@ button{font-family:inherit;color:inherit}
   .gd-cols>#parlays-more{grid-area:mo;grid-template-columns:repeat(3,minmax(0,1fr))}
   .cols.two{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
+/* Gameday's sticky columns can slide past their own row (a sticky grid item is held inside the whole grid, not
+   its row), which floated the matchups, the Booth and the parlays over each other below 1320px. Stick only where
+   nothing sits under them: from 1320px, while "Nobody's on these" and Busted are empty. */
+@media (min-width:900px) and (max-width:1319px){ .gd-cols>*{position:static!important} }
+@media (min-width:1320px){ .gd-cols:has(>#parlays-more>*)>*{position:static!important} }
 /* Teams and Wire on desktop: two columns; Wire's charts stay in view beside the list. */
 @media (min-width:900px){
   .wire-cols{display:grid;grid-template-columns:minmax(0,3fr) minmax(0,2fr)}
