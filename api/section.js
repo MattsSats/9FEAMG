@@ -392,7 +392,7 @@ function teamOf(season, st, slug, tx, yahoo = null) {
   // Like the matchup cards: once games start, the live score next to the projection.
   const sc = season.live?.scores || {}, f2 = n => (n ?? 0).toFixed(2);
   const started = o && ((sc[m]?.[0] || 0) > 0 || (sc[o]?.[0] || 0) > 0);
-  const week = !o ? '' : `Week ${LW} vs ${o}: ` + (started ? `${f2(sc[m]?.[0])}–${f2(sc[o]?.[0])} now · ` : '') + `${f2(sc[m]?.[1])}–${f2(sc[o]?.[1])} projected`;
+  const week = !o ? '' : `Week ${LW} vs ${o}: ` + (!started ? `${f2(sc[m]?.[1])}–${f2(sc[o]?.[1])} projected` : `${f2(sc[m]?.[0])}–${f2(sc[o]?.[0])} now` + (f2(sc[m]?.[0]) == f2(sc[m]?.[1]) && f2(sc[o]?.[0]) == f2(sc[o]?.[1]) ? ' · both done' : ` · ${f2(sc[m]?.[1])}–${f2(sc[o]?.[1])} projected`));
   // The bottom row: Max PF and points left on the bench (when every final week has a box score)
   // and FAAB left (when the transactions file loaded).
   const spent = tx ? season.faabBudget - faabOf(season, tx, yahoo)[m].left : null;
