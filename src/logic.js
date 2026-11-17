@@ -522,7 +522,9 @@ class Component extends DCLogic {
     // Season sections (data-shot-card, Matt, Nov 16, 2026) share in the awards style: a kicker and the section's
     // title on the page background, the section itself in a white card, the footer under it. 32px wider keeps
     // the content as wide as before.
-    const card = el.hasAttribute('data-shot-card');
+    // data-shot-card="wrap" (the Teams images, Matt, Nov 16, 2026) is already in white cards: it gets the kicker
+    // and the footer only. data-shot-kick names the tab in the kicker.
+    const wrapped = el.hasAttribute('data-shot-card'), card = wrapped && el.dataset.shotCard != 'wrap';
     stage.className = 'offstage'; stage.style.width = (+el.dataset.shotW || SHOT_W) + (card ? 32 : 0) + 'px';
     const copy = el.cloneNode(true);
     // Icon colors like fill:var(--hi-a) come out blank in the image, so bake in the real color.
@@ -538,11 +540,11 @@ class Component extends DCLogic {
     copy.querySelectorAll('.no-shot').forEach(n => n.remove());
     copy.classList.add('capturing'); copy.style.margin = '0'; copy.style.width = 'auto';
     let target = copy;
-    if (card) {
-      target = document.createElement('div'); target.className = 'capturing scw-wrap';
-      const kick = document.createElement('div'); kick.className = 'scw-kick'; kick.textContent = '9FEAMG · Season';
-      const head = copy.querySelector('.sec-head'), foot = copy.querySelector('.shot-footer');
-      copy.classList.add('scw-card');
+    if (wrapped) {
+      target = document.createElement('div'); target.className = 'capturing scw-wrap' + (card ? '' : ' flat');
+      const kick = document.createElement('div'); kick.className = 'scw-kick'; kick.textContent = el.dataset.shotKick || '9FEAMG · Season';
+      const head = card && copy.querySelector('.sec-head'), foot = copy.querySelector('.shot-footer');
+      if (card) copy.classList.add('scw-card');
       target.append(kick); if (head) target.append(head); target.append(copy); if (foot) target.append(foot);
     }
     stage.appendChild(target); document.body.appendChild(stage);

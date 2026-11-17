@@ -596,6 +596,12 @@ button{font-family:inherit;color:inherit}
 .capturing.scw-card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:4px 14px 10px!important;margin-top:10px!important}
 .capturing.scw-card [style*="background:var(--surface);"]{background:var(--surface2)!important;border-color:transparent!important}
 .scw-wrap>.shot-footer{padding:14px 0 16px!important}
+/* Already in cards (the Teams images): the copy keeps its own side padding, so the kicker and footer get it too. */
+.scw-wrap.flat{padding:0}
+.scw-wrap.flat>.scw-kick{padding:20px 20px 0;margin-bottom:0}
+.scw-wrap.flat>.shot-footer{padding:14px 20px 16px!important}
+.scw-wrap.flat>[data-shot="team"]>div:first-child{margin-top:10px!important}
+.scw-wrap.flat>[data-shot="schedule"]>div:first-child,.scw-wrap.flat>[data-shot="lineup"]{padding-top:10px!important}
 /* Team page (Matt, Nov 16, 2026): white cards, the week-by-week chart, the team's awards. */
 .tm-card{margin-top:8px;background:var(--surface);border:1px solid var(--line);border-radius:16px;overflow:hidden}
 .tm-list{margin-top:-1px}
@@ -1830,7 +1836,7 @@ button{font-family:inherit;color:inherit}
 
 <div class="cols two">
 <div>
-<div data-shot="team">
+<div data-shot="team" data-shot-card="wrap" data-shot-kick="9FEAMG · Teams">
 <div style="position:relative;margin:16px 20px 0;padding:20px;border-radius:20px;background:var(--surface);border:1px solid var(--line)">
   <span class="no-shot" style="position:absolute;top:14px;right:14px;display:flex;gap:6px">
     <button class="share-btn" sc-camel-on-click="{{ menuTeam }}" aria-label="Share this team">Share</button>
@@ -1909,7 +1915,7 @@ button{font-family:inherit;color:inherit}
 </div>
 </sc-if>
 <!-- Schedule share (Matt, Oct 31, 2026): the game log and the rest of the schedule as one image. -->
-<div data-shot="schedule" style="padding:0 0 0">
+<div data-shot="schedule" data-shot-w="460" data-shot-card="wrap" data-shot-kick="9FEAMG · Teams" style="padding:0 0 0">
 <div style="padding:28px 20px 0">
   <div class="sec-head">
     <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:26px;text-transform:uppercase">Game log</div>
@@ -1954,7 +1960,7 @@ button{font-family:inherit;color:inherit}
 </div>
 
 <div>
-<div data-shot="lineup" style="padding:28px 20px 0">
+<div data-shot="lineup" data-shot-card="wrap" data-shot-kick="9FEAMG · Teams" style="padding:28px 20px 0">
   <div class="sec-head">
     <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:26px;text-transform:uppercase">{{ team.lineupTitle }}</div>
     <span class="sec-btns no-shot"><button class="share-btn" sc-camel-on-click="{{ menuLineup }}" aria-label="Share the lineup">Share</button></span>

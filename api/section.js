@@ -406,7 +406,7 @@ function teamOf(season, st, slug, tx, yahoo = null) {
 }
 
 function teamCard(T) {
-  const tile = (label, value, sub, color = C.ink) => h('div', { flexDirection: 'column', flex: 1, padding: '14px 18px', borderRadius: 16, background: C.surface2 },
+  const tile = (label, value, sub, color = C.ink) => h('div', { flexDirection: 'column', flex: 1, padding: '14px 18px', borderRadius: 16, background: '#FFFFFF', border: `1px solid ${C.line}` },
     h('div', { fontFamily: F.mono, fontSize: 16, fontWeight: 600, letterSpacing: 2, color: C.muted }, label),
     h('div', { fontFamily: F.display, fontSize: 50, fontWeight: 900, lineHeight: 1, marginTop: 6, color }, value),
     h('div', { fontFamily: F.mono, fontSize: 16, fontWeight: 600, color: C.muted, marginTop: 6 }, sub));
@@ -420,7 +420,7 @@ function teamCard(T) {
       tile('LUCK', signed(T.luck), 'W − xW', T.luck > 0 ? C.pos : T.luck < 0 ? C.neg : C.ink)),
     T.roast ? h('div', { marginTop: 18, maxHeight: 62, overflow: 'hidden', fontFamily: F.sans, fontSize: 24, fontWeight: 600, lineHeight: 1.3, color: C.ink }, T.roast) : null,
     T.week ? h('div', { marginTop: 10, fontFamily: F.mono, fontSize: 20, fontWeight: 600, color: C.accentInk }, T.week) : null,
-    T.extras.length ? h('div', { gap: 12, marginTop: 16 }, ...T.extras.map(([label, value, sub]) => h('div', { flex: 1, alignItems: 'baseline', gap: 12, padding: '10px 18px', borderRadius: 14, border: `2px solid ${C.line}` },
+    T.extras.length ? h('div', { gap: 12, marginTop: 16 }, ...T.extras.map(([label, value, sub]) => h('div', { flex: 1, alignItems: 'baseline', gap: 12, padding: '10px 18px', borderRadius: 14, background: '#FFFFFF', border: `1px solid ${C.line}` },
       h('div', { fontFamily: F.mono, fontSize: 15, fontWeight: 600, letterSpacing: 2, color: C.muted }, label),
       h('div', { fontFamily: F.display, fontSize: 32, fontWeight: 900, lineHeight: 1, color: C.ink }, value),
       h('div', { fontFamily: F.mono, fontSize: 14, fontWeight: 600, color: C.muted }, sub)))) : null));
