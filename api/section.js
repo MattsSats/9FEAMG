@@ -455,7 +455,7 @@ function weekCard(W) {
 // with each record, two columns of five.
 function wireCard(Wd) {
   const max = Math.max(1, ...Wd.rows.map(r => r.n));
-  const row = r => h('div', { alignItems: 'center', height: 50, borderTop: `1px solid ${C.line}` },
+  const row = r => h('div', { alignItems: 'center', height: 46, borderTop: `1px solid ${C.line}` },
     crest(r, 30), h('div', { width: 110, marginLeft: 12, fontFamily: F.sans, fontSize: 23, fontWeight: 600, color: C.ink }, r.m),
     h('div', { flex: 1, height: 16, borderRadius: 4, background: C.surface2 },
       h('div', { width: `${Math.max(r.n ? 3 : 0, r.n / max * 100)}%`, height: 16, borderRadius: 4, background: mgrColor(r.hue) })),
@@ -463,8 +463,9 @@ function wireCard(Wd) {
   const col = rs => h('div', { flexDirection: 'column', flex: 1 }, ...rs.map(row));
   return frame(Wd.mode == 'season' ? 'WIRE · SEASON' : `WIRE · WEEK ${Wd.wk}`, 'Wire', null, h('div', { flexDirection: 'column' },
     h('div', { marginTop: 18, padding: '16px 22px', borderRadius: 16, background: C.accent, maxHeight: 108, overflow: 'hidden', fontFamily: F.sans, fontSize: 26, fontWeight: 600, lineHeight: 1.3, color: C.onAccent }, Wd.line),
-    h('div', { marginTop: 16, fontFamily: F.mono, fontSize: 16, fontWeight: 600, letterSpacing: 2, color: C.muted }, Wd.mode == 'season' ? 'ADDS THIS SEASON · RECORD' : `ADDS IN WEEK ${Wd.wk} · RECORD`),
-    h('div', { gap: 40, marginTop: 6 }, col(Wd.rows.slice(0, 5)), col(Wd.rows.slice(5)))));
+    h('div', { flexDirection: 'column', marginTop: 14, padding: '12px 20px 4px', background: '#FFFFFF', border: `1px solid ${C.line}`, borderRadius: 16 },
+      h('div', { fontFamily: F.mono, fontSize: 15, fontWeight: 600, letterSpacing: 2, color: C.muted }, Wd.mode == 'season' ? 'ACTIVITY VS RECORD · ADDS THIS SEASON' : `ACTIVITY VS RECORD · ADDS IN WEEK ${Wd.wk}`),
+      h('div', { gap: 36, marginTop: 6 }, col(Wd.rows.slice(0, 5)), col(Wd.rows.slice(5))))));
 }
 
 // The Booth: the newest set of lines for the live week (or the latest week with any), one per

@@ -1479,7 +1479,7 @@ class Component extends DCLogic {
     // Activity vs record: season adds on Season, this fantasy week's adds on This week.
     const quiet = W && !seasonMode && W.total == 0 && wireWk > 1, AW = quiet ? wireOf(D, tx, (name, w) => this.fantasyPts(name, w), 'week', cut.getTime() - 1) : W;
     const wirePts = m => ACQ.filter(a => a.m == m && a.how != 'draft').reduce((t, a) => t + a.started, 0);
-    const activity = AW ? AW.rows.map(r => ({ m: r.m, n: r.n, w: (r.n / Math.max(1, AW.rows[0].n) * 100) + '%', color: col(r.m), rec: r.rec, pts: seasonMode && ACQ.length ? f1(wirePts(r.m)) : '' })) : [];
+    const activity = AW ? AW.rows.map(r => ({ m: r.m, init: INIT[r.m], n: r.n, w: (r.n / Math.max(1, AW.rows[0].n) * 100) + '%', color: col(r.m), rec: r.rec, pts: seasonMode && ACQ.length ? f1(wirePts(r.m)) : '' })) : [];
     const activityLabel = seasonMode ? 'Adds · season' : quiet ? 'Adds · Week ' + AW.wk + ' (none yet in Week ' + wireWk + ')' : 'Adds · Week ' + wireWk;
     // Best pickups: the season's adds by points scored as a starter for the team that added them.
     const pickups = ACQ.filter(a => a.how == 'add' && a.started > 0).sort((a, b) => b.started - a.started).slice(0, 5)
@@ -1652,6 +1652,11 @@ class Component extends DCLogic {
       // Wire: the view on screen (this fantasy week or the season), as a link preview or an image.
       menuWire: this.shareMenu(seasonMode ? 'Wire · season' : 'Wire · Week ' + wireWk, e => this.shareLink(location.origin + (seasonMode ? '/s/wire-season' : '/s/wire-week'), seasonMode ? '9FEAMG · Wire · season' : '9FEAMG · Wire · Week ' + wireWk, e), e => this.share('wire', e)),
       shotWire: seasonMode ? 'Wire · season' : 'Wire · Week ' + wireWk,
+      // The share image (Matt, Nov 16, 2026), in the awards style: adds in two columns of five, and in Season
+      // the best pickups beside FAAB left.
+      wireKick: seasonMode ? 'Wire · season · through Week ' + boxWeeks : 'Wire · Week ' + wireWk,
+      wireActA: activity.slice(0, 5), wireActB: activity.slice(5), wirePtsHead: seasonMode && ACQ.length ? 'PTS' : '',
+      wireShotSide: seasonMode,
       // The Booth: an image of each matchup's newest line (earlier stages stay off the image).
       boothNote: (boothWaiting ? boothEmpty : BOOTH_NOTE[boothSet[0]] || '') + (PICKS.w + PICKS.l && !pundits.show ? ` The Booth’s picks: ${PICKS.w}–${PICKS.l} this season.` : ''), hasBoothSets: true, pundits, hasPundits: pundits.show,
       boothSets: boothAll.map(([label, l]) => ({ label, on: String(label == boothSet[0]), bg: label == boothSet[0] ? 'var(--ink)' : 'transparent', fg: label == boothSet[0] ? 'var(--bg)' : 'var(--muted)', op: l.length || label == boothSet[0] ? 1 : 0.45,

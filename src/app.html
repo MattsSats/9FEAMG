@@ -587,6 +587,7 @@ button{font-family:inherit;color:inherit}
 .capturing.aw-shot{display:block!important}
 .capturing.aw-sec>.aw-foot,.capturing.aw-shot>.aw-foot{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:14px 0 16px;font-family:'JetBrains Mono';font-size:11px;letter-spacing:.08em;color:var(--muted)}
 .aw-foot b{font-family:'Big Shoulders Display';font-weight:900;font-size:15px;letter-spacing:.02em;color:var(--ink)}
+.wsh-row{display:grid;grid-template-columns:24px 64px minmax(0,1fr) 28px 46px 46px;gap:8px}
 .aw-case{display:grid;grid-template-columns:minmax(0,1fr);gap:8px;margin-top:10px}
 .aw-team{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px}
 .aw-team[data-none="true"]{background:transparent;border-style:dashed}
@@ -2147,8 +2148,83 @@ button{font-family:inherit;color:inherit}
 
 <div class="wire-side stick">
 <sc-if value="{{ wireSeason }}" hint-placeholder-val="{{ false }}">
-  <div data-shot="wire" style="padding:24px 20px 0">
-    <div class="shot-only" style="margin-bottom:14px;padding:14px;border-radius:14px;background:var(--accent);color:var(--onAccent);font-size:15px;line-height:1.4;font-weight:600">{{ wireRoast }}</div>
+<!-- The share image (Matt, Nov 16, 2026): hidden on the page; the awards style, with a header, the Wire's line,
+     white cards and the footer. -->
+<div class="aw-shot" data-shot="wire" data-shot-w="960" style="display:none;background:var(--bg);padding:20px 20px 0">
+  <div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px">
+    <div style="font-family:'JetBrains Mono';font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--accentInk)">{{ wireKick }}</div>
+    <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:24px;line-height:1">9FEAMG</div>
+  </div>
+  <div style="margin-top:12px;padding:14px 16px;border-radius:14px;background:var(--accent);color:var(--onAccent);font-size:16px;line-height:1.4;font-weight:600">{{ wireRoast }}</div>
+  <div class="aw-card" style="margin-top:10px">
+    <div style="display:flex;justify-content:space-between;align-items:baseline">
+      <div style="font-family:'JetBrains Mono';font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)">Activity vs record</div>
+      <div style="font-family:'JetBrains Mono';font-size:11px;color:var(--muted)">{{ activityLabel }}</div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:28px;margin-top:10px">
+      <div><div class="wsh-row" style="font-family:'JetBrains Mono';font-size:10.5px;letter-spacing:.08em;color:var(--muted);padding-bottom:5px"><span></span><span></span><span></span><span style="text-align:right">ADDS</span><span style="text-align:right">{{ wirePtsHead }}</span><span style="text-align:right">W–L</span></div>
+        <sc-for list="{{ wireActA }}" as="a" hint-placeholder-count="5">
+          <div class="wsh-row" style="align-items:center;border-top:1px solid var(--line);padding:7px 0">
+            <div class="crest" style="width:24px;height:24px;background:{{ a.color }};color:var(--onAccent);display:flex;align-items:center;justify-content:center;font-family:'Big Shoulders Display';font-weight:800;font-size:10px"><span class="ini" data-i="{{ a.init }}">{{ a.init }}</span></div>
+            <span style="font-size:14px;font-weight:600">{{ a.m }}</span>
+            <div style="height:12px;border-radius:4px;background:var(--surface2);overflow:hidden"><div style="height:100%;width:{{ a.w }};background:{{ a.color }};border-radius:4px"></div></div>
+            <span style="font-family:'JetBrains Mono';font-size:13px;font-weight:600;text-align:right">{{ a.n }}</span>
+            <span style="font-family:'JetBrains Mono';font-size:12px;text-align:right">{{ a.pts }}</span>
+            <span style="font-family:'JetBrains Mono';font-size:12px;color:var(--muted);text-align:right">{{ a.rec }}</span>
+          </div>
+        </sc-for>
+      </div>
+      <div><div class="wsh-row" style="font-family:'JetBrains Mono';font-size:10.5px;letter-spacing:.08em;color:var(--muted);padding-bottom:5px"><span></span><span></span><span></span><span style="text-align:right">ADDS</span><span style="text-align:right">{{ wirePtsHead }}</span><span style="text-align:right">W–L</span></div>
+        <sc-for list="{{ wireActB }}" as="a" hint-placeholder-count="5">
+          <div class="wsh-row" style="align-items:center;border-top:1px solid var(--line);padding:7px 0">
+            <div class="crest" style="width:24px;height:24px;background:{{ a.color }};color:var(--onAccent);display:flex;align-items:center;justify-content:center;font-family:'Big Shoulders Display';font-weight:800;font-size:10px"><span class="ini" data-i="{{ a.init }}">{{ a.init }}</span></div>
+            <span style="font-size:14px;font-weight:600">{{ a.m }}</span>
+            <div style="height:12px;border-radius:4px;background:var(--surface2);overflow:hidden"><div style="height:100%;width:{{ a.w }};background:{{ a.color }};border-radius:4px"></div></div>
+            <span style="font-family:'JetBrains Mono';font-size:13px;font-weight:600;text-align:right">{{ a.n }}</span>
+            <span style="font-family:'JetBrains Mono';font-size:12px;text-align:right">{{ a.pts }}</span>
+            <span style="font-family:'JetBrains Mono';font-size:12px;color:var(--muted);text-align:right">{{ a.rec }}</span>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </div>
+  <sc-if value="{{ wireShotSide }}" hint-placeholder-val="{{ false }}">
+  <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:10px">
+    <div class="aw-card">
+      <div style="display:flex;justify-content:space-between;align-items:baseline">
+        <div style="font-family:'JetBrains Mono';font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)">Best pickups</div>
+        <div style="font-family:'JetBrains Mono';font-size:11px;color:var(--muted)">{{ pickupsSub }}</div>
+      </div>
+      <div style="margin-top:8px">
+        <sc-for list="{{ pickups }}" as="pk" hint-placeholder-count="5">
+          <div style="display:grid;grid-template-columns:16px minmax(0,1fr) auto;gap:10px;align-items:center;padding:7px 0;border-top:1px solid var(--line)">
+            <span style="font-family:'JetBrains Mono';font-size:11px;color:var(--muted)">{{ pk.n }}</span>
+            <div style="min-width:0"><div style="font-weight:600;font-size:14px">{{ pk.player }}</div><div style="display:flex;align-items:center;gap:6px;font-family:'JetBrains Mono';font-size:11px;color:var(--muted);margin-top:2px"><span style="width:7px;height:7px;border-radius:50%;background:{{ pk.color }}"></span>{{ pk.m }} · {{ pk.tag }}</div></div>
+            <span style="font-family:'Big Shoulders Display';font-weight:800;font-size:22px">{{ pk.pts }}</span>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+    <div class="aw-card">
+      <div style="display:flex;justify-content:space-between;align-items:baseline">
+        <div style="font-family:'JetBrains Mono';font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)">FAAB left</div>
+        <div style="font-family:'JetBrains Mono';font-size:11px;color:var(--muted)">{{ faabBudget }}</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:7px;margin-top:12px">
+        <sc-for list="{{ faab }}" as="fb" hint-placeholder-count="10">
+          <div style="display:grid;grid-template-columns:60px minmax(0,1fr) 44px;gap:10px;align-items:center">
+            <span style="font-size:13px;font-weight:600">{{ fb.m }}</span>
+            <div style="height:8px;border-radius:4px;background:var(--surface2);overflow:hidden"><div style="height:100%;width:{{ fb.w }};background:{{ fb.color }}"></div></div>
+            <span style="font-family:'JetBrains Mono';font-size:12px;font-weight:600;text-align:right">{{ fb.left }}</span>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </div>
+  </sc-if>
+  <div class="aw-foot"><b>9FEAMG</b><span>{{ wireSub }}</span></div>
+</div>
+  <div style="padding:24px 20px 0">
     <div style="display:flex;justify-content:space-between;align-items:baseline">
       <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:24px;text-transform:uppercase">Activity vs record</div>
       <div style="font-family:'JetBrains Mono';font-size:11px;color:var(--muted)">{{ activityLabel }}</div>
@@ -2165,7 +2241,6 @@ button{font-family:inherit;color:inherit}
         </div>
       </sc-for>
     </div>
-    <div class="shot-footer"><b>9FEAMG</b><span>{{ shotWire }}</span></div>
   </div>
 </sc-if>
 
