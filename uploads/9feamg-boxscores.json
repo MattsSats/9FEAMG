@@ -11950,6 +11950,1342 @@
           ]
         ]
       }
+    },
+    "10": {
+      "Matt": {
+        "total": 145.66,
+        "starters": [
+          [
+            "QB",
+            "Jayden Daniels",
+            "Was",
+            "QB",
+            22.76,
+            18.27
+          ],
+          [
+            "RB",
+            "Chuba Hubbard",
+            "Car",
+            "RB",
+            31.7,
+            17.36
+          ],
+          [
+            "RB",
+            "Christian McCaffrey",
+            "SF",
+            "RB",
+            44.3,
+            18.92
+          ],
+          [
+            "WR",
+            "Christian Watson",
+            "GB",
+            "WR",
+            5.2,
+            13.59
+          ],
+          [
+            "WR",
+            "Justin Jefferson",
+            "Min",
+            "WR",
+            11.9,
+            15.9
+          ],
+          [
+            "TE",
+            "Trey McBride",
+            "Ari",
+            "TE",
+            6.2,
+            12.13
+          ],
+          [
+            "W/R/T",
+            "Quinshon Judkins",
+            "Cle",
+            "RB",
+            14.6,
+            9.32
+          ],
+          [
+            "K",
+            "Jake Bates",
+            "Det",
+            "K",
+            5,
+            8.51
+          ],
+          [
+            "DEF",
+            "Packers",
+            "GB",
+            "DEF",
+            4,
+            7.46
+          ]
+        ],
+        "bench": [
+          [
+            "BN",
+            "Jordan Love",
+            "GB",
+            "QB",
+            11.8,
+            17.52
+          ],
+          [
+            "BN",
+            "Garrett Wilson",
+            "NYJ",
+            "WR",
+            12.1,
+            11.63
+          ],
+          [
+            "BN",
+            "Josh Downs",
+            "KC",
+            "WR",
+            13.3,
+            6.26
+          ],
+          [
+            "BN",
+            "Xavier Worthy",
+            "KC",
+            "WR",
+            0,
+            6.66
+          ],
+          [
+            "BN",
+            "Alvin Kamara",
+            "NO",
+            "RB",
+            14.9,
+            5.95
+          ],
+          [
+            "BN",
+            "Eagles",
+            "Phi",
+            "DEF",
+            0,
+            0
+          ],
+          [
+            "IR",
+            "DeVonta Smith",
+            "Phi",
+            "WR",
+            0,
+            0
+          ]
+        ]
+      },
+      "Pablo": {
+        "total": 106,
+        "starters": [
+          [
+            "QB",
+            "C.J. Stroud",
+            "Hou",
+            "QB",
+            21.44,
+            17.59
+          ],
+          [
+            "RB",
+            "Tony Pollard",
+            "Ten",
+            "RB",
+            19.9,
+            11.63
+          ],
+          [
+            "RB",
+            "Ashton Jeanty",
+            "LV",
+            "RB",
+            8.4,
+            10.54
+          ],
+          [
+            "WR",
+            "Tetairoa McMillan",
+            "Car",
+            "WR",
+            5,
+            12.97
+          ],
+          [
+            "WR",
+            "Malik Washington",
+            "Mia",
+            "WR",
+            11.86,
+            7.9
+          ],
+          [
+            "TE",
+            "Juwan Johnson",
+            "NO",
+            "TE",
+            3.8,
+            6.99
+          ],
+          [
+            "W/R/T",
+            "Dalton Schultz",
+            "Hou",
+            "TE",
+            7.6,
+            5.87
+          ],
+          [
+            "K",
+            "Brandon Aubrey",
+            "Dal",
+            "K",
+            12,
+            8.6
+          ],
+          [
+            "DEF",
+            "Rams",
+            "LAR",
+            "DEF",
+            16,
+            7.82
+          ]
+        ],
+        "bench": [
+          [
+            "BN",
+            "Breece Hall",
+            "NYJ",
+            "RB",
+            12.8,
+            11.93
+          ],
+          [
+            "BN",
+            "Ladd McConkey",
+            "LAC",
+            "WR",
+            0,
+            0
+          ],
+          [
+            "BN",
+            "Puka Nacua",
+            "LAR",
+            "WR",
+            0,
+            0
+          ],
+          [
+            "BN",
+            "Caleb Williams",
+            "Chi",
+            "QB",
+            0,
+            0
+          ],
+          [
+            "BN",
+            "Quentin Johnston",
+            "LAC",
+            "WR",
+            1.1,
+            7.13
+          ],
+          [
+            "BN",
+            "Cairo Santos",
+            "Chi",
+            "K",
+            0,
+            0
+          ]
+        ]
+      },
+      "Tristan": {
+        "total": 134.12,
+        "starters": [
+          [
+            "QB",
+            "Patrick Mahomes",
+            "KC",
+            "QB",
+            35.42,
+            19.6
+          ],
+          [
+            "RB",
+            "Bijan Robinson",
+            "Atl",
+            "RB",
+            15.7,
+            19.47
+          ],
+          [
+            "RB",
+            "Emmett Johnson",
+            "KC",
+            "RB",
+            32.1,
+            17.2
+          ],
+          [
+            "WR",
+            "A.J. Brown",
+            "NE",
+            "WR",
+            3.7,
+            10.04
+          ],
+          [
+            "WR",
+            "Caleb Douglas",
+            "Mia",
+            "WR",
+            8.6,
+            8.39
+          ],
+          [
+            "TE",
+            "Sam LaPorta",
+            "Det",
+            "TE",
+            2.1,
+            9.68
+          ],
+          [
+            "W/R/T",
+            "Derrick Henry",
+            "Bal",
+            "RB",
+            16.5,
+            16.28
+          ],
+          [
+            "K",
+            "Evan McPherson",
+            "Cin",
+            "K",
+            8,
+            8.81
+          ],
+          [
+            "DEF",
+            "Bills",
+            "Buf",
+            "DEF",
+            12,
+            6.83
+          ]
+        ],
+        "bench": [
+          [
+            "BN",
+            "Bhayshul Tuten",
+            "Jax",
+            "RB",
+            18.8,
+            13.64
+          ],
+          [
+            "BN",
+            "Rome Odunze",
+            "Chi",
+            "WR",
+            0,
+            0
+          ],
+          [
+            "BN",
+            "Mike Evans",
+            "SF",
+            "WR",
+            0,
+            0
+          ],
+          [
+            "BN",
+            "Mike Washington Jr.",
+            "LV",
+            "RB",
+            3.2,
+            5.2
+          ],
+          [
+            "BN",
+            "Tyler Higbee",
+            "LAR",
+            "TE",
+            9.2,
+            7.74
+          ],
+          [
+            "BN",
+            "Buccaneers",
+            "TB",
+            "DEF",
+            0,
+            0
+          ],
+          [
+            "IR",
+            "Carnell Tate",
+            "Ten",
+            "WR",
+            0,
+            0
+          ],
+          [
+            "IR",
+            "Josh Jacobs",
+            "GB",
+            "RB",
+            0,
+            0
+          ]
+        ]
+      },
+      "Kurt": {
+        "total": 128.96,
+        "starters": [
+          [
+            "QB",
+            "Brock Purdy",
+            "SF",
+            "QB",
+            31.66,
+            21.82
+          ],
+          [
+            "RB",
+            "Jaylen Warren",
+            "Pit",
+            "RB",
+            6.6,
+            15.07
+          ],
+          [
+            "RB",
+            "Aaron Jones Sr.",
+            "Min",
+            "RB",
+            12,
+            8.47
+          ],
+          [
+            "WR",
+            "Zay Flowers",
+            "Bal",
+            "WR",
+            8.4,
+            14.12
+          ],
+          [
+            "WR",
+            "Jameson Williams",
+            "Det",
+            "WR",
+            7,
+            10.58
+          ],
+          [
+            "TE",
+            "Brenton Strange",
+            "Jax",
+            "TE",
+            7.9,
+            8.13
+          ],
+          [
+            "W/R/T",
+            "Deebo Samuel Sr.",
+            "SF",
+            "WR",
+            24.4,
+            9.16
+          ],
+          [
+            "K",
+            "Cam Little",
+            "Jax",
+            "K",
+            19,
+            9.1
+          ],
+          [
+            "DEF",
+            "Colts",
+            "Ind",
+            "DEF",
+            12,
+            7.48
+          ]
+        ],
+        "bench": [
+          [
+            "BN",
+            "Saquon Barkley",
+            "Phi",
+            "RB",
+            0,
+            0
+          ],
+          [
+            "BN",
+            "Colston Loveland",
+            "Chi",
+            "TE",
+            0,
+            0
+          ],
+          [
+            "BN",
+            "Emeka Egbuka",
+            "TB",
+            "WR",
+            0,
+            0
+          ],
+          [
+            "BN",
+            "Broncos",
+            "Den",
+            "DEF",
+            0,
+            0
+          ],
+          [
+            "IR",
+            "Kenneth Walker III",
+            "KC",
+            "RB",
+            0,
+            0
+          ],
+          [
+            "IR",
+            "Jacory Croskey-Merritt",
+            "Was",
+            "RB",
+            0,
+            0
+          ]
+        ]
+      },
+      "Jerger": {
+        "total": 134.62,
+        "starters": [
+          [
+            "QB",
+            "Dak Prescott",
+            "Dal",
+            "QB",
+            35.42,
+            19.77
+          ],
+          [
+            "RB",
+            "James Cook III",
+            "Buf",
+            "RB",
+            21.7,
+            15.82
+          ],
+          [
+            "RB",
+            "Blake Corum",
+            "LAR",
+            "RB",
+            19.4,
+            9.77
+          ],
+          [
+            "WR",
+            "Chris Olave",
+            "NO",
+            "WR",
+            4.5,
+            14.15
+          ],
+          [
+            "WR",
+            "Malik Nabers",
+            "NYG",
+            "WR",
+            4.9,
+            12.89
+          ],
+          [
+            "TE",
+            "Travis Kelce",
+            "KC",
+            "TE",
+            4,
+            10.26
+          ],
+          [
+            "W/R/T",
+            "CeeDee Lamb",
+            "Dal",
+            "WR",
+            16.7,
+            17.57
+          ],
+          [
+            "K",
+            "Matt Gay",
+            "LV",
+            "K",
+            8,
+            7.49
+          ],
+          [
+            "DEF",
+            "Vikings",
+            "Min",
+            "DEF",
+            20,
+            6.44
+          ]
+        ],
+        "bench": [
+          [
+            "BN",
+            "Tucker Kraft",
+            "GB",
+            "TE",
+            2.4,
+            8.68
+          ],
+          [
+            "BN",
+            "Braelon Allen",
+            "NYJ",
+            "RB",
+            5.1,
+            7.44
+          ],
+          [
+            "BN",
+            "Bryce Young",
+            "Car",
+            "QB",
+            8.1,
+            19.61
+          ],
+          [
+            "BN",
+            "Jalen Coker",
+            "Car",
+            "WR",
+            0.3,
+            11.04
+          ],
+          [
+            "BN",
+            "David Montgomery",
+            "Hou",
+            "RB",
+            0,
+            0
+          ],
+          [
+            "BN",
+            "Germie Bernard",
+            "Pit",
+            "WR",
+            1,
+            9.16
+          ]
+        ]
+      },
+      "Andy": {
+        "total": 153.38,
+        "starters": [
+          [
+            "QB",
+            "Trevor Lawrence",
+            "Jax",
+            "QB",
+            27.78,
+            20.04
+          ],
+          [
+            "RB",
+            "Jahmyr Gibbs",
+            "Det",
+            "RB",
+            40.7,
+            22.18
+          ],
+          [
+            "RB",
+            "Javonte Williams",
+            "Dal",
+            "RB",
+            7.2,
+            14.83
+          ],
+          [
+            "WR",
+            "Drake London",
+            "Atl",
+            "WR",
+            13.9,
+            13.56
+          ],
+          [
+            "WR",
+            "DJ Moore",
+            "Buf",
+            "WR",
+            17.4,
+            10.39
+          ],
+          [
+            "TE",
+            "Isaiah Likely",
+            "NYG",
+            "TE",
+            23.2,
+            9.71
+          ],
+          [
+            "W/R/T",
+            "KC Concepcion Jr.",
+            "Cle",
+            "WR",
+            10.2,
+            9.38
+          ],
+          [
+            "K",
+            "Tyler Bass",
+            "Buf",
+            "K",
+            7,
+            8.89
+          ],
+          [
+            "DEF",
+            "Texans",
+            "Hou",
+            "DEF",
+            6,
+            8.67
+          ]
+        ],
+        "bench": [
+          [
+            "BN",
+            "Hunter Henry",
+            "NE",
+            "TE",
+            3.2,
+            7.66
+          ],
+          [
+            "BN",
+            "D'Andre Swift",
+            "Chi",
+            "RB",
+            0,
+            0
+          ],
+          [
+            "BN",
+            "Jaylen Waddle",
+            "Den",
+            "WR",
+            0,
+            0
+          ],
+          [
+            "BN",
+            "Tre Tucker",
+            "LV",
+            "WR",
+            1.4,
+            6.45
+          ],
+          [
+            "BN",
+            "Chase McLaughlin",
+            "TB",
+            "K",
+            0,
+            0
+          ],
+          [
+            "BN",
+            "Bengals",
+            "Cin",
+            "DEF",
+            4,
+            6.28
+          ]
+        ]
+      },
+      "Tony": {
+        "total": 101.64,
+        "starters": [
+          [
+            "QB",
+            "Josh Allen",
+            "Buf",
+            "QB",
+            23.34,
+            23.24
+          ],
+          [
+            "RB",
+            "Ollie Gordon II",
+            "Mia",
+            "RB",
+            13.5,
+            13.22
+          ],
+          [
+            "RB",
+            "Tyler Allgeier",
+            "Ari",
+            "RB",
+            1.4,
+            9.37
+          ],
+          [
+            "WR",
+            "Matthew Golden",
+            "GB",
+            "WR",
+            9.5,
+            13.42
+          ],
+          [
+            "WR",
+            "Jaxon Smith-Njigba",
+            "Sea",
+            "WR",
+            27.1,
+            19.41
+          ],
+          [
+            "TE",
+            "George Kittle",
+            "SF",
+            "TE",
+            10.4,
+            12.72
+          ],
+          [
+            "W/R/T",
+            "Tyler Warren",
+            "Ind",
+            "TE",
+            1.4,
+            11.4
+          ],
+          [
+            "K",
+            "Will Reichard",
+            "Min",
+            "K",
+            12,
+            8.2
+          ],
+          [
+            "DEF",
+            "Jaguars",
+            "Jax",
+            "DEF",
+            3,
+            7.09
+          ]
+        ],
+        "bench": [
+          [
+            "BN",
+            "Omarion Hampton",
+            "LAC",
+            "RB",
+            17,
+            7.63
+          ],
+          [
+            "BN",
+            "Jakobi Meyers",
+            "Jax",
+            "WR",
+            4.9,
+            8.53
+          ],
+          [
+            "BN",
+            "Bucky Irving",
+            "TB",
+            "RB",
+            0,
+            0
+          ],
+          [
+            "BN",
+            "Jonah Coleman",
+            "Den",
+            "RB",
+            0,
+            0
+          ],
+          [
+            "BN",
+            "Tank Dell",
+            "Hou",
+            "WR",
+            3.6,
+            7.57
+          ],
+          [
+            "BN",
+            "Ryan Flournoy",
+            "Dal",
+            "WR",
+            16.1,
+            8.06
+          ]
+        ]
+      },
+      "Colin": {
+        "total": 112.36,
+        "starters": [
+          [
+            "QB",
+            "Joe Burrow",
+            "Cin",
+            "QB",
+            33.16,
+            21.83
+          ],
+          [
+            "RB",
+            "Kyren Williams",
+            "LAR",
+            "RB",
+            4.2,
+            16.06
+          ],
+          [
+            "RB",
+            "Zach Charbonnet",
+            "Sea",
+            "RB",
+            9.4,
+            12.51
+          ],
+          [
+            "WR",
+            "Ja'Marr Chase",
+            "Cin",
+            "WR",
+            28.6,
+            17.33
+          ],
+          [
+            "WR",
+            "Rashee Rice",
+            "KC",
+            "WR",
+            10.7,
+            11.79
+          ],
+          [
+            "TE",
+            "Brock Bowers",
+            "LV",
+            "TE",
+            2.8,
+            12.35
+          ],
+          [
+            "W/R/T",
+            "Jordyn Tyson",
+            "NO",
+            "WR",
+            13.5,
+            7.97
+          ],
+          [
+            "K",
+            "Spencer Shrader",
+            "Ind",
+            "K",
+            8,
+            9.45
+          ],
+          [
+            "DEF",
+            "Ravens",
+            "Bal",
+            "DEF",
+            2,
+            7.57
+          ]
+        ],
+        "bench": [
+          [
+            "BN",
+            "Jadarian Price",
+            "Sea",
+            "RB",
+            10.9,
+            9.16
+          ],
+          [
+            "BN",
+            "Keenan Allen",
+            "SF",
+            "WR",
+            8.6,
+            5.59
+          ],
+          [
+            "BN",
+            "Jordan Mason",
+            "Min",
+            "RB",
+            5.9,
+            8.94
+          ],
+          [
+            "BN",
+            "Travis Etienne Jr.",
+            "NO",
+            "RB",
+            4.9,
+            8.05
+          ],
+          [
+            "BN",
+            "Steelers",
+            "Pit",
+            "DEF",
+            -3,
+            5.2
+          ],
+          [
+            "IR",
+            "Kyle Monangai",
+            "Chi",
+            "RB",
+            0,
+            0
+          ],
+          [
+            "IR",
+            "Davante Adams",
+            "LAR",
+            "WR",
+            0,
+            0
+          ]
+        ]
+      },
+      "Mr. G": {
+        "total": 126.52,
+        "starters": [
+          [
+            "QB",
+            "Drake Maye",
+            "NE",
+            "QB",
+            3.02,
+            21.77
+          ],
+          [
+            "RB",
+            "Chase Brown",
+            "Cin",
+            "RB",
+            24.3,
+            12.71
+          ],
+          [
+            "RB",
+            "Woody Marks",
+            "Hou",
+            "RB",
+            7,
+            12.18
+          ],
+          [
+            "WR",
+            "Amon-Ra St. Brown",
+            "Det",
+            "WR",
+            23.8,
+            17.06
+          ],
+          [
+            "WR",
+            "Parker Washington",
+            "Jax",
+            "WR",
+            24.7,
+            13.23
+          ],
+          [
+            "TE",
+            "Dalton Kincaid",
+            "Buf",
+            "TE",
+            6.8,
+            8.37
+          ],
+          [
+            "W/R/T",
+            "Nico Collins",
+            "Hou",
+            "WR",
+            19.9,
+            12.17
+          ],
+          [
+            "K",
+            "Ka'imi Fairbairn",
+            "Hou",
+            "K",
+            7,
+            8.32
+          ],
+          [
+            "DEF",
+            "Seahawks",
+            "Sea",
+            "DEF",
+            10,
+            7.09
+          ]
+        ],
+        "bench": [
+          [
+            "BN",
+            "Rhamondre Stevenson",
+            "NE",
+            "RB",
+            1,
+            10.57
+          ],
+          [
+            "BN",
+            "DK Metcalf",
+            "Pit",
+            "WR",
+            14.4,
+            10.73
+          ],
+          [
+            "BN",
+            "Luther Burden III",
+            "Chi",
+            "WR",
+            0,
+            0
+          ],
+          [
+            "BN",
+            "Mike Gesicki",
+            "Cin",
+            "TE",
+            1.4,
+            7.37
+          ],
+          [
+            "BN",
+            "Corey Kiner",
+            "NE",
+            "RB",
+            2.5,
+            6.26
+          ],
+          [
+            "BN",
+            "Aaron Rodgers",
+            "Pit",
+            "QB",
+            15.62,
+            16.98
+          ],
+          [
+            "IR",
+            "T.J. Hockenson",
+            "Min",
+            "TE",
+            0,
+            0
+          ],
+          [
+            "IR",
+            "Jeremiyah Love",
+            "Ari",
+            "RB",
+            0,
+            0
+          ]
+        ]
+      },
+      "DLin": {
+        "total": 155.42,
+        "starters": [
+          [
+            "QB",
+            "Jared Goff",
+            "Det",
+            "QB",
+            22.42,
+            19.51
+          ],
+          [
+            "RB",
+            "Jonathan Taylor",
+            "Ind",
+            "RB",
+            11.3,
+            15.57
+          ],
+          [
+            "RB",
+            "Cam Skattebo",
+            "NYG",
+            "RB",
+            25.7,
+            11.92
+          ],
+          [
+            "WR",
+            "Tee Higgins",
+            "Cin",
+            "WR",
+            9.1,
+            14.86
+          ],
+          [
+            "WR",
+            "George Pickens",
+            "Dal",
+            "WR",
+            38,
+            12.14
+          ],
+          [
+            "TE",
+            "Harold Fannin Jr.",
+            "Cle",
+            "TE",
+            12.6,
+            8.82
+          ],
+          [
+            "W/R/T",
+            "Stefon Diggs",
+            "Was",
+            "WR",
+            17.3,
+            8.91
+          ],
+          [
+            "K",
+            "Eddy Pineiro",
+            "SF",
+            "K",
+            8,
+            8.53
+          ],
+          [
+            "DEF",
+            "Chiefs",
+            "KC",
+            "DEF",
+            11,
+            5.57
+          ]
+        ],
+        "bench": [
+          [
+            "BN",
+            "Michael Wilson",
+            "Ari",
+            "WR",
+            0,
+            0
+          ],
+          [
+            "BN",
+            "J.K. Dobbins",
+            "Den",
+            "RB",
+            0,
+            0
+          ],
+          [
+            "BN",
+            "Jake Ferguson",
+            "Dal",
+            "TE",
+            0,
+            0
+          ],
+          [
+            "BN",
+            "Kenny Gainwell",
+            "TB",
+            "RB",
+            0,
+            0
+          ],
+          [
+            "BN",
+            "Rico Dowdle",
+            "Pit",
+            "RB",
+            4.4,
+            8.79
+          ],
+          [
+            "BN",
+            "Drew Lock",
+            "Sea",
+            "QB",
+            15.6,
+            16.49
+          ],
+          [
+            "IR",
+            "RJ Harvey",
+            "Den",
+            "RB",
+            0,
+            0
+          ],
+          [
+            "IR",
+            "Tyler Loop",
+            "Bal",
+            "K",
+            0,
+            0
+          ]
+        ]
+      }
     }
   }
 }
