@@ -84,6 +84,8 @@ const header = (title, note, NF, kicker = 'SEASON') => h('div', { justifyContent
     h('div', { fontFamily: F.display, fontSize: title.length > 22 ? 56 : 76, fontWeight: 900, lineHeight: 1, marginTop: 10, textTransform: 'uppercase', color: C.ink }, title)),
   note);
 
+// Season previews put the section in a white panel, like the share images and the awards (Matt, Nov 16, 2026).
+const panel = (body, bottom = 14) => h('div', { flexDirection: 'column', marginTop: 16, padding: `2px 22px ${bottom}px`, background: '#FFFFFF', border: `1px solid ${C.line}`, borderRadius: 16 }, body);
 const nameCell = m => h('div', { width: 150, fontFamily: F.sans, fontSize: 25, fontWeight: 600, color: C.ink }, m);
 
 function luckChart(st) {
@@ -135,7 +137,7 @@ function benchChart(st) {
 function pfpaChart(st) {
   const r = st.rows, pfs = r.map(x => x.pf), pas = r.map(x => x.pa);
   const x0 = Math.floor(Math.min(...pfs) / 10) * 10 - 5, x1 = Math.ceil(Math.max(...pfs) / 10) * 10 + 5;
-  const W = 1010, H = 360, D = 50, avg = a => a.reduce((s, v) => s + v, 0) / a.length;
+  const W = 960, H = 360, D = 50, avg = a => a.reduce((s, v) => s + v, 0) / a.length;
   // Room above and below keeps the top and bottom dots clear of the corner labels (16px type, 10px
   // in from the edges): the label, half the dot (or its lower half and the luck number) and a gap.
   const keepTop = (10 + 20 + D / 2 + 4) / H, keepBottom = (10 + 20 + D / 2 + 20 + 4) / H;
@@ -178,7 +180,7 @@ async function image(name, st, L, LW) {
     : h('div', { flexDirection: 'column', alignItems: 'flex-end', fontFamily: F.mono, fontSize: 20, fontWeight: 600, color: C.muted, marginBottom: 6 }, h('div', {}, 'Ring = luck (W − xW)'), h('div', {}, 'Dashed lines: league average'));
   const body = name == 'ledger' ? ledgerCard(L, st) : name == 'luck' ? luckChart(st) : name == 'xw' ? xwChart(st) : name == 'src' ? srcChart(st) : name == 'bench' ? benchChart(st) : pfpaChart(st);
   const card = h('div', { width: '100%', height: '100%', flexDirection: 'column', background: C.bg, padding: '40px 64px 0', position: 'relative' },
-    name == 'ledger' ? header(CHARTS[name], note, LW, 'PARLAYS') : header(CHARTS[name], note, st.NF), body,
+    name == 'ledger' ? header(CHARTS[name], note, LW, 'PARLAYS') : header(CHARTS[name], note, st.NF), name == 'ledger' ? body : panel(body, name == 'pfpa' ? 36 : 14),
     h('div', { position: 'absolute', right: 64, top: 40, alignItems: 'flex-end', gap: 4 },
       h('div', { fontFamily: F.display, fontSize: 40, fontWeight: 900, lineHeight: 1, color: C.ink }, '9FEAMG'),
       h('div', { width: 10, height: 10, background: C.accent, marginBottom: 5 })),
@@ -329,7 +331,7 @@ const mono = (w, text, color = C.muted, size = 22) => h('div', { width: w, justi
 
 function standingsCard(season, st) {
   const rows = [...st.rows].sort((a, b) => b.w - a.w || b.pf - a.pf), P = season.playoffTeams || 6;
-  const head = h('div', { marginTop: 14, paddingBottom: 6, fontFamily: F.mono, fontSize: 16, fontWeight: 600, letterSpacing: 2, color: C.muted },
+  const head = h('div', { marginTop: 10, paddingBottom: 6, fontFamily: F.mono, fontSize: 16, fontWeight: 600, letterSpacing: 2, color: C.muted },
     h('div', { width: 44 }, '#'), h('div', { flex: 1, marginLeft: 46 }, 'MANAGER'), mono(90, 'W–L', C.muted, 16), mono(130, 'PF', C.muted, 16), mono(130, 'PA', C.muted, 16), mono(120, 'LUCK', C.muted, 16));
   const line = r => h('div', { alignItems: 'center', height: 36, borderTop: `1px solid ${C.line}` },
     h('div', { width: 44, fontFamily: F.display, fontSize: 26, fontWeight: 900, color: C.muted }, String(rows.indexOf(r) + 1)),
@@ -337,8 +339,8 @@ function standingsCard(season, st) {
     mono(90, `${r.w}–${r.l}`, C.ink), mono(130, r.pf.toFixed(1)), mono(130, r.pa.toFixed(1)), mono(120, signed(r.luck), r.luck > 0 ? C.pos : r.luck < 0 ? C.neg : C.muted));
   const cut = h('div', { alignItems: 'center', gap: 12, height: 26, fontFamily: F.mono, fontSize: 15, fontWeight: 600, letterSpacing: 2, color: C.accentInk },
     h('div', { flex: 1, height: 2, background: C.accent }), `PLAYOFF LINE · TOP ${P}`, h('div', { flex: 1, height: 2, background: C.accent }));
-  return frame(`SEASON · THROUGH WEEK ${st.NF}`, 'Standings', null, h('div', { flexDirection: 'column' }, head,
-    ...rows.slice(0, P).map(line), cut, ...rows.slice(P).map(line)));
+  return frame(`SEASON · THROUGH WEEK ${st.NF}`, 'Standings', null, panel(h('div', { flexDirection: 'column' }, head,
+    ...rows.slice(0, P).map(line), cut, ...rows.slice(P).map(line)), 8));
 }
 
 // Playoff odds: every team's chance to make the playoffs (bar), the change since last week, a bye and last place.
@@ -352,7 +354,7 @@ function oddsOf(season, st) {
 }
 
 function oddsCard(O) {
-  const head = h('div', { marginTop: 14, paddingBottom: 6, fontFamily: F.mono, fontSize: 16, fontWeight: 600, letterSpacing: 2, color: C.muted },
+  const head = h('div', { marginTop: 10, paddingBottom: 6, fontFamily: F.mono, fontSize: 16, fontWeight: 600, letterSpacing: 2, color: C.muted },
     h('div', { flex: 1, marginLeft: 46 }, 'MANAGER'), h('div', { width: 400 }, 'PLAYOFFS'), mono(80, '±', C.muted, 16), mono(100, 'BYE', C.muted, 16), mono(100, 'LAST', C.muted, 16));
   const line = ({ m, r, o, ch }) => h('div', { alignItems: 'center', height: 41, borderTop: `1px solid ${C.line}` },
     crest(r, 30), h('div', { flex: 1, marginLeft: 16, fontFamily: F.sans, fontSize: 25, fontWeight: 600, color: C.ink }, m),
@@ -361,7 +363,7 @@ function oddsCard(O) {
       h('div', { fontFamily: F.mono, fontSize: 22, fontWeight: 600, color: C.ink }, O.pct(o, 'playoffs'))),
     mono(80, ch == null ? '' : ch > 0 ? '▲' + ch : ch < 0 ? '▼' + -ch : '–', ch > 0 ? C.pos : ch < 0 ? C.neg : C.muted, 20),
     mono(100, O.pct(o, 'bye'), C.ink), mono(100, O.pct(o, 'last')));
-  return frame(`SEASON · THROUGH WEEK ${O.NF}${O.live ? ' + WEEK ' + O.liveWeek + ' PROJECTIONS' : ''}`, 'Playoff odds', null, h('div', { flexDirection: 'column' }, head, ...O.rows.map(line)));
+  return frame(`SEASON · THROUGH WEEK ${O.NF}${O.live ? ' + WEEK ' + O.liveWeek + ' PROJECTIONS' : ''}`, 'Playoff odds', null, panel(h('div', { flexDirection: 'column' }, head, ...O.rows.map(line)), 6));
 }
 
 function powerCard(season, st) {
@@ -375,7 +377,7 @@ function powerCard(season, st) {
       crest(look[r.m], 32), h('div', { flex: 1, marginLeft: 16, fontFamily: F.sans, fontSize: 26, fontWeight: 600, color: C.ink }, r.m),
       mono(110, r.wl), mono(150, 'AP ' + r.ap), mono(110, r.score.toFixed(1), C.ink, 24));
   };
-  return frame(`SEASON · THROUGH WEEK ${st.NF}`, 'Power rankings', '50% all-play · 25% record · 25% recent', h('div', { flexDirection: 'column', marginTop: 14 }, ...now.map(line)));
+  return frame(`SEASON · THROUGH WEEK ${st.NF}`, 'Power rankings', '50% all-play · 25% record · 25% recent', panel(h('div', { flexDirection: 'column', marginTop: 4 }, ...now.map(line)), 6));
 }
 
 function teamOf(season, st, slug, tx, yahoo = null) {
@@ -557,11 +559,11 @@ function bracketCard(B) {
     h('div', { fontFamily: F.mono, fontSize: 15, fontWeight: 600, letterSpacing: 2, color: C.accentInk, marginTop: 4 }, g.label.toUpperCase()), side(g.a), side(g.b));
   const col = (head, kids) => h('div', { flex: 1, flexDirection: 'column' }, h('div', { fontFamily: F.mono, fontSize: 16, fontWeight: 600, letterSpacing: 2, color: C.muted, marginBottom: 4 }, head), ...kids);
   const body = B.games
-    ? h('div', { gap: 48, marginTop: 18 }, col(`WEEK ${B.wk}${B.live ? ' · LIVE' : ''}`, B.games.filter((g, i) => i % 2 == 0).map(game)), col(' ', B.games.filter((g, i) => i % 2 == 1).map(game)))
-    : h('div', { gap: 48, marginTop: 18 },
+    ? h('div', { gap: 48, marginTop: 12 }, col(`WEEK ${B.wk}${B.live ? ' · LIVE' : ''}`, B.games.filter((g, i) => i % 2 == 0).map(game)), col(' ', B.games.filter((g, i) => i % 2 == 1).map(game)))
+    : h('div', { gap: 48, marginTop: 12 },
         col('CHAMPIONSHIP · WEEKS 15–17', [h('div', { flexDirection: 'column', paddingBottom: 4 }, ...B.byes.map(s => side({ ...s, rec: 'Week 15 bye' }))), ...B.champ.map(game)]),
         col('TOILET BOWL SIDE · WEEKS 16–17', [...B.toilet.map(game), h('div', { fontFamily: F.sans, fontSize: 19, color: C.muted, marginTop: 10, lineHeight: 1.35 }, 'The Week 16 losers meet in the Toilet Bowl for 9th. Its loser is the Toilet Bowl King.')]));
-  return frame(B.champion ? `CHAMPION: ${B.champion.toUpperCase()} · TOILET BOWL KING: ${String(B.king || '').toUpperCase()}` : B.games ? 'THE PLAYOFFS' : `IF THE SEASON ENDED TODAY · THROUGH WEEK ${B.NF}`, 'Playoff picture', null, body);
+  return frame(B.champion ? `CHAMPION: ${B.champion.toUpperCase()} · TOILET BOWL KING: ${String(B.king || '').toUpperCase()}` : B.games ? 'THE PLAYOFFS' : `IF THE SEASON ENDED TODAY · THROUGH WEEK ${B.NF}`, 'Playoff picture', null, panel(body, 10));
 }
 
 async function sectionRoute(url, request, name) {

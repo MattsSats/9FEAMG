@@ -590,6 +590,12 @@ button{font-family:inherit;color:inherit}
 .wsh-row{display:grid;grid-template-columns:24px 64px minmax(0,1fr) 28px 46px 46px;gap:8px}
 .bsh-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:12px}
 .bsh-grid>.aw-card:last-child:nth-child(odd){grid-column:1 / -1}
+/* Season section images (Matt, Nov 16, 2026): the awards style. share() builds the wrapper. */
+.scw-wrap{padding:20px 20px 0;background:var(--bg)}
+.scw-kick{font-family:'JetBrains Mono';font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
+.capturing.scw-card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:4px 14px 10px!important;margin-top:10px!important}
+.capturing.scw-card [style*="background:var(--surface);"]{background:var(--surface2)!important;border-color:transparent!important}
+.scw-wrap>.shot-footer{padding:14px 0 16px!important}
 .aw-case{display:grid;grid-template-columns:minmax(0,1fr);gap:8px;margin-top:10px}
 .aw-team{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px}
 .aw-team[data-none="true"]{background:transparent;border-style:dashed}
@@ -1345,7 +1351,7 @@ button{font-family:inherit;color:inherit}
 
 <div class="cols season-grid">
 <div class="sg-c1">
-<div id="standings" data-shot="standings" class="sg-st" style="padding:30px 20px 0;scroll-margin-top:64px">
+<div id="standings" data-shot="standings" data-shot-card class="sg-st" style="padding:30px 20px 0;scroll-margin-top:64px">
   <div class="sec-head">
     <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:26px;text-transform:uppercase">Standings</div>
     <span class="sec-btns no-shot"><button class="share-btn" sc-camel-on-click="{{ menuStandings }}" aria-label="Share the standings">Share</button></span>
@@ -1373,7 +1379,7 @@ button{font-family:inherit;color:inherit}
   <div class="shot-footer"><b>9FEAMG</b><span>{{ shotStandings }}</span></div>
 </div>
 
-<div id="odds" data-shot="odds" class="sg-od" style="padding:30px 20px 0;scroll-margin-top:64px">
+<div id="odds" data-shot="odds" data-shot-card class="sg-od" style="padding:30px 20px 0;scroll-margin-top:64px">
   <div class="sec-head">
     <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:26px;text-transform:uppercase">Playoff odds</div>
     <span class="sec-btns no-shot"><button class="share-btn" sc-camel-on-click="{{ menuOdds }}" aria-label="Share the playoff odds">Share</button></span>
@@ -1425,7 +1431,7 @@ button{font-family:inherit;color:inherit}
 
 <!-- Playoff picture: the bracket if the season ended today, and the Toilet Bowl side (Matt, Oct 31, 2026). -->
 <sc-if value="{{ hasPic }}" hint-placeholder-val="{{ false }}">
-<div id="bracket" data-shot="bracket" class="sg-od" style="padding:30px 20px 0;scroll-margin-top:64px">
+<div id="bracket" data-shot="bracket" data-shot-card class="sg-od" style="padding:30px 20px 0;scroll-margin-top:64px">
   <div class="sec-head">
     <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:26px;text-transform:uppercase">Playoff picture</div>
     <span class="sec-btns no-shot"><button class="share-btn" sc-camel-on-click="{{ menuBracket }}" aria-label="Share the playoff picture">Share</button></span>
@@ -1533,7 +1539,7 @@ button{font-family:inherit;color:inherit}
 </div>
 </sc-if>
 
-<div id="bench" data-shot="bench" class="sg-bn" style="padding:30px 20px 0;scroll-margin-top:64px">
+<div id="bench" data-shot="bench" data-shot-card class="sg-bn" style="padding:30px 20px 0;scroll-margin-top:64px">
   <div class="sec-head">
     <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:26px;text-transform:uppercase">Points left on bench</div>
     <span class="sec-btns no-shot"><button class="share-btn" sc-camel-on-click="{{ menuBench }}" aria-label="Share the bench chart">Share</button></span>
@@ -1561,7 +1567,7 @@ button{font-family:inherit;color:inherit}
 
 <div class="sg-c2">
 <sc-if value="{{ hasPower }}" hint-placeholder-val="{{ true }}">
-<div id="power" data-shot="power" data-shot-w="560" class="sg-pw" style="padding:30px 20px 0;scroll-margin-top:64px">
+<div id="power" data-shot="power" data-shot-card data-shot-w="560" class="sg-pw" style="padding:30px 20px 0;scroll-margin-top:64px">
   <div class="sec-head">
     <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:26px;text-transform:uppercase">Power rankings</div>
     <span class="sec-btns no-shot"><button class="share-btn" sc-camel-on-click="{{ menuPower }}" aria-label="Share the power rankings">Share</button></span>
@@ -1614,7 +1620,7 @@ button{font-family:inherit;color:inherit}
 </div>
 
 <div class="sg-c3">
-<div id="pfpa" data-shot="pfpa" class="sg-ch" style="padding:30px 20px 0;scroll-margin-top:64px">
+<div id="pfpa" data-shot="pfpa" data-shot-card class="sg-ch" style="padding:30px 20px 0;scroll-margin-top:64px">
   <div class="sec-head">
     <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:26px;text-transform:uppercase">Points for vs against</div>
     <span class="sec-btns no-shot"><button class="share-btn" sc-camel-on-click="{{ menuPfpa }}" aria-label="Share the points for vs against chart">Share</button></span>
@@ -1643,7 +1649,7 @@ button{font-family:inherit;color:inherit}
 </div>
 
 <div class="sg-lk">
-<div id="luck" data-shot="luck" style="padding:30px 20px 0;scroll-margin-top:64px">
+<div id="luck" data-shot="luck" data-shot-card style="padding:30px 20px 0;scroll-margin-top:64px">
   <div class="sec-head">
     <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:26px;text-transform:uppercase;display:flex;align-items:center;gap:8px"><svg class="hi play" width="26" height="26" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><g class="a-dice vb"><rect x="8" y="8" width="32" height="32" rx="7"></rect><circle cx="16" cy="16" r="2.6" stroke="none" style="fill:var(--hi-a)"></circle><circle cx="32" cy="16" r="2.6" stroke="none" style="fill:var(--hi-a)"></circle><circle cx="24" cy="24" r="2.6" stroke="none" style="fill:var(--hi-a)"></circle><circle cx="16" cy="32" r="2.6" stroke="none" style="fill:var(--hi-a)"></circle><circle cx="32" cy="32" r="2.6" stroke="none" style="fill:var(--hi-a)"></circle></g></svg>Luck</div>
     <span class="sec-btns no-shot"><button class="share-btn" sc-camel-on-click="{{ menuLuck }}" aria-label="Share the luck chart">Share</button></span>
@@ -1662,7 +1668,7 @@ button{font-family:inherit;color:inherit}
   <div class="shot-footer"><b>9FEAMG</b><span>{{ shotNoteLuck }}</span></div>
 </div>
 
-<div id="xw" data-shot="xw" style="padding:30px 20px 0;scroll-margin-top:64px">
+<div id="xw" data-shot="xw" data-shot-card style="padding:30px 20px 0;scroll-margin-top:64px">
   <div class="sec-head">
     <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:26px;text-transform:uppercase">Expected wins</div>
     <span class="sec-btns no-shot"><button class="share-btn" sc-camel-on-click="{{ menuXw }}" aria-label="Share the expected wins chart">Share</button></span>
@@ -1694,7 +1700,7 @@ button{font-family:inherit;color:inherit}
 
 <!-- In column 3 on desktop, so column 1 (standings to the playoff picture) isn't far longer than the rest (Nov 15, 2026). -->
 <!-- Where the points come from, every team: started points by how the players arrived (draft, wire, trades). -->
-<div id="src" data-shot="src" class="sg-src" style="padding:30px 20px 0;scroll-margin-top:64px">
+<div id="src" data-shot="src" data-shot-card class="sg-src" style="padding:30px 20px 0;scroll-margin-top:64px">
   <div class="sec-head">
     <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:26px;text-transform:uppercase">Where the points come from</div>
     <span class="sec-btns no-shot"><button class="share-btn" sc-camel-on-click="{{ menuSrc }}" aria-label="Share the where the points come from chart">Share</button></span>

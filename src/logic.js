@@ -519,7 +519,11 @@ class Component extends DCLogic {
     if (!el || this.state.sharing) return;
     this.setState({ sharing: name });
     const stage = document.createElement('div');
-    stage.className = 'offstage'; stage.style.width = (+el.dataset.shotW || SHOT_W) + 'px';
+    // Season sections (data-shot-card, Matt, Nov 16, 2026) share in the awards style: a kicker and the section's
+    // title on the page background, the section itself in a white card, the footer under it. 32px wider keeps
+    // the content as wide as before.
+    const card = el.hasAttribute('data-shot-card');
+    stage.className = 'offstage'; stage.style.width = (+el.dataset.shotW || SHOT_W) + (card ? 32 : 0) + 'px';
     const copy = el.cloneNode(true);
     // Icon colors like fill:var(--hi-a) come out blank in the image, so bake in the real color.
     const vSrc = el.querySelectorAll('[style*="var(--"]'), vDst = copy.querySelectorAll('[style*="var(--"]');
@@ -533,13 +537,21 @@ class Component extends DCLogic {
     // Drop what images leave out before layout, so the card closes up around the gap.
     copy.querySelectorAll('.no-shot').forEach(n => n.remove());
     copy.classList.add('capturing'); copy.style.margin = '0'; copy.style.width = 'auto';
-    stage.appendChild(copy); document.body.appendChild(stage);
+    let target = copy;
+    if (card) {
+      target = document.createElement('div'); target.className = 'capturing scw-wrap';
+      const kick = document.createElement('div'); kick.className = 'scw-kick'; kick.textContent = '9FEAMG · Season';
+      const head = copy.querySelector('.sec-head'), foot = copy.querySelector('.shot-footer');
+      copy.classList.add('scw-card');
+      target.append(kick); if (head) target.append(head); target.append(copy); if (foot) target.append(foot);
+    }
+    stage.appendChild(target); document.body.appendChild(stage);
     let file;
     try {
       const lib = await this.loadShotLib();
       await new Promise(r => setTimeout(r, 30)); // let the copy lay out (rAF stalls in background tabs)
       const bg = getComputedStyle(document.documentElement).getPropertyValue('--bg').trim();
-      const blob = await lib.toBlob(copy, { pixelRatio: 3, backgroundColor: bg, filter: n => !n.classList?.contains('no-shot') });
+      const blob = await lib.toBlob(target, { pixelRatio: 3, backgroundColor: bg, filter: n => !n.classList?.contains('no-shot') });
       file = new File([blob], `9feamg-${name}.png`, { type: 'image/png' });
     } catch (err) {
       console.error('share capture failed', err);
