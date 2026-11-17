@@ -716,7 +716,9 @@ export function seasonAwards(season, box, { tx } = {}) {
     if (ad[0]) add('Lineups and moves', 'Most adds', 'neutral', 'adds', ad[0][0], String(ad[0][1]), `${ad[0][0]} made ${ad[0][1]} adds through Week ${NF}` + (ad[1] ? `, ${ad[0][1] - ad[1][1]} more than anyone else.` : '.'), ad[1] && nx(ad[1][0], String(ad[1][1])));
   }
   if (starts.length) {
-    const top = rank(starts, x => x.pts), proj = starts.filter(x => x.proj > 0), up = rank(proj, x => x.over), dn = rank(proj, x => -x.over);
+    const top = rank(starts, x => x.pts), proj = starts.filter(x => x.proj > 0), up = rank(proj, x => x.over),
+      // A starter who got hurt during the game (hurtInGame, from ESPN) did not bust (Matt, Nov 16, 2026).
+      hurt = w => new Set(season.hurtInGame?.[w] || []), dn = rank(proj.filter(x => !hurt(x.w).has(x.name)), x => -x.over);
     add('Players', 'Top player week', 'good', 'points', top[0].m, n(top[0].pts), `${top[0].name} scored ${n(top[0].pts)} for ${top[0].m} in Week ${top[0].w}, the best start of the season.`, top[1] && nx(top[1].m, n(top[1].pts), top[1].w));
     if (up[0]) add('Players', 'Biggest boom', 'good', 'vs projection', up[0].m, '+' + n(up[0].over), `${up[0].name} scored ${n(up[0].pts)} on ${an(n(up[0].proj))} projection for ${up[0].m} in Week ${up[0].w}.`, up[1] && nx(up[1].m, '+' + n(up[1].over), up[1].w));
     if (dn[0]) add('Players', 'Biggest bust', 'rough', 'vs projection', dn[0].m, n(dn[0].over), `${dn[0].name} scored ${n(dn[0].pts)} on ${an(n(dn[0].proj))} projection for ${dn[0].m} in Week ${dn[0].w}.`, dn[1] && nx(dn[1].m, n(dn[1].over), dn[1].w));

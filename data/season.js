@@ -52,6 +52,18 @@ window.SEASON = {
     14: [['Matt', 'Kurt'], ['Tristan', 'Tony'], ['Jerger', 'Mr. G'], ['Colin', 'DLin'], ['Andy', 'Pablo']]
   },
 
+  // Starters hurt during a game (scripts/hurt-in-game.mjs, from ESPN's play-by-play): Biggest bust skips them.
+  // Written by the script; don't edit.
+  hurtInGame: {
+    1: ['A.J. Brown', 'Ladd McConkey'],
+    2: ['DJ Moore', 'Jaxson Dart', 'Jayden Daniels'],
+    3: ['Breece Hall', 'De\'Von Achane', 'Mike Evans'],
+    4: ['Ja\'Marr Chase', 'Saquon Barkley'],
+    5: ['Deebo Samuel Sr.', 'T.J. Hockenson'],
+    6: ['Mike Evans', 'Terry McLaurin'],
+    9: ['Rhamondre Stevenson']
+  },
+
   // Roster strength (scripts/roster-strength.mjs): each team's best healthy lineup, projected, at the
   // start of each week. The playoff odds blend it with the season average. Written by the script; don't edit.
   rosterProj: {
