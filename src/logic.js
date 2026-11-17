@@ -446,6 +446,11 @@ class Component extends DCLogic {
     if (wk) { this.setState({ tab: 'Gameday', week: +wk[1], sheet: null }); window.scrollTo(0, 0); return; }
     if (h == '#season') { this.setState({ tab: 'Season', sheet: null }); window.scrollTo(0, 0); return; }
     if (h == '#awards') { this.setState({ tab: 'Awards', sheet: null }); window.scrollTo(0, 0); return; }
+    // #awards-players (and -trophy, -games, -lineups-and-moves, -season) opens the awards scrolled to that section.
+    // The box scores load after the tab opens, so wait for the section to exist.
+    const aw = h.match(/^#awards-([a-z-]+)$/);
+    if (aw) { this.setState({ tab: 'Awards', sheet: null }); let n = 0; const go = () => { const el = document.getElementById('aw-' + aw[1]);
+      if (el) { el.scrollIntoView({ block: 'start' }); el.classList.remove('flash'); void el.offsetWidth; el.classList.add('flash'); } else if (++n < 40) setTimeout(go, 150); }; setTimeout(go, 200); return; }
     // Season sections: #power, #pfpa, #luck, #xw, #bench, #src open the Season tab scrolled to that section.
     if (['#power', '#odds', '#bracket', '#pfpa', '#luck', '#xw', '#bench', '#src'].includes(h)) { this.setState({ tab: 'Season', sheet: null }); setTimeout(() => document.getElementById(h.slice(1))?.scrollIntoView({ block: 'start' }), 350); return; }
     if (h == '#ledger') { this.setState({ tab: 'Gameday', week: HOME_WK, sheet: null }); setTimeout(() => document.getElementById('ledger')?.scrollIntoView({ block: 'start' }), 350); return; }
@@ -583,6 +588,7 @@ class Component extends DCLogic {
       : S.tab == 'Wire' ? (S.wire == 'Season' ? '#wire-season' : '#wire') : S.tab == 'Draft' ? '#draft' : S.tab == 'Awards' ? '#awards' : null;
     if (want == null || h == want) return;
     if (S.tab == 'Gameday' && (h == '#w' + S.week || h.startsWith('#w' + S.week + '-') || h == '#ledger' || (h == '#booth' && S.week == BOOTH_WK))) return;
+    if (S.tab == 'Awards' && /^#awards-[a-z-]+$/.test(h)) return;
     if (S.tab == 'Season' && ['#power', '#odds', '#bracket', '#pfpa', '#luck', '#xw', '#bench', '#src'].includes(h)) return;
     if (!want && !h) return;
     history.pushState(null, '', want || location.pathname + location.search);
@@ -1280,7 +1286,7 @@ class Component extends DCLogic {
     // since the race moves every week. Groups come in threes, so the grid has no orphan cards.
     // Each section shares on its own (Matt, Nov 16, 2026): an image of just that section, or the awards link.
     const awSlug = g => 'aw-' + g.toLowerCase().replace(/[^a-z]+/g, '-'), awMenu = (g, shot) => this.shareMenu('Season awards · ' + g,
-      e => this.shareLink(location.origin + '/s/awards', '9FEAMG · Season awards', e), e => this.share(shot, e));
+      e => this.shareLink(location.origin + '/s/awards-' + shot.slice(3), '9FEAMG · Season awards · ' + g, e), e => this.share(shot, e));
     const awardGroups = !seasonAw ? [] : [...new Set(seasonAw.awards.map(a => a.group))].map(group => ({ group, shot: awSlug(group), menu: awMenu(group, awSlug(group)),
       awards: seasonAw.awards.filter(a => a.group == group).map(a => ({ ...a, init: INIT[a.m], color: col(a.m), hasNext: !!a.next,
         nextM: a.next?.m || '', nextInit: INIT[a.next?.m] || '', nextColor: a.next ? col(a.next.m) : 'transparent',
@@ -1625,7 +1631,7 @@ class Component extends DCLogic {
       // Season jump chips, like Gameday's (Matt, Nov 15, 2026).
       seasonJumps: [['Standings', 'standings'], ['Playoffs', 'odds'], ['Power', 'power'], ['Luck', 'luck'], ['Bench', 'bench'], ['Point sources', 'src'], ['Weekly scores', 'weekly']].map(([label, id]) => ({ label, go: () => this.jump(id) })),
       // Season awards: the link (/s/awards, its own preview card) or an image of the page.
-      menuTrophy: this.shareMenu('Season awards · Trophy case', e => this.shareLink(location.origin + '/s/awards', '9FEAMG · Season awards', e), e => this.share('aw-trophy', e)),
+      menuTrophy: this.shareMenu('Season awards · Trophy case', e => this.shareLink(location.origin + '/s/awards-trophy', '9FEAMG · Season awards · Trophy case', e), e => this.share('aw-trophy', e)),
       menuAwards: this.shareMenu('Season awards', e => this.shareLink(location.origin + '/s/awards', '9FEAMG · Season awards', e), e => this.share('awards', e)),
       hasAwards: awardGroups.length > 0, shotAwards: `Season awards · through week ${NF}`,
       menuStandings: this.shareMenu('Standings', e => this.shareLink(location.origin + '/s/standings', '9FEAMG · Standings', e), e => this.share('standings', e)),

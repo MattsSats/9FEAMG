@@ -580,6 +580,7 @@ button{font-family:inherit;color:inherit}
 .capturing .aw-grid>.aw-card:last-child:nth-child(odd){grid-column:auto!important}
 .capturing .aw-case{grid-template-columns:repeat(2,minmax(0,1fr))!important}
 .capturing.aw-sec{padding-top:18px!important}
+.aw-sec{scroll-margin-top:64px}
 /* The section image gets its own header and footer; the whole-page image keeps neither. */
 .aw-kick,.aw-foot{display:none}
 .capturing.aw-sec>.aw-kick{display:block}
@@ -1934,7 +1935,7 @@ button{font-family:inherit;color:inherit}
 <div data-shot="awards" data-shot-w="960" style="background:var(--bg);padding-bottom:4px">
 <!-- Trophy case (Matt, Nov 15, 2026): each team's awards as pills; good ones in the accent color, rough ones muted. -->
 <sc-if value="{{ hasTrophy }}" hint-placeholder-val="{{ true }}">
-  <div class="aw-sec" data-shot="aw-trophy" data-shot-w="960" style="padding:22px 20px 0;background:var(--bg)">
+  <div class="aw-sec" id="aw-trophy" data-shot="aw-trophy" data-shot-w="960" style="padding:22px 20px 0;background:var(--bg)">
     <div class="aw-kick" style="font-family:'JetBrains Mono';font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:4px">9FEAMG · Season awards</div>
     <div style="display:flex;justify-content:space-between;align-items:center;gap:12px">
       <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:26px;text-transform:uppercase">Trophy case</div>
@@ -1959,7 +1960,7 @@ button{font-family:inherit;color:inherit}
   </div>
 </sc-if>
 <sc-for list="{{ awardGroups }}" as="g" hint-placeholder-count="4">
-  <div class="aw-sec" data-shot="{{ g.shot }}" data-shot-w="960" style="padding:26px 20px 0;background:var(--bg)">
+  <div class="aw-sec" id="{{ g.shot }}" data-shot="{{ g.shot }}" data-shot-w="960" style="padding:26px 20px 0;background:var(--bg)">
     <div class="aw-kick" style="font-family:'JetBrains Mono';font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:4px">9FEAMG · Season awards</div>
     <div style="display:flex;justify-content:space-between;align-items:center;gap:12px">
       <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:26px;text-transform:uppercase">{{ g.group }}</div>

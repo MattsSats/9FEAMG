@@ -485,18 +485,23 @@ function boothOf(season) {
 // Season awards (/s/awards, Matt, Nov 15, 2026): six of the season's awards in a 3 × 2 grid, the headline
 // ones first (seasonAwards in api/_shared.js).
 const AWARD_PICKS = ['Highest score', 'Biggest blowout', 'Closest game', 'Luckiest team', 'Unluckiest team', 'Most points left on the bench'];
-function awardsOf(season, box) {
+const awSlug = g => g.toLowerCase().replace(/[^a-z]+/g, '-');
+function awardsOf(season, box, sec) {
   const A = seasonAwards(season, box); if (!A) return null;
   const look = Object.fromEntries(season.managers.map(x => [x.m, x]));
+  const group = sec && sec != 'trophy' ? A.awards.find(a => awSlug(a.group) == sec)?.group : null;
+  if (sec && sec != 'trophy' && !group) return null;
+  const section = sec == 'trophy' ? 'Trophy case' : group;
+  if (group) return { through: A.through, section, awards: A.awards.filter(a => a.group == group).slice(0, 6).map(a => ({ ...a, mg: look[a.m] })) };
   const pick = [...AWARD_PICKS.map(t => A.awards.find(a => a.title.toLowerCase() == t.toLowerCase())).filter(Boolean), ...A.awards].filter((a, i, l) => l.indexOf(a) == i).slice(0, 6);
-  return { through: A.through, awards: pick.map(a => ({ ...a, mg: look[a.m] })) };
+  return { through: A.through, section, awards: pick.map(a => ({ ...a, mg: look[a.m] })) };
 }
 function awardsCard(A) {
   const cell = a => h('div', { width: '33.33%', flexDirection: 'column', padding: '14px 16px 0 0', height: 240, borderTop: `1px solid ${C.line}` },
     h('div', { fontFamily: F.mono, fontSize: 16, fontWeight: 600, letterSpacing: 2, color: C.muted }, a.title.toUpperCase()),
     h('div', { alignItems: 'center', gap: 12, marginTop: 14 }, a.mg ? crest(a.mg, 40) : h('div', {}), h('div', { fontFamily: F.sans, fontSize: 26, fontWeight: 600, color: C.ink }, a.m)),
     h('div', { fontFamily: F.display, fontSize: 64, fontWeight: 900, lineHeight: 1, marginTop: 14, color: C.accentInk }, String(a.value)));
-  return frame(`SEASON AWARDS · THROUGH WEEK ${A.through}`, null, null, h('div', { flexWrap: 'wrap', marginTop: 16 }, ...A.awards.map(cell)));
+  return frame(`SEASON AWARDS · ${A.section ? A.section.toUpperCase() + ' · ' : ''}THROUGH WEEK ${A.through}`, null, null, h('div', { flexWrap: 'wrap', marginTop: 16 }, ...A.awards.map(cell)));
 }
 
 function boothCard(B) {
@@ -538,10 +543,10 @@ function bracketCard(B) {
 }
 
 async function sectionRoute(url, request, name) {
-  const team = name.match(/^team-([a-z0-9-]+)$/), wkm = name.match(/^w(\d+)$/);
-  const kind = name == 'standings' || name == 'power' || name == 'booth' || name == 'odds' || name == 'bracket' || name == 'awards' ? name : name == 'wire-week' || name == 'wire-season' ? 'wire' : team ? 'team' : wkm ? 'week' : null;
+  const team = name.match(/^team-([a-z0-9-]+)$/), wkm = name.match(/^w(\d+)$/), aws = name.match(/^awards-([a-z-]+)$/);
+  const kind = name == 'standings' || name == 'power' || name == 'booth' || name == 'odds' || name == 'bracket' || name == 'awards' ? name : aws ? 'awards' : name == 'wire-week' || name == 'wire-season' ? 'wire' : team ? 'team' : wkm ? 'week' : null;
   if (!kind) return null;
-  const dest = new URL(kind == 'awards' ? '/#awards' : kind == 'standings' ? '/#season' : kind == 'power' ? '/#power' : kind == 'odds' ? '/#odds' : kind == 'bracket' ? '/#bracket' : kind == 'booth' ? '/#booth' : kind == 'wire' ? (name == 'wire-season' ? '/#wire-season' : '/#wire') : kind == 'team' ? '/#team-' + team[1] : '/#w' + wkm[1], url.origin).href;
+  const dest = new URL(kind == 'awards' ? (aws ? '/#awards-' + aws[1] : '/#awards') : kind == 'standings' ? '/#season' : kind == 'power' ? '/#power' : kind == 'odds' ? '/#odds' : kind == 'bracket' ? '/#bracket' : kind == 'booth' ? '/#booth' : kind == 'wire' ? (name == 'wire-season' ? '/#wire-season' : '/#wire') : kind == 'team' ? '/#team-' + team[1] : '/#w' + wkm[1], url.origin).href;
   const fallback = () => Response.redirect(new URL('/og.png', url.origin).href, 302), isImg = url.searchParams.has('img');
   const person = !isImg && !BOTS.test(request.headers.get('user-agent') || '');
   let season, st, data = null;
@@ -551,7 +556,7 @@ async function sectionRoute(url, request, name) {
   if (kind == 'booth') data = boothOf(season);
   if (kind == 'odds') data = oddsOf(season, st);
   if (kind == 'bracket') data = bracketOf(season, st);
-  if (kind == 'awards') data = awardsOf(season, await loadBox(url.origin).catch(() => null));
+  if (kind == 'awards') data = awardsOf(season, await loadBox(url.origin).catch(() => null), aws?.[1]);
   if (kind == 'wire') { const tx = await loadTx(url.origin); if (!tx) return isImg ? fallback() : Response.redirect(dest, 302); data = wireOf(season, tx, await loadBox(url.origin), name == 'wire-season' ? 'season' : 'week'); }
   if ((kind == 'team' || kind == 'week' || kind == 'booth' || kind == 'odds' || kind == 'awards') && !data) return isImg ? fallback() : Response.redirect(dest, 302);
   if (!st.NF && kind != 'week' && kind != 'booth') return isImg ? fallback() : Response.redirect(dest, 302);
@@ -561,7 +566,7 @@ async function sectionRoute(url, request, name) {
   }
   let title, desc, ver;
   if (kind == 'awards') {
-    title = `Season awards · through week ${data.through} · 9FEAMG`;
+    title = `Season awards · ${data.section ? data.section + ' · ' : ''}through week ${data.through} · 9FEAMG`;
     desc = data.awards.slice(0, 3).map(a => `${a.title}: ${a.m} ${a.value}`).join(' · ') + '.';
     ver = data.awards.map(a => [a.title, a.m, a.value]);
   } else if (kind == 'standings') {
