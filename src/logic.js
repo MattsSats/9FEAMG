@@ -1752,7 +1752,7 @@ class Component extends DCLogic {
       // Phones: Season's three views (the sections are all on the page; CSS shows the picked view's). Desktop shows everything.
       seasonView: S.seasonView || 'Standings',
       seasonViews: ['Standings', 'Playoffs', 'Stats'].map(v => { const on = v == (S.seasonView || 'Standings');
-        return { label: v, on: String(on), bg: on ? 'var(--ink)' : 'transparent', fg: on ? 'var(--bg)' : 'var(--muted)', pick: () => this.setState({ seasonView: v }) }; }),
+        return { label: v, on: String(on), bg: on ? 'var(--ink)' : 'transparent', fg: on ? 'var(--bg)' : 'var(--muted)', pick: () => { this.setState({ seasonView: v }); if (window.scrollY > 160) window.scrollTo(0, 160); } }; }),
       canBack: (S.navI || 0) > 0, backCls: (S.navI || 0) > 0 ? 'hdr has-back' : 'hdr', goBack: () => history.back(),
       seasonJumps: [['Standings', 'standings'], ['Playoffs', 'odds'], ['Power', 'power'], ['Luck', 'luck'], ['Bench', 'bench'], ['Point sources', 'src'], ['Weekly scores', 'weekly']].map(([label, id]) => ({ label, go: () => this.jump(id) })),
       // Season awards: the link (/s/awards, its own preview card) or an image of the page.

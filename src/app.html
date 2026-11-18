@@ -534,14 +534,15 @@ button{font-family:inherit;color:inherit}
   .season-grid{display:flex;flex-direction:column}
   .season-grid>.sg-L,.season-grid>.sg-R,.sg-A,.sg-B1,.sg-B2,.sg-C{display:contents}
   .sg-st{order:1}.sg-pw{order:2}.sg-od{order:3}.sg-br{order:4}.sg-ch{order:5}.sg-lk{order:6}.sg-bn{order:7}.sg-src{order:8}.sg-hs{order:9}.sg-hr{order:10}
-  /* One view at a time: Standings (tiles, standings, power rankings), Playoffs (odds, picture), Stats (the rest). */
-  .season-jumps{display:none!important}
-  .sv-tiles:not([data-view="Standings"]){display:none!important}
-  .season-grid[data-view="Standings"] :is(.sg-od,.sg-br,.sg-ch,.sg-lk,.sg-bn,.sg-src,.sg-hs,.sg-hr),
-  .season-grid[data-view="Playoffs"] :is(.sg-st,.sg-pw,.sg-ch,.sg-lk,.sg-bn,.sg-src,.sg-hs,.sg-hr),
-  .season-grid[data-view="Stats"] :is(.sg-st,.sg-pw,.sg-od,.sg-br){display:none!important}
 }
-@media (min-width:900px){.sv-switch{display:none!important}}
+/* One view at a time at every width (Matt, Nov 17, 2026): Standings (tiles, standings, power rankings),
+   Playoffs (odds, picture), Stats (the rest). The sections all stay in the page. */
+/* Links to a section land below the top bar and the sticky switch. */
+.season-grid [id]{scroll-margin-top:124px!important}
+.sv-tiles:not([data-view="Standings"]){display:none!important}
+.season-grid[data-view="Standings"] :is(.sg-od,.sg-br,.sg-ch,.sg-lk,.sg-bn,.sg-src,.sg-hs,.sg-hr),
+.season-grid[data-view="Playoffs"] :is(.sg-st,.sg-pw,.sg-ch,.sg-lk,.sg-bn,.sg-src,.sg-hs,.sg-hr),
+.season-grid[data-view="Stats"] :is(.sg-st,.sg-pw,.sg-od,.sg-br){display:none!important}
 /* Weekly scores grid: phones (weeks so far + one "rest" cell) and desktop (all 14 weeks). */
 .heat-grid{display:grid;grid-template-columns:var(--heat-m);gap:4px}
 .heat-wrap{min-width:var(--hmin-m)}
@@ -557,7 +558,7 @@ button{font-family:inherit;color:inherit}
   .heat-grid>span:first-child{position:sticky;left:0;z-index:2;background:var(--bg);align-self:stretch;display:flex;align-items:center;box-shadow:4px 0 0 var(--bg)}}
 @media (min-width:900px){
   /* Two columns, each its own stack so nothing leaves a row gap. Left: Standings, Playoff odds, PF vs PA,
-     Luck. Right: Power rankings, Playoff picture, Bench, Point sources, How to read this. */
+     Luck. Right: Power rankings, Playoff picture, Bench, Point sources, How to read this; the view picks which show. */
   .season-grid>.sg-L,.season-grid>.sg-R{display:flex;flex-direction:column;min-width:0}
   .sg-A,.sg-B1,.sg-B2,.sg-C{display:contents}
   .sg-L>*>*,.sg-R>*>*{min-width:0}
@@ -577,15 +578,10 @@ button{font-family:inherit;color:inherit}
   .wire-toggle{display:inline-grid!important;grid-template-columns:auto auto!important;border-radius:999px!important}
   .wire-toggle>button{min-height:34px!important;padding:0 16px;border-radius:999px!important;font-size:13px!important}
 }
-/* Wide screens: three columns. Standings, PF vs PA, Luck | Playoff odds over Playoff picture, Bench |
-   Power rankings, Point sources, How to read this. Only the middle column has two grid items (the outer
-   two span both rows), so opening a team's panel in the odds pushes the picture down and leaves no gap. */
+/* Wide screens keep two columns: each view is two balanced stacks (Standings | Power rankings, Playoff
+   odds | Playoff picture, the charts split left and right with Weekly scores underneath). */
 @media (min-width:1320px){
-  .cols.season-grid{grid-template-columns:repeat(3,minmax(0,1fr));grid-template-areas:"a b1 c" "a b2 c" "hs hs hs";grid-template-rows:auto 1fr auto}
-  .season-grid>.sg-L,.season-grid>.sg-R{display:contents}
-  .season-grid .sg-A,.season-grid .sg-B1,.season-grid .sg-B2,.season-grid .sg-C{display:block;min-width:0}
-  .season-grid .sg-A{grid-area:a}.season-grid .sg-B1{grid-area:b1}.season-grid .sg-B2{grid-area:b2;align-self:start}.season-grid .sg-C{grid-area:c}
-  .season-grid>.sg-hs{grid-area:hs}
+  .cols.season-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
 /* Season awards (Matt, Nov 15, 2026): one column on phones, two on tablets (a lone last card spans both),
    three on desktop; equal heights per row, the runner-up pinned to the bottom of each card. */
@@ -1383,17 +1379,15 @@ button{font-family:inherit;color:inherit}
 <div style="padding:22px 20px 0">
   <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:48px;line-height:.9;text-transform:uppercase">Season</div>
   <div style="font-family:'JetBrains Mono';font-size:11px;color:var(--muted);margin-top:10px">{{ seasonSub }}</div>
-  <!-- Phones: three views, one at a time (Matt, Nov 17, 2026). Desktop: jump links, everything on the page. -->
-  <div class="sv-switch" role="tablist" aria-label="Season views" style="display:inline-flex;gap:4px;margin-top:12px;padding:3px;border:1px solid var(--line);border-radius:999px">
+</div>
+<!-- The switch stays under the top bar while the page scrolls, like the week chips on Gameday. -->
+<div class="sv-bar" style="position:sticky;top:var(--hdrLive,var(--hdrH));z-index:19;background:var(--bg);padding:10px 20px 8px">
+  <!-- Three views, one at a time, at every width (Matt, Nov 17, 2026); they replaced the jump links. -->
+  <div class="sv-switch" role="tablist" aria-label="Season views" style="display:inline-flex;gap:4px;padding:3px;border:1px solid var(--line);border-radius:999px">
     <sc-for list="{{ seasonViews }}" as="sv" hint-placeholder-count="3">
       <button role="tab" aria-selected="{{ sv.on }}" sc-camel-on-click="{{ sv.pick }}" style="min-height:36px;padding:0 14px;border:0;border-radius:999px;background:{{ sv.bg }};color:{{ sv.fg }};font-family:'JetBrains Mono';font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;cursor:pointer">{{ sv.label }}</button>
     </sc-for>
   </div>
-  <nav class="jumps season-jumps" aria-label="On this page" style="display:flex;flex-wrap:wrap;gap:6px;margin-top:12px">
-    <sc-for list="{{ seasonJumps }}" as="j" hint-placeholder-count="5">
-      <button sc-camel-on-click="{{ j.go }}" class="hov" style="min-height:32px;padding:0 12px;border:1px solid var(--line);border-radius:999px;background:transparent;color:var(--ink);font-size:13px;font-weight:600;cursor:pointer">{{ j.label }}</button>
-    </sc-for>
-  </nav>
 </div>
 <div class="tiles sv-tiles" data-view="{{ seasonView }}" style="display:grid;gap:10px;padding:18px 20px 0">
   <sc-for list="{{ seasonTiles }}" as="t" hint-placeholder-count="4">
@@ -1406,9 +1400,9 @@ button{font-family:inherit;color:inherit}
 </div>
 
 <div class="cols season-grid" data-view="{{ seasonView }}">
-<!-- Season layout (Matt, Nov 17, 2026). Four groups in two halves:
+<!-- Season layout (Matt, Nov 17, 2026). Two halves (the A/B1/B2/C groups inside are left from a three-column layout):
        L: A (Standings, PF vs PA, Luck) + B1 (Playoff odds)    R: B2 (Playoff picture, Bench) + C (Power rankings, Point sources, How to read this)
-     Phones: one column in reading order. 900px: two columns, L and R. 1320px: three, A | B1 over B2 | C. -->
+     Phones: one column in reading order. 900px and up: two columns, L and R. The view (data-view) picks which sections show. -->
 <div class="sg-L">
 <div class="sg-A">
 <div id="standings" data-shot="standings" data-shot-card class="sg-st" style="padding:30px 20px 0;scroll-margin-top:64px">
