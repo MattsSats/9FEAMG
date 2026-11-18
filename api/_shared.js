@@ -357,7 +357,8 @@ export const projOf = (p, rosters, wk) => p.espn != null && p.proj > 0 && roster
 // the share of Yahoo's projection still to play, iv: variance the Q and D tags add }. matchupOdds and
 // the live week in playoffOdds both start from these, so the two agree (Matt, Nov 17, 2026). null
 // without live scores.
-export function liveSides(season, rosters = null, now = Date.now()) {
+// best: false counts the lineups as they're set right now (no swaps), for the "As set" odds beside the main ones.
+export function liveSides(season, rosters = null, now = Date.now(), { best = true } = {}) {
   const L = season.live, wk = L?.week;
   if (!L?.scores) return null;
   const pts = L.playerPoints || {}, playing = new Set(L.inProgress || []);
@@ -399,13 +400,13 @@ export function liveSides(season, rosters = null, now = Date.now()) {
     return Math.max(0, best - set);
   };
   const side = m => { const [pnow, proj] = L.scores[m] || [0, 0], I = injOf(m);
-    return { proj: (proj || pnow || 0) + I.espn - I.cut + fillOf(m), left: proj > 0 ? Math.max(0, proj - (pnow || 0)) / proj : 0, iv: I.v }; };
+    return { proj: (proj || pnow || 0) + I.espn - I.cut + (best ? fillOf(m) : 0), left: proj > 0 ? Math.max(0, proj - (pnow || 0)) / proj : 0, iv: I.v }; };
   return Object.fromEntries(season.managers.map(x => [x.m, side(x.m)]));
 }
-export function matchupOdds(season, rosters = null, now = Date.now()) {
+export function matchupOdds(season, rosters = null, now = Date.now(), opts = {}) {
   const L = season.live, wk = L?.week, NF = Math.max(0, ...season.managers.map(x => (season.scores[x.m] || []).length));
   if (!L?.scores || !season.schedule?.[wk]) return null;
-  const sd = weeklySpread(season, NF), SIDES = liveSides(season, rosters, now);
+  const sd = weeklySpread(season, NF), SIDES = liveSides(season, rosters, now, opts);
   // Normal CDF through erf (Abramowitz and Stegun 7.1.26).
   const erf = x => { const t = 1 / (1 + 0.3275911 * Math.abs(x)), y = 1 - (((((1.061405429 * t - 1.453152027) * t) + 1.421413741) * t - 0.284496736) * t + 0.254829592) * t * Math.exp(-x * x); return x < 0 ? -y : y; };
   return season.schedule[wk].map(([a, b]) => {

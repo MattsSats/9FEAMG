@@ -74,8 +74,10 @@ const MY_TEAM = (() => { try { const m = localStorage.getItem('9feamg-req-mgr');
 const asOfLabel = iso => { const d = new Date(iso); return isNaN(d) ? '' : 'Scores as of ' + d.toLocaleString('en-US', { weekday: 'short', hour: 'numeric', minute: '2-digit', timeZone: 'America/Chicago' }).replace(',', ''); };
 // Win odds for the live week's matchups (matchupOdds in api/_shared.js), by "a|b". Q and D starters
 // count once the rosters file has loaded (winOf(rosters)); until then it's Yahoo's totals alone.
-const winMap = r => D ? Object.fromEntries((matchupOdds(D, r) || []).map(o => [o.a + '|' + o.b, o.pa])) : {};
-const winOf = r => { if (WIN[0] !== r) WIN = [r, winMap(r)]; return WIN[1]; };
+const winMap = (r, opts) => D ? Object.fromEntries((matchupOdds(D, r, Date.now(), opts) || []).map(o => [o.a + '|' + o.b, o.pa])) : {};
+const winOf = r => { if (WIN[0] !== r) WIN = [r, winMap(r), winMap(r, { best: false })]; return WIN[1]; };
+// The same odds with the lineups as they're set right now (Matt, Nov 17, 2026), shown beside the main ones when they differ.
+const winSetOf = r => { winOf(r); return WIN[2] || {}; };
 // The Booth's pick for a matchup: [pick, win % when picked] (boothPicks[week], schedule order).
 const pickOf = (wk, pair) => { const i = (PAIRS[wk] || []).findIndex(p => p[0] == pair[0] && p[1] == pair[1]); return i < 0 ? null : D?.boothPicks?.[wk]?.[i] || null; };
 // Parlay request risk levels: total American odds, low to high. A doubling ladder (Matt, Oct 18, 2026):
@@ -808,11 +810,14 @@ class Component extends DCLogic {
     const alerts = [a, b].flatMap(m => { const l = this.lineupAlerts(m, wk); return l.length ? [`${m}: ${l.join('; ')}`] : []; });
     // Win odds for the live week, and the Booth's pick (graded once the week is final).
     const pa = live ? winOf(this.state.rosters)[a + '|' + b] : undefined, fav = pa == null ? null : pa >= 0.5 ? a : b, fp = pa == null ? 0 : Math.max(pa, 1 - pa);
+    const ps = live ? winSetOf(this.state.rosters)[a + '|' + b] : undefined, favS = ps == null ? null : ps >= 0.5 ? a : b, fpS = ps == null ? 0 : Math.max(ps, 1 - ps);
+    const setChip = live && fav && favS && (favS != fav || oddsPct(fpS) != oddsPct(fp)) ? `As set now: ${favS} ${oddsPct(fpS)}` : '';
     const pk = pickOf(wk, pair), done = doneWk(wk), winner = done ? (won(a, wk) ? a : won(b, wk) ? b : null) : null;
     // A playoff game's round ("Semifinal", "Toilet Bowl"), shown on its card.
     const rd = wk > RW ? roundOf(wk, a) : null;
     // Live: the gray chip is the site's own win odds ("Odds: Matt 59% to win": Yahoo and ESPN projections,
-    // injury tags, lineups counted as set; Matt, Oct 29, 2026) and the Booth chip names the pick alone
+    // injury tags, each side's best lineup; Matt, Oct 29 and Nov 17, 2026), with a second chip for the lineups
+    // as set right now when that gives a different number, and the Booth chip names the pick alone
     // ("Booth pick: Matt"): a second % beside the odds read as a disagreement (Matt, Oct 31, 2026). The %
     // it was made at stays on the Booth line's tag.
     return { a: A, b: B, live, alerts: alerts.map(t => ({ t })), hasAlerts: alerts.length > 0, round: rd?.label || '', hasRound: !!rd,
@@ -821,6 +826,7 @@ class Component extends DCLogic {
       // Column headers: Now (live only) and Proj, or Final once the week is done.
       colNow: live ? 'Now' : '', colScore: live ? 'Proj' : 'Final',
       // The gap in words, leader first: "Pablo +3.55 proj" or "Tony won by 9.04".
+      chipSet: setChip, hasSet: !!setChip,
       chip: live && fav ? `Odds: ${fav} ${oddsPct(fp)} to win`
         : (lead ? (live ? `${lead} +${f2(gap)} proj` : `${lead} won by ${f2(gap)}`) : live ? 'Even on projection' : 'Tied') + (lead && fav == lead ? ` · ${oddsPct(fp)} to win` : fav ? ` · ${fav} ${oddsPct(fp)} to win` : ''),
       open: () => this.setState({ sheet: { a, b, wk } }) };
