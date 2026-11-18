@@ -433,6 +433,22 @@ button{font-family:inherit;color:inherit}
 @media (max-width:480px){.ls-fn{display:none}.ls-ln{display:block}.ls-big{font-size:32px}}
 .tiles{grid-template-columns:repeat(2,minmax(0,1fr))}
 .scroll-x{overflow-x:auto}
+/* Page headers on a laptop (Matt, Nov 17, 2026): title and subtitle left, the view switch and Share right,
+   on one row, instead of a phone-width stack with empty space beside it. Phones keep the stack. */
+@media (min-width:900px){
+  .ph{display:grid;grid-template-columns:minmax(0,1fr) auto auto;grid-template-areas:"t v sh" "s v sh" "b b b";column-gap:12px;align-items:center}
+  .ph .ph-row{display:contents!important}
+  .ph .ph-t{grid-area:t;align-self:end}
+  .ph .ph-s{grid-area:s;align-self:start}
+  .ph .share-btn{grid-area:sh}
+  .ph .ph-v{grid-area:v;margin-top:0!important}
+  .ph .ph-b{grid-area:b;margin-top:16px!important}
+  .ph .wire-toggle{width:260px}
+  .ph-se{padding-right:340px!important}
+  .sv-bar{width:fit-content;margin:-60px 20px 0 auto;padding:0!important;background:transparent!important}
+  .sv-bar .sv-switch{background:var(--bg);box-shadow:0 0 0 8px var(--bg)}
+}
+
 .wk.fade-r{-webkit-mask-image:linear-gradient(90deg,#000 calc(100% - 48px),transparent);mask-image:linear-gradient(90deg,#000 calc(100% - 48px),transparent)}
 .wk.fade-l{-webkit-mask-image:linear-gradient(90deg,transparent,#000 48px);mask-image:linear-gradient(90deg,transparent,#000 48px)}
 .wk.fade-l.fade-r{-webkit-mask-image:linear-gradient(90deg,transparent,#000 48px,#000 calc(100% - 48px),transparent);mask-image:linear-gradient(90deg,transparent,#000 48px,#000 calc(100% - 48px),transparent)}
@@ -799,17 +815,17 @@ button{font-family:inherit;color:inherit}
 </sc-if>
 
 <sc-if value="{{ tabGameday }}" hint-placeholder-val="{{ true }}">
-<div style="padding:22px 20px 0">
-  <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:12px">
-    <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:48px;line-height:.9;text-transform:uppercase">Gameday</div>
+<div class="ph" style="padding:22px 20px 0">
+  <div class="ph-row" style="display:flex;justify-content:space-between;align-items:flex-end;gap:12px">
+    <div class="ph-t" style="font-family:'Big Shoulders Display';font-weight:900;font-size:48px;line-height:.9;text-transform:uppercase">Gameday</div>
     <sc-if value="{{ hasGamedayShare }}" hint-placeholder-val="{{ true }}"><button class="share-btn" sc-camel-on-click="{{ gamedayShare }}" aria-label="Share this week">Share</button></sc-if>
   </div>
-  <div style="font-family:'JetBrains Mono';font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-top:10px">{{ gamedaySub }}</div>
+  <div class="ph-s" style="font-family:'JetBrains Mono';font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-top:10px">{{ gamedaySub }}</div>
   <sc-if value="{{ noMe }}" hint-placeholder-val="{{ false }}">
-    <button class="hov" sc-camel-on-click="{{ openTeamSheet }}" style="display:flex;justify-content:space-between;align-items:center;gap:10px;width:100%;min-height:44px;margin-top:12px;padding:0 14px;border:1px dashed var(--accent);border-radius:12px;background:transparent;color:var(--ink);font-size:14px;font-weight:600;text-align:left;cursor:pointer">Which team is yours? It puts your matchup first.<span style="flex:none;color:var(--accentInk)">Pick ›</span></button>
+    <button class="hov ph-b" sc-camel-on-click="{{ openTeamSheet }}" style="display:flex;justify-content:space-between;align-items:center;gap:10px;width:100%;min-height:44px;margin-top:12px;padding:0 14px;border:1px dashed var(--accent);border-radius:12px;background:transparent;color:var(--ink);font-size:14px;font-weight:600;text-align:left;cursor:pointer">Which team is yours? It puts your matchup first.<span style="flex:none;color:var(--accentInk)">Pick ›</span></button>
   </sc-if>
   <!-- Two views, one at a time (Matt, Nov 17, 2026): Matchups (with the Booth) and Parlays. They replaced the jump links. -->
-  <div class="gd-switch" role="tablist" aria-label="Gameday views" style="display:inline-flex;gap:4px;margin-top:12px;padding:3px;border:1px solid var(--line);border-radius:999px">
+  <div class="gd-switch ph-v" role="tablist" aria-label="Gameday views" style="display:inline-flex;gap:4px;margin-top:12px;padding:3px;border:1px solid var(--line);border-radius:999px">
     <sc-for list="{{ gdViews }}" as="gv" hint-placeholder-count="2">
       <button role="tab" aria-selected="{{ gv.on }}" sc-camel-on-click="{{ gv.pick }}" style="min-height:36px;padding:0 14px;border:0;border-radius:999px;background:{{ gv.bg }};color:{{ gv.fg }};font-family:'JetBrains Mono';font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;cursor:pointer">{{ gv.label }}</button>
     </sc-for>
@@ -1377,7 +1393,7 @@ button{font-family:inherit;color:inherit}
 </sc-if>
 
 <sc-if value="{{ tabSeason }}" hint-placeholder-val="{{ false }}">
-<div style="padding:22px 20px 0">
+<div class="ph-se" style="padding:22px 20px 0">
   <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:48px;line-height:.9;text-transform:uppercase">Season</div>
   <div style="font-family:'JetBrains Mono';font-size:11px;color:var(--muted);margin-top:10px">{{ seasonSub }}</div>
 </div>
@@ -2262,19 +2278,21 @@ button{font-family:inherit;color:inherit}
 </sc-if>
 
 <sc-if value="{{ tabWire }}" hint-placeholder-val="{{ false }}">
-<div style="padding:22px 20px 0">
-  <div style="display:flex;justify-content:space-between;align-items:center;gap:12px">
-    <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:48px;line-height:.9;text-transform:uppercase">Wire</div>
+<div class="ph" style="padding:22px 20px 0">
+  <div class="ph-row" style="display:flex;justify-content:space-between;align-items:center;gap:12px">
+    <div class="ph-t" style="font-family:'Big Shoulders Display';font-weight:900;font-size:48px;line-height:.9;text-transform:uppercase">Wire</div>
     <sc-if value="{{ txOk }}" hint-placeholder-val="{{ true }}"><button class="share-btn" sc-camel-on-click="{{ menuWire }}" aria-label="Share the Wire">Share</button></sc-if>
   </div>
-  <div style="font-family:'JetBrains Mono';font-size:11px;color:var(--muted);margin-top:10px">{{ wireSub }}</div>
-</div>
-<div style="padding:16px 20px 0">
-  <div class="wire-toggle" style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));padding:4px;background:var(--surface);border:1px solid var(--line);border-radius:12px;gap:4px">
-    <sc-for list="{{ wireModes }}" as="wm" hint-placeholder-count="2">
-      <button sc-camel-on-click="{{ wm.pick }}" style="min-height:40px;border:0;border-radius:9px;background:{{ wm.bg }};color:{{ wm.fg }};font-weight:600;font-size:14px;cursor:pointer">{{ wm.label }}</button>
-    </sc-for>
+  <div class="ph-s" style="font-family:'JetBrains Mono';font-size:11px;color:var(--muted);margin-top:10px">{{ wireSub }}</div>
+  <div class="ph-v" style="margin-top:16px">
+    <div class="wire-toggle" style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));padding:4px;background:var(--surface);border:1px solid var(--line);border-radius:12px;gap:4px">
+      <sc-for list="{{ wireModes }}" as="wm" hint-placeholder-count="2">
+        <button sc-camel-on-click="{{ wm.pick }}" style="min-height:40px;border:0;border-radius:9px;background:{{ wm.bg }};color:{{ wm.fg }};font-weight:600;font-size:14px;cursor:pointer">{{ wm.label }}</button>
+      </sc-for>
+    </div>
   </div>
+</div>
+<div style="padding:0 20px">
   <sc-if value="{{ showWireMgrs }}" hint-placeholder-val="{{ false }}">
     <div role="group" aria-label="Show one team's moves" style="display:flex;gap:6px;overflow-x:auto;margin-top:10px;padding-bottom:2px">
       <sc-for list="{{ wireMgrs }}" as="wf" hint-placeholder-count="11">
