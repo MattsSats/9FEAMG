@@ -3,7 +3,7 @@
 // for the Wire line and lineup alerts. Exits 1 if anything is wrong. Usage: node scripts/check.js
 import { readFileSync } from 'node:fs';
 import vm from 'node:vm';
-import { seasonStats, byStandings, kickoffAt, nflKey, lineupIssues, wireOf, pointsOf, ticketSlug, parlayState, parlayFair, impliedProb, toAmerican, playoffOdds, oddsPct, raceText, matchupOdds, boothPickRecord, expertPickRecord, mergeYahoo, playoffScenarios, seasonAwards } from '../api/_shared.js';
+import { seasonStats, byStandings, kickoffAt, nflKey, lineupIssues, wireOf, pointsOf, ticketSlug, parlayState, parlayFair, impliedProb, toAmerican, playoffOdds, oddsPct, raceText, matchupOdds, boothPickRecord, expertPickRecord, mergeYahoo, liveRosters, playoffScenarios, seasonAwards } from '../api/_shared.js';
 
 const read = p => readFileSync(new URL('../' + p, import.meta.url), 'utf8');
 const box = { window: {} }; vm.runInNewContext(read('data/season.js'), box);
@@ -25,6 +25,9 @@ let L = null;
 try { const r = await fetch('https://www.9feamg.cloud/api/live', { signal: AbortSignal.timeout(10000) }); if (r.ok) L = await r.json(); } catch {}
 const S = L?.weeks ? mergeYahoo(mergeYahoo(S0, Y), L) : Y?.weeks ? mergeYahoo(S0, Y) : S0;
 const st = seasonStats(S, scores), NF = st.NF, LW = S.live?.week;
+// The rosters file with Yahoo's current lineups laid over it, the way the site does (src/logic.js), so the
+// win odds and lineup alerts match the site's after managers change lineups (Matt, Nov 17, 2026).
+const RL = liveRosters(liveRosters(rosters, Y), L);
 
 // Schedule: every regular-season week pairs all ten managers once (playoff weeks come from Yahoo).
 for (const [w, pairs] of Object.entries(S.schedule)) {
@@ -75,9 +78,9 @@ const out = [];
 const ST = [...st.rows].sort(byStandings);
 out.push('Standings: ' + ST.map((r, i) => `${i + 1}. ${r.m} ${r.w}–${r.l}`).join(', '));
 // Win odds for the live week's matchups (Post-SNF lines quote these), and the Booth's picks.
-const MO = matchupOdds(S, rosters);
+const MO = matchupOdds(S, RL);
 if (MO) out.push(`Win odds, Week ${LW}: ` + MO.map(o => `${o.a} ${oddsPct(o.pa)}–${oddsPct(1 - o.pa)} ${o.b}`).join(', ')
-  + (rosters?.espn?.week == LW ? ` (Yahoo and ESPN projections averaged; ESPN read ${new Date(rosters.espn.asOf).toLocaleString('en-US', { timeZone: 'America/Chicago', weekday: 'short', hour: 'numeric', minute: '2-digit' })})` : ' (Yahoo projections only: run node scripts/espn-proj.mjs)'));
+  + (RL?.espn?.week == LW ? ` (Yahoo and ESPN projections averaged; ESPN read ${new Date(RL.espn.asOf).toLocaleString('en-US', { timeZone: 'America/Chicago', weekday: 'short', hour: 'numeric', minute: '2-digit' })})` : ' (Yahoo projections only: run node scripts/espn-proj.mjs)'));
 for (const [w, picks] of Object.entries(S.boothPicks || {})) (picks || []).forEach((p, i) => {
   const pair = S.schedule[w]?.[i];
   if (!pair) bad.push(`boothPicks[${w}][${i}] has no matchup.`);
@@ -112,9 +115,9 @@ if (AW) out.push(`Season awards (through Week ${AW.through}):` + AW.awards.map(a
 const pts = (n, w) => pointsOf(S, scores, n, w);
 out.push('Wire, this week: ' + wireOf(S, tx, pts, 'week').line);
 out.push('Wire, season:    ' + wireOf(S, tx, pts, 'season').line);
-if (LW) for (const t of rosters.teams) {
+if (LW) for (const t of RL.teams) {
   const { bye, out: o, empty, noProj } = lineupIssues(S, t.players.filter(p => p.slot == 'starter'), LW, S.live.playerPoints || {});
-  const bits = [...bye.map(p => p.name + ' on bye'), ...o.map(p => p.name + ' Out'), ...(empty.length ? [empty.length + ' empty'] : []), ...(rosters.week == LW ? noProj.map(p => p.name + ' no projection (Yahoo or ESPN)') : [])];
+  const bits = [...bye.map(p => p.name + ' on bye'), ...o.map(p => p.name + ' Out'), ...(empty.length ? [empty.length + ' empty'] : []), ...(RL.week == LW ? noProj.map(p => p.name + ' no projection (Yahoo or ESPN)') : [])];
   if (bits.length) out.push(`Alert, ${t.name}: ${bits.join(', ')}`);
 }
 for (const p of S.parlays?.[LW] || []) { const s = parlayState(p); const f = parlayFair(p); out.push(`Ticket ${ticketSlug(LW, p)}: ${s.status}${s.priced ? ' ' + toAmerican(s.dec) : ''}${f ? ` (fair ${f.est ? '~' : ''}${toAmerican(f.dec)}${f.est ? ' est.' : ''}, book edge ${(f.edge * 100).toFixed(1)}%)` : ''}`); }
