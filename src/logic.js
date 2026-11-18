@@ -1315,9 +1315,31 @@ class Component extends DCLogic {
         tri: tr || '–', triGap: !tr || !td ? '' : td > 0 ? '▲' + td : '▼' + -td, triColor: td > 0 ? 'var(--pos)' : td < 0 ? 'var(--neg)' : 'var(--muted)',
         open: () => { this.setState({ tab: 'Teams', team: r.m }); window.scrollTo(0, 0); } };
     }) : [];
+    // Tapping a standings row opens what's behind its columns (Matt, Nov 17, 2026; the power rankings already
+    // link to the team page): the results week by week, points for and against with their ranks, how much of
+    // the best possible lineup was scored, where the luck number comes from, and the next game.
+    const stNum = n => n.toLocaleString('en-US', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+    const stRank = (m, val, low) => ord([...ST].sort((x, y) => low ? val(x) - val(y) : val(y) - val(x)).findIndex(x => x.m == m) + 1);
+    const stWhy = r => {
+      const m = r.m, res = [];
+      for (let w = 1; w <= NF; w++) { const p = (PAIRS[w] || []).find(x => x.includes(m)); if (!p) continue;
+        const o = p[0] == m ? p[1] : p[0], a = SC[m][w - 1], b = SC[o][w - 1]; res.push({ w, o, a, b, r: a > b ? 'W' : a < b ? 'L' : 'T' }); }
+      const last = res[res.length - 1]; let k = 0; for (let i = res.length - 1; i >= 0 && res[i].r == last.r; i--) k++;
+      const nextW = NF < RW ? NF + 1 : null, np = nextW && (PAIRS[nextW] || []).find(x => x.includes(m)), no = np && (np[0] == m ? np[1] : np[0]), nr = no && ST.find(x => x.m == no);
+      return [
+        res.length && { k: 'Results', t: res.map(x => x.r).join(' ') + ` · ${last.r == 'W' ? 'won' : last.r == 'L' ? 'lost' : 'tied'} ${k == 1 ? 'the last one' : k + ' straight'}` },
+        last && { k: 'Week ' + last.w, t: `${last.r == 'W' ? 'Beat' : last.r == 'L' ? 'Lost to' : 'Tied'} ${last.o} ${f2(last.a)}–${f2(last.b)}` },
+        { k: 'Points for', t: `${stNum(r.pf)} · ${f1(r.pf / (NF || 1))} a week · ${stRank(m, x => x.pf)} most` },
+        { k: 'Against', t: `${stNum(r.pa)} · ${f1(r.pa / (NF || 1))} a week · ${stRank(m, x => x.pa)} most` },
+        r.max > 0 && { k: 'Max PF', t: `Scored ${(100 * r.pf / r.max).toFixed(1)}% of the best lineup it could have set (${stNum(r.max)}) · ${stRank(m, x => x.max > 0 ? x.pf / x.max : 0)} best` },
+        r.xw != null && { k: 'Luck', t: `${r.w} wins on ${r.xw.toFixed(2)} expected · ${sgn(r.luck)}` },
+        no && { k: 'Week ' + nextW, t: `vs ${no}${nr ? ' (' + nr.w + '–' + nr.l + ')' : ''}` },
+      ].filter(Boolean);
+    };
     const standings = ST.map((s, i) => ({ rank: i + 1, m: s.m, rowBg: s.m == S.reqMgr ? 'var(--surface2)' : 'transparent', rowEdge: s.m == S.reqMgr ? col(s.m) : 'transparent', you: s.m == S.reqMgr,
       // The row just above the playoff line has no rule of its own; the line is the divider.
-      rowLine: i == P - 1 ? 'transparent' : 'var(--line)', init: INIT[s.m], color: col(s.m), pa: f1(s.pa), max: s.max == null ? '—' : f1(s.max), wl: s.w + '–' + s.l, pf: f1(s.pf), luck: sgn(s.luck), luckColor: s.luck > 0 ? 'var(--pos)' : s.luck < 0 ? 'var(--neg)' : 'var(--muted)', cut: i == P - 1, open: () => { this.setState({ tab: 'Teams', team: s.m }); window.scrollTo(0, 0); } }));
+      rowLine: i == P - 1 ? 'transparent' : 'var(--line)', init: INIT[s.m], color: col(s.m), pa: f1(s.pa), max: s.max == null ? '—' : f1(s.max), wl: s.w + '–' + s.l, pf: f1(s.pf), luck: sgn(s.luck), luckColor: s.luck > 0 ? 'var(--pos)' : s.luck < 0 ? 'var(--neg)' : 'var(--muted)', cut: i == P - 1, open: () => this.setState({ stOpen: this.state.stOpen == s.m ? null : s.m }),
+      isOpen: S.stOpen == s.m, expanded: String(S.stOpen == s.m), why: S.stOpen == s.m ? stWhy(s) : [], teamLabel: s.m + '’s team page', toTeam: () => { this.setState({ tab: 'Teams', team: s.m }); window.scrollTo(0, 0); } }));
     // Playoff picture (Matt, Oct 31, 2026): the bracket if the regular season ended today, seeded by the
     // standings (wins, then points for). Seeds 1 and 2 sit out Week 15 while 3 plays 6 and 4 plays 5, and
     // the semifinals reseed. Seeds 7–10 play from Week 16, 7 v 10 and 8 v 9; the two losers meet in Week

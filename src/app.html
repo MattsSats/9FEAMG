@@ -1412,7 +1412,7 @@ button{font-family:inherit;color:inherit}
     <span>#</span><span>MANAGER</span><span style="text-align:right">W–L</span><span style="text-align:right">PF</span><span style="text-align:right">MAX PF</span><span style="text-align:right">LUCK</span>
   </div>
   <sc-for list="{{ standings }}" as="s" hint-placeholder-count="10">
-    <div sc-camel-on-click="{{ s.open }}" class="hov shot-tight" tabindex="0" role="button" style="display:grid;grid-template-columns:22px minmax(0,1fr) 40px 52px 52px 48px;gap:8px;align-items:center;padding:10px 6px;margin:0 -6px;border-radius:8px;background:{{ s.rowBg }};box-shadow:inset 3px 0 0 {{ s.rowEdge }};border-bottom:1px solid {{ s.rowLine }};cursor:pointer">
+    <div sc-camel-on-click="{{ s.open }}" class="hov shot-tight" tabindex="0" role="button" aria-expanded="{{ s.expanded }}" style="display:grid;grid-template-columns:22px minmax(0,1fr) 40px 52px 52px 48px;gap:8px;align-items:center;padding:10px 6px;margin:0 -6px;border-radius:8px;background:{{ s.rowBg }};box-shadow:inset 3px 0 0 {{ s.rowEdge }};border-bottom:1px solid {{ s.rowLine }};cursor:pointer">
       <span style="font-family:'Big Shoulders Display';font-weight:800;font-size:18px;color:var(--muted)">{{ s.rank }}</span>
       <div style="display:flex;align-items:center;gap:10px;min-width:0">
         <div class="crest" style="width:28px;height:28px;background:{{ s.color }};color:var(--onAccent);display:flex;align-items:center;justify-content:center;font-family:'Big Shoulders Display';font-weight:800;font-size:12px;flex:none"><span class="ini" data-i="{{ s.init }}">{{ s.init }}</span></div>
@@ -1423,6 +1423,13 @@ button{font-family:inherit;color:inherit}
       <span style="text-align:right;font-family:'JetBrains Mono';font-size:13px;color:var(--muted)">{{ s.max }}</span>
       <span style="text-align:right;font-family:'JetBrains Mono';font-size:13px;font-weight:600;color:{{ s.luckColor }}">{{ s.luck }}</span>
     </div>
+    <!-- What's behind the row (Matt, Nov 17, 2026): opens when the row is tapped. -->
+    <sc-if value="{{ s.isOpen }}" hint-placeholder-val="{{ false }}">
+      <div class="no-shot" role="region" aria-label="Behind the standings" style="padding:10px 12px;margin:6px 0;border-radius:10px;background:var(--surface2);font-size:13px;line-height:1.45">
+        <sc-for list="{{ s.why }}" as="y" hint-placeholder-count="6"><div style="display:grid;grid-template-columns:92px minmax(0,1fr);gap:10px;padding:2px 0"><span style="font-family:'JetBrains Mono';font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);padding-top:2px">{{ y.k }}</span><span style="text-wrap:pretty">{{ y.t }}</span></div></sc-for>
+        <button type="button" sc-camel-on-click="{{ s.toTeam }}" class="hov" style="margin-top:6px;min-height:32px;padding:0 12px;border:1px solid var(--line);border-radius:999px;background:transparent;font:inherit;font-weight:600;color:var(--accentInk);cursor:pointer">{{ s.teamLabel }} →</button>
+      </div>
+    </sc-if>
     <sc-if value="{{ s.cut }}" hint-placeholder-val="{{ false }}">
       <div style="display:flex;align-items:center;gap:10px;padding:8px 0;font-family:'JetBrains Mono';font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--accentInk)"><span style="flex:1;height:2px;background:var(--accent)"></span><span style="display:flex;align-items:center;gap:6px"><svg class="hi play" width="16" height="16" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><defs><clipPath id="hi-cup"><path d="M14 8 H34 V18 a10 10 0 0 1 -20 0 Z"></path></clipPath></defs><path d="M14 8 H34 V18 a10 10 0 0 1 -20 0 Z" style="fill:var(--hi-a)"></path><g clip-path="url(#hi-cup)"><polygon class="a-shine" points="-10,6 -4,6 4,30 -2,30" fill="#ffffff" fill-opacity="0.55" stroke="none"></polygon></g><path d="M14 12 H9 V15 a5 5 0 0 0 5 5 M34 12 H39 V15 a5 5 0 0 1 -5 5 M24 28 V34"></path><rect x="16" y="34" width="16" height="7" rx="2"></rect><path class="a-pop" d="M7 2 v7 M3.5 5.5 h7" stroke-width="2" style="stroke:var(--hi-b)"></path></svg>{{ playoffLine }}</span><span style="flex:1;height:2px;background:var(--accent)"></span></div>
     </sc-if>
