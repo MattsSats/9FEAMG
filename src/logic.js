@@ -479,7 +479,9 @@ class Component extends DCLogic {
     if (!h && nav) { this.setState({ tab: 'Gameday', week: HOME_WK, sheet: null }); window.scrollTo(0, 0); return; }
     if (h == '#wire' || h == '#wire-season' || h == '#draft') { this.setState({ tab: h == '#draft' ? 'Draft' : 'Wire', ...(h == '#draft' ? {} : { wire: h == '#wire-season' ? 'Season' : 'This week' }), sheet: null }); window.scrollTo(0, 0); return; }
     if (wk) { this.setState({ tab: 'Gameday', week: +wk[1], sheet: null }); window.scrollTo(0, 0); return; }
-    if (h == '#season') { this.setState({ tab: 'Season', sheet: null }); window.scrollTo(0, 0); return; }
+    // Season's views have their own links (Matt, Nov 17, 2026): #season, #season-playoffs, #season-stats.
+    const sv = h.match(/^#season(?:-(playoffs|stats))?$/);
+    if (sv) { this.setState({ tab: 'Season', sheet: null, seasonView: sv[1] ? sv[1][0].toUpperCase() + sv[1].slice(1) : 'Standings' }); window.scrollTo(0, 0); return; }
     if (h == '#awards') { this.setState({ tab: 'Awards', sheet: null }); window.scrollTo(0, 0); return; }
     // #awards-players (and -trophy, -games, -lineups-and-moves, -season) opens the awards scrolled to that section.
     // The box scores load after the tab opens, so wait for the section to exist.
@@ -637,13 +639,13 @@ class Component extends DCLogic {
   syncUrl() {
     const S = this.state, h = location.hash;
     const want = S.tab == 'Gameday' ? (S.week == HOME_WK ? '' : '#w' + S.week)
-      : S.tab == 'Season' ? '#season' : S.tab == 'Teams' ? '#team-' + teamSlug(S.team)
+      : S.tab == 'Season' ? ((S.seasonView || 'Standings') == 'Standings' ? '#season' : '#season-' + S.seasonView.toLowerCase()) : S.tab == 'Teams' ? '#team-' + teamSlug(S.team)
       : S.tab == 'Wire' ? (S.wire == 'Season' ? '#wire-season' : '#wire') : S.tab == 'Draft' ? '#draft' : S.tab == 'Awards' ? '#awards' : null;
     if (want == null || h == want) return;
     if (S.tab == 'Gameday' && (h == '#w' + S.week || h.startsWith('#w' + S.week + '-') || h == '#ledger' || (h == '#booth' && S.week == BOOTH_WK))) return;
     if (S.tab == 'Awards' && /^#awards-[a-z-]+$/.test(h)) return;
     if (S.tab == 'Teams' && /^-(awards|weeks|h2h)$/.test(h.slice(('#team-' + teamSlug(S.team)).length)) && h.startsWith('#team-' + teamSlug(S.team) + '-')) return;
-    if (S.tab == 'Season' && ['#power', '#odds', '#bracket', '#pfpa', '#luck', '#xw', '#bench', '#src'].includes(h)) return;
+    if (S.tab == 'Season' && ['#power', '#odds', '#bracket', '#pfpa', '#luck', '#xw', '#bench', '#src'].includes(h) && SEASON_VIEW[h.slice(1)] == (S.seasonView || 'Standings')) return;
     if (!want && !h) return;
     this.pushNav(want || location.pathname + location.search);
   }
