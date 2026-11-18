@@ -241,7 +241,7 @@ class Component extends DCLogic {
       else if (el?.dataset?.reqGame != null) this.state.req.game = el.value; // read on send; no re-render while typing
     };
     document.addEventListener('input', onReq); document.addEventListener('change', onReq);
-    setTimeout(() => this.syncRiskSlider(), 0);
+    setTimeout(() => { this.syncRiskSlider(); this.syncChips(); }, 0);
     // Week chips start at W1; once the season is long, scroll just enough to show the open week.
     setTimeout(() => { const el = document.querySelector('[data-weekchips] [data-on="1"]'); if (el) el.scrollIntoView({ block: 'nearest', inline: 'nearest' }); }, 0);
     this.restoreAfterRefresh();
@@ -288,6 +288,7 @@ class Component extends DCLogic {
     this.openHash();
     // Back/forward and typed hashes (popstate fires for both).
     this.navI = history.state?.i ?? 0; this.navY = {};
+    if (history.state?.i == null) history.replaceState({ i: 0 }, '');
     if (this.navI) this.setState({ navI: this.navI });
     window.addEventListener('pointerdown', () => { this.tapY = window.scrollY; }, true);
     window.addEventListener('keydown', () => { this.tapY = window.scrollY; }, true);
@@ -396,7 +397,9 @@ class Component extends DCLogic {
   }
   popNav() {
     this.navY[this.navI] = window.scrollY;
-    const i = history.state?.i ?? 0, y = this.navY[i];
+    // A typed or linked hash (not Back/Forward) arrives with no state: a new entry, opened at its own spot.
+    if (history.state?.i == null) { history.replaceState({ i: ++this.navI }, ''); this.openHash(true); this.setState({ navI: this.navI }); return; }
+    const i = history.state.i, y = this.navY[i];
     this.navI = i; this.openHash(true); this.setState({ navI: i });
     if (y != null) setTimeout(() => window.scrollTo(0, y), 380);
   }
@@ -632,7 +635,17 @@ class Component extends DCLogic {
     setTimeout(() => URL.revokeObjectURL(a.href), 1000);
     this.toast('Image saved.');
   }
-  componentDidUpdate() { this.applyTheme(); this.syncRiskSlider(); this.syncUrl(); this.syncSticky(); }
+  componentDidUpdate() { this.applyTheme(); this.syncRiskSlider(); this.syncUrl(); this.syncSticky(); this.syncChips(); }
+  // The week chips scroll sideways when they don't fit (a laptop with 12+ weeks): the edge with more
+  // chips past it fades, the row starts at the newest weeks, and the picked week scrolls into view (Matt, Nov 17, 2026).
+  syncChips() {
+    const el = typeof document != 'undefined' && document.querySelector('[data-weekchips]'); if (!el) return;
+    const edges = () => { const more = el.scrollWidth - el.clientWidth > 2; el.classList.toggle('fade-l', more && el.scrollLeft > 2); el.classList.toggle('fade-r', more && el.scrollLeft < el.scrollWidth - el.clientWidth - 2); };
+    if (el._wired !== el) { el._wired = el; el.addEventListener('scroll', edges, { passive: true }); window.addEventListener('resize', edges); this.chipWk = null; }
+    if (this.chipWk != this.state.week) { if (this.chipWk == null) el.scrollLeft = el.scrollWidth; this.chipWk = this.state.week; const on = el.querySelector('[data-on="1"]');
+      if (on && (on.offsetLeft < el.scrollLeft || on.offsetLeft + on.offsetWidth > el.scrollLeft + el.clientWidth)) el.scrollLeft = on.offsetLeft - (el.clientWidth - on.offsetWidth) / 2; }
+    edges();
+  }
   // Desktop columns marked .stick (Gameday's, Wire's side; Matt, Nov 15, 2026) stay in view beside the longer
   // one: a column shorter than the window pins under the header, a taller one scrolls until its bottom shows,
   // then pins there (a negative top), so nothing in it is ever out of reach.
@@ -893,7 +906,7 @@ class Component extends DCLogic {
     const chipWeeks = [...Array(NF).keys()].map(i => i + 1).concat(Object.keys(PO?.scores || {}).map(Number).sort((a, b) => a - b));
     if (LW && !chipWeeks.includes(LW)) chipWeeks.push(LW);
     if (NEXT && NEXT.week != LW && NEXT.week > LASTDONE) chipWeeks.push(NEXT.week);
-    const weekChips = chipWeeks.map(w => { const on = w == wk; return { label: 'W' + w, aria: `Week ${w}, ${w == LW ? 'live' : doneWk(w) ? 'final' : 'next'}`, cur: on ? 'true' : 'false', on: on ? '1' : '0', live: w == LW, sub: w == LW ? 'LIVE' : doneWk(w) ? 'FINAL' : 'NEXT', bg: on ? 'var(--accent)' : 'var(--surface)', fg: on ? 'var(--onAccent)' : (w == LW ? 'var(--accentInk)' : 'var(--ink)'), border: on ? 'var(--accent)' : 'var(--line)', pick: () => { this.setState({ week: w }); if (window.scrollY > 150) window.scrollTo(0, 0); } }; });
+    const weekChips = chipWeeks.map(w => { const on = w == wk; return { label: 'W' + w, aria: `Week ${w}, ${w == LW ? (LIVE_STARTED ? 'live' : 'preview') : doneWk(w) ? 'final' : 'next'}`, cur: on ? 'true' : 'false', on: on ? '1' : '0', live: w == LW && !!LIVE_STARTED, sub: w == LW ? (LIVE_STARTED ? 'LIVE' : 'PREVIEW') : doneWk(w) ? 'FINAL' : 'NEXT', bg: on ? 'var(--accent)' : 'var(--surface)', fg: on ? 'var(--onAccent)' : (w == LW ? 'var(--accentInk)' : 'var(--ink)'), border: on ? 'var(--accent)' : 'var(--line)', pick: () => { this.setState({ week: w }); if (window.scrollY > 150) window.scrollTo(0, 0); } }; });
     const hasWeek = (doneWk(wk) || wk == LW) && !!PAIRS[wk];
     let matchups = [], hero = null;
     let heroMine = false;

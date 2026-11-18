@@ -953,7 +953,9 @@ export function wireOf(season, tx, ptsOf, mode, now = Date.now()) {
   const pickLow = not => (light.length ? light : MGR).filter(m => m != not).sort((a, b) => place(a) - place(b))[0];
   const gameAt = (nfl, w) => kickoffAt(season, w, nflGameOf(season, nfl, w) || 'Sun 12:00 PM');
   const ptsSince = (t, at) => { let s = 0; for (let w = 1; w <= (LW || NF); w++) { const k = gameAt(t.nfl, w); if (k && k > at) s += ptsOf(t.player, w) || 0; } return s; };
-  const who = t => t.pos == 'DEF' ? `the ${t.player} defense` : lastName(t.player);
+  // Last names, unless another player on file shares it (Javonte, Kyren and Jameson Williams): then the full name.
+  const nameOf = p => new Set(tx.filter(t => lastName(t.player) == lastName(p)).map(t => t.player)).size > 1 ? p : lastName(p);
+  const who = t => t.pos == 'DEF' ? `the ${t.player} defense` : nameOf(t.player);
   const f2 = x => x.toFixed(2), s = (k, w) => k + (w == 1 ? '' : 's');
   const inWin = tx.filter(t => when(t) >= cut), dayOf = d => d.toLocaleDateString('en-US', { weekday: 'long', timeZone: 'America/Chicago' });
   const regret = inWin.filter(t => t.action == 'drop').map(d => {
@@ -968,7 +970,7 @@ export function wireOf(season, tx, ptsOf, mode, now = Date.now()) {
     const from = teamMgr[String(t.via || '').replace('trade from ', '')]; if (!from) return;
     let d = deals.find(x => x.when == t.when && x.got[t.manager] && x.got[from]);
     if (!d) deals.push(d = { when: t.when, got: { [t.manager]: [], [from]: [] } });
-    d.got[t.manager].push(lastName(t.player));
+    d.got[t.manager].push(nameOf(t.player));
   });
   const list = a => a.length > 1 ? a.slice(0, -1).join(', ') + ' and ' + a.at(-1) : a[0];
   // Each deal is told from the side of whoever traded most this week, so one name leads the line.

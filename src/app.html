@@ -433,6 +433,9 @@ button{font-family:inherit;color:inherit}
 @media (max-width:480px){.ls-fn{display:none}.ls-ln{display:block}.ls-big{font-size:32px}}
 .tiles{grid-template-columns:repeat(2,minmax(0,1fr))}
 .scroll-x{overflow-x:auto}
+.wk.fade-r{-webkit-mask-image:linear-gradient(90deg,#000 calc(100% - 48px),transparent);mask-image:linear-gradient(90deg,#000 calc(100% - 48px),transparent)}
+.wk.fade-l{-webkit-mask-image:linear-gradient(90deg,transparent,#000 48px);mask-image:linear-gradient(90deg,transparent,#000 48px)}
+.wk.fade-l.fade-r{-webkit-mask-image:linear-gradient(90deg,transparent,#000 48px,#000 calc(100% - 48px),transparent);mask-image:linear-gradient(90deg,transparent,#000 48px,#000 calc(100% - 48px),transparent)}
 /* BUSTED / CASHED stamp on a settled ticket: floated right in the title block, so a long title
    wraps around it instead of running under it. Smaller on phones. */
 .stamp{float:right;margin:2px 0 8px 12px;position:relative;z-index:2;transform:rotate(-10deg);border:3px solid;font-family:'Big Shoulders Display';font-weight:900;font-size:30px;line-height:1;letter-spacing:.06em;padding:4px 12px;border-radius:8px;background:color-mix(in oklch, var(--surface) 70%, transparent);pointer-events:none}
