@@ -1515,6 +1515,8 @@ class Component extends DCLogic {
     // Rest of the regular season (Matt, Oct 31, 2026): each week still to come with the opponent's record,
     // place and average score so far, and how the last meeting went. How hard the run-in is: the
     // opponents' average a week, ranked against what every other team has left (1st = toughest).
+    // Games left (Season, Playoffs view): every regular-season week that isn't final yet.
+    const restSched = [...Array(RW).keys()].map(i => i + 1).filter(w => w > NF && PAIRS[w]).map(w => ({ w, label: 'Week ' + w + (w == LW ? (LIVE_STARTED ? ' · live' : ' · this week') : ''), games: PAIRS[w].map(([a, b]) => ({ a, b, ca: col(a), cb: col(b) })) }));
     const restWks = m => [...Array(D.regularSeasonWeeks || 14).keys()].map(i => i + 1).filter(w => w > (LW ?? NF) && opp(m, w));
     const perWeek = m => NF ? ST.find(x => x.m == m).pf / NF : 0;
     const sosOf = m => { const o = restWks(m).map(w => opp(m, w)); return o.length ? o.reduce((t, x) => t + perWeek(x), 0) / o.length : 0; };
@@ -1785,6 +1787,8 @@ class Component extends DCLogic {
       weekChips, isW5: isNext && !upcoming.length, nextTitle, nextNote, hasWeek, hero: hero || blank, matchups,
       upcoming, hasUpcoming: upcoming.length > 0, upNote: 'Projections, odds and lineups come in when the week opens on Tuesday.', heroSwing, hasHeroSwing: !!heroSwing,
       hasChamp: !!BR?.champion && wk >= RW + 3, champTitle: BR?.champion ? `${BR.champion} is the champion` : '', champSub: BR?.king ? `Toilet Bowl King: ${BR.king}` : '', heroLabel: heroMine ? 'Your matchup' + (wk > RW && hero?.round ? ' · ' + hero.round : '') : wk > RW && hero?.round ? hero.round : wk == LW ? 'Matchup of the week' : 'Closest finish', heroCaption: this.heroCaption(wk, hero),
+      noTickets: parlays.length == 0 && !hasReq, noTicketsLine: 'No tickets in Week ' + wk + '.',
+      hasRest: restSched.length > 0, restSched, restSub: restSched.length ? (restSched.length > 1 ? 'Weeks ' + restSched[0].w + '–' + restSched[restSched.length - 1].w : 'Week ' + restSched[0].w) + ' · regular season' : '',
       weekStatus, parlays: parlays.filter(x => group(x) == 0), parlaysMore: parlays.filter(x => group(x) > 0), hasParlays: parlays.length > 0, hasLedger: allParlays.length > 0, ledgerTiles, ledgerSub, ledgerOwners, hasLedgerRows: tailsReady && ledgerOwners.length > 0, hasPaper, paperLine, paperTix, paperOpen, paperExp: String(paperOpen), togglePaper, latestTaps, hasLatestTaps: latestTaps.length > 0,
       shareLedger: e => this.share('ledger', e), ledgerLabel: S.sharing == 'ledger' ? '…' : 'Image',
       linkLedger: e => this.shareLink(location.origin + '/s/ledger', '9FEAMG · Parlay ledger', e), shotLedger: `Parlay ledger · through week ${LW ?? NF}`,

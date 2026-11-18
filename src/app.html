@@ -742,6 +742,50 @@ button{font-family:inherit;color:inherit}
   .mu-chips .mu-t{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;flex:0 1 auto}
   .team-tiles{grid-template-columns:repeat(4,minmax(0,1fr))!important}
 }
+/* Tablets (600 to 899px; Matt, Nov 18, 2026): still one page with the bottom bar, but it uses the width instead of a
+   phone column with empty margins: matchups and tickets two across, stat tiles four across. */
+@media (min-width:600px) and (max-width:899px){
+  .app,.tabbar{max-width:780px}
+  .sheet{max-width:620px}
+  .tiles,.team-tiles{grid-template-columns:repeat(4,minmax(0,1fr))!important}
+  .mu-list{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))}
+  .mu-list .lu-w{display:none}
+  .mu-list .mu-chips{flex-wrap:nowrap!important;min-width:0}
+  .mu-list .mu-chips .mu-t{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;flex:0 1 auto}
+  #parlays,#parlays-more{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));align-items:start}
+  :is(#parlays,#parlays-more)>:is(.ledger,.col-head,.busted-bar){grid-column:1/-1}
+  :is(#parlays,#parlays-more)>*{min-width:0}
+}
+/* Parlays on a laptop (Matt, Nov 18, 2026): one grid for every ticket (two across, three from 1320px) with the
+   ledger in a rail on the right that stays in view, instead of a lone ticket beside a blank and a full-width ledger. */
+@media (min-width:900px){
+  .cols.gd-cols[data-view="Parlays"]{grid-template-columns:repeat(2,minmax(0,1fr)) minmax(300px,340px)}
+  .gd-cols[data-view="Parlays"]>:is(#parlays,#parlays-more){display:contents}
+  .gd-cols[data-view="Parlays"] :is(.col-head,.busted-bar,.pr-empty){grid-column:1/-2}
+  .gd-cols[data-view="Parlays"] .ledger{grid-column:-2/-1;grid-row:1/span 60;position:sticky;top:112px;align-self:start;padding-left:0!important;padding-top:28px!important}
+  .gd-cols[data-view="Parlays"]>*>*{min-width:0}
+}
+@media (min-width:1320px){
+  .cols.gd-cols[data-view="Parlays"]{grid-template-columns:repeat(3,minmax(0,1fr)) minmax(320px,360px)}
+}
+/* Narrow laptops: the team page's column is too tight for four tiles (captions wrapped), so two across. */
+@media (min-width:900px) and (max-width:1139px){ .team-tiles{grid-template-columns:repeat(2,minmax(0,1fr))!important} }
+/* Lineup sheet on phones: a long last name (Washington, Smith-Njigba) wraps instead of being cut off. */
+@media (max-width:480px){.ls-name{font-size:13px;letter-spacing:-.01em}.ls-ln{white-space:normal;overflow-wrap:anywhere;text-overflow:clip}}
+/* A heading with a caption beside it: the caption drops under the heading when both don't fit on one line. */
+.hd-wrap{flex-wrap:wrap;gap:2px 12px}
+.hd-wrap>:first-child{white-space:nowrap}
+/* Games left (Season, Playoffs view; Matt, Nov 18, 2026): the rest of the regular season, a card per week. */
+.rs-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:12px}
+.rs-wk{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px 14px;min-width:0}
+.rs-h{font-family:'JetBrains Mono';font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.rs-g{display:flex;align-items:center;gap:6px;padding:4px 0;font-size:14px;font-weight:600;white-space:nowrap;min-width:0}
+.rs-g i{width:8px;height:8px;border-radius:50%;flex:none}
+.rs-g em{font-style:normal;font-weight:400;font-size:12px;color:var(--muted)}
+.season-grid:not([data-view="Playoffs"]) .sg-rs{display:none!important}
+.sg-rs{order:4}
+@media (min-width:600px){.rs-grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media (min-width:900px){.season-grid>.sg-rs{grid-column:1/-1}}
 /* Collapsed parlays still show every leg in a shared image. */
 .capturing .pr-body{display:block!important}
 /* Manager crests: the avatar in its manager's hue, cut to a shield that fits
@@ -1012,7 +1056,7 @@ button{font-family:inherit;color:inherit}
     <div class="shot-footer" style="padding:0 16px 14px"><b>9FEAMG</b><span>{{ shotHero }}</span></div>
   </div>
   <div style="padding:10px 20px 0">
-    <div style="display:flex;flex-direction:column;gap:10px">
+    <div class="mu-list" style="display:flex;flex-direction:column;gap:10px">
       <sc-for list="{{ matchups }}" as="mu" hint-placeholder-count="4">
         <div style="background:var(--surface);border:1px solid var(--line);border-radius:16px;overflow:hidden">
           <sc-if value="{{ mu.hasRound }}" hint-placeholder-val="{{ false }}"><div style="padding:14px 16px 0;font-family:'JetBrains Mono';font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)">{{ mu.round }}</div></sc-if>
@@ -1271,6 +1315,7 @@ button{font-family:inherit;color:inherit}
       <div style="font-family:'JetBrains Mono';font-size:11px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase">$10 stakes · for fun</div>
     </div>
   </sc-if>
+  <sc-if value="{{ noTickets }}" hint-placeholder-val="{{ false }}"><div class="pr-empty" style="padding:20px 20px 0"><div style="padding:28px 16px;border:1px dashed var(--line);border-radius:16px;text-align:center;font-size:14px;color:var(--muted)">{{ noTicketsLine }}</div></div></sc-if>
   <!--TICKETS-->
   <sc-for list="{{ parlays }}" as="pr" hint-placeholder-count="1">
     <sc-if value="{{ pr.firstGroup }}" hint-placeholder-val="{{ false }}">
@@ -1914,6 +1959,19 @@ button{font-family:inherit;color:inherit}
 </div>
 </div>
 
+<sc-if value="{{ hasRest }}" hint-placeholder-val="{{ false }}">
+<div id="games-left" class="sg-rs" style="padding:30px 20px 0;scroll-margin-top:64px">
+  <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:26px;text-transform:uppercase">Games left</div>
+  <div class="sec-cap">{{ restSub }}</div>
+  <div class="rs-grid">
+    <sc-for list="{{ restSched }}" as="rw" hint-placeholder-count="4">
+      <div class="rs-wk"><div class="rs-h">{{ rw.label }}</div>
+        <sc-for list="{{ rw.games }}" as="g" hint-placeholder-count="5"><div class="rs-g"><i style="background:{{ g.ca }}"></i>{{ g.a }} <em>vs</em> <i style="background:{{ g.cb }}"></i>{{ g.b }}</div></sc-for>
+      </div>
+    </sc-for>
+  </div>
+</div>
+</sc-if>
 <div id="weekly" class="heat-sec sg-hs" style="padding:30px 20px 0;scroll-margin-top:64px">
   <div style="display:flex;align-items:baseline;justify-content:space-between;gap:24px">
     <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:26px;text-transform:uppercase">Weekly scores</div>
@@ -2483,7 +2541,7 @@ button{font-family:inherit;color:inherit}
   <div class="aw-foot"><b>9FEAMG</b><span>{{ wireSub }}</span></div>
 </div>
   <div style="padding:24px 20px 0">
-    <div style="display:flex;justify-content:space-between;align-items:baseline">
+    <div class="hd-wrap" style="display:flex;justify-content:space-between;align-items:baseline">
       <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:24px;text-transform:uppercase">Activity vs record</div>
       <div style="font-family:'JetBrains Mono';font-size:11px;color:var(--muted)">{{ activityLabel }}</div>
     </div>
@@ -2521,7 +2579,7 @@ button{font-family:inherit;color:inherit}
 </sc-if>
 
 <div style="margin:24px 20px 0;padding:18px;background:var(--surface);border:1px solid var(--line);border-radius:16px">
-  <div style="display:flex;justify-content:space-between;align-items:baseline">
+  <div class="hd-wrap" style="display:flex;justify-content:space-between;align-items:baseline">
     <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:22px;text-transform:uppercase">FAAB left</div>
     <div style="font-family:'JetBrains Mono';font-size:11px;color:var(--muted)">{{ faabBudget }}</div>
   </div>
