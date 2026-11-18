@@ -535,14 +535,14 @@ button{font-family:inherit;color:inherit}
   .season-grid>.sg-L,.season-grid>.sg-R,.sg-A,.sg-B1,.sg-B2,.sg-C{display:contents}
   .sg-st{order:1}.sg-pw{order:2}.sg-od{order:3}.sg-br{order:4}.sg-ch{order:5}.sg-lk{order:6}.sg-bn{order:7}.sg-src{order:8}.sg-hs{order:9}.sg-hr{order:10}
 }
-/* One view at a time at every width (Matt, Nov 17, 2026): Standings (tiles, standings, power rankings),
+/* One view at a time at every width (Matt, Nov 17, 2026): Standings (tiles, standings, power rankings, weekly scores),
    Playoffs (odds, picture), Stats (the rest). The sections all stay in the page. */
 /* Links to a section land below the top bar and the sticky switch. */
 .season-grid [id]{scroll-margin-top:124px!important}
 .sv-tiles:not([data-view="Standings"]){display:none!important}
-.season-grid[data-view="Standings"] :is(.sg-od,.sg-br,.sg-ch,.sg-lk,.sg-bn,.sg-src,.sg-hs,.sg-hr),
+.season-grid[data-view="Standings"] :is(.sg-od,.sg-br,.sg-ch,.sg-lk,.sg-bn,.sg-src,.sg-hr),
 .season-grid[data-view="Playoffs"] :is(.sg-st,.sg-pw,.sg-ch,.sg-lk,.sg-bn,.sg-src,.sg-hs,.sg-hr),
-.season-grid[data-view="Stats"] :is(.sg-st,.sg-pw,.sg-od,.sg-br){display:none!important}
+.season-grid[data-view="Stats"] :is(.sg-st,.sg-pw,.sg-od,.sg-br,.sg-hs){display:none!important}
 /* Weekly scores grid: phones (weeks so far + one "rest" cell) and desktop (all 14 weeks). */
 .heat-grid{display:grid;grid-template-columns:var(--heat-m);gap:4px}
 .heat-wrap{min-width:var(--hmin-m)}

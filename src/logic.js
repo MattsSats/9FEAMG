@@ -61,7 +61,7 @@ if (D && typeof document != 'undefined' && !document.getElementById('ini-fit')) 
   document.head.appendChild(st);
 }
 // Season on phones is three views (Matt, Nov 17, 2026): which one each section lives in, by element id.
-const SEASON_VIEW = { standings: 'Standings', power: 'Standings', odds: 'Playoffs', bracket: 'Playoffs', pfpa: 'Stats', luck: 'Stats', xw: 'Stats', bench: 'Stats', src: 'Stats', weekly: 'Stats', howto: 'Stats' };
+const SEASON_VIEW = { standings: 'Standings', power: 'Standings', odds: 'Playoffs', bracket: 'Playoffs', pfpa: 'Stats', luck: 'Stats', xw: 'Stats', bench: 'Stats', src: 'Stats', weekly: 'Standings', howto: 'Stats' };
 // Manager colors: lightness comes from --mgrL (0.76 dark, 0.61 light) so dots and bars hold 3:1 on the light background.
 const col = m => `oklch(var(--mgrL, 0.76) 0.12 ${HUE[m] ?? 0})`;
 // Parlays can belong to someone outside the league (e.g. 'The Booth'), who gets the accent color.
