@@ -785,6 +785,8 @@ button{font-family:inherit;color:inherit}
 .season-grid:not([data-view="Playoffs"]) .sg-rs{display:none!important}
 .sg-rs{order:4}
 @media (min-width:600px){.rs-grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media (max-width:599px){.rs-wk{padding:12px}.rs-h{letter-spacing:.03em;white-space:nowrap}.rs-g{font-size:13.5px;gap:5px}}
+@media (max-width:359px){.rs-grid{grid-template-columns:minmax(0,1fr)}}
 @media (min-width:900px){.season-grid>.sg-rs{grid-column:1/-1}}
 /* Collapsed parlays still show every leg in a shared image. */
 .capturing .pr-body{display:block!important}
