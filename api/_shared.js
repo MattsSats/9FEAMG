@@ -251,8 +251,15 @@ export function weeklySpread(season, W0) {
 //   with the uncertainty its weeks so far leave (the weekly spread over √(weeks + shrink)); the weeks
 //   are then rolled around that. One run's teams are hot or cold all season, as real ones are, so the
 //   far ends (>99%, <1%) come in a little less sure. The live week stays on Yahoo's projection.
+// With `rosters` (the live week's rosters file), the live week is counted the way the win odds count
+// it (liveSides; Matt, Nov 17, 2026): Yahoo's and ESPN's projections averaged, Q and D starters marked
+// down, and a bye, Out or empty slot filled from the bench, so a lineup nobody has set yet doesn't
+// drag a team's odds down.
+// Each team also gets (Matt, Nov 17, 2026): `records`, how often it finishes on each record and how
+// often that record makes the playoffs ([{ w, l, share, in }], most wins first), and `root`, the other
+// games of the next week with its playoff odds under each result ([{ a, b, inA, inB }], biggest gap first).
 // Returns null when a week left to play has no schedule.
-export function playoffOdds(season, { through, live = true, sims = 20000, shrink = 5, roster = true, spread = true } = {}) {
+export function playoffOdds(season, { through, live = true, sims = 20000, shrink = 5, roster = true, spread = true, rosters = null, now = Date.now() } = {}) {
   const MGR = season.managers.map(x => x.m), SC = season.scores, PAIRS = season.schedule || {};
   const NF = Math.max(0, ...MGR.map(m => (SC[m] || []).length)), W0 = Math.min(through ?? NF, NF), R = season.regularSeasonWeeks || 14;
   const P = season.playoffTeams || 6, byes = Math.max(0, 2 ** Math.ceil(Math.log2(P)) - P), N = MGR.length;
@@ -274,21 +281,26 @@ export function playoffOdds(season, { through, live = true, sims = 20000, shrink
   const sd = weeklySpread(season, W0), tau = spread ? sd / Math.sqrt(W0 + shrink) : 0;
   // The live week (the one right after W0) from Yahoo: points so far plus the rest of the projection.
   const LV = live && W0 < R && season.live?.week == W0 + 1 && season.live.scores ? season.live.scores : null;
+  const SIDES = LV && rosters ? liveSides(season, rosters, now) : null;
   const wk = {};
   for (let w = W0 + 1; w <= R; w++) wk[w] = Object.fromEntries(MGR.map(m => {
     const s = LV && w == W0 + 1 ? LV[m] : null;
     if (!s || !(s[1] > 0)) return [m, [avg[m], sd]];
+    const x = SIDES?.[m];
+    if (x) return [m, [x.proj, Math.sqrt(sd * sd * x.left + x.iv)]];
     const left = Math.max(0, s[1] - (s[0] || 0)) / s[1];
     return [m, [s[1], sd * Math.sqrt(left)]];
   }));
   // Seeded random numbers (mulberry32) and normal draws (Box-Muller).
-  let seed = 9 + W0 * 7919 + (LV ? Math.round(MGR.reduce((t, m) => t + LV[m][0] * 100 + LV[m][1], 0)) : 0);
+  let seed = 9 + W0 * 7919 + (LV ? Math.round(MGR.reduce((t, m) => t + LV[m][0] * 100 + (SIDES?.[m]?.proj ?? LV[m][1]), 0)) : 0);
   const rand = () => { seed = (seed + 0x6D2B79F5) | 0; let t = Math.imul(seed ^ (seed >>> 15), 1 | seed); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
   const draw = (mu, s) => s ? mu + s * Math.sqrt(-2 * Math.log(1 - rand())) * Math.cos(2 * Math.PI * rand()) : mu;
   const out = Object.fromEntries(MGR.map(m => [m, { playoffs: 0, bye: 0, top: 0, last: 0, wins: 0 }]));
   // The swing (Matt, Oct 31, 2026): playoff odds in the runs where a team wins its next game (the first
   // week simulated, W0 + 1) and in the runs where it loses.
   const S1 = W0 < R ? W0 + 1 : null, sw = Object.fromEntries(MGR.map(m => [m, { w: 0, wIn: 0, l: 0, lIn: 0 }]));
+  // By final record, and by who won each of the next week's games.
+  const G1 = S1 ? PAIRS[S1] : [], recs = Object.fromEntries(MGR.map(m => [m, {}])), rootT = Object.fromEntries(MGR.map(m => [m, G1.map(() => [0, 0, 0, 0])]));
   for (let i = 0; i < sims; i++) {
     const W = { ...wins }, F = { ...pf }, first = {}, lvl = Object.fromEntries(MGR.map(m => [m, draw(0, tau)]));
     for (let w = W0 + 1; w <= R; w++) for (const [a, b] of PAIRS[w]) {
@@ -297,10 +309,15 @@ export function playoffOdds(season, { through, live = true, sims = 20000, shrink
       if (w == S1 && sa != sb) { first[a] = sa > sb; first[b] = sb > sa; }
     }
     const order = MGR.map(m => ({ m, w: W[m], pf: F[m] })).sort(byStandings);
-    order.forEach((r, k) => { const o = out[r.m], s = sw[r.m]; o.wins += W[r.m]; if (k < P) o.playoffs++; if (k < byes) o.bye++; if (k == 0) o.top++; if (k == N - 1) o.last++;
+    order.forEach((r, k) => { const o = out[r.m], s = sw[r.m]; o.wins += W[r.m];
+      const rc = recs[r.m][W[r.m]] ||= [0, 0]; rc[0]++; if (k < P) rc[1]++;
+      G1.forEach(([a], g) => { if (first[a] == null) return; const t = rootT[r.m][g], j = first[a] ? 0 : 2; t[j]++; if (k < P) t[j + 1]++; }); if (k < P) o.playoffs++; if (k < byes) o.bye++; if (k == 0) o.top++; if (k == N - 1) o.last++;
       if (first[r.m] === true) { s.w++; if (k < P) s.wIn++; } else if (first[r.m] === false) { s.l++; if (k < P) s.lIn++; } });
   }
-  for (const m of MGR) { for (const k in out[m]) out[m][k] /= sims; const s = sw[m]; out[m].ifWin = s.w ? s.wIn / s.w : null; out[m].ifLose = s.l ? s.lIn / s.l : null; }
+  for (const m of MGR) { for (const k in out[m]) out[m][k] /= sims; const s = sw[m]; out[m].ifWin = s.w ? s.wIn / s.w : null; out[m].ifLose = s.l ? s.lIn / s.l : null;
+    out[m].records = Object.entries(recs[m]).map(([w, [n, k]]) => ({ w: +w, l: R - +w, share: n / sims, in: k / n })).sort((a, b) => b.w - a.w);
+    out[m].root = G1.map(([a, b], g) => ({ a, b, t: rootT[m][g] })).filter(x => x.a != m && x.b != m && x.t[0] >= sims / 100 && x.t[2] >= sims / 100)
+      .map(({ a, b, t }) => ({ a, b, inA: t[1] / t[0], inB: t[3] / t[2] })).sort((x, y) => Math.abs(y.inA - y.inB) - Math.abs(x.inA - x.inB)); }
   // What's already settled, from wins alone and never from a simulation: a team is in when at most
   // P − 1 others can still reach its win total even if it loses out (a tie on wins counts as a loss,
   // since it comes down to points), and out when P others already have more wins than it can reach.
@@ -335,12 +352,13 @@ export const INJ_PLAY = { Q: 0.85, D: 0.35 };
 // A player's projection for the win odds: Yahoo's and ESPN's averaged when the rosters file has both
 // for the live week (Matt, Oct 29, 2026: one source's projections are noisier than two), else Yahoo's.
 export const projOf = (p, rosters, wk) => p.espn != null && p.proj > 0 && rosters?.espn?.week == wk ? (p.proj + p.espn) / 2 : p.proj;
-export function matchupOdds(season, rosters = null, now = Date.now()) {
-  const L = season.live, wk = L?.week, NF = Math.max(0, ...season.managers.map(x => (season.scores[x.m] || []).length));
-  if (!L?.scores || !season.schedule?.[wk]) return null;
-  const sd = weeklySpread(season, NF);
-  // Normal CDF through erf (Abramowitz and Stegun 7.1.26).
-  const erf = x => { const t = 1 / (1 + 0.3275911 * Math.abs(x)), y = 1 - (((((1.061405429 * t - 1.453152027) * t) + 1.421413741) * t - 0.284496736) * t + 0.254829592) * t * Math.exp(-x * x); return x < 0 ? -y : y; };
+// The live week's sides as the win odds count them, by manager: { proj: the adjusted projection, left:
+// the share of Yahoo's projection still to play, iv: variance the Q and D tags add }. matchupOdds and
+// the live week in playoffOdds both start from these, so the two agree (Matt, Nov 17, 2026). null
+// without live scores.
+export function liveSides(season, rosters = null, now = Date.now()) {
+  const L = season.live, wk = L?.week;
+  if (!L?.scores) return null;
   const pts = L.playerPoints || {}, playing = new Set(L.inProgress || []);
   const proj = p => projOf(p, rosters, wk), started = p => pts[p.name] != null || playing.has(p.name) || now >= (kickoffAt(season, wk, nflGameOf(season, p.nfl, wk) || 'Sun 12:00 PM')?.getTime() ?? Infinity);
   // Starters still to play: { cut: expected points lost to Q/D tags, v: variance added, espn: what
@@ -375,8 +393,16 @@ export function matchupOdds(season, rosters = null, now = Date.now()) {
   };
   const side = m => { const [pnow, proj] = L.scores[m] || [0, 0], I = injOf(m);
     return { proj: (proj || pnow || 0) + I.espn - I.cut + fillOf(m), left: proj > 0 ? Math.max(0, proj - (pnow || 0)) / proj : 0, iv: I.v }; };
+  return Object.fromEntries(season.managers.map(x => [x.m, side(x.m)]));
+}
+export function matchupOdds(season, rosters = null, now = Date.now()) {
+  const L = season.live, wk = L?.week, NF = Math.max(0, ...season.managers.map(x => (season.scores[x.m] || []).length));
+  if (!L?.scores || !season.schedule?.[wk]) return null;
+  const sd = weeklySpread(season, NF), SIDES = liveSides(season, rosters, now);
+  // Normal CDF through erf (Abramowitz and Stegun 7.1.26).
+  const erf = x => { const t = 1 / (1 + 0.3275911 * Math.abs(x)), y = 1 - (((((1.061405429 * t - 1.453152027) * t) + 1.421413741) * t - 0.284496736) * t + 0.254829592) * t * Math.exp(-x * x); return x < 0 ? -y : y; };
   return season.schedule[wk].map(([a, b]) => {
-    const A = side(a), B = side(b), v = sd * sd * (A.left + B.left) + A.iv + B.iv, d = A.proj - B.proj;
+    const A = SIDES[a], B = SIDES[b], v = sd * sd * (A.left + B.left) + A.iv + B.iv, d = A.proj - B.proj;
     return { a, b, pa: v > 0 ? 0.5 * (1 + erf(d / Math.sqrt(2 * v))) : d > 0 ? 1 : d < 0 ? 0 : 0.5 };
   });
 }

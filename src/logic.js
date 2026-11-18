@@ -315,12 +315,23 @@ class Component extends DCLogic {
   // seasons take a moment on a phone: the Season tab (full, with the change since the week before)
   // waits for them; elsewhere they're worked out just after the page draws, and what uses them (the
   // swing lines) appears a beat later. null until then.
+  // They wait for the rosters file (Matt, Nov 17, 2026): the live week is counted like the win odds
+  // (liveSides: bench fills, Q and D tags, ESPN), and one set of numbers beats two that differ.
   odds(full) {
-    const keyOf = () => NF + '|' + JSON.stringify(LIVE?.scores || null), key = keyOf(), M = this.oddsMemo?.key == key ? this.oddsMemo : null;
-    if (full) return M && 'prev' in M ? M : (this.oddsMemo = { key, now: M?.now ?? playoffOdds(D), prev: NF > 1 ? playoffOdds(D, { through: NF - 1, live: false }) : null });
+    if (!this.state.loaded) return null;
+    const keyOf = () => NF + '|' + this.sidesSig(this.state.rosters), key = keyOf(), M = this.oddsMemo?.key == key ? this.oddsMemo : null;
+    const run = () => playoffOdds(D, { rosters: this.state.rosters });
+    if (full) return M && 'prev' in M ? M : (this.oddsMemo = { key, now: M?.now ?? run(), prev: NF > 1 ? playoffOdds(D, { through: NF - 1, live: false }) : null });
     if (M) return M;
-    if (this.oddsLater != key) { this.oddsLater = key; setTimeout(() => { const k = keyOf(); if (this.oddsMemo?.key != k) { this.oddsMemo = { key: k, now: playoffOdds(D) }; this.setState({ oddsAt: Date.now() }); } }, 80); }
+    if (this.oddsLater != key) { this.oddsLater = key; setTimeout(() => { const k = keyOf(); if (this.oddsMemo?.key != k) { this.oddsMemo = { key: k, now: run() }; this.setState({ oddsAt: Date.now() }); } }, 80); }
     return null;
+  }
+  // What the live week's odds start from, as a string: the odds are redone only when it changes.
+  sidesSig(R) {
+    const k = JSON.stringify(LIVE?.scores || null);
+    if (this.sgR !== R || this.sgK != k) { this.sgR = R; this.sgK = k; const sd = R && D ? liveSides(D, R) : null;
+      this.sg = k + '|' + (sd ? MGR.map(m => sd[m].proj.toFixed(1) + ':' + sd[m].iv.toFixed(0)).join(',') : ''); }
+    return this.sg;
   }
   // Runs the three data scripts the poll read, recomputes everything (derive), lays Yahoo's reads over
   // the files again and redraws. False when the week changed (a final or a new week), which reloads.
@@ -1292,16 +1303,33 @@ class Component extends DCLogic {
       byes: [seedOf(1), seedOf(2)], qf: [[3, 6], [4, 5]].map(([a, b]) => ({ a: seedOf(a), b: seedOf(b) })), cons: [[7, 10], [8, 9]].map(([a, b]) => ({ a: seedOf(a), b: seedOf(b) })) } : null;
     // Playoff odds (playoffOdds in api/_shared.js) with the change since the week before (this.odds).
     const OD = S.tab == 'Season' ? this.odds(true) : null, oddsDone = OD?.now?.weeksLeft == 0;
+    // Tapping a row opens what's behind its number (Matt, Nov 17, 2026): points for (the tiebreaker),
+    // what the roster projects now, who's left, and what this week's game is worth.
+    const rankOf = (m, val) => ord([...MGR].sort((x, y) => val(y) - val(x)).indexOf(m) + 1), pfOf = m => ST.find(x => x.m == m)?.pf || 0, wlOf = m => { const r = ST.find(x => x.m == m); return r ? r.w + '–' + r.l : ''; };
+    const RPN = D.rosterProj?.[NF + 1], oppIn = (m, w) => { const p = (PAIRS[w] || []).find(p => p.includes(m)); return p ? (p[0] == m ? p[1] : p[0]) : null; };
+    const whyOf = (m, o) => {
+      const left = []; for (let w = NF + 1; w <= RW; w++) { const x = oppIn(m, w); if (x) left.push(x + ' ' + wlOf(x)); }
+      const sw = OD.now.swingWeek, x = sw ? oppIn(m, sw) : null, pair = x && (PAIRS[sw] || []).find(p => p.includes(m)), pa = pair && sw == LW ? winOf(S.rosters)[pair[0] + '|' + pair[1]] : null;
+      const win = pa == null ? '' : Math.round((pair[0] == m ? pa : 1 - pa) * 100) + '% to beat ' + x;
+      const swing = o.playoffsSure == null && o.ifWin != null && o.ifLose != null ? `playoffs ${oddsPct(o.ifWin)} with a win, ${oddsPct(o.ifLose)} with a loss` : '';
+      return [
+        { k: 'Points for', t: `${pfOf(m).toLocaleString('en-US', { minimumFractionDigits: 1, maximumFractionDigits: 1 })} · ${rankOf(m, pfOf)} · breaks ties on wins` },
+        RPN?.[m] > 0 && { k: 'Roster now', t: `Projects ${f1(RPN[m])} a week · ${rankOf(m, y => RPN[y])}` },
+        left.length && { k: 'Left to play', t: left.join(', ') },
+        (win || swing) && { k: 'Week ' + sw, t: [win, swing].filter(Boolean).join(' · ') },
+      ].filter(Boolean);
+    };
     const oddsRows = !OD?.now ? [] : MGR.map(m => ({ m, o: OD.now.teams[m], p: OD.prev?.teams[m], s: ST.find(x => x.m == m) }))
       .sort((a, b) => b.o.playoffs - a.o.playoffs || b.o.bye - a.o.bye || a.o.last - b.o.last).map(({ m, o, p, s }) => {
         const ch = p ? Math.round(o.playoffs * 100) - Math.round(p.playoffs * 100) : 0;
         return { m, init: INIT[m], color: col(m), wl: s.w + '–' + s.l, pct: raceText(o, 'playoffs', oddsDone), bar: (o.playoffs * 100).toFixed(1) + '%',
           bye: raceText(o, 'bye', oddsDone), last: raceText(o, 'last', oddsDone), move: !p ? '' : ch > 0 ? '▲' + ch : ch < 0 ? '▼' + -ch : '–',
-          moveColor: ch > 0 ? 'var(--pos)' : ch < 0 ? 'var(--neg)' : 'var(--muted)', open: () => { this.setState({ tab: 'Teams', team: m }); window.scrollTo(0, 0); } };
+          moveColor: ch > 0 ? 'var(--pos)' : ch < 0 ? 'var(--neg)' : 'var(--muted)', open: () => this.setState({ poOpen: this.state.poOpen == m ? null : m }),
+          isOpen: S.poOpen == m, expanded: String(S.poOpen == m), why: S.poOpen == m ? whyOf(m, o) : [], teamLabel: m + '’s team page', toTeam: () => { this.setState({ tab: 'Teams', team: m }); window.scrollTo(0, 0); } };
       });
     const oddsSub = !OD ? '' : !OD.now ? 'Odds start once the rest of the regular season is on the schedule.'
       : oddsDone ? 'The regular season is over.'
-      : `${OD.now.sims.toLocaleString('en-US')} simulated seasons · ${OD.now.live ? `Week ${LW} from ${LIVE_STARTED ? 'live scores and what’s left to play' : 'Yahoo’s projections'} · ` : ''}${OD.prev ? '± since last week' : ''}`;
+      : `${OD.now.sims.toLocaleString('en-US')} simulated seasons · ${OD.now.live ? `Week ${LW} from ${LIVE_STARTED ? 'live scores and what’s left to play' : 'Yahoo’s and ESPN’s projections'} · ` : ''}${OD.prev ? '± since last week' : ''}`;
     // Season awards (seasonAwards in api/_shared.js), once the box scores have loaded.
     const seasonAw = (S.tab == 'Awards' || S.tab == 'Teams') && S.box ? seasonAwards(D, S.box, { tx: S.tx }) : null;
     // Award cards (Matt, Nov 15, 2026): the number with its unit, the sentence, and the runner-up underneath,
@@ -1329,9 +1357,26 @@ class Component extends DCLogic {
     if (scnKey && this.scnKey != scnKey) { this.scnKey = scnKey; this.scn = playoffScenarios(D); }
     const SCN = scnKey ? this.scn : null;
     // Teams with the same sentence share one row (Matt, Nov 15, 2026), in standings order.
+    // Under the exact sentences, for a team still in the race (Matt, Nov 17, 2026), from the simulations:
+    // what this week's game is worth, the odds on each final record, and which other games to root for
+    // (the result that helps, by how many points of playoff odds over the other result; 3 or more).
+    const simsOf = m => { const o = OD?.now?.teams[m], t = SCN.teams[m]; if (!o || t.clinched || t.out || o.playoffsSure != null || OD.now.through != SCN.through) return [];
+      // Records it lands on at least 1% of the time; a run of sure things at either end reads "8–6 or better >99%".
+      const rl = (o.records || []).filter(r => Number.isInteger(r.w) && r.share >= 0.01).map(r => ({ rec: r.w + '–⁠' + r.l, p: oddsPct(r.in) }));
+      const top = rl.findIndex(r => r.p != '>99%'), nTop = top < 0 ? rl.length : top, bot = rl.length - 1 - rl.findLastIndex(r => r.p != '<1%');
+      const mid = rl.slice(nTop > 1 ? nTop - 1 : 0, bot > 1 ? rl.length - bot + 1 : rl.length);
+      if (nTop > 1) mid[0] = { rec: mid[0].rec + ' or better', p: '>99%' };
+      if (bot > 1 && mid.length > (nTop > 1 ? 1 : 0)) mid[mid.length - 1] = { rec: mid[mid.length - 1].rec + ' or worse', p: '<1%' };
+      const recs = mid.map(r => (r.rec + ' ' + r.p).replace(/ /g, ' '));
+      const root = (o.root || []).map(r => ({ w: r.inA >= r.inB ? r.a : r.b, l: r.inA >= r.inB ? r.b : r.a, d: Math.round(Math.abs(r.inA - r.inB) * 100) })).filter(r => r.d >= 3).slice(0, 3);
+      return [
+        o.ifWin != null && o.ifLose != null && { k: 'Week ' + OD.now.swingWeek, t: `${oddsPct(o.ifWin)} with a win · ${oddsPct(o.ifLose)} with a loss` },
+        recs.length > 1 && { k: 'Finish', t: recs.join(' · ') },
+        root.length && { k: 'Root for', t: root.map(r => `${r.w} over ${r.l} +${r.d}`.replace(/ /g, ' ')).join(' · ') },
+      ].filter(Boolean); };
     const scenarios = []; if (SCN) for (const s of ST) {
-      const lines = SCN.teams[s.m].lines, key = lines.join('|'), g = scenarios.find(x => x.key == key), who = { m: s.m, init: INIT[s.m], color: col(s.m), wl: s.w + '–' + s.l };
-      if (g) g.teams.push(who); else scenarios.push({ key, teams: [who], lines: lines.map(t => ({ t })) });
+      const sims = simsOf(s.m), lines = SCN.teams[s.m].lines, key = lines.join('|') + (sims.length ? '|' + s.m : ''), g = scenarios.find(x => x.key == key), who = { m: s.m, init: INIT[s.m], color: col(s.m), wl: s.w + '–' + s.l };
+      if (g) g.teams.push(who); else scenarios.push({ key, teams: [who], lines: lines.map(t => ({ t })), sims });
     }
     const allS = Object.values(SC).flat(), lo = Math.min(...allS), hi = Math.max(...allS);
     // Weekly scores: one column per regular-season week. Played weeks are shaded (darker = higher),
@@ -1670,7 +1715,7 @@ class Component extends DCLogic {
       // The live week before its first lines: the heading and when they're coming, so the Booth's
       // column isn't left blank on desktop.
       showBooth: boothOn, booth: boothLines, hasBooth: boothOn && (boothLines.length > 0 || hasWeek), boothCanShare: boothLines.length > 0,
-      seasonSub, seasonTiles, standings, playoffLine: `Playoff line · top ${P} of ${MGR.length}`, oddsRows, oddsSub, scenarios, hasScenarios: scenarios.length > 0, scenariosSub: SCN ? `Through Week ${SCN.through} · a win or a loss means Week ${SCN.week}` : '', pic: pic || {}, hasPic: !!pic,
+      seasonSub, seasonTiles, standings, playoffLine: `Playoff line · top ${P} of ${MGR.length}`, oddsRows, oddsSub, scenarios, hasScenarios: scenarios.length > 0, scenariosSub: SCN ? `Through Week ${SCN.through} · a win or a loss means Week ${SCN.week}` : '', poHow: !!S.poHow, poHowLabel: S.poHow ? 'Hide' : 'How this works', poHowTap: () => this.setState({ poHow: !this.state.poHow }), hasPoHow: oddsRows.length > 0 && !oddsDone, pic: pic || {}, hasPic: !!pic,
       heat, heatHead, heatColsM, heatColsD, heatMinM, heatMinD,
       team, teamPicker,
       draftInfo: D.draftInfo, draftToolUrl: D.draftToolUrl || '', hasDraftTool: !!D.draftToolUrl, draftOk: !draftMsg, draftMsg, draftFirsts, draftModes, draftChips, draftPicks, draftTitle, draftSub, isBoard, notBoard: !isBoard, boardHead, boardRows,

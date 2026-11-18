@@ -344,8 +344,8 @@ function standingsCard(season, st) {
 }
 
 // Playoff odds: every team's chance to make the playoffs (bar), the change since last week, a bye and last place.
-function oddsOf(season, st) {
-  const now = playoffOdds(season), prev = st.NF > 1 ? playoffOdds(season, { through: st.NF - 1, live: false }) : null;
+function oddsOf(season, st, rosters = null) {
+  const now = playoffOdds(season, { rosters }), prev = st.NF > 1 ? playoffOdds(season, { through: st.NF - 1, live: false }) : null;
   if (!now) return null;
   const done = now.weeksLeft == 0, look = Object.fromEntries(st.rows.map(r => [r.m, r]));
   const rows = season.managers.map(x => x.m).map(m => ({ m, r: look[m], o: now.teams[m], ch: prev ? Math.round(now.teams[m].playoffs * 100) - Math.round(prev.teams[m].playoffs * 100) : null }))
@@ -636,7 +636,13 @@ async function sectionRoute(url, request, name) {
   if (kind == 'teamsec') { const [box, tx] = await Promise.all([loadBox(url.origin).catch(() => null), loadTx(url.origin).catch(() => null)]); data = teamSecOf(season, seasonStats(season, box), box, tx, tsec[1], tsec[2]); }
   if (kind == 'week') data = weekOf(season, st, +wkm[1]);
   if (kind == 'booth') data = boothOf(season);
-  if (kind == 'odds') data = oddsOf(season, st);
+  if (kind == 'odds') {
+    // The live week's rosters, as the site reads them, so the card's odds match the page's.
+    let rosters = null;
+    try { const r = await fetch(new URL('/uploads/9feamg-rosters.json', dataOrigin(url.origin)), { cache: 'no-store' }); rosters = r.ok ? await r.json() : null; } catch { /* Yahoo's projections alone then */ }
+    if (rosters) try { rosters = liveRosters(rosters, await readData()); } catch { /* the file's lineups then */ }
+    data = oddsOf(season, st, rosters);
+  }
   if (kind == 'bracket') data = bracketOf(season, st);
   if (kind == 'awards') { const [box, tx] = await Promise.all([loadBox(url.origin).catch(() => null), loadTx(url.origin).catch(() => null)]); data = awardsOf(season, box, aws?.[1], tx, st); }
   if (kind == 'wire') { const tx = await loadTx(url.origin); if (!tx) return isImg ? fallback() : Response.redirect(dest, 302); data = wireOf(season, tx, await loadBox(url.origin), name == 'wire-season' ? 'season' : 'week'); }

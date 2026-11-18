@@ -103,9 +103,11 @@ for (const [w, r] of Object.entries(S.chatRanks || {})) {
   if (order.length != all.length || all.some(m => !order.includes(m))) bad.push(`chatRanks[${w}].order must list all ${all.length} managers once each.`);
 }
 // Playoff odds as the site shows them (to check odds quoted in Booth lines against).
-const OD = playoffOdds(S);
+const OD = playoffOdds(S, { rosters: RL });
 if (!OD) warn.push(`No playoff odds: the schedule needs every week through ${S.regularSeasonWeeks}.`);
 else out.push('Playoff odds (playoffs/bye/last): ' + Object.entries(OD.teams).sort((a, b) => b[1].playoffs - a[1].playoffs).map(([m, o]) => `${m} ${raceText(o, 'playoffs', !OD.weeksLeft)}/${raceText(o, 'bye', !OD.weeksLeft)}/${raceText(o, 'last', !OD.weeksLeft)}`).join(', '));
+if (OD?.swingWeek) out.push(`Playoff odds by team (Week ${OD.swingWeek} win/loss · by final record · other games, playoff odds if the first-named wins/loses):` + Object.entries(OD.teams).filter(([, o]) => o.playoffsSure == null).map(([m, o]) => `
+  ${m}: ${oddsPct(o.ifWin)}/${oddsPct(o.ifLose)} · ${o.records.filter(r => r.share >= 0.01).map(r => `${r.w}–${r.l} ${oddsPct(r.in)}`).join(', ')} · ${o.root.slice(0, 3).map(r => `${r.a} v ${r.b} ${oddsPct(r.inA)}/${oddsPct(r.inB)}`).join(', ')}`).join(''));
 const SCN = playoffScenarios(S);
 if (SCN) out.push(`Playoff scenarios (a win or loss means Week ${SCN.week}):` + Object.entries(SCN.teams).map(([m, t]) => `
   ${m}: ${t.lines.join(' ')}`).join(''));

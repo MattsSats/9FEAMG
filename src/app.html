@@ -1417,7 +1417,7 @@ button{font-family:inherit;color:inherit}
     <span>MANAGER</span><span>PLAYOFFS</span><span style="text-align:right">±</span><span style="text-align:right">BYE</span><span style="text-align:right">LAST</span>
   </div>
   <sc-for list="{{ oddsRows }}" as="o" hint-placeholder-count="10">
-    <div sc-camel-on-click="{{ o.open }}" class="hov shot-tight" tabindex="0" role="button" style="display:grid;grid-template-columns:minmax(98px,1fr) minmax(0,1.25fr) 30px 36px 36px;gap:8px;align-items:center;padding:9px 6px;margin:0 -6px;border-radius:8px;border-bottom:1px solid var(--line);cursor:pointer">
+    <div sc-camel-on-click="{{ o.open }}" class="hov shot-tight" tabindex="0" role="button" aria-expanded="{{ o.expanded }}" style="display:grid;grid-template-columns:minmax(98px,1fr) minmax(0,1.25fr) 30px 36px 36px;gap:8px;align-items:center;padding:9px 6px;margin:0 -6px;border-radius:8px;border-bottom:1px solid var(--line);cursor:pointer">
       <div style="display:flex;align-items:center;gap:10px;min-width:0">
         <div class="crest" style="width:26px;height:26px;background:{{ o.color }};color:var(--onAccent);display:flex;align-items:center;justify-content:center;font-family:'Big Shoulders Display';font-weight:800;font-size:11px;flex:none"><span class="ini" data-i="{{ o.init }}">{{ o.init }}</span></div>
         <div style="min-width:0"><div style="font-weight:600;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ o.m }}</div><div style="font-family:'JetBrains Mono';font-size:11px;color:var(--muted);margin-top:1px">{{ o.wl }}</div></div>
@@ -1430,7 +1430,27 @@ button{font-family:inherit;color:inherit}
       <span style="text-align:right;font-family:'JetBrains Mono';font-size:12px">{{ o.bye }}</span>
       <span style="text-align:right;font-family:'JetBrains Mono';font-size:12px;color:var(--muted)">{{ o.last }}</span>
     </div>
+    <!-- What's behind the number (Matt, Nov 17, 2026): opens when the row is tapped. -->
+    <sc-if value="{{ o.isOpen }}" hint-placeholder-val="{{ false }}">
+      <div class="no-shot" role="region" aria-label="Behind the odds" style="padding:10px 12px;margin:6px 0;border-radius:10px;background:var(--surface2);font-size:13px;line-height:1.45">
+        <sc-for list="{{ o.why }}" as="y" hint-placeholder-count="4"><div style="display:grid;grid-template-columns:92px minmax(0,1fr);gap:10px;padding:2px 0"><span style="font-family:'JetBrains Mono';font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);padding-top:2px">{{ y.k }}</span><span style="text-wrap:pretty">{{ y.t }}</span></div></sc-for>
+        <button type="button" sc-camel-on-click="{{ o.toTeam }}" class="hov" style="margin-top:6px;min-height:32px;padding:0 12px;border:1px solid var(--line);border-radius:999px;background:transparent;font:inherit;font-weight:600;color:var(--accentInk);cursor:pointer">{{ o.teamLabel }} →</button>
+      </div>
+    </sc-if>
   </sc-for>
+  <!-- How the playoff odds work (Matt, Nov 17, 2026). -->
+  <sc-if value="{{ hasPoHow }}" hint-placeholder-val="{{ false }}"><div class="no-shot" style="padding:10px 0 0;font-size:12.5px;color:var(--muted)">
+    <span style="margin-right:10px">Tap a team to see what’s behind its number.</span>
+    <button type="button" sc-camel-on-click="{{ poHowTap }}" aria-expanded="{{ poHow }}" aria-controls="po-how" class="hov" style="min-height:32px;padding:0 12px;border:1px solid var(--line);border-radius:999px;background:transparent;font:inherit;font-weight:600;color:var(--accentInk);cursor:pointer">{{ poHowLabel }}</button>
+    <sc-if value="{{ poHow }}" hint-placeholder-val="{{ false }}"><div id="po-how" role="region" aria-label="How the playoff odds work" style="margin-top:8px;padding:10px 12px;border-radius:10px;background:var(--surface2);font-size:13px;line-height:1.45;color:var(--ink);text-wrap:pretty">
+      <p style="margin:0 0 8px">We play out the rest of the regular season 20,000 times and count how often each team finishes in the top 6 (playoffs), the top 2 (bye) and 10th (last).</p>
+      <p style="margin:0 0 8px"><b>How good is each team?</b> A mix of its scoring average so far and what its roster projects now with its best healthy lineup, so a trade or an injury moves the odds the same day. The roster counts a little more each week.</p>
+      <p style="margin:0 0 8px"><b>Luck.</b> Every simulated week swings as much as real weeks in this league do, and in each simulated season every team also runs a bit better or worse than it has looked.</p>
+      <p style="margin:0 0 8px"><b>This week</b> starts from Yahoo’s and ESPN’s projections, like the matchup win odds, with a bye or an empty slot filled from the bench.</p>
+      <p style="margin:0 0 8px"><b>Same record, different odds?</b> Seeds go by wins, then points for, so points break ties. Who a team still plays matters too.</p>
+      <p style="margin:0"><b>In</b> and <b>Out</b> show only once wins alone settle it, never from a simulation.</p>
+    </div></sc-if>
+  </div></sc-if>
   <div class="shot-footer"><b>9FEAMG</b><span>{{ shotOdds }}</span></div>
 </div>
 
@@ -1449,11 +1469,12 @@ button{font-family:inherit;color:inherit}
             <sc-for list="{{ s.teams }}" as="tm" hint-placeholder-count="1"><span style="display:inline-flex;align-items:center;gap:6px;font-weight:600;font-size:15px"><span class="crest" style="width:22px;height:22px;background:{{ tm.color }};color:var(--onAccent);display:inline-flex;align-items:center;justify-content:center;font-family:'Big Shoulders Display';font-weight:800;font-size:10px;flex:none"><span class="ini" data-i="{{ tm.init }}">{{ tm.init }}</span></span>{{ tm.m }} <span style="font-family:'JetBrains Mono';font-size:11px;color:var(--muted);font-weight:400">{{ tm.wl }}</span></span></sc-for>
           </div>
           <sc-for list="{{ s.lines }}" as="l" hint-placeholder-count="1"><div style="font-size:14px;line-height:1.4;margin-top:2px">{{ l.t }}</div></sc-for>
+          <sc-for list="{{ s.sims }}" as="y" hint-placeholder-count="0"><div style="display:grid;grid-template-columns:72px minmax(0,1fr);gap:10px;margin-top:4px;font-size:13px;line-height:1.4"><span style="font-family:'JetBrains Mono';font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);padding-top:2px">{{ y.k }}</span><span style="font-family:'JetBrains Mono';font-size:12.5px;text-wrap:pretty">{{ y.t }}</span></div></sc-for>
         </div>
       </div>
     </sc-for>
   </div>
-  <div style="font-size:12px;line-height:1.4;color:var(--muted);margin-top:10px">Seeds go by wins, then points for. A clinch holds even if every tie on wins goes against the team.</div>
+  <div style="font-size:12px;line-height:1.4;color:var(--muted);margin-top:10px">Seeds go by wins, then points for. A clinch holds even if every tie on wins goes against the team. The sentences are exact; the percentages come from the playoff odds. Finish is the chance to make it on each final record. Root for is the result that helps and how many points of playoff odds it’s worth over the other result.</div>
 </div>
 </sc-if>
 
