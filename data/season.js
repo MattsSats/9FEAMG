@@ -346,10 +346,13 @@ window.SEASON = {
     9: ['Matt', 'Tristan', 'Jerger', 'Andy', 'Colin'],
     10: ['Matt', 'Kurt', 'Jerger', 'Tony', 'DLin']
   },
-  // Tristan's weekly power rankings, 1 to 10 (Matt, Oct 20, 2026; Tristan agreed). Rank order only; the
-  // Season tab shows it beside the site's own power rankings for the same week.
-  tristanRanks: {
-    6: ['Tony', 'Kurt', 'Andy', 'Jerger', 'Matt', 'Colin', 'Pablo', 'DLin', 'Mr. G', 'Tristan']
+  // The group chat's power rankings, 1 to 10, one set a week: { by: who wrote them, order } (Matt, Oct 20,
+  // 2026, Tristan; Nov 17, 2026, Colin too, never both in one week). Keyed by the last final week the
+  // rankings cover (a post titled "Week 11" covers games through Week 10, so it goes under 10). Rank
+  // order only; the Season tab shows it beside the site's own power rankings for the same week.
+  chatRanks: {
+    6: { by: 'Tristan', order: ['Tony', 'Kurt', 'Andy', 'Jerger', 'Matt', 'Colin', 'Pablo', 'DLin', 'Mr. G', 'Tristan'] },
+    10: { by: 'Colin', order: ['Andy', 'Tony', 'Colin', 'Matt', 'Tristan', 'Jerger', 'DLin', 'Pablo', 'Kurt', 'Mr. G'] }
   },
   // Post-SNF lines, one per matchup in the same order: written Sunday after the night game, with
   // what each matchup still needs on Monday. [manager, line, written at].

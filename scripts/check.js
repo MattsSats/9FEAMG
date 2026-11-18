@@ -86,16 +86,18 @@ for (const [w, picks] of Object.entries(S.boothPicks || {})) (picks || []).forEa
 });
 { const R = boothPickRecord(S), open = Object.entries(S.boothPicks || {}).filter(([w]) => +w > NF).flatMap(([w, p]) => p.map(x => `W${w} ${x[0]} ${x[1]}%`));
   if (R.graded.length || open.length) out.push(`Booth picks: ${R.w}–${R.l} graded${open.length ? ' · open: ' + open.join(', ') : ''}`); }
-// Jerger's expert picks (a name per matchup) and Tristan's power rankings (all ten managers, once each).
+// Jerger's expert picks (a name per matchup) and the chat's power rankings (chatRanks: who wrote them, all ten managers once each).
 for (const [w, picks] of Object.entries(S.expertPicks || {})) (picks || []).forEach((p, i) => {
   const pair = S.schedule[w]?.[i];
   if (!pair) bad.push(`expertPicks[${w}][${i}]: Week ${w} has no matchup ${i + 1}.`);
   else if (!pair.includes(p)) bad.push(`expertPicks[${w}][${i}] picks ${p}, who isn't in ${pair.join(' vs ')}.`);
 });
 { const R = expertPickRecord(S); if (R.graded.length) out.push(`Jerger's experts: ${R.w}–${R.l} graded`); }
-for (const [w, order] of Object.entries(S.tristanRanks || {})) {
-  const all = S.managers.map(x => x.m);
-  if ((order || []).length != all.length || all.some(m => !order.includes(m))) bad.push(`tristanRanks[${w}] must list all ${all.length} managers once each.`);
+if (S.tristanRanks) bad.push('tristanRanks is now chatRanks: { week: { by, order } }.');
+for (const [w, r] of Object.entries(S.chatRanks || {})) {
+  const all = S.managers.map(x => x.m), order = r?.order || [];
+  if (!all.includes(r?.by)) bad.push(`chatRanks[${w}].by should be a manager, not ${r?.by}.`);
+  if (order.length != all.length || all.some(m => !order.includes(m))) bad.push(`chatRanks[${w}].order must list all ${all.length} managers once each.`);
 }
 // Playoff odds as the site shows them (to check odds quoted in Booth lines against).
 const OD = playoffOdds(S);

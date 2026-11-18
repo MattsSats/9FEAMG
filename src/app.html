@@ -1625,7 +1625,7 @@ button{font-family:inherit;color:inherit}
     </div>
   </sc-if>
   <div class="pw-row" data-tri="{{ triFlag }}" style="display:grid;grid-template-columns:{{ powerCols }};gap:8px;padding:14px 0 8px;font-family:'JetBrains Mono';font-size:11px;letter-spacing:.08em;color:var(--muted);border-bottom:1px solid var(--line)">
-    <span>#</span><span></span><span>MANAGER</span><sc-if value="{{ hasTri }}" hint-placeholder-val="{{ false }}"><span style="text-align:center">TRIST</span></sc-if><span style="text-align:right">SCORE</span>
+    <span>#</span><span></span><span>MANAGER</span><sc-if value="{{ hasTri }}" hint-placeholder-val="{{ false }}"><span style="text-align:center">{{ triHead }}</span></sc-if><span style="text-align:right">SCORE</span>
   </div>
   <sc-for list="{{ powerRows }}" as="p" hint-placeholder-count="10">
     <!-- Rank and crest (with the week's movement on top) span both lines; the name line carries TRIST and

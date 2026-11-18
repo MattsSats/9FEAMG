@@ -395,7 +395,7 @@ class Component extends DCLogic {
       this.toast(err.message || 'Couldn’t save that. Try again.');
     }
   }
-  // Jerger's picks and Tristan's rankings set on the site (/api/pundits), laid over data/season.js.
+  // Jerger's picks and Tristan's rankings set on the site (/api/pundits), laid over data/season.js (expertPicks, chatRanks).
   loadPundits() {
     fetch('/api/pundits', { cache: 'no-store' }).then(r => r.ok ? r.json() : null).then(d => d && this.setState({ pundits: d })).catch(() => {});
   }
@@ -1233,9 +1233,12 @@ class Component extends DCLogic {
     const P = D.playoffTeams;
     // Power rankings, with movement since the week before.
     const prevRank = NF > 1 ? Object.fromEntries(power(NF - 1).map((r, i) => [r.m, i + 1])) : {};
-    // Tristan's own power rankings for the same week (tristanRanks), when he's posted them.
-    const TR = { ...(D.tristanRanks || {}), ...(S.pundits?.ranks || {}) };
-    const triRank = TR[NF] ? Object.fromEntries(TR[NF].map((m, i) => [m, i + 1])) : null;
+    // The group chat's own power rankings for the same week (chatRanks: { by, order }), when someone has
+    // posted them. Rankings Tristan set on the site (/api/pundits, an order) are his.
+    const TR = { ...(D.chatRanks || {}), ...Object.fromEntries(Object.entries(S.pundits?.ranks || {}).map(([w, o]) => [w, { by: 'Tristan', order: o }])) };
+    const triBy = TR[NF]?.by || '', triMine = triBy == 'Tristan' ? TR[NF].order : null;
+    const triRank = TR[NF] ? Object.fromEntries(TR[NF].order.map((m, i) => [m, i + 1])) : null;
+    const triHead = triBy.toUpperCase();
     // Tristan, with Tristan picked in Pick team: reorder the ten and save, until next week's first kickoff.
     const triCan = NF > 0 && S.reqMgr == 'Tristan' && punditOpen(D, 'ranks', NF);
     const triOrder = S.triEdit;
@@ -1246,10 +1249,10 @@ class Component extends DCLogic {
     const triFacts = !triCan ? {} : Object.fromEntries(MGR.map(m => { const s = ST.find(x => x.m == m) || {}; return [m, `site #${siteRank[m]} · ${s.w}-${s.l} · Wk ${NF} ${f2(SC[m][NF - 1])} (${ordinal(weekRank(m))}) · luck ${sgn(s.luck)}`]; }));
     const triMove = (i, d) => { const o = [...triOrder], j = i + d; if (j < 0 || j >= o.length) return; [o[i], o[j]] = [o[j], o[i]]; this.setState({ triEdit: o }); };
     const triEditor = !triCan ? { show: false } : {
-      show: true, open: !!triOrder, label: TR[NF] ? `Edit your Week ${NF} rankings` : `Post your Week ${NF} rankings`,
-      start: () => this.setState({ triEdit: TR[NF] ? [...TR[NF]] : power(NF).map(r => r.m) }),
+      show: true, open: !!triOrder, label: triMine ? `Edit your Week ${NF} rankings` : `Post your Week ${NF} rankings`,
+      start: () => this.setState({ triEdit: triMine ? [...triMine] : power(NF).map(r => r.m) }),
       cancel: () => this.setState({ triEdit: null }),
-      save: () => this.savePundit({ manager: 'Tristan', week: NF, order: triOrder }, 'Rankings saved. TRIST shows them now.'),
+      save: () => this.savePundit({ manager: 'Tristan', week: NF, order: triOrder }, 'Rankings saved. They show beside the site’s now.'),
       saveLabel: S.punditBusy ? 'Saving…' : 'Save rankings',
       lock: (k => k ? `Open until kickoff, ${new Date(k).toLocaleString('en-US', { weekday: 'short', hour: 'numeric', minute: '2-digit', timeZone: 'America/Chicago' }).replace(',', '')}` : '')(weekFirstKick(D, NF + 1)),
       rows: (triOrder || []).map((m, i) => ({ rank: i + 1, m, init: INIT[m], color: col(m), facts: triFacts[m], up: () => triMove(i, -1), down: () => triMove(i, 1), upOp: i == 0 ? '.3' : '1', downOp: i == triOrder.length - 1 ? '.3' : '1' })),
@@ -1722,7 +1725,7 @@ class Component extends DCLogic {
       xwHelp: !!S.xwHelp, xwHelpLabel: S.xwHelp ? 'Hide' : 'What’s this?', xwExample: xwWeek(),
       // "How the odds work" under the live week's matchup cards.
       hasOddsHelp: wk == LW && !!LIVE, oddsHelp: !!S.oddsHelp, oddsHelpLabel: S.oddsHelp ? 'Hide' : 'How the odds work', oddsHow: () => this.setState({ oddsHelp: !this.state.oddsHelp }),
-      powerRows, hasPower: powerRows.length > 0, powerCols, hasTri: !!triRank, triEditor, hasTriEditor: triEditor.show, triEditing: !!triEditor.open, triNotEditing: triEditor.show && !triEditor.open, triFlag: triRank ? '1' : '0', powerSub: `Through week ${NF}` + (triRank ? ' · TRIST = Tristan’s own rankings (▲ Tristan has them higher, ▼ lower)' : ''), sharePower: e => this.share('power', e), powerLabel: S.sharing == 'power' ? '…' : 'Image',
+      powerRows, hasPower: powerRows.length > 0, powerCols, hasTri: !!triRank, triHead, triEditor, hasTriEditor: triEditor.show, triEditing: !!triEditor.open, triNotEditing: triEditor.show && !triEditor.open, triFlag: triRank ? '1' : '0', powerSub: `Through week ${NF}` + (triRank ? ` · ${triHead} = ${triBy}’s rankings (▲ ${triBy} has them higher, ▼ lower)` : ''), sharePower: e => this.share('power', e), powerLabel: S.sharing == 'power' ? '…' : 'Image',
       linkPower: e => this.shareLink(location.origin + '/#power', '9FEAMG · Power rankings', e), shotPower: `Power rankings · through week ${NF}`,
       // Season charts: a link to the chart and an image of it.
       ...Object.fromEntries([['Pfpa', 'pfpa', 'Points for vs against'], ['Luck', 'luck', 'Luck'], ['Xw', 'xw', 'Expected wins'], ['Bench', 'bench', 'Points left on bench'], ['Src', 'src', 'Where the points come from']].flatMap(([k, id, title]) => [
