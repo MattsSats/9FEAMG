@@ -259,7 +259,7 @@ export function weeklySpread(season, W0) {
 // often that record makes the playoffs ([{ w, l, share, in }], most wins first), and `root`, the other
 // games of the next week with its playoff odds under each result ([{ a, b, inA, inB }], biggest gap first).
 // Returns null when a week left to play has no schedule.
-export function playoffOdds(season, { through, live = true, sims = 20000, shrink = 5, roster = true, spread = true, rosters = null, now = Date.now() } = {}) {
+export function playoffOdds(season, { through, live = true, sims = 20000, shrink = 5, roster = true, spread = true, rosters = null, now = Date.now(), edge = 1 } = {}) {
   const MGR = season.managers.map(x => x.m), SC = season.scores, PAIRS = season.schedule || {};
   const NF = Math.max(0, ...MGR.map(m => (SC[m] || []).length)), W0 = Math.min(through ?? NF, NF), R = season.regularSeasonWeeks || 14;
   const P = season.playoffTeams || 6, byes = Math.max(0, 2 ** Math.ceil(Math.log2(P)) - P), N = MGR.length;
@@ -278,7 +278,10 @@ export function playoffOdds(season, { through, live = true, sims = 20000, shrink
     const a = Math.min(0.7, 0.4 + 0.02 * W0), mu = MGR.reduce((t, m) => t + RP[m], 0) / N;
     for (const m of MGR) avg[m] = (1 - a) * avg[m] + a * (RP[m] - mu + lg);
   }
-  const sd = weeklySpread(season, W0), tau = spread ? sd / Math.sqrt(W0 + shrink) : 0;
+  // edge scales how far each team sits from the league average in the weeks after the live one (1 = as
+  // measured, 0 = every such game a coin flip); for testing how much team strength should count weeks ahead.
+  if (edge != 1) for (const m of MGR) avg[m] = lg + edge * (avg[m] - lg);
+  const sd = weeklySpread(season, W0), tau = spread ? edge * sd / Math.sqrt(W0 + shrink) : 0;
   // The live week (the one right after W0) from Yahoo: points so far plus the rest of the projection.
   const LV = live && W0 < R && season.live?.week == W0 + 1 && season.live.scores ? season.live.scores : null;
   const SIDES = LV && rosters ? liveSides(season, rosters, now) : null;
