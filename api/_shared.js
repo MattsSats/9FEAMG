@@ -457,7 +457,7 @@ export const expertPickRecord = season => pickRecord(season, season.expertPicks)
 // The Booth's pick, one label everywhere (Matt, Nov 15, 2026): "Preview pick: Tony" on the cards and link
 // previews, "Preview pick: Tony 54%" on the Booth's line. Picks are made with the preview, before the week's
 // first kickoff, and never change, so next to live odds that favor the other side it reads as that call.
-export const pickChip = (season, wk, pick) => `Preview pick: ${pick}`;
+export const pickChip = (season, wk, pick) => `Booth pick: ${pick}`;
 export const oddsPct = (x, done) => done ? (x >= 0.5 ? 'In' : 'Out') : x >= 0.995 ? '>99%' : x < 0.005 ? '<1%' : Math.round(x * 100) + '%';
 // Power rankings through week n, 0–100: half season all-play win %, a quarter actual win %,
 // a quarter all-play win % over the last two weeks (form). Ties go to PF.

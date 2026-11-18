@@ -498,6 +498,9 @@ button{font-family:inherit;color:inherit}
 .hdr .logo{transition:transform .2s ease;transform-origin:left center}
 .desk-tabs{display:none}
 .sub-tabs{display:none}
+/* Card footers: one line of text, the parts split by a dot (Matt, Nov 17, 2026). */
+.mu-foot{display:flex;flex-wrap:wrap;align-items:center;gap:2px 8px;min-width:0;padding:10px 0;font-size:13px;color:var(--muted)}
+.mu-foot .mu-t+.mu-t::before{content:'·';margin-right:8px;color:var(--muted);font-weight:400}
 .jump-to{scroll-margin-top:150px}
 .wchip[data-on="1"]{box-shadow:none}
 @media (max-width:899px){
@@ -527,6 +530,8 @@ button{font-family:inherit;color:inherit}
   .sub-i:hover{color:var(--ink)}
   .sub-i.on{color:var(--ink);border-bottom-color:var(--accent)}
   .gd-switch,.sv-bar,.ph .ph-v{display:none!important}
+  .mu-head{display:block!important}
+  .wk-status[data-view="Matchups"]{display:none!important}
   .tabbar{display:none!important}
   .app{padding-bottom:40px!important}
   .wk .wchip{flex:none!important;min-height:34px!important;flex-direction:row!important;gap:6px!important;padding:0 12px!important}
@@ -709,7 +714,7 @@ button{font-family:inherit;color:inherit}
 
   /* Gameday cards: the odds and pick chips stay on one line, so every card is the same height. */
   .mu-chips{flex-wrap:nowrap!important;min-width:0}
-  .mu-chips .chip-t{font-size:11px!important;padding:4px 7px!important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;flex:0 1 auto}
+  .mu-chips .mu-t{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;flex:0 1 auto}
   .team-tiles{grid-template-columns:repeat(4,minmax(0,1fr))!important}
 }
 /* Collapsed parlays still show every leg in a shared image. */
@@ -876,7 +881,7 @@ button{font-family:inherit;color:inherit}
     </button>
   </sc-for>
 </div>
-<div style="padding:2px 20px 0;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:4px 12px;font-family:'JetBrains Mono';font-size:11px;color:var(--muted)">
+<div class="wk-status" data-view="{{ gdView }}" style="padding:2px 20px 0;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:4px 12px;font-family:'JetBrains Mono';font-size:11px;color:var(--muted)">
   <span>{{ weekStatus }}</span>
   <sc-if value="{{ hasAsOf }}" hint-placeholder-val="{{ false }}"><span style="color:var(--ink)">{{ scoresAsOf }}</span></sc-if>
 </div>
@@ -949,9 +954,13 @@ button{font-family:inherit;color:inherit}
 <sc-if value="{{ hasWeek }}" hint-placeholder-val="{{ true }}">
 <div class="cols gd-cols" data-view="{{ gdView }}">
 <div id="matchups" class="jump-to stick">
+  <div class="mu-head" style="display:none;padding:28px 20px 0">
+    <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:26px;line-height:34px;text-transform:uppercase">Matchups</div>
+    <div style="margin-top:8px;font-size:13px;color:var(--muted)">{{ weekStatus }}<sc-if value="{{ hasAsOf }}" hint-placeholder-val="{{ false }}"> · {{ scoresAsOf }}</sc-if></div>
+  </div>
   <div data-shot="hero" sc-camel-on-click="{{ hero.open }}" tabindex="0" role="button" style="margin:16px 20px 0;background:var(--surface);border:1px solid var(--line);border-radius:20px;overflow:hidden;cursor:pointer">
     <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;padding:14px 16px 0;min-height:46px">
-      <span style="display:flex;align-items:baseline;gap:8px;min-width:0"><span style="font-family:'JetBrains Mono';font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--accentInk);font-weight:600">{{ heroLabel }}</span></span>
+      <span style="display:flex;align-items:baseline;gap:8px;min-width:0"><span style="font-family:'JetBrains Mono';font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600">{{ heroLabel }}</span></span>
       <span class="no-shot" style="display:flex;align-items:center;gap:12px">
 <button class="share-btn" sc-camel-on-click="{{ menuHero }}" aria-label="Share this matchup">Share</button>
         <span style="font-family:'JetBrains Mono';font-size:11px;color:var(--muted)">Lineups ›</span>
@@ -973,7 +982,7 @@ button{font-family:inherit;color:inherit}
               <sc-for list="{{ hero.alerts }}" as="al" hint-placeholder-count="1"><div>⚠ {{ al.t }}</div></sc-for>
             </div>
           </sc-if>
-    <div class="mu-chips" style="padding:14px 16px 16px;display:flex;flex-wrap:wrap;gap:6px"><span class="chip-t" style="font-family:'JetBrains Mono';font-weight:700;font-size:12px;color:var(--ink);padding:4px 9px;border-radius:6px;background:var(--surface2);border:1px solid var(--line)">{{ hero.chip }}</span><sc-if value="{{ hero.hasSet }}" hint-placeholder-val="{{ false }}"><span class="chip-t" title="With the lineups as they are set right now" style="font-family:'JetBrains Mono';font-weight:600;font-size:12px;color:var(--muted);padding:4px 9px;border-radius:6px;background:transparent;border:1px dashed var(--line)">{{ hero.chipSet }}</span></sc-if><sc-if value="{{ hero.hasPick }}" hint-placeholder-val="{{ false }}"><span class="chip-t" style="font-family:'JetBrains Mono';font-weight:700;font-size:12px;color:{{ hero.pickColor }};padding:4px 9px;border-radius:6px;border:1px solid currentColor;white-space:nowrap">{{ hero.pickText }}</span></sc-if></div>
+    <div style="padding:16px 16px 16px"><span class="mu-chips mu-foot"><span class="mu-t" style="color:var(--ink);font-weight:600">{{ hero.chip }}</span><sc-if value="{{ hero.hasSet }}" hint-placeholder-val="{{ false }}"><span class="mu-t" title="With the lineups as they are set right now">{{ hero.chipSet }}</span></sc-if><sc-if value="{{ hero.hasPick }}" hint-placeholder-val="{{ false }}"><span class="mu-t" style="color:{{ hero.pickColor }};font-weight:600">{{ hero.pickText }}</span></sc-if></span></div>
     <sc-if value="{{ hasHeroSwing }}" hint-placeholder-val="{{ false }}"><div class="no-shot" style="margin:-6px 16px 14px;font-family:'JetBrains Mono';font-size:11.5px;color:var(--muted)">{{ heroSwing }}</div></sc-if>
     <div class="shot-footer" style="padding:0 16px 14px"><b>9FEAMG</b><span>{{ shotHero }}</span></div>
   </div>
@@ -981,7 +990,7 @@ button{font-family:inherit;color:inherit}
     <div style="display:flex;flex-direction:column;gap:10px">
       <sc-for list="{{ matchups }}" as="mu" hint-placeholder-count="4">
         <div style="background:var(--surface);border:1px solid var(--line);border-radius:16px;overflow:hidden">
-          <sc-if value="{{ mu.hasRound }}" hint-placeholder-val="{{ false }}"><div style="padding:14px 16px 0;font-family:'JetBrains Mono';font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--accentInk)">{{ mu.round }}</div></sc-if>
+          <sc-if value="{{ mu.hasRound }}" hint-placeholder-val="{{ false }}"><div style="padding:14px 16px 0;font-family:'JetBrains Mono';font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)">{{ mu.round }}</div></sc-if>
           <div style="display:grid;grid-template-columns:32px minmax(0,1fr) auto auto;column-gap:12px;row-gap:8px;align-items:center;padding:12px 16px 14px">
             <span></span><span></span><span style="font-family:'JetBrains Mono';font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);text-align:right">{{ mu.colNow }}</span><span style="font-family:'JetBrains Mono';font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);text-align:right">{{ mu.colScore }}</span>
             <div class="crest" style="width:32px;height:32px;background:{{ mu.a.color }};color:var(--onAccent);display:flex;align-items:center;justify-content:center;font-family:'Big Shoulders Display';font-weight:800;font-size:13px;flex:none"><span class="ini" data-i="{{ mu.a.init }}">{{ mu.a.init }}</span></div>
@@ -998,8 +1007,8 @@ button{font-family:inherit;color:inherit}
               <sc-for list="{{ mu.alerts }}" as="al" hint-placeholder-count="1"><div>⚠ {{ al.t }}</div></sc-for>
             </div>
           </sc-if>
-          <button sc-camel-on-click="{{ mu.open }}" class="hov" style="width:100%;display:flex;justify-content:space-between;align-items:center;gap:8px;min-height:44px;padding:0 16px;border:0;border-top:1px solid var(--line);background:transparent;cursor:pointer;font-family:'JetBrains Mono';font-size:11px">
-            <span class="mu-chips" style="display:flex;flex-wrap:wrap;gap:6px;min-width:0;padding:6px 0"><span class="chip-t" style="font-family:'JetBrains Mono';font-weight:700;font-size:12px;color:var(--ink);padding:4px 9px;border-radius:6px;background:var(--surface2);border:1px solid var(--line)">{{ mu.chip }}</span><sc-if value="{{ mu.hasSet }}" hint-placeholder-val="{{ false }}"><span class="chip-t" title="With the lineups as they are set right now" style="font-family:'JetBrains Mono';font-weight:600;font-size:12px;color:var(--muted);padding:4px 9px;border-radius:6px;background:transparent;border:1px dashed var(--line)">{{ mu.chipSet }}</span></sc-if><sc-if value="{{ mu.hasPick }}" hint-placeholder-val="{{ false }}"><span class="chip-t" style="font-family:'JetBrains Mono';font-weight:700;font-size:12px;color:{{ mu.pickColor }};padding:4px 9px;border-radius:6px;border:1px solid currentColor;white-space:nowrap">{{ mu.pickText }}</span></sc-if></span><span style="flex:none;color:var(--accentInk);font-weight:600">Lineups ›</span>
+          <button sc-camel-on-click="{{ mu.open }}" class="hov" style="width:100%;display:flex;justify-content:space-between;align-items:center;gap:8px;min-height:44px;padding:0 16px;border:0;border-top:1px solid var(--line);background:transparent;cursor:pointer;font:inherit;text-align:left">
+            <span class="mu-chips mu-foot"><span class="mu-t" style="color:var(--ink);font-weight:600">{{ mu.chip }}</span><sc-if value="{{ mu.hasSet }}" hint-placeholder-val="{{ false }}"><span class="mu-t" title="With the lineups as they are set right now">{{ mu.chipSet }}</span></sc-if><sc-if value="{{ mu.hasPick }}" hint-placeholder-val="{{ false }}"><span class="mu-t" style="color:{{ mu.pickColor }};font-weight:600">{{ mu.pickText }}</span></sc-if></span><span style="flex:none;font-family:'JetBrains Mono';font-size:11px;color:var(--muted)">Lineups ›</span>
           </button>
         </div>
       </sc-for>
@@ -1034,7 +1043,7 @@ button{font-family:inherit;color:inherit}
                 <div class="crest" style="width:30px;height:30px;background:{{ c.color }};color:var(--onAccent);display:flex;align-items:center;justify-content:center;font-family:'Big Shoulders Display';font-weight:800;font-size:12px;flex:none"><span class="ini" data-i="{{ c.init }}">{{ c.init }}</span></div>
               </sc-for>
               <span style="font-family:'JetBrains Mono';font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-left:2px;white-space:nowrap">{{ b.matchup }}</span>
-              <span style="margin-left:auto;font-family:'JetBrains Mono';font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--accentInk);white-space:nowrap">{{ b.label }}</span>
+              <span style="margin-left:auto;font-family:'JetBrains Mono';font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);white-space:nowrap">{{ b.label }}<sc-if value="{{ b.mark }}" hint-placeholder-val="{{ false }}"><span style="color:{{ b.markColor }};margin-left:5px;font-size:13px">{{ b.mark }}</span></sc-if></span>
             </div>
             <div style="margin-top:10px;font-size:16px;line-height:1.45;font-weight:500;text-wrap:pretty">{{ b.text }}</div>
           </div>
@@ -1064,7 +1073,7 @@ button{font-family:inherit;color:inherit}
                 <div class="crest" style="width:28px;height:28px;background:{{ c.color }};color:var(--onAccent);display:flex;align-items:center;justify-content:center;font-family:'Big Shoulders Display';font-weight:800;font-size:12px;flex:none"><span class="ini" data-i="{{ c.init }}">{{ c.init }}</span></div>
               </sc-for>
               <span style="font-family:'JetBrains Mono';font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-left:2px;white-space:nowrap">{{ b.matchup }}</span>
-              <span style="margin-left:auto;font-family:'JetBrains Mono';font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--accentInk);white-space:nowrap">{{ b.label }}</span>
+              <span style="margin-left:auto;font-family:'JetBrains Mono';font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);white-space:nowrap">{{ b.label }}<sc-if value="{{ b.mark }}" hint-placeholder-val="{{ false }}"><span style="color:{{ b.markColor }};margin-left:5px;font-size:13px">{{ b.mark }}</span></sc-if></span>
             </div>
             <div style="min-width:0;margin-top:6px">
               <div style="font-size:15px;line-height:1.4;text-wrap:pretty">{{ b.text }}</div>

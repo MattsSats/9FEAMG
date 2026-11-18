@@ -835,7 +835,7 @@ class Component extends DCLogic {
     // it was made at stays on the Booth line's tag.
     return { a: A, b: B, live, alerts: alerts.map(t => ({ t })), hasAlerts: alerts.length > 0, round: rd?.label || '', hasRound: !!rd,
       hasPick: !!pk, pickText: pk ? pickChip(D, wk, pk[0], done || live && LIVE_STARTED) + (done ? (winner == pk[0] ? ' ✓' : ' ✗') : '') : '',
-      pickColor: !pk || !done ? 'var(--accentInk)' : winner == pk[0] ? 'var(--pos)' : 'var(--neg)',
+      pickColor: !pk || !done ? 'var(--muted)' : winner == pk[0] ? 'var(--pos)' : 'var(--neg)',
       // Column headers: Now (live only) and Proj, or Final once the week is done.
       colNow: live ? 'Now' : '', colScore: live ? 'Proj' : 'Final',
       // The gap in words, leader first: "Pablo +3.55 proj" or "Tony won by 9.04".
@@ -985,9 +985,10 @@ class Component extends DCLogic {
       const [label] = boothSet, c = line[3] == 'claude', when = written(line, label), pair = PAIRS[wk]?.[i] || [line[0]];
       // The Booth's pick rides on the preview (with its odds then) and the recap (graded).
       const pk = D.boothPicks?.[wk]?.[i], fin = doneWk(wk), won = fin && PAIRS[wk]?.[i] ? (([x, y]) => scoreOf(x, wk) > scoreOf(y, wk) ? x : scoreOf(y, wk) > scoreOf(x, wk) ? y : null)(PAIRS[wk][i]) : null;
-      const pickTag = !pk ? '' : label == 'Preview' ? ` · Preview pick: ${pk[0]} ${pk[1]}%` : label == 'Recap' && fin ? ` · Preview pick: ${pk[0]} ${won == pk[0] ? '✓' : '✗'}` : '';
+      const graded = !!pk && label == 'Recap' && fin, hit = graded && won == pk[0];
+      const tag = pk && label == 'Preview' ? `Pick: ${pk[0]} ${pk[1]}%` : graded ? `Pick: ${pk[0]}` : label == 'Post-SNF' ? when : '';
       return { crests: pair.map(m => ({ m, init: INIT[m], color: col(m) })), matchup: pair.join(' vs '),
-        text: line[1] + (c ? ' *' : ''), label: label == 'Preview' && pk ? pickTag.slice(3) : label + (when ? ' · ' + when : '') + pickTag, draft: c };
+        text: line[1] + (c ? ' *' : ''), label: tag, mark: graded ? (hit ? '✓' : '✗') : '', markColor: hit ? 'var(--pos)' : 'var(--neg)', draft: c };
     });
     // Same order as the matchup cards: the featured one, then the rest.
     const cardOrder = hasWeek ? [hero, ...matchups].map(x => x.a.m) : [];
