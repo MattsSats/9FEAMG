@@ -443,10 +443,6 @@ button{font-family:inherit;color:inherit}
   .ph .share-btn{grid-area:sh}
   .ph .ph-v{grid-area:v;margin-top:0!important}
   .ph .ph-b{grid-area:b;margin-top:16px!important}
-  .ph .wire-toggle{width:260px}
-  .ph-se{padding-right:340px!important}
-  .sv-bar{width:fit-content;margin:-60px 20px 0 auto;padding:0!important;background:transparent!important}
-  .sv-bar .sv-switch{background:var(--bg);box-shadow:0 0 0 8px var(--bg)}
 }
 
 .wk.fade-r{-webkit-mask-image:linear-gradient(90deg,#000 calc(100% - 48px),transparent);mask-image:linear-gradient(90deg,#000 calc(100% - 48px),transparent)}
@@ -501,6 +497,7 @@ button{font-family:inherit;color:inherit}
    real height (--hdrLive). */
 .hdr .logo{transition:transform .2s ease;transform-origin:left center}
 .desk-tabs{display:none}
+.sub-tabs{display:none}
 .jump-to{scroll-margin-top:150px}
 .wchip[data-on="1"]{box-shadow:none}
 @media (max-width:899px){
@@ -519,12 +516,29 @@ button{font-family:inherit;color:inherit}
 @media (min-width:900px){
   .desk-tabs{display:flex;gap:2px;margin-right:auto;margin-left:18px}
   .desk-tabs .on{background:var(--surface2)!important;color:var(--ink)!important}
+  /* Main tabs: bigger, with the bottom bar's icons; the pill marks the current one (Matt, Nov 17, 2026). */
+  .desk-tabs button{display:flex;align-items:center;gap:7px;min-height:40px!important;padding:0 14px 0 11px!important;font-family:'Big Shoulders Display'!important;font-size:18px!important;font-weight:800!important;letter-spacing:.03em!important}
+  .desk-tabs .ti{width:20px;height:20px}
+  .desk-tabs .tab.on::before{display:none}
+  /* Views: a second row of the top bar, underlined, the same on every tab. The in-page switches give way to it. */
+  .hdr{flex-wrap:wrap}
+  .sub-tabs{display:flex;order:9;flex-basis:100%;gap:26px;margin:8px 0 -12px;padding-left:2px}
+  .sub-i{min-height:38px;padding:0;border:0;border-bottom:3px solid transparent;background:transparent;color:var(--muted);font-family:'JetBrains Mono';font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;cursor:pointer}
+  .sub-i:hover{color:var(--ink)}
+  .sub-i.on{color:var(--ink);border-bottom-color:var(--accent)}
+  .gd-switch,.sv-bar,.ph .ph-v{display:none!important}
   .tabbar{display:none!important}
   .app{padding-bottom:40px!important}
   .wk .wchip{flex:none!important;min-height:34px!important;flex-direction:row!important;gap:6px!important;padding:0 12px!important}
   .wk .wchip>span:first-child{font-size:16px!important}
   .share-sheet{align-items:center!important}
   .share-panel{border-radius:20px!important}
+}
+/* Narrow laptops: the tabs drop their icons and tighten up so the top bar stays on one row. */
+@media (min-width:900px) and (max-width:1139px){
+  .desk-tabs{margin-left:10px}
+  .desk-tabs .ti{display:none}
+  .desk-tabs button{font-size:16px!important;padding:0 9px!important}
 }
 /* Manager pickers: all ten in two rows of five, nothing to scroll. */
 .mgr-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px}
@@ -793,9 +807,31 @@ button{font-family:inherit;color:inherit}
   <!-- Desktop: the tabs live up here instead of the bottom bar. -->
   <nav class="desk-tabs" aria-label="Sections">
     <sc-for list="{{ deskTabs }}" as="dt" hint-placeholder-count="4">
-      <button aria-current="{{ dt.cur }}" sc-camel-on-click="{{ dt.pick }}" style="min-height:34px;padding:0 14px;border:0;border-radius:999px;background:transparent;color:{{ dt.fg }};font-family:'JetBrains Mono';font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;cursor:pointer" class="{{ dt.cls }}">{{ dt.label }}</button>
+      <button aria-current="{{ dt.cur }}" sc-camel-on-click="{{ dt.pick }}" style="min-height:34px;padding:0 14px;border:0;border-radius:999px;background:transparent;color:{{ dt.fg }};font-family:'JetBrains Mono';font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;cursor:pointer" class="{{ dt.cls }}"><sc-if value="{{ dt.isGameday }}" hint-placeholder-val="{{ false }}">
+        <svg class="ti" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><g class="a-ball vb"><g transform="rotate(-45 24 24)"><ellipse cx="24" cy="24" rx="19" ry="11" style="fill:var(--accent)"></ellipse><path d="M17 24 H31 M20 20.5 V27.5 M24 20.5 V27.5 M28 20.5 V27.5"></path></g></g></svg>
+      </sc-if>
+      <sc-if value="{{ dt.isSeason }}" hint-placeholder-val="{{ false }}">
+        <svg class="ti" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 42 H43"></path><rect class="a-bar" x="8" y="26" width="9" height="14" rx="2"></rect><rect class="a-bar a-bar2" x="20" y="16" width="9" height="24" rx="2"></rect><rect class="a-bar a-bar3" x="32" y="6" width="9" height="34" rx="2" style="fill:var(--accent)"></rect></svg>
+      </sc-if>
+      <sc-if value="{{ dt.isTeams }}" hint-placeholder-val="{{ false }}">
+        <svg class="ti" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><g class="a-jersey"><path d="M18 6 L8 9 L3 19 L10 23 L13 20 V41 Q13 42 14 42 H34 Q35 42 35 41 V20 L38 23 L45 19 L40 9 L30 6 Q28 10 24 10 Q20 10 18 6 Z" style="fill:var(--accent)"></path><path d="M5.5 14 L11.5 17.5 M42.5 14 L36.5 17.5"></path><circle cx="24" cy="21.5" r="4"></circle><path d="M28 21.5 V30 Q28 33 24.5 33"></path></g></svg>
+      </sc-if>
+      <sc-if value="{{ dt.isWire }}" hint-placeholder-val="{{ false }}">
+        <svg class="ti" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><g class="a-swap1"><path d="M8 16 H38 M31 9 L38 16 L31 23" style="stroke:var(--accent)"></path></g><g class="a-swap2"><path d="M40 32 H10 M17 25 L10 32 L17 39"></path></g></svg>
+      </sc-if>
+      <sc-if value="{{ dt.isAwards }}" hint-placeholder-val="{{ false }}">
+        <svg class="ti" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><g class="a-cup"><path d="M14 6 H34 V18 Q34 29 24 29 Q14 29 14 18 Z" style="fill:var(--accent)"></path><path d="M14 10 H7 Q7 20 15 22 M34 10 H41 Q41 20 33 22"></path><path d="M24 29 V36 M16 42 H32 L30 36 H18 Z"></path></g></svg>
+      </sc-if><span>{{ dt.label }}</span></button>
     </sc-for>
   </nav>
+  <!-- Desktop: the current tab's views on a second row of the top bar (Matt, Nov 17, 2026). -->
+  <sc-if value="{{ hasSubViews }}" hint-placeholder-val="{{ false }}">
+  <nav class="sub-tabs" aria-label="Views">
+    <sc-for list="{{ subViews }}" as="sv" hint-placeholder-count="3">
+      <button class="{{ sv.cls }}" aria-current="{{ sv.cur }}" sc-camel-on-click="{{ sv.pick }}">{{ sv.label }}</button>
+    </sc-for>
+  </nav>
+  </sc-if>
   <div class="hdr-btns" style="display:flex;gap:8px">
     <button sc-camel-on-click="{{ openTeamSheet }}" aria-label="{{ meLabel }}" title="{{ meLabel }}" style="min-height:34px;min-width:34px;padding:0 4px;border:1px solid var(--line);border-radius:999px;background:var(--surface);cursor:pointer;display:flex;align-items:center;justify-content:center">
       <sc-if value="{{ hasMe }}" hint-placeholder-val="{{ false }}"><span class="crest" style="width:24px;height:24px;background:{{ meColor }};color:var(--onAccent);display:flex;align-items:center;justify-content:center;font-family:'Big Shoulders Display';font-weight:800;font-size:11px"><span class="ini" data-i="{{ meInit }}">{{ meInit }}</span></span></sc-if>

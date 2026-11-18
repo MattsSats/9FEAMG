@@ -1808,6 +1808,12 @@ class Component extends DCLogic {
       seasonView: S.seasonView || 'Standings',
       seasonViews: ['Standings', 'Playoffs', 'Stats'].map(v => { const on = v == (S.seasonView || 'Standings');
         return { label: v, on: String(on), bg: on ? 'var(--ink)' : 'transparent', fg: on ? 'var(--bg)' : 'var(--muted)', pick: () => { this.setState({ seasonView: v }); if (window.scrollY > 160) window.scrollTo(0, 160); } }; }),
+      // Desktop view strip under the top bar (Matt, Nov 17, 2026): the current tab's views, one style everywhere.
+      subViews: (S.tab == 'Gameday' ? ['Matchups', 'Parlays'].map(v => [v, v == (S.gdView || 'Matchups'), () => this.setState({ gdView: v })])
+        : S.tab == 'Season' ? ['Standings', 'Playoffs', 'Stats'].map(v => [v, v == (S.seasonView || 'Standings'), () => this.setState({ seasonView: v })])
+        : S.tab == 'Wire' ? ['This week', 'Season'].map(v => [v, v == (S.wire || 'This week'), () => this.setState({ wire: v })]) : [])
+        .map(([label, on, set]) => ({ label, cls: on ? 'sub-i on' : 'sub-i', cur: on ? 'page' : 'false', pick: () => { set(); if (window.scrollY > 0) window.scrollTo(0, 0); } })),
+      hasSubViews: ['Gameday', 'Season', 'Wire'].includes(S.tab),
       canBack: (S.navI || 0) > 0, backCls: (S.navI || 0) > 0 ? 'hdr has-back' : 'hdr', goBack: () => history.back(),
       seasonJumps: [['Standings', 'standings'], ['Playoffs', 'odds'], ['Power', 'power'], ['Luck', 'luck'], ['Bench', 'bench'], ['Point sources', 'src'], ['Weekly scores', 'weekly']].map(([label, id]) => ({ label, go: () => this.jump(id) })),
       // Season awards: the link (/s/awards, its own preview card) or an image of the page.
