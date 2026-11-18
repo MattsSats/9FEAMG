@@ -535,6 +535,7 @@ button{font-family:inherit;color:inherit}
   .season-grid>.sg-L,.season-grid>.sg-R,.sg-A,.sg-B1,.sg-B2,.sg-C{display:contents}
   .sg-st{order:1}.sg-pw{order:2}.sg-od{order:3}.sg-br{order:4}.sg-ch{order:5}.sg-lk{order:6}.sg-bn{order:7}.sg-src{order:8}.sg-hs{order:9}.sg-hr{order:10}
 }
+.gd-cols[data-view="Matchups"]>:is(#parlays,#parlays-more),.gd-cols[data-view="Parlays"]>:is(#matchups,.gd-booth){display:none!important}
 /* One view at a time at every width (Matt, Nov 17, 2026): Standings (tiles, standings, power rankings, weekly scores),
    Playoffs (odds, picture), Stats (the rest). The sections all stay in the page. */
 /* Links to a section land below the top bar and the sticky switch. */
@@ -650,16 +651,13 @@ button{font-family:inherit;color:inherit}
   .aw-grid>.aw-card:last-child:nth-child(odd){grid-column:1 / -1}
 }
 @media (min-width:1320px){ .aw-case{grid-template-columns:repeat(5,minmax(0,1fr))} }
-/* Wide desktop: three columns on Gameday (featured + Booth | matchups | parlays). */
+/* Wide desktop. Gameday's views (Matt, Nov 17, 2026): Matchups is the matchups beside the Booth; Parlays is the
+   request form, tickets three across and the ledger. */
 @media (min-width:1320px){
   .app,.tabbar{max-width:1440px}
   .cols{grid-template-columns:repeat(3,minmax(0,1fr))}
-  /* Gameday: matchups, the Booth beside them, and tickets someone's on with the ledger in the
-     third column; Nobody's on these and Busted run three-up underneath, full width. */
-  .gd-cols{grid-template-areas:"mu bo pa" "mo mo mo"}
-  .gd-cols>#matchups{grid-area:mu}.gd-cols>.gd-booth{grid-area:bo}.gd-cols>#parlays{grid-area:pa}
-  .gd-cols>#parlays{grid-column:auto;display:flex;flex-direction:column;align-items:stretch}
-  .gd-cols>#parlays-more{grid-area:mo;grid-template-columns:repeat(3,minmax(0,1fr))}
+  .cols.gd-cols{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .gd-cols>.col-wide{grid-template-columns:repeat(3,minmax(0,1fr))}
   .cols.two{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
 /* Gameday's sticky columns can slide past their own row (a sticky grid item is held inside the whole grid, not
@@ -807,13 +805,12 @@ button{font-family:inherit;color:inherit}
   <sc-if value="{{ noMe }}" hint-placeholder-val="{{ false }}">
     <button class="hov" sc-camel-on-click="{{ openTeamSheet }}" style="display:flex;justify-content:space-between;align-items:center;gap:10px;width:100%;min-height:44px;margin-top:12px;padding:0 14px;border:1px dashed var(--accent);border-radius:12px;background:transparent;color:var(--ink);font-size:14px;font-weight:600;text-align:left;cursor:pointer">Which team is yours? It puts your matchup first.<span style="flex:none;color:var(--accentInk)">Pick ›</span></button>
   </sc-if>
-  <sc-if value="{{ hasJumps }}" hint-placeholder-val="{{ true }}">
-    <nav class="jumps" aria-label="On this page" style="display:flex;gap:6px;margin-top:12px">
-      <sc-for list="{{ jumps }}" as="j" hint-placeholder-count="3">
-        <button sc-camel-on-click="{{ j.go }}" aria-disabled="{{ j.dis }}" class="hov" style="min-height:32px;padding:0 12px;border:1px solid var(--line);border-radius:999px;background:transparent;color:var(--ink);font-size:13px;font-weight:600;cursor:pointer;opacity:{{ j.op }}">{{ j.label }}</button>
-      </sc-for>
-    </nav>
-  </sc-if>
+  <!-- Two views, one at a time (Matt, Nov 17, 2026): Matchups (with the Booth) and Parlays. They replaced the jump links. -->
+  <div class="gd-switch" role="tablist" aria-label="Gameday views" style="display:inline-flex;gap:4px;margin-top:12px;padding:3px;border:1px solid var(--line);border-radius:999px">
+    <sc-for list="{{ gdViews }}" as="gv" hint-placeholder-count="2">
+      <button role="tab" aria-selected="{{ gv.on }}" sc-camel-on-click="{{ gv.pick }}" style="min-height:36px;padding:0 14px;border:0;border-radius:999px;background:{{ gv.bg }};color:{{ gv.fg }};font-family:'JetBrains Mono';font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;cursor:pointer">{{ gv.label }}</button>
+    </sc-for>
+  </div>
 </div>
 <!-- Week buttons stay pinned under the header while Gameday scrolls. -->
 <div data-weekchips="" class="scroll-x wk" style="position:sticky;top:var(--hdrLive,var(--hdrH));z-index:19;background:var(--bg);display:flex;gap:6px;margin-top:8px;padding:10px 20px">
@@ -895,7 +892,7 @@ button{font-family:inherit;color:inherit}
 </sc-if>
 
 <sc-if value="{{ hasWeek }}" hint-placeholder-val="{{ true }}">
-<div class="cols gd-cols">
+<div class="cols gd-cols" data-view="{{ gdView }}">
 <div id="matchups" class="jump-to stick">
   <div data-shot="hero" sc-camel-on-click="{{ hero.open }}" tabindex="0" role="button" style="margin:16px 20px 0;background:var(--surface);border:1px solid var(--line);border-radius:20px;overflow:hidden;cursor:pointer">
     <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;padding:14px 16px 0;min-height:46px">
