@@ -516,7 +516,9 @@ button{font-family:inherit;color:inherit}
 .sec-head>:first-child{line-height:1.05}
 .sec-btns{display:flex;gap:6px}
 .sec-cap{grid-column:1/-1;font-family:'JetBrains Mono';font-size:11px;color:var(--muted)}
-@media (max-width:440px){.hide-xs{display:none}}
+@media (max-width:440px){.hide-xs{display:none}
+  /* With Back showing, the Draft button keeps its icon and drops its word, so the bar still fits. */
+  .hdr.has-back .draft-lbl{display:none}}
 /* Phones: the header's three buttons fit in 360px (no sideways scroll before a team is picked). */
 @media (max-width:420px){.hdr-btns button+button{padding-left:10px!important;padding-right:10px!important}.hdr-btns .pick{padding:0 2px!important}}
 /* Wire on phones: the FAAB and activity charts come before the long list of moves. */
@@ -532,7 +534,14 @@ button{font-family:inherit;color:inherit}
   .season-grid{display:flex;flex-direction:column}
   .season-grid>.sg-L,.season-grid>.sg-R,.sg-A,.sg-B1,.sg-B2,.sg-C{display:contents}
   .sg-st{order:1}.sg-pw{order:2}.sg-od{order:3}.sg-br{order:4}.sg-ch{order:5}.sg-lk{order:6}.sg-bn{order:7}.sg-src{order:8}.sg-hs{order:9}.sg-hr{order:10}
+  /* One view at a time: Standings (tiles, standings, power rankings), Playoffs (odds, picture), Stats (the rest). */
+  .season-jumps{display:none!important}
+  .sv-tiles:not([data-view="Standings"]){display:none!important}
+  .season-grid[data-view="Standings"] :is(.sg-od,.sg-br,.sg-ch,.sg-lk,.sg-bn,.sg-src,.sg-hs,.sg-hr),
+  .season-grid[data-view="Playoffs"] :is(.sg-st,.sg-pw,.sg-ch,.sg-lk,.sg-bn,.sg-src,.sg-hs,.sg-hr),
+  .season-grid[data-view="Stats"] :is(.sg-st,.sg-pw,.sg-od,.sg-br){display:none!important}
 }
+@media (min-width:900px){.sv-switch{display:none!important}}
 /* Weekly scores grid: phones (weeks so far + one "rest" cell) and desktop (all 14 weeks). */
 .heat-grid{display:grid;grid-template-columns:var(--heat-m);gap:4px}
 .heat-wrap{min-width:var(--hmin-m)}
@@ -759,11 +768,15 @@ button{font-family:inherit;color:inherit}
 <div style="min-height:100vh;background:var(--page);display:flex;justify-content:center">
 <div class="{{ compactCls }}" style="width:100%;min-height:100vh;background:var(--bg);position:relative;padding-bottom:104px">
 
-<div class="hdr" style="position:sticky;top:0;z-index:20;background:var(--bg);display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 20px 12px;border-bottom:1px solid var(--line)">
+<div class="{{ backCls }}" style="position:sticky;top:0;z-index:20;background:var(--bg);display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 20px 12px;border-bottom:1px solid var(--line)">
+  <!-- Back (Matt, Nov 17, 2026): shows once there's somewhere to go back to in this visit. -->
+  <div style="display:flex;align-items:center;gap:8px;min-width:0">
+  <sc-if value="{{ canBack }}" hint-placeholder-val="{{ false }}"><button type="button" class="hdr-back hov" sc-camel-on-click="{{ goBack }}" aria-label="Back" title="Back" style="min-height:34px;min-width:34px;padding:0;border:1px solid var(--line);border-radius:999px;background:var(--surface);color:var(--ink);cursor:pointer;display:flex;align-items:center;justify-content:center;flex:none"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5 L8 12 L15 19"></path></svg></button></sc-if>
   <a href="/" sc-camel-on-click="{{ goHome }}" aria-label="9FEAMG home" style="display:flex;gap:8px;color:inherit;text-decoration:none;min-height:34px;align-items:center">
     <span class="logo" style="font-family:'Big Shoulders Display';font-weight:900;font-size:26px;letter-spacing:.02em;line-height:1">9FEAMG</span>
     <span class="hide-xs" style="font-family:'JetBrains Mono';font-size:11px;color:var(--accentInk);letter-spacing:.06em">2026</span>
   </a>
+  </div>
   <!-- Desktop: the tabs live up here instead of the bottom bar. -->
   <nav class="desk-tabs" aria-label="Sections">
     <sc-for list="{{ deskTabs }}" as="dt" hint-placeholder-count="4">
@@ -775,7 +788,7 @@ button{font-family:inherit;color:inherit}
       <sc-if value="{{ hasMe }}" hint-placeholder-val="{{ false }}"><span class="crest" style="width:24px;height:24px;background:{{ meColor }};color:var(--onAccent);display:flex;align-items:center;justify-content:center;font-family:'Big Shoulders Display';font-weight:800;font-size:11px"><span class="ini" data-i="{{ meInit }}">{{ meInit }}</span></span></sc-if>
       <sc-if value="{{ noMe }}" hint-placeholder-val="{{ true }}"><span class="pick" style="padding:0 8px;font-family:'JetBrains Mono';font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink);white-space:nowrap">Pick team</span></sc-if>
     </button>
-    <button sc-camel-on-click="{{ openDraft }}" aria-label="Draft results" style="background:{{ draftBtnBg }};color:{{ draftBtnFg }};border:1px solid {{ draftBtnBorder }};border-radius:999px;padding:0 14px;font-family:'JetBrains Mono';font-size:11px;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;min-height:34px;display:flex;align-items:center;gap:6px"><svg class="{{ draftIconCls }}" width="16" height="16" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 5 H29 M24 5 V9"></path><circle class="trk" cx="24" cy="25" r="16" style="stroke:var(--line)"></circle><circle class="a-ring" cx="24" cy="25" r="16" transform="rotate(-90 24 25)" style="stroke:var(--hi-a)"></circle><path class="a-hand" d="M24 25 V15"></path><circle cx="24" cy="25" r="2" stroke="none" style="fill:var(--hi-a)"></circle></svg>Draft</button>
+    <button sc-camel-on-click="{{ openDraft }}" aria-label="Draft results" style="background:{{ draftBtnBg }};color:{{ draftBtnFg }};border:1px solid {{ draftBtnBorder }};border-radius:999px;padding:0 14px;font-family:'JetBrains Mono';font-size:11px;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;min-height:34px;display:flex;align-items:center;gap:6px"><svg class="{{ draftIconCls }}" width="16" height="16" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 5 H29 M24 5 V9"></path><circle class="trk" cx="24" cy="25" r="16" style="stroke:var(--line)"></circle><circle class="a-ring" cx="24" cy="25" r="16" transform="rotate(-90 24 25)" style="stroke:var(--hi-a)"></circle><path class="a-hand" d="M24 25 V15"></path><circle cx="24" cy="25" r="2" stroke="none" style="fill:var(--hi-a)"></circle></svg><span class="draft-lbl">Draft</span></button>
     <button sc-camel-on-click="{{ toggleTheme }}" style="background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:0 14px;font-family:'JetBrains Mono';font-size:11px;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;min-height:34px">{{ themeLabel }}</button>
   </div>
 </div>
@@ -1370,13 +1383,19 @@ button{font-family:inherit;color:inherit}
 <div style="padding:22px 20px 0">
   <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:48px;line-height:.9;text-transform:uppercase">Season</div>
   <div style="font-family:'JetBrains Mono';font-size:11px;color:var(--muted);margin-top:10px">{{ seasonSub }}</div>
-  <nav class="jumps" aria-label="On this page" style="display:flex;flex-wrap:wrap;gap:6px;margin-top:12px">
+  <!-- Phones: three views, one at a time (Matt, Nov 17, 2026). Desktop: jump links, everything on the page. -->
+  <div class="sv-switch" role="tablist" aria-label="Season views" style="display:inline-flex;gap:4px;margin-top:12px;padding:3px;border:1px solid var(--line);border-radius:999px">
+    <sc-for list="{{ seasonViews }}" as="sv" hint-placeholder-count="3">
+      <button role="tab" aria-selected="{{ sv.on }}" sc-camel-on-click="{{ sv.pick }}" style="min-height:36px;padding:0 14px;border:0;border-radius:999px;background:{{ sv.bg }};color:{{ sv.fg }};font-family:'JetBrains Mono';font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;cursor:pointer">{{ sv.label }}</button>
+    </sc-for>
+  </div>
+  <nav class="jumps season-jumps" aria-label="On this page" style="display:flex;flex-wrap:wrap;gap:6px;margin-top:12px">
     <sc-for list="{{ seasonJumps }}" as="j" hint-placeholder-count="5">
       <button sc-camel-on-click="{{ j.go }}" class="hov" style="min-height:32px;padding:0 12px;border:1px solid var(--line);border-radius:999px;background:transparent;color:var(--ink);font-size:13px;font-weight:600;cursor:pointer">{{ j.label }}</button>
     </sc-for>
   </nav>
 </div>
-<div class="tiles" style="display:grid;gap:10px;padding:18px 20px 0">
+<div class="tiles sv-tiles" data-view="{{ seasonView }}" style="display:grid;gap:10px;padding:18px 20px 0">
   <sc-for list="{{ seasonTiles }}" as="t" hint-placeholder-count="4">
     <div style="background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:14px">
       <div style="font-family:'JetBrains Mono';font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)">{{ t.label }}</div>
@@ -1386,7 +1405,7 @@ button{font-family:inherit;color:inherit}
   </sc-for>
 </div>
 
-<div class="cols season-grid">
+<div class="cols season-grid" data-view="{{ seasonView }}">
 <!-- Season layout (Matt, Nov 17, 2026). Four groups in two halves:
        L: A (Standings, PF vs PA, Luck) + B1 (Playoff odds)    R: B2 (Playoff picture, Bench) + C (Power rankings, Point sources, How to read this)
      Phones: one column in reading order. 900px: two columns, L and R. 1320px: three, A | B1 over B2 | C. -->

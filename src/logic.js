@@ -60,6 +60,8 @@ if (D && typeof document != 'undefined' && !document.getElementById('ini-fit')) 
   st.textContent = D.managers.filter(x => (x.init || '').length > 2).map(x => `.crest .ini[data-i="${x.init}"]{font-size:.72em;letter-spacing:-.02em}`).join('');
   document.head.appendChild(st);
 }
+// Season on phones is three views (Matt, Nov 17, 2026): which one each section lives in, by element id.
+const SEASON_VIEW = { standings: 'Standings', power: 'Standings', odds: 'Playoffs', bracket: 'Playoffs', pfpa: 'Stats', luck: 'Stats', xw: 'Stats', bench: 'Stats', src: 'Stats', weekly: 'Stats', howto: 'Stats' };
 // Manager colors: lightness comes from --mgrL (0.76 dark, 0.61 light) so dots and bars hold 3:1 on the light background.
 const col = m => `oklch(var(--mgrL, 0.76) 0.12 ${HUE[m] ?? 0})`;
 // Parlays can belong to someone outside the league (e.g. 'The Booth'), who gets the accent color.
@@ -281,7 +283,11 @@ class Component extends DCLogic {
     // Parlay deep links: #w4-the-truce opens that week and scrolls to the card.
     this.openHash();
     // Back/forward and typed hashes (popstate fires for both).
-    window.addEventListener('popstate', () => this.openHash(true));
+    this.navI = history.state?.i ?? 0; this.navY = {};
+    if (this.navI) this.setState({ navI: this.navI });
+    window.addEventListener('pointerdown', () => { this.tapY = window.scrollY; }, true);
+    window.addEventListener('keydown', () => { this.tapY = window.scrollY; }, true);
+    window.addEventListener('popstate', () => this.popNav());
   }
   // Game days (any day with a kickoff on the NFL schedule, Saturdays and Christmas included, and
   // the early hours after; api/_shared.js isGameDay): check season.js and the Yahoo feeds every
@@ -370,7 +376,25 @@ class Component extends DCLogic {
   }
   // One Share button per card: a sheet offers the link or the image.
   shareMenu(title, link, img) { return e => { e?.stopPropagation?.(); this.setState({ shareSheet: { title, link, img } }); }; }
-  jump(id) { document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+  // Scrolls to a section; a Season section in another phone view switches to that view first.
+  jump(id) {
+    const go = () => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' }), v = SEASON_VIEW[id];
+    if (v && this.state.tab == 'Season' && (this.state.seasonView || 'Standings') != v) { this.setState({ seasonView: v }); setTimeout(go, 80); } else go();
+  }
+  // Back (Matt, Nov 17, 2026): every tab, week and team change is a history entry (syncUrl), numbered
+  // in history.state so Back knows there's somewhere to go; the scroll position each one was left at
+  // (where the tap that left it happened) comes back with it.
+  pushNav(url) {
+    this.navY[this.navI] = this.tapY ?? window.scrollY;
+    history.pushState({ i: ++this.navI }, '', url);
+    if (this.state.navI != this.navI) this.setState({ navI: this.navI });
+  }
+  popNav() {
+    this.navY[this.navI] = window.scrollY;
+    const i = history.state?.i ?? 0, y = this.navY[i];
+    this.navI = i; this.openHash(true); this.setState({ navI: i });
+    if (y != null) setTimeout(() => window.scrollTo(0, y), 380);
+  }
   loadRequests() {
     fetch('/api/requests?week=' + LW, { cache: 'no-store' }).then(r => r.ok ? r.json() : null)
       .then(d => d && this.setState({ reqs: d.requests || {} })).catch(() => {});
@@ -446,7 +470,7 @@ class Component extends DCLogic {
   goHome(e) {
     e?.preventDefault?.();
     this.setState({ tab: 'Gameday', week: HOME_WK, sheet: null });
-    if (location.pathname != '/' || location.search || location.hash) history.pushState(null, '', '/');
+    if (location.pathname != '/' || location.search || location.hash) this.pushNav('/');
     window.scrollTo(0, 0);
   }
   openHash(nav) {
@@ -463,7 +487,7 @@ class Component extends DCLogic {
     if (aw) { this.setState({ tab: 'Awards', sheet: null }); let n = 0; const go = () => { const el = document.getElementById('aw-' + aw[1]);
       if (el) { el.scrollIntoView({ block: 'start' }); el.classList.remove('flash'); void el.offsetWidth; el.classList.add('flash'); } else if (++n < 40) setTimeout(go, 150); }; setTimeout(go, 200); return; }
     // Season sections: #power, #pfpa, #luck, #xw, #bench, #src open the Season tab scrolled to that section.
-    if (['#power', '#odds', '#bracket', '#pfpa', '#luck', '#xw', '#bench', '#src'].includes(h)) { this.setState({ tab: 'Season', sheet: null }); setTimeout(() => document.getElementById(h.slice(1))?.scrollIntoView({ block: 'start' }), 350); return; }
+    if (['#power', '#odds', '#bracket', '#pfpa', '#luck', '#xw', '#bench', '#src'].includes(h)) { this.setState({ tab: 'Season', sheet: null, seasonView: SEASON_VIEW[h.slice(1)] }); setTimeout(() => document.getElementById(h.slice(1))?.scrollIntoView({ block: 'start' }), 350); return; }
     if (h == '#ledger') { this.setState({ tab: 'Gameday', week: HOME_WK, sheet: null }); setTimeout(() => document.getElementById('ledger')?.scrollIntoView({ block: 'start' }), 350); return; }
     if (h == '#booth') { this.setState({ tab: 'Gameday', week: BOOTH_WK, sheet: null }); setTimeout(() => document.getElementById('booth')?.scrollIntoView({ block: 'start' }), 350); return; }
     // #team-tony-awards (and -weeks, -h2h) opens the team page scrolled to that section (Matt, Nov 16, 2026).
@@ -621,7 +645,7 @@ class Component extends DCLogic {
     if (S.tab == 'Teams' && /^-(awards|weeks|h2h)$/.test(h.slice(('#team-' + teamSlug(S.team)).length)) && h.startsWith('#team-' + teamSlug(S.team) + '-')) return;
     if (S.tab == 'Season' && ['#power', '#odds', '#bracket', '#pfpa', '#luck', '#xw', '#bench', '#src'].includes(h)) return;
     if (!want && !h) return;
-    history.pushState(null, '', want || location.pathname + location.search);
+    this.pushNav(want || location.pathname + location.search);
   }
   // The risk slider isn't bound to a value (a bound one is read-only here), so set its
   // position from state when it first appears or the form resets.
@@ -1725,6 +1749,11 @@ class Component extends DCLogic {
       // The matchup link goes through /s/w5-andy-vs-pablo so chats show a picture of it (api/section.js).
       menuHero: this.shareMenu('This matchup', e => this.shareLink(location.origin + (hero ? `/s/w${S.week}-${teamSlug(hero.a.m)}-vs-${teamSlug(hero.b.m)}` : '/#w' + S.week), hero ? `9FEAMG · ${hero.a.m} vs ${hero.b.m}` : '9FEAMG · Week ' + S.week, e), e => this.share('hero', e)),
       // Season jump chips, like Gameday's (Matt, Nov 15, 2026).
+      // Phones: Season's three views (the sections are all on the page; CSS shows the picked view's). Desktop shows everything.
+      seasonView: S.seasonView || 'Standings',
+      seasonViews: ['Standings', 'Playoffs', 'Stats'].map(v => { const on = v == (S.seasonView || 'Standings');
+        return { label: v, on: String(on), bg: on ? 'var(--ink)' : 'transparent', fg: on ? 'var(--bg)' : 'var(--muted)', pick: () => this.setState({ seasonView: v }) }; }),
+      canBack: (S.navI || 0) > 0, backCls: (S.navI || 0) > 0 ? 'hdr has-back' : 'hdr', goBack: () => history.back(),
       seasonJumps: [['Standings', 'standings'], ['Playoffs', 'odds'], ['Power', 'power'], ['Luck', 'luck'], ['Bench', 'bench'], ['Point sources', 'src'], ['Weekly scores', 'weekly']].map(([label, id]) => ({ label, go: () => this.jump(id) })),
       // Season awards: the link (/s/awards, its own preview card) or an image of the page.
       menuTrophy: this.shareMenu('Season awards · Trophy case', e => this.shareLink(location.origin + '/s/awards-trophy', '9FEAMG · Season awards · Trophy case', e), e => this.share('aw-trophy', e)),
@@ -1766,7 +1795,7 @@ class Component extends DCLogic {
       shareLabel: { hero: S.sharing == 'hero' ? '…' : 'Image', standings: S.sharing == 'standings' ? '…' : 'Image', team: S.sharing == 'team' ? '…' : 'Image' },
       hasRecap, recap, recapTitle: `Week ${wk} · ${isFinal ? 'Final' : LIVE_STARTED ? 'Live' : 'Preview'}`, recapBar: isFinal ? 'Week recap · scores + Booth' : LIVE_STARTED ? 'Live week · scores + Booth' : 'Week preview · projections + Booth', shareRecap: e => this.share('recap', e), recapLabel: S.sharing == 'recap' ? '…' : 'Image',
       // "What's this?" opens the explainer under the Expected wins chart: one real week, worked through.
-      howTo: () => { const open = !this.state.xwHelp; this.setState({ xwHelp: open }); if (open) setTimeout(() => document.getElementById('xw')?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 0); },
+      howTo: () => { const open = !this.state.xwHelp; this.setState(open ? { xwHelp: open, seasonView: 'Stats' } : { xwHelp: open }); if (open) setTimeout(() => document.getElementById('xw')?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 0); },
       xwHelp: !!S.xwHelp, xwHelpLabel: S.xwHelp ? 'Hide' : 'What’s this?', xwExample: xwWeek(),
       // "How the odds work" under the live week's matchup cards.
       hasOddsHelp: wk == LW && !!LIVE, oddsHelp: !!S.oddsHelp, oddsHelpLabel: S.oddsHelp ? 'Hide' : 'How the odds work', oddsHow: () => this.setState({ oddsHelp: !this.state.oddsHelp }),
