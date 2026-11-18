@@ -1,5 +1,65 @@
 [
   {
+    "when": "Nov 17, 9:31 pm",
+    "yahooTeam": "Definitely not a Boomer",
+    "manager": "Mr. G",
+    "action": "trade",
+    "player": "Javonte Williams",
+    "nfl": "Dal",
+    "pos": "RB",
+    "faab": null,
+    "via": "trade from it’s gibbing time",
+    "notes": "Yahoo API Tue, Nov 17, 9:36 PM CT"
+  },
+  {
+    "when": "Nov 17, 9:31 pm",
+    "yahooTeam": "Definitely not a Boomer",
+    "manager": "Mr. G",
+    "action": "trade",
+    "player": "Drake London",
+    "nfl": "Atl",
+    "pos": "WR",
+    "faab": null,
+    "via": "trade from it’s gibbing time",
+    "notes": "Yahoo API Tue, Nov 17, 9:36 PM CT"
+  },
+  {
+    "when": "Nov 17, 9:31 pm",
+    "yahooTeam": "it’s gibbing time",
+    "manager": "Andy",
+    "action": "trade",
+    "player": "Luther Burden III",
+    "nfl": "Chi",
+    "pos": "WR",
+    "faab": null,
+    "via": "trade from Definitely not a Boomer",
+    "notes": "Yahoo API Tue, Nov 17, 9:36 PM CT"
+  },
+  {
+    "when": "Nov 17, 9:31 pm",
+    "yahooTeam": "it’s gibbing time",
+    "manager": "Andy",
+    "action": "trade",
+    "player": "Parker Washington",
+    "nfl": "Jax",
+    "pos": "WR",
+    "faab": null,
+    "via": "trade from Definitely not a Boomer",
+    "notes": "Yahoo API Tue, Nov 17, 9:36 PM CT"
+  },
+  {
+    "when": "Nov 17, 12:39 pm",
+    "yahooTeam": "Definitely not a Boomer",
+    "manager": "Mr. G",
+    "action": "drop",
+    "player": "Corey Kiner",
+    "nfl": "NE",
+    "pos": "RB",
+    "faab": null,
+    "via": "Waivers",
+    "notes": "Yahoo facts Tue Nov 17, 9:46 PM CT"
+  },
+  {
     "when": "Nov 15, 5:42 pm",
     "yahooTeam": "C LAMBS BIGGEST HATER",
     "manager": "Colin",
