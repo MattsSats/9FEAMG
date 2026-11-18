@@ -525,13 +525,13 @@ button{font-family:inherit;color:inherit}
 .act-row[data-pts="true"]{grid-template-columns:60px minmax(0,1fr) 30px 46px 36px}
 .act-row:not([data-pts="true"])>.act-pts{display:none}
 .wire-cols>.wire-side{order:-1}
-/* Season: three stacks, each column on its own so nothing leaves a row gap.
-   1: Standings, Bench · 2: Power rankings · 3: PF vs PA, Luck (the rings tie them together).
-   Phones drop the stacks and keep the reading order: Standings, Power, PF vs PA, Luck, Bench. */
+/* Season (Matt, Nov 17, 2026): the groups are in the markup (sg-L: sg-A + sg-B1, sg-R: sg-B2 + sg-C).
+   Phones drop them for one column in reading order: Standings, Power rankings, Playoff odds, Playoff
+   picture, PF vs PA, Luck, Bench, Point sources, Weekly scores, How to read this. */
 @media (max-width:899px){
   .season-grid{display:flex;flex-direction:column}
-  .season-grid>.sg-c1,.season-grid>.sg-c2,.season-grid>.sg-c3{display:contents}
-  .sg-st{order:1}.sg-od{order:1}.sg-pw{order:2}.sg-ch{order:3}.sg-lk{order:4}.sg-bn{order:5}.sg-src{order:5}.sg-hs{order:6}.sg-hr{order:7}
+  .season-grid>.sg-L,.season-grid>.sg-R,.sg-A,.sg-B1,.sg-B2,.sg-C{display:contents}
+  .sg-st{order:1}.sg-pw{order:2}.sg-od{order:3}.sg-br{order:4}.sg-ch{order:5}.sg-lk{order:6}.sg-bn{order:7}.sg-src{order:8}.sg-hs{order:9}.sg-hr{order:10}
 }
 /* Weekly scores grid: phones (weeks so far + one "rest" cell) and desktop (all 14 weeks). */
 .heat-grid{display:grid;grid-template-columns:var(--heat-m);gap:4px}
@@ -547,11 +547,14 @@ button{font-family:inherit;color:inherit}
   .heat-scroll{direction:rtl}.heat-scroll>.heat-wrap{direction:ltr}
   .heat-grid>span:first-child{position:sticky;left:0;z-index:2;background:var(--bg);align-self:stretch;display:flex;align-items:center;box-shadow:4px 0 0 var(--bg)}}
 @media (min-width:900px){
-  /* Standings, odds, scenarios and the playoff picture make column 1 long, so column 2 stacks Power
-     rankings, then PF vs PA, Luck and How to read this, instead of leaving a gap beside it (Nov 15, 2026). */
-  .cols.season-grid{grid-template-areas:"c1 c2" "c1 c3" "hs hs";grid-template-rows:auto 1fr auto}
-  .season-grid>.sg-c3{align-self:start}
-  .season-grid>.sg-c1{grid-area:c1}.season-grid>.sg-c2{grid-area:c2}.season-grid>.sg-c3{grid-area:c3}.season-grid>.sg-hs{grid-area:hs}
+  /* Two columns, each its own stack so nothing leaves a row gap. Left: Standings, Playoff odds, PF vs PA,
+     Luck. Right: Power rankings, Playoff picture, Bench, Point sources, How to read this. */
+  .season-grid>.sg-L,.season-grid>.sg-R{display:flex;flex-direction:column;min-width:0}
+  .sg-A,.sg-B1,.sg-B2,.sg-C{display:contents}
+  .sg-L>*>*,.sg-R>*>*{min-width:0}
+  .sg-st{order:1}.sg-od{order:2}.sg-ch{order:3}.sg-lk{order:4}
+  .sg-pw{order:1}.sg-br{order:2}.sg-bn{order:3}.sg-src{order:4}.sg-hr{order:5}
+  .season-grid>.sg-hs{grid-column:1/-1}
   .heat-grid{grid-template-columns:var(--heat-d)}
   .heat-wrap{min-width:var(--hmin-d)}
   .heat-grid>.heat-fut{display:flex}
@@ -565,9 +568,15 @@ button{font-family:inherit;color:inherit}
   .wire-toggle{display:inline-grid!important;grid-template-columns:auto auto!important;border-radius:999px!important}
   .wire-toggle>button{min-height:34px!important;padding:0 16px;border-radius:999px!important;font-size:13px!important}
 }
-/* Wide screens keep the two-column stack: column 1 alone is taller than a third column could balance. */
+/* Wide screens: three columns. Standings, PF vs PA, Luck | Playoff odds over Playoff picture, Bench |
+   Power rankings, Point sources, How to read this. Only the middle column has two grid items (the outer
+   two span both rows), so opening a team's panel in the odds pushes the picture down and leaves no gap. */
 @media (min-width:1320px){
-  .cols.season-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .cols.season-grid{grid-template-columns:repeat(3,minmax(0,1fr));grid-template-areas:"a b1 c" "a b2 c" "hs hs hs";grid-template-rows:auto 1fr auto}
+  .season-grid>.sg-L,.season-grid>.sg-R{display:contents}
+  .season-grid .sg-A,.season-grid .sg-B1,.season-grid .sg-B2,.season-grid .sg-C{display:block;min-width:0}
+  .season-grid .sg-A{grid-area:a}.season-grid .sg-B1{grid-area:b1}.season-grid .sg-B2{grid-area:b2;align-self:start}.season-grid .sg-C{grid-area:c}
+  .season-grid>.sg-hs{grid-area:hs}
 }
 /* Season awards (Matt, Nov 15, 2026): one column on phones, two on tablets (a lone last card spans both),
    three on desktop; equal heights per row, the runner-up pinned to the bottom of each card. */
@@ -1378,7 +1387,11 @@ button{font-family:inherit;color:inherit}
 </div>
 
 <div class="cols season-grid">
-<div class="sg-c1">
+<!-- Season layout (Matt, Nov 17, 2026). Four groups in two halves:
+       L: A (Standings, PF vs PA, Luck) + B1 (Playoff odds)    R: B2 (Playoff picture, Bench) + C (Power rankings, Point sources, How to read this)
+     Phones: one column in reading order. 900px: two columns, L and R. 1320px: three, A | B1 over B2 | C. -->
+<div class="sg-L">
+<div class="sg-A">
 <div id="standings" data-shot="standings" data-shot-card class="sg-st" style="padding:30px 20px 0;scroll-margin-top:64px">
   <div class="sec-head">
     <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:26px;text-transform:uppercase">Standings</div>
@@ -1407,6 +1420,86 @@ button{font-family:inherit;color:inherit}
   <div class="shot-footer"><b>9FEAMG</b><span>{{ shotStandings }}</span></div>
 </div>
 
+<div id="pfpa" data-shot="pfpa" data-shot-card class="sg-ch" style="padding:30px 20px 0;scroll-margin-top:64px">
+  <div class="sec-head">
+    <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:26px;text-transform:uppercase">Points for vs against</div>
+    <span class="sec-btns no-shot"><button class="share-btn" sc-camel-on-click="{{ menuPfpa }}" aria-label="Share the points for vs against chart">Share</button></span>
+    <div class="sec-cap">Ring = luck (W − xW), same as the chart below.</div>
+    <div class="sec-cap no-shot">{{ hlHint }}</div>
+  </div>
+  <div style="margin-top:12px;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:14px 14px 10px">
+    <div style="position:relative;height:{{ plotH }}px;margin:0 4px 0 22px;border-left:1px solid var(--line);border-bottom:1px solid var(--line)">
+      <span style="position:absolute;left:-22px;top:0;font-family:'JetBrains Mono';font-size:11px;color:var(--muted)">{{ paMax }}</span>
+      <span style="position:absolute;left:-22px;bottom:0;font-family:'JetBrains Mono';font-size:11px;color:var(--muted)">{{ paMin }}</span>
+      <div style="position:absolute;left:{{ scatterMidX }};top:0;bottom:0;border-left:1px dashed var(--line)"></div>
+      <div style="position:absolute;top:{{ scatterMidY }};left:0;right:0;border-top:1px dashed var(--line)"></div>
+      <!-- Corners: points for (good/bad) against points against (schedule). Luck is the ring. -->
+      <span style="position:absolute;right:6px;top:6px;font-family:'JetBrains Mono';font-size:11px;letter-spacing:.08em;color:var(--muted);text-align:right;max-width:44%;line-height:1.2">GOOD, TOUGH SCHEDULE</span>
+      <span style="position:absolute;right:6px;bottom:6px;font-family:'JetBrains Mono';font-size:11px;letter-spacing:.08em;color:var(--muted);text-align:right;max-width:44%;line-height:1.2">GOOD, EASY SCHEDULE</span>
+      <span style="position:absolute;left:6px;top:6px;font-family:'JetBrains Mono';font-size:11px;letter-spacing:.08em;color:var(--muted);max-width:44%;line-height:1.2">BAD, TOUGH SCHEDULE</span>
+      <span style="position:absolute;left:6px;bottom:6px;font-family:'JetBrains Mono';font-size:11px;letter-spacing:.08em;color:var(--muted);max-width:44%;line-height:1.2">BAD, EASY SCHEDULE</span>
+      <sc-for list="{{ scatter }}" as="d" hint-placeholder-count="10">
+        <button sc-camel-on-click="{{ d.pick }}" aria-label="{{ d.label }}" style="position:absolute;left:{{ d.x }};top:{{ d.y }};transform:translate(-50%,-50%);width:30px;height:30px;border-radius:50%;border:3px solid {{ d.luckColor }};box-shadow:0 0 0 2px {{ d.ring }};background:{{ d.color }};color:var(--onAccent);font-family:'Big Shoulders Display';font-weight:800;font-size:11px;cursor:pointer;opacity:{{ d.op }};padding:0;display:flex;align-items:center;justify-content:center;z-index:{{ d.z }}">{{ d.init }}<span style="position:absolute;top:100%;left:50%;transform:translateX(-50%);margin-top:2px;font-family:'JetBrains Mono';font-size:11px;font-weight:700;line-height:1;white-space:nowrap;color:{{ d.luckColor }}">{{ d.luck }}</span></button>
+      </sc-for>
+      <span style="position:absolute;left:-22px;top:50%;transform:translateY(-50%) rotate(-90deg);font-family:'JetBrains Mono';font-size:11px;color:var(--muted);letter-spacing:.08em;white-space:nowrap">PA ↑</span>
+    </div>
+    <div style="display:flex;justify-content:space-between;margin:6px 4px 0 22px;font-family:'JetBrains Mono';font-size:11px;color:var(--muted)"><span>{{ pfMin }}</span><span>PF →</span><span>{{ pfMax }}</span></div>
+  </div>
+  <div class="shot-footer"><b>9FEAMG</b><span>{{ shotNotePfpa }}</span></div>
+</div>
+
+<div class="sg-lk">
+<div id="luck" data-shot="luck" data-shot-card style="padding:30px 20px 0;scroll-margin-top:64px">
+  <div class="sec-head">
+    <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:26px;text-transform:uppercase;display:flex;align-items:center;gap:8px"><svg class="hi play" width="26" height="26" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><g class="a-dice vb"><rect x="8" y="8" width="32" height="32" rx="7"></rect><circle cx="16" cy="16" r="2.6" stroke="none" style="fill:var(--hi-a)"></circle><circle cx="32" cy="16" r="2.6" stroke="none" style="fill:var(--hi-a)"></circle><circle cx="24" cy="24" r="2.6" stroke="none" style="fill:var(--hi-a)"></circle><circle cx="16" cy="32" r="2.6" stroke="none" style="fill:var(--hi-a)"></circle><circle cx="32" cy="32" r="2.6" stroke="none" style="fill:var(--hi-a)"></circle></g></svg>Luck</div>
+    <span class="sec-btns no-shot"><button class="share-btn" sc-camel-on-click="{{ menuLuck }}" aria-label="Share the luck chart">Share</button></span>
+    <div class="sec-cap">Real wins minus expected wins (xW, the next chart)</div>
+  </div>
+  <div style="display:flex;flex-direction:column;gap:6px;margin-top:12px">
+    <sc-for list="{{ luckBars }}" as="lb" hint-placeholder-count="10">
+      <div sc-camel-on-click="{{ lb.pick }}" class="hov" tabindex="0" role="button" style="display:grid;grid-template-columns:60px minmax(0,1fr) minmax(0,1fr) 44px;align-items:center;gap:0;cursor:pointer;opacity:{{ lb.op }}">
+        <span style="font-size:13px;font-weight:600">{{ lb.m }}</span>
+        <div style="height:18px;display:flex;justify-content:flex-end;border-right:1px solid var(--muted)"><div style="width:{{ lb.neg }};background:var(--neg);border-radius:4px 0 0 4px"></div></div>
+        <div style="height:18px;display:flex"><div style="width:{{ lb.pos }};background:var(--pos);border-radius:0 4px 4px 0"></div></div>
+        <span style="font-family:'JetBrains Mono';font-size:12px;font-weight:600;text-align:right;color:{{ lb.color }}">{{ lb.v }}</span>
+      </div>
+    </sc-for>
+  </div>
+  <div class="shot-footer"><b>9FEAMG</b><span>{{ shotNoteLuck }}</span></div>
+</div>
+
+<div id="xw" data-shot="xw" data-shot-card style="padding:30px 20px 0;scroll-margin-top:64px">
+  <div class="sec-head">
+    <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:26px;text-transform:uppercase">Expected wins</div>
+    <span class="sec-btns no-shot"><button class="share-btn" sc-camel-on-click="{{ menuXw }}" aria-label="Share the expected wins chart">Share</button></span>
+    <div class="sec-cap"><span style="display:inline-block;width:9px;height:9px;border-radius:50%;border:2px solid var(--ink);box-sizing:border-box;vertical-align:-1px"></span> xW · <span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:var(--ink);vertical-align:-1px"></span> real wins · <button class="no-shot" sc-camel-on-click="{{ howTo }}" aria-expanded="{{ xwHelp }}" style="min-height:32px;padding:0;border:0;background:transparent;font:inherit;color:var(--accentInk);text-decoration:underline;cursor:pointer">{{ xwHelpLabel }}</button></div>
+    <sc-if value="{{ xwHelp }}" hint-placeholder-val="{{ false }}"><div class="no-shot" style="grid-column:1/-1;margin-top:8px;padding:10px 12px;border-radius:10px;background:var(--surface2);font-size:13px;line-height:1.45;color:var(--ink);text-wrap:pretty">{{ xwExample }}</div></sc-if>
+  </div>
+  <div style="display:flex;flex-direction:column;gap:6px;margin-top:12px">
+    <sc-for list="{{ xwBars }}" as="xb" hint-placeholder-count="10">
+      <div sc-camel-on-click="{{ xb.pick }}" class="hov" tabindex="0" role="button" aria-label="{{ xb.label }}" style="display:grid;grid-template-columns:60px minmax(0,1fr) 44px;align-items:center;gap:10px;cursor:pointer;opacity:{{ xb.op }}">
+        <span style="font-size:13px;font-weight:600">{{ xb.m }}</span>
+        <div style="position:relative;height:18px;margin:0 6px">
+          <div style="position:absolute;left:0;right:0;top:8px;height:2px;background:var(--line)"></div>
+          <div style="position:absolute;left:{{ xb.lo }};width:{{ xb.span }};top:7px;height:4px;border-radius:2px;background:{{ xb.lineColor }}"></div>
+          <div style="position:absolute;left:{{ xb.xAt }};top:3px;width:12px;height:12px;margin-left:-6px;border-radius:50%;border:2px solid var(--ink);background:var(--surface);box-sizing:border-box"></div>
+          <div style="position:absolute;left:{{ xb.wAt }};top:4px;width:10px;height:10px;margin-left:-5px;border-radius:50%;background:var(--ink)"></div>
+        </div>
+        <span style="font-family:'JetBrains Mono';font-size:12px;font-weight:600;text-align:right">{{ xb.xw }}</span>
+      </div>
+    </sc-for>
+    <div style="display:grid;grid-template-columns:60px minmax(0,1fr) 44px;gap:10px;font-family:'JetBrains Mono';font-size:11px;color:var(--muted)">
+      <span>WINS</span>
+      <div style="position:relative;height:12px;margin:0 6px"><sc-for list="{{ xwTicks }}" as="t" hint-placeholder-count="7"><span style="position:absolute;left:{{ t.at }};transform:translateX(-50%)">{{ t.n }}</span></sc-for></div>
+      <span style="text-align:right">xW</span>
+    </div>
+  </div>
+  <div class="shot-footer"><b>9FEAMG</b><span>{{ shotNoteXw }}</span></div>
+</div>
+</div>
+
+</div>
+<div class="sg-B1">
 <div id="odds" data-shot="odds" data-shot-card class="sg-od" style="padding:30px 20px 0;scroll-margin-top:64px">
   <div class="sec-head">
     <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:26px;text-transform:uppercase">Playoff odds</div>
@@ -1440,7 +1533,7 @@ button{font-family:inherit;color:inherit}
   </sc-for>
   <!-- How the playoff odds work (Matt, Nov 17, 2026). -->
   <sc-if value="{{ hasPoHow }}" hint-placeholder-val="{{ false }}"><div class="no-shot" style="padding:10px 0 0;font-size:12.5px;color:var(--muted)">
-    <span style="margin-right:10px">Tap a team to see what’s behind its number.</span>
+    <span style="margin-right:10px">Tap a team for its scenario and what’s behind its number.</span>
     <button type="button" sc-camel-on-click="{{ poHowTap }}" aria-expanded="{{ poHow }}" aria-controls="po-how" class="hov" style="min-height:32px;padding:0 12px;border:1px solid var(--line);border-radius:999px;background:transparent;font:inherit;font-weight:600;color:var(--accentInk);cursor:pointer">{{ poHowLabel }}</button>
     <sc-if value="{{ poHow }}" hint-placeholder-val="{{ false }}"><div id="po-how" role="region" aria-label="How the playoff odds work" style="margin-top:8px;padding:10px 12px;border-radius:10px;background:var(--surface2);font-size:13px;line-height:1.45;color:var(--ink);text-wrap:pretty">
       <p style="margin:0 0 8px">We play out the rest of the regular season 20,000 times and count how often each team finishes in the top 6 (playoffs), the top 2 (bye) and 10th (last).</p>
@@ -1448,39 +1541,21 @@ button{font-family:inherit;color:inherit}
       <p style="margin:0 0 8px"><b>Luck.</b> Every simulated week swings as much as real weeks in this league do, and in each simulated season every team also runs a bit better or worse than it has looked.</p>
       <p style="margin:0 0 8px"><b>This week</b> starts from Yahoo’s and ESPN’s projections, like the matchup win odds, with a bye or an empty slot filled from the bench.</p>
       <p style="margin:0 0 8px"><b>Same record, different odds?</b> Seeds go by wins, then points for, so points break ties. Who a team still plays matters too.</p>
-      <p style="margin:0"><b>In</b> and <b>Out</b> show only once wins alone settle it, never from a simulation.</p>
+      <p style="margin:0 0 8px"><b>In</b> and <b>Out</b> show only once wins alone settle it, never from a simulation.</p>
+      <p style="margin:0"><b>In a team’s panel:</b> Scenario is exact, from the wins and the games left, and a clinch holds even if every tie on wins goes against the team. A win or a loss there means this week’s game. Finish is the chance to make it on each final record. Root for is the result that helps and how many points of playoff odds it’s worth over the other result.</p>
     </div></sc-if>
   </div></sc-if>
   <div class="shot-footer"><b>9FEAMG</b><span>{{ shotOdds }}</span></div>
 </div>
 
-<!-- Playoff scenarios (Matt, Nov 8, 2026): what each team needs, from the final scores and the games left. -->
-<sc-if value="{{ hasScenarios }}" hint-placeholder-val="{{ false }}">
-<div id="scenarios" class="sg-od" style="padding:30px 20px 0;scroll-margin-top:64px">
-  <div class="sec-head">
-    <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:26px;text-transform:uppercase">Playoff scenarios</div>
-    <div class="sec-cap">{{ scenariosSub }}</div>
-  </div>
-  <div style="margin-top:10px;border-top:1px solid var(--line)">
-    <sc-for list="{{ scenarios }}" as="s" hint-placeholder-count="10">
-      <div style="padding:10px 0;border-bottom:1px solid var(--line)">
-        <div style="min-width:0">
-          <div style="display:flex;flex-wrap:wrap;gap:4px 12px">
-            <sc-for list="{{ s.teams }}" as="tm" hint-placeholder-count="1"><span style="display:inline-flex;align-items:center;gap:6px;font-weight:600;font-size:15px"><span class="crest" style="width:22px;height:22px;background:{{ tm.color }};color:var(--onAccent);display:inline-flex;align-items:center;justify-content:center;font-family:'Big Shoulders Display';font-weight:800;font-size:10px;flex:none"><span class="ini" data-i="{{ tm.init }}">{{ tm.init }}</span></span>{{ tm.m }} <span style="font-family:'JetBrains Mono';font-size:11px;color:var(--muted);font-weight:400">{{ tm.wl }}</span></span></sc-for>
-          </div>
-          <sc-for list="{{ s.lines }}" as="l" hint-placeholder-count="1"><div style="font-size:14px;line-height:1.4;margin-top:2px">{{ l.t }}</div></sc-for>
-          <sc-for list="{{ s.sims }}" as="y" hint-placeholder-count="0"><div style="display:grid;grid-template-columns:72px minmax(0,1fr);gap:10px;margin-top:4px;font-size:13px;line-height:1.4"><span style="font-family:'JetBrains Mono';font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);padding-top:2px">{{ y.k }}</span><span style="font-family:'JetBrains Mono';font-size:12.5px;text-wrap:pretty">{{ y.t }}</span></div></sc-for>
-        </div>
-      </div>
-    </sc-for>
-  </div>
-  <div style="font-size:12px;line-height:1.4;color:var(--muted);margin-top:10px">Seeds go by wins, then points for. A clinch holds even if every tie on wins goes against the team. The sentences are exact; the percentages come from the playoff odds. Finish is the chance to make it on each final record. Root for is the result that helps and how many points of playoff odds it’s worth over the other result.</div>
 </div>
-</sc-if>
+</div>
 
+<div class="sg-R">
+<div class="sg-B2">
 <!-- Playoff picture: the bracket if the season ended today, and the Toilet Bowl side (Matt, Oct 31, 2026). -->
 <sc-if value="{{ hasPic }}" hint-placeholder-val="{{ false }}">
-<div id="bracket" data-shot="bracket" data-shot-card class="sg-od" style="padding:30px 20px 0;scroll-margin-top:64px">
+<div id="bracket" data-shot="bracket" data-shot-card class="sg-br" style="padding:30px 20px 0;scroll-margin-top:64px">
   <div class="sec-head">
     <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:26px;text-transform:uppercase">Playoff picture</div>
     <span class="sec-btns no-shot"><button class="share-btn" sc-camel-on-click="{{ menuBracket }}" aria-label="Share the playoff picture">Share</button></span>
@@ -1613,8 +1688,7 @@ button{font-family:inherit;color:inherit}
   <div class="shot-footer"><b>9FEAMG</b><span>{{ shotNoteBench }}</span></div>
 </div>
 </div>
-
-<div class="sg-c2">
+<div class="sg-C">
 <sc-if value="{{ hasPower }}" hint-placeholder-val="{{ true }}">
 <div id="power" data-shot="power" data-shot-card data-shot-w="560" class="sg-pw" style="padding:30px 20px 0;scroll-margin-top:64px">
   <div class="sec-head">
@@ -1666,88 +1740,6 @@ button{font-family:inherit;color:inherit}
   <div class="shot-footer"><b>9FEAMG</b><span>{{ shotPower }}</span></div>
 </div>
 </sc-if>
-</div>
-
-<div class="sg-c3">
-<div id="pfpa" data-shot="pfpa" data-shot-card class="sg-ch" style="padding:30px 20px 0;scroll-margin-top:64px">
-  <div class="sec-head">
-    <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:26px;text-transform:uppercase">Points for vs against</div>
-    <span class="sec-btns no-shot"><button class="share-btn" sc-camel-on-click="{{ menuPfpa }}" aria-label="Share the points for vs against chart">Share</button></span>
-    <div class="sec-cap">Ring = luck (W − xW), same as the chart below.</div>
-    <div class="sec-cap no-shot">{{ hlHint }}</div>
-  </div>
-  <div style="margin-top:12px;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:14px 14px 10px">
-    <div style="position:relative;height:{{ plotH }}px;margin:0 4px 0 22px;border-left:1px solid var(--line);border-bottom:1px solid var(--line)">
-      <span style="position:absolute;left:-22px;top:0;font-family:'JetBrains Mono';font-size:11px;color:var(--muted)">{{ paMax }}</span>
-      <span style="position:absolute;left:-22px;bottom:0;font-family:'JetBrains Mono';font-size:11px;color:var(--muted)">{{ paMin }}</span>
-      <div style="position:absolute;left:{{ scatterMidX }};top:0;bottom:0;border-left:1px dashed var(--line)"></div>
-      <div style="position:absolute;top:{{ scatterMidY }};left:0;right:0;border-top:1px dashed var(--line)"></div>
-      <!-- Corners: points for (good/bad) against points against (schedule). Luck is the ring. -->
-      <span style="position:absolute;right:6px;top:6px;font-family:'JetBrains Mono';font-size:11px;letter-spacing:.08em;color:var(--muted);text-align:right;max-width:44%;line-height:1.2">GOOD, TOUGH SCHEDULE</span>
-      <span style="position:absolute;right:6px;bottom:6px;font-family:'JetBrains Mono';font-size:11px;letter-spacing:.08em;color:var(--muted);text-align:right;max-width:44%;line-height:1.2">GOOD, EASY SCHEDULE</span>
-      <span style="position:absolute;left:6px;top:6px;font-family:'JetBrains Mono';font-size:11px;letter-spacing:.08em;color:var(--muted);max-width:44%;line-height:1.2">BAD, TOUGH SCHEDULE</span>
-      <span style="position:absolute;left:6px;bottom:6px;font-family:'JetBrains Mono';font-size:11px;letter-spacing:.08em;color:var(--muted);max-width:44%;line-height:1.2">BAD, EASY SCHEDULE</span>
-      <sc-for list="{{ scatter }}" as="d" hint-placeholder-count="10">
-        <button sc-camel-on-click="{{ d.pick }}" aria-label="{{ d.label }}" style="position:absolute;left:{{ d.x }};top:{{ d.y }};transform:translate(-50%,-50%);width:30px;height:30px;border-radius:50%;border:3px solid {{ d.luckColor }};box-shadow:0 0 0 2px {{ d.ring }};background:{{ d.color }};color:var(--onAccent);font-family:'Big Shoulders Display';font-weight:800;font-size:11px;cursor:pointer;opacity:{{ d.op }};padding:0;display:flex;align-items:center;justify-content:center;z-index:{{ d.z }}">{{ d.init }}<span style="position:absolute;top:100%;left:50%;transform:translateX(-50%);margin-top:2px;font-family:'JetBrains Mono';font-size:11px;font-weight:700;line-height:1;white-space:nowrap;color:{{ d.luckColor }}">{{ d.luck }}</span></button>
-      </sc-for>
-      <span style="position:absolute;left:-22px;top:50%;transform:translateY(-50%) rotate(-90deg);font-family:'JetBrains Mono';font-size:11px;color:var(--muted);letter-spacing:.08em;white-space:nowrap">PA ↑</span>
-    </div>
-    <div style="display:flex;justify-content:space-between;margin:6px 4px 0 22px;font-family:'JetBrains Mono';font-size:11px;color:var(--muted)"><span>{{ pfMin }}</span><span>PF →</span><span>{{ pfMax }}</span></div>
-  </div>
-  <div class="shot-footer"><b>9FEAMG</b><span>{{ shotNotePfpa }}</span></div>
-</div>
-
-<div class="sg-lk">
-<div id="luck" data-shot="luck" data-shot-card style="padding:30px 20px 0;scroll-margin-top:64px">
-  <div class="sec-head">
-    <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:26px;text-transform:uppercase;display:flex;align-items:center;gap:8px"><svg class="hi play" width="26" height="26" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><g class="a-dice vb"><rect x="8" y="8" width="32" height="32" rx="7"></rect><circle cx="16" cy="16" r="2.6" stroke="none" style="fill:var(--hi-a)"></circle><circle cx="32" cy="16" r="2.6" stroke="none" style="fill:var(--hi-a)"></circle><circle cx="24" cy="24" r="2.6" stroke="none" style="fill:var(--hi-a)"></circle><circle cx="16" cy="32" r="2.6" stroke="none" style="fill:var(--hi-a)"></circle><circle cx="32" cy="32" r="2.6" stroke="none" style="fill:var(--hi-a)"></circle></g></svg>Luck</div>
-    <span class="sec-btns no-shot"><button class="share-btn" sc-camel-on-click="{{ menuLuck }}" aria-label="Share the luck chart">Share</button></span>
-    <div class="sec-cap">Real wins minus expected wins (xW, the next chart)</div>
-  </div>
-  <div style="display:flex;flex-direction:column;gap:6px;margin-top:12px">
-    <sc-for list="{{ luckBars }}" as="lb" hint-placeholder-count="10">
-      <div sc-camel-on-click="{{ lb.pick }}" class="hov" tabindex="0" role="button" style="display:grid;grid-template-columns:60px minmax(0,1fr) minmax(0,1fr) 44px;align-items:center;gap:0;cursor:pointer;opacity:{{ lb.op }}">
-        <span style="font-size:13px;font-weight:600">{{ lb.m }}</span>
-        <div style="height:18px;display:flex;justify-content:flex-end;border-right:1px solid var(--muted)"><div style="width:{{ lb.neg }};background:var(--neg);border-radius:4px 0 0 4px"></div></div>
-        <div style="height:18px;display:flex"><div style="width:{{ lb.pos }};background:var(--pos);border-radius:0 4px 4px 0"></div></div>
-        <span style="font-family:'JetBrains Mono';font-size:12px;font-weight:600;text-align:right;color:{{ lb.color }}">{{ lb.v }}</span>
-      </div>
-    </sc-for>
-  </div>
-  <div class="shot-footer"><b>9FEAMG</b><span>{{ shotNoteLuck }}</span></div>
-</div>
-
-<div id="xw" data-shot="xw" data-shot-card style="padding:30px 20px 0;scroll-margin-top:64px">
-  <div class="sec-head">
-    <div style="font-family:'Big Shoulders Display';font-weight:900;font-size:26px;text-transform:uppercase">Expected wins</div>
-    <span class="sec-btns no-shot"><button class="share-btn" sc-camel-on-click="{{ menuXw }}" aria-label="Share the expected wins chart">Share</button></span>
-    <div class="sec-cap"><span style="display:inline-block;width:9px;height:9px;border-radius:50%;border:2px solid var(--ink);box-sizing:border-box;vertical-align:-1px"></span> xW · <span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:var(--ink);vertical-align:-1px"></span> real wins · <button class="no-shot" sc-camel-on-click="{{ howTo }}" aria-expanded="{{ xwHelp }}" style="min-height:32px;padding:0;border:0;background:transparent;font:inherit;color:var(--accentInk);text-decoration:underline;cursor:pointer">{{ xwHelpLabel }}</button></div>
-    <sc-if value="{{ xwHelp }}" hint-placeholder-val="{{ false }}"><div class="no-shot" style="grid-column:1/-1;margin-top:8px;padding:10px 12px;border-radius:10px;background:var(--surface2);font-size:13px;line-height:1.45;color:var(--ink);text-wrap:pretty">{{ xwExample }}</div></sc-if>
-  </div>
-  <div style="display:flex;flex-direction:column;gap:6px;margin-top:12px">
-    <sc-for list="{{ xwBars }}" as="xb" hint-placeholder-count="10">
-      <div sc-camel-on-click="{{ xb.pick }}" class="hov" tabindex="0" role="button" aria-label="{{ xb.label }}" style="display:grid;grid-template-columns:60px minmax(0,1fr) 44px;align-items:center;gap:10px;cursor:pointer;opacity:{{ xb.op }}">
-        <span style="font-size:13px;font-weight:600">{{ xb.m }}</span>
-        <div style="position:relative;height:18px;margin:0 6px">
-          <div style="position:absolute;left:0;right:0;top:8px;height:2px;background:var(--line)"></div>
-          <div style="position:absolute;left:{{ xb.lo }};width:{{ xb.span }};top:7px;height:4px;border-radius:2px;background:{{ xb.lineColor }}"></div>
-          <div style="position:absolute;left:{{ xb.xAt }};top:3px;width:12px;height:12px;margin-left:-6px;border-radius:50%;border:2px solid var(--ink);background:var(--surface);box-sizing:border-box"></div>
-          <div style="position:absolute;left:{{ xb.wAt }};top:4px;width:10px;height:10px;margin-left:-5px;border-radius:50%;background:var(--ink)"></div>
-        </div>
-        <span style="font-family:'JetBrains Mono';font-size:12px;font-weight:600;text-align:right">{{ xb.xw }}</span>
-      </div>
-    </sc-for>
-    <div style="display:grid;grid-template-columns:60px minmax(0,1fr) 44px;gap:10px;font-family:'JetBrains Mono';font-size:11px;color:var(--muted)">
-      <span>WINS</span>
-      <div style="position:relative;height:12px;margin:0 6px"><sc-for list="{{ xwTicks }}" as="t" hint-placeholder-count="7"><span style="position:absolute;left:{{ t.at }};transform:translateX(-50%)">{{ t.n }}</span></sc-for></div>
-      <span style="text-align:right">xW</span>
-    </div>
-  </div>
-  <div class="shot-footer"><b>9FEAMG</b><span>{{ shotNoteXw }}</span></div>
-</div>
-</div>
-
-<!-- In column 3 on desktop, so column 1 (standings to the playoff picture) isn't far longer than the rest (Nov 15, 2026). -->
 <!-- Where the points come from, every team: started points by how the players arrived (draft, wire, trades). -->
 <div id="src" data-shot="src" data-shot-card class="sg-src" style="padding:30px 20px 0;scroll-margin-top:64px">
   <div class="sec-head">
@@ -1811,6 +1803,7 @@ button{font-family:inherit;color:inherit}
     <div><div style="font-family:'JetBrains Mono';font-size:11px;font-weight:600;color:var(--accentInk);letter-spacing:.06em">MAX PF</div><div style="font-size:14px;line-height:1.45;margin-top:4px;color:var(--muted)">The best legal lineup from your roster each week, bench included.</div></div>
     <div><div style="font-family:'JetBrains Mono';font-size:11px;font-weight:600;color:var(--accentInk);letter-spacing:.06em">BENCH POINTS</div><div style="font-size:14px;line-height:1.45;margin-top:4px;color:var(--muted)">Best possible lineup minus what you actually scored. Points you left sitting.</div></div>
   </div>
+</div>
 </div>
 </div>
 
