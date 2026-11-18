@@ -348,7 +348,8 @@ export const raceText = (o, k, done) => o?.[k + 'Sure'] == null ? oddsPct(o[k], 
 // variance to his side; O and IR are already 0 in Yahoo's projection.
 // A dead slot (bye, Out, empty) counts as filled from the bench; see fillOf. Players with an ESPN
 // projection (scripts/espn-proj.mjs) count at the average of Yahoo's and ESPN's; see projOf.
-export const INJ_PLAY = { Q: 0.85, D: 0.35 };
+// Questionable starters count in full (Matt, Nov 17, 2026: the 85% markdown wasn't clearly helping; most Q players play).
+export const INJ_PLAY = { D: 0.35 };
 // A player's projection for the win odds: Yahoo's and ESPN's averaged when the rosters file has both
 // for the live week (Matt, Oct 29, 2026: one source's projections are noisier than two), else Yahoo's.
 export const projOf = (p, rosters, wk) => p.espn != null && p.proj > 0 && rosters?.espn?.week == wk ? (p.proj + p.espn) / 2 : p.proj;
