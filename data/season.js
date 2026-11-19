@@ -327,7 +327,7 @@ window.SEASON = {
     ]
   },
   // The day each week's previews were written; each line's own time (third field) wins when it has one.
-  boothPreviewAt: { 5: '2026-10-07', 6: '2026-10-15', 7: '2026-10-21', 8: '2026-10-29', 9: '2026-11-04', 10: '2026-11-12' },
+  boothPreviewAt: { 5: '2026-10-07', 6: '2026-10-15', 7: '2026-10-21', 8: '2026-10-29', 9: '2026-11-04', 10: '2026-11-12', 11: '2026-11-18' },
   // The Booth's picks, made with the previews: [pick, win % when picked], one per matchup in schedule
   // order. The win % is check.js's "Win odds" line before kickoff. The site grades them once the week is
   // final and keeps the season record.
@@ -336,7 +336,8 @@ window.SEASON = {
     7: [['Matt', 51], ['Andy', 62], ['Colin', 51], ['Tony', 52], ['Pablo', 66]],
     8: [['Matt', 61], ['Mr. G', 52], ['Tony', 65], ['Kurt', 58], ['Andy', 73]],
     9: [['Tony', 63], ['Tristan', 57], ['Jerger', 57], ['Andy', 72], ['Colin', 60]],
-    10: [['Matt', 85], ['Kurt', 55], ['Andy', 57], ['Tony', 54], ['Mr. G', 59]]
+    10: [['Matt', 85], ['Kurt', 55], ['Andy', 57], ['Tony', 54], ['Mr. G', 59]],
+    11: [['Andy', 53], ['Jerger', 66], ['Mr. G', 53], ['Kurt', 56], ['Colin', 56]]
   },
   // Jerger's weekly preview picks ("the experts"): one name per matchup in schedule order, graded
   // like the Booth's (Matt, Oct 20, 2026; Jerger agreed). Only the pick goes here; the write-up stays private.
@@ -366,6 +367,15 @@ window.SEASON = {
     ]
   },
   boothPreview: {
+    // Week 11: written by Claude at Matt's request (Wed Nov 18, after waivers) from the fact sheet
+    // (.claude/booth-facts build, Yahoo read Wed 6:28 PM, check.js win and playoff odds), two graders a round.
+    11: [
+      ['Andy', 'Andy clinches a playoff spot with a win over Matt, as long as Jerger or DLin also loses. Matt won the Week 2 meeting by 29.68, when DJ Moore started for Andy and scored −0.10. Clinching goes easier with a receiver above zero.', '2026-11-18T22:42-06:00'],
+      ['Jerger', 'Jerger is the league’s steadiest team and has still lost three straight, twice to opponents who topped 149. Tristan won last week with 134.12, half a point under the 134.62 Jerger lost with. Steady isn’t the same as safe.', '2026-11-18T22:42-06:00'],
+      ['Tony', 'Tony beat Mr. G by 70.10 in Week 2, the biggest blowout of the season. Mr. G was a 23% shot Tuesday night, then traded with Andy for Drake London and Javonte Williams and picked up Bo Nix. Andy’s trade, Tony’s problem.', '2026-11-18T22:42-06:00'],
+      ['DLin', 'DLin went from the week’s lowest score in Week 9, 79.40, to the season high, 155.42, a week later. Kurt gets 94.5% of possible points into the lineup, the best in the league. Kurt has a system; DLin has a range.', '2026-11-18T22:42-06:00'],
+      ['Pablo', 'Pablo holds sixth, the last playoff spot, and nobody’s odds swing harder this week: 61% with a win, 23% with a loss. Colin has won three straight and would still be at 88% after a loss. Colin can afford this one; Pablo can’t.', '2026-11-18T22:42-06:00']
+    ],
     // Week 10: rewritten by Claude at Matt's request (Sun Nov 15, during the late games) in the Booth's
     // lighter voice. Numbers are Yahoo's Thu 7:01 PM projections and records through Week 9; no results.
     // The picks in boothPicks[10] are unchanged (made Thursday before kickoff).
