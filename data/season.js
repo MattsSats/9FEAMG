@@ -100,17 +100,17 @@ window.SEASON = {
     week: 11,
     status: 'Kicks off Thursday · IND @ HOU, 7:15 PM',
     // When these numbers were pulled from Yahoo (Central); shows as "Scores as of Thu 10:19 PM".
-    asOf: '2026-11-18T18:17:00-06:00',
+    asOf: '2026-11-18T18:28:00-06:00',
     // [current points, projected final]
-    // Yahoo as of Wed Nov 18, 6:17 PM CT (Week 11 matchup pages).
+    // Yahoo as of Wed Nov 18, 6:28 PM CT (Week 11 matchup pages).
     scores: {
-      Matt: [0.00, 115.68], Andy: [0.00, 120.71],
+      Matt: [0.00, 117.64], Andy: [0.00, 120.71],
       Tristan: [0.00, 113.88], Jerger: [0.00, 122.27],
       Tony: [0.00, 108.85], 'Mr. G': [0.00, 112.48],
       Kurt: [0.00, 100.92], DLin: [0.00, 102.98],
       Colin: [0.00, 107.65], Pablo: [0.00, 98.03]
     },
-    yahooWin: { Tony: 47, Tristan: 43, Andy: 54, Matt: 46, Kurt: 48, Jerger: 57, 'Mr. G': 53, Colin: 59, DLin: 52, Pablo: 41 },
+    yahooWin: { Tony: 47, Tristan: 43, Andy: 53, Matt: 47, Kurt: 48, Jerger: 57, 'Mr. G': 53, Colin: 59, DLin: 52, Pablo: 41 },
     // Points so far for every player whose game has started (starters and bench).
     // Players listed in inProgress are still playing; the rest are final.
     playerPoints: {},
@@ -118,7 +118,7 @@ window.SEASON = {
     // Players Matt reported leaving their game before ESPN's play-by-play logged it (Yahoo name: when, Central).
     // Counted at their points from then, unless ESPN later says they returned (addLiveProj in api/yahoo/sync.js).
     leftGame: { 'Brock Bowers': '2026-11-15T16:04-06:00' },
-    sheetNote: 'Week 11 projections as of Wed 6:17 PM CT. Each player is tagged Final, Live or proj.'
+    sheetNote: 'Week 11 projections as of Wed 6:28 PM CT. Each player is tagged Final, Live or proj.'
   },
 
   // The NFL week: every game ('Sun 12:00 PM · CHI @ GB', kickoff Central, same form as parlay legs)
