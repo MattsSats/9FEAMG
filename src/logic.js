@@ -641,9 +641,14 @@ class Component extends DCLogic {
   syncChips() {
     const el = typeof document != 'undefined' && document.querySelector('[data-weekchips]'); if (!el) return;
     const edges = () => { const more = el.scrollWidth - el.clientWidth > 2; el.classList.toggle('fade-l', more && el.scrollLeft > 2); el.classList.toggle('fade-r', more && el.scrollLeft < el.scrollWidth - el.clientWidth - 2); };
-    if (el._wired !== el) { el._wired = el; el.addEventListener('scroll', edges, { passive: true }); window.addEventListener('resize', edges); this.chipWk = null; }
-    if (this.chipWk != this.state.week) { if (this.chipWk == null) el.scrollLeft = el.scrollWidth; this.chipWk = this.state.week; const on = el.querySelector('[data-on="1"]');
-      if (on && (on.offsetLeft < el.scrollLeft || on.offsetLeft + on.offsetWidth > el.scrollLeft + el.clientWidth)) el.scrollLeft = on.offsetLeft - (el.clientWidth - on.offsetWidth) / 2; }
+    // The picked chip has to sit clear of the 48px fades, not just inside the row; chips widen once the
+    // web fonts load, so this runs again then and on resize (Nov 18, 2026: W11 sat under the right fade).
+    const place = () => { const on = el.querySelector('[data-on="1"]'); if (!on) return edges(); const F = 48, max = el.scrollWidth - el.clientWidth;
+      const l = on.offsetLeft, r = l + on.offsetWidth, sl = el.scrollLeft;
+      if ((sl > 2 && l < sl + F) || (sl < max - 2 && r > sl + el.clientWidth - F)) el.scrollLeft = Math.max(0, Math.min(max, l - (el.clientWidth - on.offsetWidth) / 2));
+      edges(); };
+    if (el._wired !== el) { el._wired = el; el.addEventListener('scroll', edges, { passive: true }); window.addEventListener('resize', place); document.fonts?.ready.then(place); this.chipWk = null; }
+    if (this.chipWk != this.state.week) { this.chipWk = this.state.week; place(); }
     edges();
   }
   // Desktop columns marked .stick (Gameday's, Wire's side; Matt, Nov 15, 2026) stay in view beside the longer
