@@ -345,7 +345,8 @@ window.SEASON = {
     6: ['Matt', 'Pablo', 'Tony', 'Kurt', 'Mr. G'],
     8: ['Colin', 'Tristan', 'Tony', 'Kurt', 'Andy'],
     9: ['Matt', 'Tristan', 'Jerger', 'Andy', 'Colin'],
-    10: ['Matt', 'Kurt', 'Jerger', 'Tony', 'DLin']
+    10: ['Matt', 'Kurt', 'Jerger', 'Tony', 'DLin'],
+    11: ['Matt', 'Jerger', 'Tony', 'Kurt', 'Colin']
   },
   // The group chat's power rankings, 1 to 10, one set a week: { by: who wrote them, order } (Matt, Oct 20,
   // 2026, Tristan; Nov 17, 2026, Colin too, never both in one week). Keyed by the last final week the
