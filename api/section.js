@@ -247,7 +247,8 @@ function matchupOf(season, st, wk, aSlug, bSlug, rosters) {
   const preDay = preAt ? new Date(preAt).toLocaleDateString('en-US', { weekday: 'short', timeZone: 'America/Chicago' }) : '';
   const boothLabel = !booth ? '' : recap ? 'The Booth' : (snf ? 'Booth · Post-SNF' : 'Booth preview') + (preDay && !snf ? ' · ' + preDay : '');
   const asOf = live && season.live.asOf ? new Date(season.live.asOf).toLocaleString('en-US', { weekday: 'short', hour: 'numeric', minute: '2-digit', timeZone: 'America/Chicago' }).replace(',', '') : '';
-  return { wk, live, a, b, chip, pick, pickColor, booth, boothLabel, asOf };
+  const early = live && !kickedOff(season);
+  return { wk, live, early, a, b, chip, pick, pickColor, booth, boothLabel, asOf };
 }
 
 function matchupCard(M) {
@@ -257,16 +258,16 @@ function matchupCard(M) {
       h('div', { fontFamily: F.sans, fontSize: 46, fontWeight: 600, color: C.ink, lineHeight: 1.05 }, s.m),
       h('div', { fontFamily: F.mono, fontSize: 22, fontWeight: 600, color: C.muted, marginTop: 6 }, s.rec),
       s.alert ? h('div', { fontFamily: F.sans, fontSize: 21, fontWeight: 600, color: C.neg, marginTop: 6 }, '⚠ ' + s.alert) : null),
-    M.live ? h('div', { width: 170, justifyContent: 'flex-end', fontFamily: F.mono, fontSize: 30, fontWeight: 600, color: C.muted }, s.now.toFixed(2)) : null,
+    M.live && !M.early ? h('div', { width: 170, justifyContent: 'flex-end', fontFamily: F.mono, fontSize: 30, fontWeight: 600, color: C.muted }, s.now.toFixed(2)) : null,
     h('div', { width: 300, justifyContent: 'flex-end', fontFamily: F.display, fontSize: 104, fontWeight: 900, lineHeight: 1, color: s == (M.a.score >= M.b.score ? M.a : M.b) ? C.ink : C.muted }, s.score.toFixed(2)));
   return h('div', { width: '100%', height: '100%', flexDirection: 'column', background: C.bg, padding: '40px 64px 0', position: 'relative' },
     h('div', { justifyContent: 'space-between', alignItems: 'flex-start' },
-      h('div', { fontFamily: F.mono, fontSize: 22, fontWeight: 600, letterSpacing: 4, color: C.accentInk }, `WEEK ${M.wk} · ${M.live ? 'LIVE' + (M.asOf ? ' · AS OF ' + M.asOf.toUpperCase() : '') : 'FINAL'}`),
+      h('div', { fontFamily: F.mono, fontSize: 22, fontWeight: 600, letterSpacing: 4, color: C.accentInk }, `WEEK ${M.wk} · ${M.live ? (M.early ? 'PREVIEW' : 'LIVE') + (M.asOf ? ' · AS OF ' + M.asOf.toUpperCase() : '') : 'FINAL'}`),
       h('div', { alignItems: 'flex-end', gap: 4 },
         h('div', { fontFamily: F.display, fontSize: 40, fontWeight: 900, lineHeight: 1, color: C.ink }, '9FEAMG'),
         h('div', { width: 10, height: 10, background: C.accent, marginBottom: 5 }))),
     h('div', { justifyContent: 'flex-end', gap: 0, marginTop: 18, fontFamily: F.mono, fontSize: 20, fontWeight: 600, letterSpacing: 3, color: C.muted },
-      M.live ? h('div', { width: 170, justifyContent: 'flex-end' }, 'NOW') : null,
+      M.live && !M.early ? h('div', { width: 170, justifyContent: 'flex-end' }, 'NOW') : null,
       h('div', { width: 300, justifyContent: 'flex-end' }, M.live ? 'PROJ' : 'FINAL')),
     h('div', { flexDirection: 'column', marginTop: 8 }, row(M.a), row(M.b)),
     h('div', { marginTop: 18, borderTop: `2px solid ${C.line}`, paddingTop: 18, gap: 14 },
@@ -275,7 +276,7 @@ function matchupCard(M) {
     // The Booth's line on this matchup, labelled ("Booth preview · Wed"), up to two lines.
     M.booth ? h('div', { flexDirection: 'column', marginTop: 12 },
       h('div', { fontFamily: F.mono, fontSize: 17, fontWeight: 600, letterSpacing: 3, color: C.accentInk }, M.boothLabel.toUpperCase()),
-      h('div', { marginTop: 4, maxHeight: 62, overflow: 'hidden', fontFamily: F.sans, fontSize: 23, fontWeight: 600, lineHeight: 1.3, color: C.muted }, M.booth)) : null,
+      h('div', { marginTop: 4, maxHeight: 92, overflow: 'hidden', fontFamily: F.sans, fontSize: 23, fontWeight: 600, lineHeight: 1.3, color: C.muted }, fitLine(M.booth, 265))) : null,
     h('div', { position: 'absolute', left: 0, right: 0, bottom: 0, height: 10, background: C.accent }));
 }
 
@@ -293,10 +294,10 @@ async function matchupRoute(url, request, m) {
   if (!M) return isImg ? fallback() : Response.redirect(dest, 302);
   if (isImg) return new ImageResponse(matchupCard(M), { width: 1200, height: 630, fonts: await fonts(), headers: { 'cache-control': 'public, max-age=300, s-maxage=300' } });
   const name = m[0], e = escapeHtml;
-  const title = `${M.a.m} vs ${M.b.m} · Week ${wk}${M.live ? ' · live' : ' · final'} · 9FEAMG`;
-  const score = s => M.live ? `${s.m} ${s.now.toFixed(2)} now, ${s.score.toFixed(2)} projected` : `${s.m} ${s.score.toFixed(2)}`;
+  const title = `${M.a.m} vs ${M.b.m} · Week ${wk}${M.live ? (M.early ? ' · preview' : ' · live') : ' · final'} · 9FEAMG`;
+  const score = s => M.live ? (M.early ? `${s.m} ${s.score.toFixed(2)} projected` : `${s.m} ${s.now.toFixed(2)} now, ${s.score.toFixed(2)} projected`) : `${s.m} ${s.score.toFixed(2)}`;
   const desc = `${score(M.a)}; ${score(M.b)}. ${M.chip}.` + (M.pick ? ` ${M.pick}.` : '') +[M.a, M.b].filter(s => s.alert).map(s => ` ⚠ ${s.m}: ${s.alert}.`).join('') + (M.booth ? ` ${M.boothLabel}: ${M.booth}` : '');
-  const img = new URL(`/api/section?name=${name}&img=1&v=${hash(JSON.stringify([M.a.now, M.a.score, M.b.now, M.b.score, M.asOf, M.a.alert, M.b.alert, M.chip, M.pick, M.boothLabel, M.booth]))}`, url.origin).href;
+  const img = new URL(`/api/section?name=${name}&img=1&v=${hash(JSON.stringify([M.early, M.a.now, M.a.score, M.b.now, M.b.score, M.asOf, M.a.alert, M.b.alert, M.chip, M.pick, M.boothLabel, M.booth]))}`, url.origin).href;
   return new Response(`<!doctype html><html><head><meta charset="utf-8">
 <title>${e(title)}</title>
 <meta name="description" content="${e(desc)}">
@@ -426,6 +427,13 @@ function teamCard(T) {
       h('div', { fontFamily: F.mono, fontSize: 14, fontWeight: 600, color: C.muted }, sub)))) : null));
 }
 
+// Before the live week's first kickoff the cards say Preview, not Live, and leave out the "now" scores
+// (all 0.00), like the site does (LIVE_STARTED in src/logic.js; Matt, Nov 18, 2026).
+const kickedOff = season => Object.keys(season.live?.playerPoints || {}).length > 0 || Object.values(season.live?.scores || {}).some(x => x[0] > 0);
+// A Booth line cut to fit a card: whole sentences that fit, else whole words and an ellipsis.
+const fitLine = (t, n) => { if (!t || t.length <= n) return t; let out = ''; for (const x of t.split(/(?<!\bMr\.)(?<=\.)\s+(?=[A-Z])/)) { if ((out + ' ' + x).trim().length > n) break; out += ' ' + x; }
+  if (out.trim()) return out.trim(); const w = t.slice(0, n - 1); return w.slice(0, w.lastIndexOf(' ')).replace(/[,;:]$/, '') + '…'; };
+
 function weekOf(season, st, wk) {
   const pairs = season.schedule?.[wk]; if (!pairs) return null;
   const live = season.live?.week == wk; if (!live && wk > st.NF) return null;
@@ -436,7 +444,7 @@ function weekOf(season, st, wk) {
     return { a: { ...look[a], score: s(a), now: n(a) }, b: { ...look[b], score: s(b), now: n(b) } };
   }).sort((x, y) => Math.abs(x.a.score - x.b.score) - Math.abs(y.a.score - y.b.score));
   const asOf = live && season.live.asOf ? new Date(season.live.asOf).toLocaleString('en-US', { weekday: 'short', hour: 'numeric', minute: '2-digit', timeZone: 'America/Chicago' }).replace(',', '') : '';
-  return { wk, live, games, asOf };
+  return { wk, live, early: live && !kickedOff(season), games, asOf };
 }
 
 function weekCard(W) {
@@ -446,10 +454,10 @@ function weekCard(W) {
     right ? crest(s, 40) : null);
   const score = (s, o) => h('div', { flexDirection: 'column', alignItems: 'center', width: 150 },
     h('div', { fontFamily: F.display, fontSize: 44, fontWeight: 900, lineHeight: 1, color: s.score >= o.score ? C.ink : C.muted }, s.score.toFixed(2)),
-    W.live ? h('div', { fontFamily: F.mono, fontSize: 15, fontWeight: 600, color: C.muted, marginTop: 2 }, 'now ' + s.now.toFixed(2)) : null);
+    W.live && !W.early ? h('div', { fontFamily: F.mono, fontSize: 15, fontWeight: 600, color: C.muted, marginTop: 2 }, 'now ' + s.now.toFixed(2)) : null);
   const row = g => h('div', { alignItems: 'center', height: 82, borderTop: `1px solid ${C.line}` },
     side(g.a, g.b, false), score(g.a, g.b), h('div', { width: 24, justifyContent: 'center', fontFamily: F.mono, fontSize: 24, color: C.muted }, '–'), score(g.b, g.a), side(g.b, g.a, true));
-  return frame(`WEEK ${W.wk} · ${W.live ? 'LIVE · PROJECTED' + (W.asOf ? ' · AS OF ' + W.asOf.toUpperCase() : '') : 'FINAL'}`, null, null,
+  return frame(`WEEK ${W.wk} · ${W.live ? (W.early ? 'PREVIEW' : 'LIVE') + ' · PROJECTED' + (W.asOf ? ' · AS OF ' + W.asOf.toUpperCase() : '') : 'FINAL'}`, null, null,
     h('div', { flexDirection: 'column', marginTop: 22 }, ...W.games.map(row)));
 }
 
@@ -698,9 +706,9 @@ async function sectionRoute(url, request, name) {
     desc = [`PF ${data.pf.toFixed(1)} (${ordinal(data.pfRank)}), PA ${data.pa.toFixed(1)}, luck ${signed(data.luck)}.`, data.week ? data.week + '.' : '', data.roast].filter(Boolean).join(' ');
     ver = [data.rec, data.pf, data.pa, data.luck, data.week, data.roast];
   } else {
-    title = `Week ${data.wk} · ${data.live ? 'live' : 'final'} · 9FEAMG`;
+    title = `Week ${data.wk} · ${data.live ? (data.early ? 'preview' : 'live') : 'final'} · 9FEAMG`;
     desc = data.games.map(g => `${g.a.m} ${g.a.score.toFixed(2)}–${g.b.score.toFixed(2)} ${g.b.m}`).join(' · ') + (data.live ? ' (projected)' : '');
-    ver = data.games.map(g => [g.a.score, g.a.now, g.b.score, g.b.now]).concat([data.asOf]);
+    ver = data.games.map(g => [g.a.score, g.a.now, g.b.score, g.b.now]).concat([data.asOf, data.early]);
   }
   const e = escapeHtml, img = new URL(`/api/section?name=${name}&img=1&v=${hash(JSON.stringify(ver))}`, url.origin).href;
   return new Response(`<!doctype html><html><head><meta charset="utf-8">
