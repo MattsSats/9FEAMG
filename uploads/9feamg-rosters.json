@@ -1,5 +1,5 @@
 {
-  "asOf": "2026-11-19T21:01:29.900Z",
+  "asOf": "2026-11-20T00:49:27.480Z",
   "source": "Signed-in Yahoo Fantasy league 935526 team roster pages (full reconcile)",
   "week": 11,
   "baseline": "yahoo-live",
@@ -1031,7 +1031,6 @@
           "slot": "starter",
           "nfl": "Phi",
           "proj": 10.61,
-          "inj": "Q",
           "espn": 10.31
         },
         {
@@ -2128,7 +2127,7 @@
   ],
   "espn": {
     "week": 11,
-    "asOf": "2026-11-19T21:02:31.321Z",
+    "asOf": "2026-11-20T00:51:29.960Z",
     "source": "ESPN fantasy projections, half-PPR (average of ESPN standard and PPR)"
   }
 }
