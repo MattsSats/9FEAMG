@@ -386,6 +386,15 @@ button{font-family:inherit;color:inherit}
 .ls-body{padding:2px 12px 0}
 .ls-row{display:grid;grid-template-columns:minmax(0,1fr) 36px minmax(0,1fr);column-gap:4px;align-items:stretch;border-bottom:1px solid var(--line)}
 .ls-side{display:grid;column-gap:4px;align-items:center;min-width:0;padding:6px 4px;border-radius:6px}
+/* A player whose game is on (Nov 22, 2026): a green stripe on the outer edge of his half (red once he's left
+   the game). Outer padding leaves room for it on every row, so names line up. */
+.ls-a{padding-left:8px}.ls-b{padding-right:8px}
+@media (max-width:480px){.ls-a{padding-left:6px;padding-right:2px}.ls-b{padding-right:6px;padding-left:2px}}
+.ls-a.ls-on{box-shadow:inset 3px 0 0 var(--live);border-top-left-radius:0;border-bottom-left-radius:0}
+.ls-b.ls-on{box-shadow:inset -3px 0 0 var(--live);border-top-right-radius:0;border-bottom-right-radius:0}
+.ls-on-hurt.ls-a{box-shadow:inset 3px 0 0 var(--neg)}.ls-on-hurt.ls-b{box-shadow:inset -3px 0 0 var(--neg)}
+.ls-b .ls-num{flex-direction:row-reverse}
+.ls-k-on{display:inline-block;width:3px;height:12px;background:var(--live)}
 .ls-a{grid-template-columns:minmax(0,1fr) 66px}
 .ls-b{grid-template-columns:66px minmax(0,1fr)}
 .ls-b .ls-who{order:2;text-align:right}
@@ -2677,7 +2686,7 @@ button{font-family:inherit;color:inherit}
         </sc-for>
          </div>
         </sc-if>
-        <div class="ls-key"><span><b class="ls-k-pre">0.0</b> proj</span><span><span class="ls-dot"></span>live</span><span><b>0.0</b> final</span><span><b class="pos">+</b>/<b class="neg">−</b> vs proj</span><span><span class="ls-tag ls-q">Q</span>questionable</span><span><span class="ls-tag ls-out">OUT</span>out</span><span><span class="ls-dot ls-dot-hurt"></span>left game</span></div>
+        <div class="ls-key"><span><b class="ls-k-pre">0.0</b> proj</span><span><span class="ls-k-on"></span><span class="ls-dot"></span>live</span><span><b>0.0</b> final</span><span><b class="pos">+</b>/<b class="neg">−</b> vs proj</span><span><span class="ls-tag ls-q">Q</span>questionable</span><span><span class="ls-tag ls-out">OUT</span>out</span><span><span class="ls-dot ls-dot-hurt"></span>left game</span></div>
         <div class="ls-note no-shot">{{ sheet.note }}</div>
         <div class="shot-footer"><b>9FEAMG</b><span>{{ sheet.shotLabel }}</span></div>
       </div>
