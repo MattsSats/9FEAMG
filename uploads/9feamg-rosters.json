@@ -1,5 +1,5 @@
 {
-  "asOf": "2026-11-22T15:32:23.040Z",
+  "asOf": "2026-11-22T17:00:23.901Z",
   "source": "Signed-in Yahoo Fantasy league 935526 team roster pages (full reconcile)",
   "week": 11,
   "baseline": "yahoo-live",
@@ -113,7 +113,6 @@
           "slot": "bench",
           "nfl": "Det",
           "proj": 3.35,
-          "inj": "Q",
           "espn": 3.43
         },
         {
@@ -169,8 +168,7 @@
           "slot": "starter",
           "nfl": "Ten",
           "proj": 12.03,
-          "inj": "Q",
-          "espn": 10.47
+          "espn": 10.48
         },
         {
           "name": "Adonai Mitchell",
@@ -306,7 +304,7 @@
           "slot": "starter",
           "nfl": "Cin",
           "proj": 18.57,
-          "espn": 21.05
+          "espn": 21.02
         },
         {
           "name": "Rashee Rice",
@@ -317,13 +315,12 @@
           "espn": 10.49
         },
         {
-          "name": "Brock Bowers",
+          "name": "Mark Andrews",
           "pos": "TE",
           "slot": "starter",
-          "nfl": "LV",
-          "proj": 11.74,
-          "inj": "Q",
-          "espn": 12.31
+          "nfl": "Bal",
+          "proj": 6.28,
+          "espn": 5.69
         },
         {
           "name": "Jordyn Tyson",
@@ -346,6 +343,15 @@
           "slot": "starter",
           "nfl": "Pit",
           "proj": 7.76
+        },
+        {
+          "name": "Brock Bowers",
+          "pos": "TE",
+          "slot": "bench",
+          "nfl": "LV",
+          "proj": 11.74,
+          "inj": "Q",
+          "espn": 12.31
         },
         {
           "name": "Kyren Williams",
@@ -387,14 +393,6 @@
           "nfl": "Min",
           "proj": 8.06,
           "espn": 7.91
-        },
-        {
-          "name": "Mark Andrews",
-          "pos": "TE",
-          "slot": "bench",
-          "nfl": "Bal",
-          "proj": 6.28,
-          "espn": 5.69
         },
         {
           "name": "Davante Adams",
@@ -444,7 +442,7 @@
           "slot": "starter",
           "nfl": "Cin",
           "proj": 14.86,
-          "espn": 13.77
+          "espn": 13.75
         },
         {
           "name": "George Pickens",
@@ -452,14 +450,14 @@
           "slot": "starter",
           "nfl": "Dal",
           "proj": 14.17,
-          "espn": 13.18
+          "espn": 13.17
         },
         {
           "name": "Dallas Goedert",
           "nfl": "Phi",
           "slot": "starter",
           "pos": "TE",
-          "espn": 6.08
+          "espn": 6.12
         },
         {
           "name": "Stefon Diggs",
@@ -522,7 +520,7 @@
           "slot": "bench",
           "nfl": "Pit",
           "proj": 8.45,
-          "espn": 8.17
+          "espn": 8.15
         },
         {
           "name": "Drew Lock",
@@ -573,7 +571,7 @@
           "slot": "starter",
           "nfl": "Ten",
           "proj": 14.82,
-          "espn": 16.99
+          "espn": 19.06
         },
         {
           "name": "Breece Hall",
@@ -581,7 +579,7 @@
           "slot": "starter",
           "nfl": "NYJ",
           "proj": 12.16,
-          "espn": 11.58
+          "espn": 11.59
         },
         {
           "name": "Tetairoa McMillan",
@@ -589,7 +587,7 @@
           "slot": "starter",
           "nfl": "Car",
           "proj": 12.16,
-          "espn": 11.66
+          "espn": 11.67
         },
         {
           "name": "Malik Washington",
@@ -701,7 +699,7 @@
           "slot": "starter",
           "nfl": "Mia",
           "proj": 11.19,
-          "espn": 12.85
+          "espn": 12.86
         },
         {
           "name": "Bucky Irving",
@@ -828,7 +826,7 @@
           "slot": "starter",
           "nfl": "Cin",
           "proj": 13.38,
-          "espn": 13.17
+          "espn": 13.16
         },
         {
           "name": "Javonte Williams",
@@ -836,7 +834,7 @@
           "slot": "starter",
           "nfl": "Dal",
           "proj": 17.74,
-          "espn": 18.34
+          "espn": 18.51
         },
         {
           "name": "Amon-Ra St. Brown",
@@ -868,7 +866,7 @@
           "slot": "starter",
           "nfl": "Pit",
           "proj": 8.58,
-          "espn": 9.59
+          "espn": 9.53
         },
         {
           "name": "Ka'imi Fairbairn",
@@ -890,7 +888,7 @@
           "slot": "bench",
           "nfl": "Buf",
           "proj": 8.22,
-          "inj": "D",
+          "inj": "O",
           "espn": 0
         },
         {
@@ -899,7 +897,7 @@
           "slot": "bench",
           "nfl": "Ten",
           "proj": 18.57,
-          "espn": 16.96
+          "espn": 16.97
         },
         {
           "name": "Drake Maye",
@@ -967,7 +965,7 @@
           "slot": "starter",
           "nfl": "Was",
           "proj": 21.34,
-          "espn": 19.57
+          "espn": 19.56
         },
         {
           "name": "Chuba Hubbard",
@@ -975,7 +973,7 @@
           "slot": "starter",
           "nfl": "Car",
           "proj": 15.4,
-          "espn": 18.34
+          "espn": 18.93
         },
         {
           "name": "Christian McCaffrey",
@@ -1015,7 +1013,7 @@
           "slot": "starter",
           "nfl": "Phi",
           "proj": 10.61,
-          "espn": 10.56
+          "espn": 10.67
         },
         {
           "name": "Jake Bates",
@@ -1094,7 +1092,7 @@
           "slot": "starter",
           "nfl": "Dal",
           "proj": 22.88,
-          "espn": 21.9
+          "espn": 21.92
         },
         {
           "name": "James Cook III",
@@ -1126,7 +1124,7 @@
           "slot": "starter",
           "nfl": "Dal",
           "proj": 18.8,
-          "espn": 18.9
+          "espn": 18.89
         },
         {
           "name": "Travis Kelce",
@@ -1189,7 +1187,7 @@
           "slot": "bench",
           "nfl": "Car",
           "proj": 10.05,
-          "espn": 7.42
+          "espn": 7.43
         },
         {
           "name": "Kirk Cousins",
@@ -1229,7 +1227,7 @@
           "slot": "starter",
           "nfl": "Pit",
           "proj": 14.42,
-          "espn": 14.39
+          "espn": 14.37
         },
         {
           "name": "Saquon Barkley",
@@ -1237,7 +1235,7 @@
           "slot": "starter",
           "nfl": "Phi",
           "proj": 11.04,
-          "espn": 11.03
+          "espn": 11.05
         },
         {
           "name": "Zay Flowers",
@@ -2112,7 +2110,7 @@
   ],
   "espn": {
     "week": 11,
-    "asOf": "2026-11-22T15:33:23.957Z",
+    "asOf": "2026-11-22T17:09:48.017Z",
     "source": "ESPN fantasy projections, half-PPR (average of ESPN standard and PPR)"
   }
 }
