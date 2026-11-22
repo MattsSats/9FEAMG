@@ -364,8 +364,8 @@ button{font-family:inherit;color:inherit}
 .sheet{max-width:440px}
 /* Lineup sheet (Matt, Nov 15, 2026 redesign, style A). Position tints for the slot chips, the Q and
    OUT tags, and the faint red behind a player who's out. Light first, dark below. */
-:root{--pQB:#F6DCD5;--pRB:#D9EEDD;--pWR:#DBE6F6;--pTE:#F6E6CC;--pK:#E9DFF3;--pDEF:#E6E2D8;--pInk:#3A3730;--amber:#8A5300;--amberBg:#FBE8C2;--outBg:#FBECEC;--outInk:#A81F37;--outTag:#F8D4DA;--live:#25784A}
-:root[data-theme="dark"]{--pQB:#4A2C26;--pRB:#24402C;--pWR:#26364C;--pTE:#4A3B22;--pK:#3A2F4A;--pDEF:#36332C;--pInk:#ECE7DE;--amber:#F2BE5C;--amberBg:#4A3714;--outBg:#2E1C1E;--outInk:#F2667A;--outTag:#55222B;--live:#72C690}
+:root{--pQB:#F6DCD5;--pRB:#D9EEDD;--pWR:#DBE6F6;--pTE:#F6E6CC;--pK:#E9DFF3;--pDEF:#E6E2D8;--pInk:#3A3730;--amber:#8A5300;--amberBg:#FBE8C2;--outBg:#FBECEC;--outInk:#A81F37;--outTag:#F8D4DA;--live:#25784A;--stripe:#2EA55E}
+:root[data-theme="dark"]{--pQB:#4A2C26;--pRB:#24402C;--pWR:#26364C;--pTE:#4A3B22;--pK:#3A2F4A;--pDEF:#36332C;--pInk:#ECE7DE;--amber:#F2BE5C;--amberBg:#4A3714;--outBg:#2E1C1E;--outInk:#F2667A;--outTag:#55222B;--live:#72C690;--stripe:#72C690}
 /* Draft board (Nov 15, 2026): 10 team columns, 15 rounds; phones scroll it sideways. */
 .draft-board{display:grid;grid-template-columns:22px repeat(10,minmax(84px,1fr));gap:3px;min-width:900px}
 .db-head{display:flex;flex-direction:column;align-items:center;gap:3px;padding-bottom:4px;font-size:11px;font-weight:600;text-align:center}
@@ -388,13 +388,13 @@ button{font-family:inherit;color:inherit}
 .ls-side{display:grid;column-gap:4px;align-items:center;min-width:0;padding:6px 4px;border-radius:6px}
 /* A player whose game is on (Nov 22, 2026): a green stripe on the outer edge of his half (red once he's left
    the game). Outer padding leaves room for it on every row, so names line up. */
-.ls-a{padding-left:8px}.ls-b{padding-right:8px}
-@media (max-width:480px){.ls-a{padding-left:6px;padding-right:2px}.ls-b{padding-right:6px;padding-left:2px}}
-.ls-a.ls-on{box-shadow:inset 3px 0 0 var(--live);border-top-left-radius:0;border-bottom-left-radius:0}
-.ls-b.ls-on{box-shadow:inset -3px 0 0 var(--live);border-top-right-radius:0;border-bottom-right-radius:0}
-.ls-on-hurt.ls-a{box-shadow:inset 3px 0 0 var(--neg)}.ls-on-hurt.ls-b{box-shadow:inset -3px 0 0 var(--neg)}
+.ls-a{padding-left:9px}.ls-b{padding-right:9px}
+@media (max-width:480px){.ls-a{padding-left:7px;padding-right:1px}.ls-b{padding-right:7px;padding-left:1px}}
+.ls-a.ls-on{box-shadow:inset 4px 0 0 var(--stripe);border-top-left-radius:0;border-bottom-left-radius:0}
+.ls-b.ls-on{box-shadow:inset -4px 0 0 var(--stripe);border-top-right-radius:0;border-bottom-right-radius:0}
+.ls-on-hurt.ls-a{box-shadow:inset 4px 0 0 var(--neg)}.ls-on-hurt.ls-b{box-shadow:inset -4px 0 0 var(--neg)}
 .ls-b .ls-num{flex-direction:row-reverse}
-.ls-k-on{display:inline-block;width:3px;height:12px;background:var(--live)}
+.ls-k-on{display:inline-block;width:4px;height:12px;background:var(--stripe)}.ls-k-on.hurt{background:var(--neg)}
 .ls-a{grid-template-columns:minmax(0,1fr) 66px}
 .ls-b{grid-template-columns:66px minmax(0,1fr)}
 .ls-b .ls-who{order:2;text-align:right}
@@ -425,7 +425,7 @@ button{font-family:inherit;color:inherit}
 .ls-prog{display:flex;align-items:center;gap:4px;margin-top:3px;font-family:'JetBrains Mono';font-size:9px;color:var(--muted);white-space:nowrap}
 .ls-b .ls-prog{flex-direction:row-reverse}
 .ls-track{flex:0 0 40px;height:3px;border-radius:2px;background:var(--line);overflow:hidden}
-.ls-fill{display:block;height:100%;background:var(--live)}
+.ls-fill{display:block;height:100%;background:var(--muted)}
 .ls-p-hurt .ls-fill{background:var(--neg)}
 .ls-p-hurt{color:var(--neg)}
 .ls-chip{align-self:center;justify-self:center;width:36px;padding:4px 0;border-radius:6px;text-align:center;font-family:'JetBrains Mono';font-size:10px;font-weight:700;letter-spacing:.02em;color:var(--pInk)}
@@ -2686,7 +2686,7 @@ button{font-family:inherit;color:inherit}
         </sc-for>
          </div>
         </sc-if>
-        <div class="ls-key"><span><b class="ls-k-pre">0.0</b> proj</span><span><span class="ls-k-on"></span><span class="ls-dot"></span>live</span><span><b>0.0</b> final</span><span><b class="pos">+</b>/<b class="neg">−</b> vs proj</span><span><span class="ls-tag ls-q">Q</span>questionable</span><span><span class="ls-tag ls-out">OUT</span>out</span><span><span class="ls-dot ls-dot-hurt"></span>left game</span></div>
+        <div class="ls-key"><span><b class="ls-k-pre">0.0</b> proj</span><span><span class="ls-k-on"></span>live</span><span><b>0.0</b> final</span><span><b class="pos">+</b>/<b class="neg">−</b> vs proj</span><span><span class="ls-tag ls-q">Q</span>questionable</span><span><span class="ls-tag ls-out">OUT</span>out</span><span><span class="ls-k-on hurt"></span>left game</span></div>
         <div class="ls-note no-shot">{{ sheet.note }}</div>
         <div class="shot-footer"><b>9FEAMG</b><span>{{ sheet.shotLabel }}</span></div>
       </div>

@@ -786,7 +786,7 @@ class Component extends DCLogic {
     const state = !live ? (p.pts == null ? 'none' : 'final') : bye ? 'bye' : playing ? (left ? 'hurt' : 'live') : started ? 'final' : 'pre';
     const c = { name: p.name, last: lastName(p.name) || p.name, meta: (m ? m[1].toUpperCase() : String(p.nfl || '').toUpperCase()), empty: false,
       // The tag as Yahoo has it: OUT for O, IR and PUP by name (red), Q and D (amber).
-      inj: out ? (inj == 'O' ? 'OUT' : inj) : inj == 'Q' || inj == 'D' ? inj : '', injCls: out ? 'ls-out' : 'ls-q', sideCls: (out && state != 'final' && state != 'live' || state == 'hurt' ? 'ls-hurtrow' : '') + (state == 'live' ? ' ls-on' : state == 'hurt' ? ' ls-on ls-on-hurt' : ''), dot: state == 'live' || state == 'hurt', hasBar: false };
+      inj: out ? (inj == 'O' ? 'OUT' : inj) : inj == 'Q' || inj == 'D' ? inj : '', injCls: out ? 'ls-out' : 'ls-q', sideCls: (out && state != 'final' && state != 'live' || state == 'hurt' ? 'ls-hurtrow' : '') + (state == 'live' ? ' ls-on' : state == 'hurt' ? ' ls-on ls-on-hurt' : ''), dot: false, hasBar: false };
     c.hasInj = !!c.inj;
     if (state == 'bye') return { ...c, meta: String(p.nfl || '').toUpperCase(), num: '0.00', numCls: 'bye', sub: 'bye', subCls: '' };
     if (sat) return { ...c, dot: false, num: '0.00', numCls: 'bye', sub: 'out', subCls: '' };
