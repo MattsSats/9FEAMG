@@ -1,5 +1,65 @@
 [
   {
+    "when": "Nov 21, 11:30 am",
+    "yahooTeam": "Squirtle Squad",
+    "manager": "Tristan",
+    "action": "add",
+    "player": "Adonai Mitchell",
+    "nfl": "NYJ",
+    "pos": "WR",
+    "faab": null,
+    "via": "Free Agency",
+    "notes": "Yahoo API Sun, Nov 22, 9:32 AM CT"
+  },
+  {
+    "when": "Nov 21, 11:30 am",
+    "yahooTeam": "Squirtle Squad",
+    "manager": "Tristan",
+    "action": "drop",
+    "player": "Tyler Higbee",
+    "nfl": "LAR",
+    "pos": "TE",
+    "faab": null,
+    "via": "Waivers",
+    "notes": "Yahoo API Sun, Nov 22, 9:32 AM CT"
+  },
+  {
+    "when": "Nov 21, 11:30 am",
+    "yahooTeam": "Squirtle Squad",
+    "manager": "Tristan",
+    "action": "drop",
+    "player": "Mike Washington Jr.",
+    "nfl": "LV",
+    "pos": "RB",
+    "faab": null,
+    "via": "Waivers",
+    "notes": "Yahoo API Sun, Nov 22, 9:32 AM CT"
+  },
+  {
+    "when": "Nov 19, 9:56 pm",
+    "yahooTeam": "Toilet Bowl King",
+    "manager": "DLin",
+    "action": "add",
+    "player": "Dallas Goedert",
+    "nfl": "Phi",
+    "pos": "TE",
+    "faab": null,
+    "via": "Free Agency",
+    "notes": "Yahoo API Sun, Nov 22, 9:32 AM CT"
+  },
+  {
+    "when": "Nov 19, 9:56 pm",
+    "yahooTeam": "Toilet Bowl King",
+    "manager": "DLin",
+    "action": "drop",
+    "player": "Jake Ferguson",
+    "nfl": "Dal",
+    "pos": "TE",
+    "faab": null,
+    "via": "Waivers",
+    "notes": "Yahoo API Sun, Nov 22, 9:32 AM CT"
+  },
+  {
     "when": "Nov 18, 6:24 pm",
     "yahooTeam": "There is no 2nd best",
     "manager": "Matt",

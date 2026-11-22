@@ -78,7 +78,7 @@ window.SEASON = {
     8: { Tony: 125.18, Tristan: 115.07, Andy: 121.03, Matt: 126.83, Kurt: 113.76, Jerger: 119.37, 'Mr. G': 117.03, Colin: 115.18, DLin: 101.06, Pablo: 111.12 },
     9: { Tony: 125.52, Tristan: 111.17, Andy: 123.81, Matt: 122.55, Kurt: 116.03, Jerger: 113.86, 'Mr. G': 117.83, Colin: 117.16, DLin: 102.26, Pablo: 108.12 },
     10: { Tony: 125.54, Tristan: 117.84, Andy: 124.83, Matt: 123.77, Kurt: 108.15, Jerger: 114.16, 'Mr. G': 112.9, Colin: 118.05, DLin: 105.83, Pablo: 97.46 },
-    11: { Tony: 119.66, Tristan: 118.6, Andy: 119.28, Matt: 122.17, Kurt: 100.92, Jerger: 119.34, 'Mr. G': 121.24, Colin: 119.3, DLin: 109.01, Pablo: 104.35 }
+    11: { Tony: 119.66, Tristan: 118.6, Andy: 119.28, Matt: 122.17, Kurt: 99.94, Jerger: 119.34, 'Mr. G': 118.23, Colin: 119.3, DLin: 109.01, Pablo: 104.35 }
   },
 
   // Final scores (Yahoo, two decimals), one per completed week.
