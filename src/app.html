@@ -422,12 +422,8 @@ button{font-family:inherit;color:inherit}
 .ls-n-hurt .ls-dot,.ls-dot-hurt{background:var(--neg);animation:none}
 @keyframes ls-pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transform:scale(.7)}}
 @media (prefers-reduced-motion:reduce){.ls-dot{animation:none}}
-.ls-prog{display:flex;align-items:center;gap:4px;margin-top:3px;font-family:'JetBrains Mono';font-size:9px;color:var(--muted);white-space:nowrap}
-.ls-b .ls-prog{flex-direction:row-reverse}
-.ls-track{flex:0 0 40px;height:3px;border-radius:2px;background:var(--line);overflow:hidden}
-.ls-fill{display:block;height:100%;background:var(--muted)}
-.ls-p-hurt .ls-fill{background:var(--neg)}
-.ls-p-hurt{color:var(--neg)}
+.ls-mshort{display:none}
+@media (max-width:480px){.ls-meta:has(.ls-mshort) .ls-mfull{display:none}.ls-mshort{display:inline}}
 .ls-chip{align-self:center;justify-self:center;width:36px;padding:4px 0;border-radius:6px;text-align:center;font-family:'JetBrains Mono';font-size:10px;font-weight:700;letter-spacing:.02em;color:var(--pInk)}
 .ls-bench .ls-side{padding-top:4px;padding-bottom:4px}
 .ls-bench .ls-name{font-weight:500;font-size:12.5px}
@@ -2644,8 +2640,8 @@ button{font-family:inherit;color:inherit}
             <div class="ls-side ls-a {{ r.a.sideCls }}">
               <div class="ls-who">
                 <div class="ls-name"><span class="ls-fn">{{ r.a.name }}</span><span class="ls-ln">{{ r.a.last }}</span><sc-if value="{{ r.a.hasInj }}" hint-placeholder-val="{{ false }}"><span class="ls-tag {{ r.a.injCls }}">{{ r.a.inj }}</span></sc-if></div>
-                <div class="ls-meta">{{ r.a.meta }}</div>
-                <sc-if value="{{ r.a.hasBar }}" hint-placeholder-val="{{ false }}"><div class="ls-prog ls-p-{{ r.a.numCls }}"><span class="ls-track"><span class="ls-fill" style="width:{{ r.a.barW }}"></span></span><span>{{ r.a.barTxt }}</span></div></sc-if>
+                <div class="ls-meta"><span class="ls-mfull">{{ r.a.meta }}{{ r.a.clk }}</span><sc-if value="{{ r.a.hasClk }}" hint-placeholder-val="{{ false }}"><span class="ls-mshort">{{ r.a.clkShort }}</span></sc-if></div>
+                
               </div>
               <div class="ls-pts"><div class="ls-num ls-n-{{ r.a.numCls }}"><sc-if value="{{ r.a.dot }}" hint-placeholder-val="{{ false }}"><span class="ls-dot"></span></sc-if>{{ r.a.num }}</div><div class="ls-sub {{ r.a.subCls }}">{{ r.a.sub }}</div></div>
             </div>
@@ -2653,8 +2649,8 @@ button{font-family:inherit;color:inherit}
             <div class="ls-side ls-b {{ r.b.sideCls }}">
               <div class="ls-who">
                 <div class="ls-name"><span class="ls-fn">{{ r.b.name }}</span><span class="ls-ln">{{ r.b.last }}</span><sc-if value="{{ r.b.hasInj }}" hint-placeholder-val="{{ false }}"><span class="ls-tag {{ r.b.injCls }}">{{ r.b.inj }}</span></sc-if></div>
-                <div class="ls-meta">{{ r.b.meta }}</div>
-                <sc-if value="{{ r.b.hasBar }}" hint-placeholder-val="{{ false }}"><div class="ls-prog ls-p-{{ r.b.numCls }}"><span class="ls-track"><span class="ls-fill" style="width:{{ r.b.barW }}"></span></span><span>{{ r.b.barTxt }}</span></div></sc-if>
+                <div class="ls-meta"><span class="ls-mfull">{{ r.b.meta }}{{ r.b.clk }}</span><sc-if value="{{ r.b.hasClk }}" hint-placeholder-val="{{ false }}"><span class="ls-mshort">{{ r.b.clkShort }}</span></sc-if></div>
+                
               </div>
               <div class="ls-pts"><div class="ls-num ls-n-{{ r.b.numCls }}"><sc-if value="{{ r.b.dot }}" hint-placeholder-val="{{ false }}"><span class="ls-dot"></span></sc-if>{{ r.b.num }}</div><div class="ls-sub {{ r.b.subCls }}">{{ r.b.sub }}</div></div>
             </div>
@@ -2668,8 +2664,8 @@ button{font-family:inherit;color:inherit}
             <div class="ls-side ls-a {{ r.a.sideCls }}">
               <div class="ls-who">
                 <div class="ls-name"><span class="ls-fn">{{ r.a.name }}</span><span class="ls-ln">{{ r.a.last }}</span><sc-if value="{{ r.a.hasInj }}" hint-placeholder-val="{{ false }}"><span class="ls-tag {{ r.a.injCls }}">{{ r.a.inj }}</span></sc-if></div>
-                <div class="ls-meta">{{ r.a.meta }}</div>
-                <sc-if value="{{ r.a.hasBar }}" hint-placeholder-val="{{ false }}"><div class="ls-prog ls-p-{{ r.a.numCls }}"><span class="ls-track"><span class="ls-fill" style="width:{{ r.a.barW }}"></span></span><span>{{ r.a.barTxt }}</span></div></sc-if>
+                <div class="ls-meta"><span class="ls-mfull">{{ r.a.meta }}{{ r.a.clk }}</span><sc-if value="{{ r.a.hasClk }}" hint-placeholder-val="{{ false }}"><span class="ls-mshort">{{ r.a.clkShort }}</span></sc-if></div>
+                
               </div>
               <div class="ls-pts"><div class="ls-num ls-n-{{ r.a.numCls }}"><sc-if value="{{ r.a.dot }}" hint-placeholder-val="{{ false }}"><span class="ls-dot"></span></sc-if>{{ r.a.num }}</div><div class="ls-sub {{ r.a.subCls }}">{{ r.a.sub }}</div></div>
             </div>
@@ -2677,8 +2673,8 @@ button{font-family:inherit;color:inherit}
             <div class="ls-side ls-b {{ r.b.sideCls }}">
               <div class="ls-who">
                 <div class="ls-name"><span class="ls-fn">{{ r.b.name }}</span><span class="ls-ln">{{ r.b.last }}</span><sc-if value="{{ r.b.hasInj }}" hint-placeholder-val="{{ false }}"><span class="ls-tag {{ r.b.injCls }}">{{ r.b.inj }}</span></sc-if></div>
-                <div class="ls-meta">{{ r.b.meta }}</div>
-                <sc-if value="{{ r.b.hasBar }}" hint-placeholder-val="{{ false }}"><div class="ls-prog ls-p-{{ r.b.numCls }}"><span class="ls-track"><span class="ls-fill" style="width:{{ r.b.barW }}"></span></span><span>{{ r.b.barTxt }}</span></div></sc-if>
+                <div class="ls-meta"><span class="ls-mfull">{{ r.b.meta }}{{ r.b.clk }}</span><sc-if value="{{ r.b.hasClk }}" hint-placeholder-val="{{ false }}"><span class="ls-mshort">{{ r.b.clkShort }}</span></sc-if></div>
+                
               </div>
               <div class="ls-pts"><div class="ls-num ls-n-{{ r.b.numCls }}"><sc-if value="{{ r.b.dot }}" hint-placeholder-val="{{ false }}"><span class="ls-dot"></span></sc-if>{{ r.b.num }}</div><div class="ls-sub {{ r.b.subCls }}">{{ r.b.sub }}</div></div>
             </div>

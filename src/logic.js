@@ -771,7 +771,7 @@ class Component extends DCLogic {
   }
   // One side of a sheet row: the state (pre, live, hurt, final, bye, empty) and what each shows.
   sheetCell(p, wk) {
-    if (!p) return { empty: true, name: 'Empty', last: 'Empty', meta: '', num: '—', numCls: 'none', sub: '', subCls: '', inj: '', injCls: '', sideCls: 'ls-empty', hasBar: false, hasInj: false, dot: false };
+    if (!p) return { empty: true, name: 'Empty', last: 'Empty', meta: '', num: '—', numCls: 'none', sub: '', subCls: '', inj: '', injCls: '', sideCls: 'ls-empty', hasBar: false, hasClk: false, clk: '', clkShort: '', hasInj: false, dot: false };
     const g = nflGame(p.nfl, wk), m = g && g.match(/·\s*(.+)$/), live = wk == LW;
     const ck = live ? LIVE.clock?.[String(p.nfl).toUpperCase()] : null, inj = String(p.inj || '').toUpperCase();
     const out = inj == 'O' || inj == 'IR' || inj == 'PUP', bye = onBye(p.nfl, wk);
@@ -786,7 +786,7 @@ class Component extends DCLogic {
     const state = !live ? (p.pts == null ? 'none' : 'final') : bye ? 'bye' : playing ? (left ? 'hurt' : 'live') : started ? 'final' : 'pre';
     const c = { name: p.name, last: lastName(p.name) || p.name, meta: (m ? m[1].toUpperCase() : String(p.nfl || '').toUpperCase()), empty: false,
       // The tag as Yahoo has it: OUT for O, IR and PUP by name (red), Q and D (amber).
-      inj: out ? (inj == 'O' ? 'OUT' : inj) : inj == 'Q' || inj == 'D' ? inj : '', injCls: out ? 'ls-out' : 'ls-q', sideCls: (out && state != 'final' && state != 'live' || state == 'hurt' ? 'ls-hurtrow' : '') + (state == 'live' ? ' ls-on' : state == 'hurt' ? ' ls-on ls-on-hurt' : ''), dot: false, hasBar: false };
+      inj: out ? (inj == 'O' ? 'OUT' : inj) : inj == 'Q' || inj == 'D' ? inj : '', injCls: out ? 'ls-out' : 'ls-q', sideCls: (out && state != 'final' && state != 'live' || state == 'hurt' ? 'ls-hurtrow' : '') + (state == 'live' ? ' ls-on' : state == 'hurt' ? ' ls-on ls-on-hurt' : ''), dot: false, hasBar: false, hasClk: false, clk: '', clkShort: '' };
     c.hasInj = !!c.inj;
     if (state == 'bye') return { ...c, meta: String(p.nfl || '').toUpperCase(), num: '0.00', numCls: 'bye', sub: 'bye', subCls: '' };
     if (sat) return { ...c, dot: false, num: '0.00', numCls: 'bye', sub: 'out', subCls: '' };
@@ -796,7 +796,10 @@ class Component extends DCLogic {
       return { ...c, num: p.proj != null ? f2(+p.proj) : '—', numCls: 'pre', sub: today ? t + ' proj' : t || 'proj', subCls: '' };
     }
     if (state == 'live' || state == 'hurt') {
-      const bar = ck ? { hasBar: true, barW: Math.round(Math.min(1, Math.max(0, ck.f || 0)) * 100) + '%', barTxt: ck.h ? 'Half' : (ck.q >= 5 ? 'OT' : 'Q' + ck.q) + (ck.c && !ck.h ? ' ' + ck.c : '') } : {};
+      // The game clock goes on the game line, not a line of its own (Matt, Nov 22, 2026). Phones only have room
+      // for his own team and the clock.
+      const clk = ck ? (ck.h ? 'Half' : (ck.q >= 5 ? 'OT' : 'Q' + ck.q) + (ck.c && !ck.h ? ' ' + ck.c : '')) : '';
+      const bar = clk ? { clk: ' · ' + clk, clkShort: String(p.nfl || '').toUpperCase() + ' ' + clk, hasClk: true } : {};
       return { ...c, ...bar, num: f2(p.pts ?? 0), numCls: state, sub: state == 'hurt' ? 'left game' : p.proj != null ? 'of ' + f1(+p.proj) : 'live', subCls: state == 'hurt' ? 'neg' : '' };
     }
     if (state == 'none') return { ...c, num: '—', numCls: 'none', sub: '', subCls: '' };
