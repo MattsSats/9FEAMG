@@ -1,5 +1,29 @@
 [
   {
+    "when": "Nov 22, 4:02 pm",
+    "yahooTeam": "He was #1",
+    "manager": "Pablo",
+    "action": "drop",
+    "player": "Puka Nacua",
+    "nfl": "LAR",
+    "pos": "WR",
+    "faab": null,
+    "via": "Waivers",
+    "notes": "Yahoo API Sun, Nov 22, 11:03 PM CT"
+  },
+  {
+    "when": "Nov 22, 1:03 pm",
+    "yahooTeam": "Average Sports Enthusiast",
+    "manager": "Kurt",
+    "action": "add",
+    "player": "Courtland Sutton",
+    "nfl": "Den",
+    "pos": "WR",
+    "faab": null,
+    "via": "Free Agency",
+    "notes": "Yahoo API Sun, Nov 22, 11:03 PM CT"
+  },
+  {
     "when": "Nov 21, 11:30 am",
     "yahooTeam": "Squirtle Squad",
     "manager": "Tristan",
