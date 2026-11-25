@@ -848,6 +848,18 @@ window.SEASON = {
       DLin: 'Up two to 8th and off the bottom on the season high, 155.42, with Pickens at 38.00. One week can only do so much, and this one did plenty.',
       Pablo: 'Down four to 9th, the week’s biggest drop, after 106.00, 9th of the week. Still 6th in the standings, holding the last playoff spot.',
       'Mr. G': 'Down one to 10th, but Mr. G’s score has gone up four weeks in a row, to 126.52, the second-best Mr. G week of the season. It ran into the season high.'
+    },
+    11: {
+      Andy: 'Andy’s first time on top since Week 6 came on back-to-back second-best scores of the week. This is the same team that scored 71.20 in Week 8. It’s gibbing time, for now.',
+      Jerger: 'The week’s biggest climb ties Jerger’s best spot of the season. The last time Jerger got here, after Week 8, two straight losses followed. Jerger would prefer a different sequel.',
+      Tony: 'Tony’s four weeks on top ended, though nobody has a better all-play mark (64–35). Recent form still remembers Week 10’s 101.64, the lowest score that week.',
+      Tristan: 'Tristan’s best spot since Week 6 is built on two straight top-five scores of the week, 134.12 and 113.66. The rankings count the score, not the result.',
+      Matt: 'Matt’s all-play record, 59–40, is tied for second in the league with Andy’s and Jerger’s. Andy is 8–3 with it; Matt is 4–7.',
+      Kurt: 'Kurt has the league’s best lineup setting, 94.2% of possible points on the season. When Kurt’s players score, they’re almost always in the lineup.',
+      DLin: 'DLin moved up a spot in a loss, because Colin fell five places past. Toilet Bowl King, climbing by standing still.',
+      Pablo: 'Pablo holds 6th in the standings with the league’s worst lineup setting, 83.4% of possible points. The playoff spot is real; the lineups are a work in progress.',
+      Colin: 'Colin is still 5th in the standings, four spots higher than here, the widest gap in the league. The standings are patient; the rankings aren’t.',
+      'Mr. G': 'Javonte Williams scored 22.60 for Mr. G in the first week after the trade from Andy. Opponents are scoring 121.74 a week against Mr. G, and no trade fixes that.'
     }
   },
 
