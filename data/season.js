@@ -344,7 +344,7 @@ window.SEASON = {
     ]
   },
   // The day each week's previews were written; each line's own time (third field) wins when it has one.
-  boothPreviewAt: { 5: '2026-10-07', 6: '2026-10-15', 7: '2026-10-21', 8: '2026-10-29', 9: '2026-11-04', 10: '2026-11-12', 11: '2026-11-18' },
+  boothPreviewAt: { 5: '2026-10-07', 6: '2026-10-15', 7: '2026-10-21', 8: '2026-10-29', 9: '2026-11-04', 10: '2026-11-12', 11: '2026-11-18', 12: '2026-11-25' },
   // The Booth's picks, made with the previews: [pick, win % when picked], one per matchup in schedule
   // order. The win % is check.js's "Win odds" line before kickoff. The site grades them once the week is
   // final and keeps the season record.
@@ -354,7 +354,8 @@ window.SEASON = {
     8: [['Matt', 61], ['Mr. G', 52], ['Tony', 65], ['Kurt', 58], ['Andy', 73]],
     9: [['Tony', 63], ['Tristan', 57], ['Jerger', 57], ['Andy', 72], ['Colin', 60]],
     10: [['Matt', 85], ['Kurt', 55], ['Andy', 57], ['Tony', 54], ['Mr. G', 59]],
-    11: [['Andy', 53], ['Jerger', 66], ['Mr. G', 53], ['Kurt', 56], ['Colin', 56]]
+    11: [['Andy', 53], ['Jerger', 66], ['Mr. G', 53], ['Kurt', 56], ['Colin', 56]],
+    12: [['Matt', 59], ['Jerger', 57], ['Tony', 75], ['Mr. G', 59], ['Andy', 57]]
   },
   // Jerger's weekly preview picks ("the experts"): one name per matchup in schedule order, graded
   // like the Booth's (Matt, Oct 20, 2026; Jerger agreed). Only the pick goes here; the write-up stays private.
@@ -385,6 +386,15 @@ window.SEASON = {
     ]
   },
   boothPreview: {
+    // Week 12: written by Claude at Matt's request (Wed Nov 25, before the Wednesday GB @ LAR opener) from the fact
+    // sheet (Yahoo read Wed 2:26 PM, ESPN 2:28 PM, check.js win and playoff odds), two graders a round.
+    12: [
+      ['Matt', 'Matt’s playoff odds are 66% with a win and 19% with a loss, the biggest swing riding on any Week 12 game. Tristan won the first meeting by 7.16 and can clinch with a second win, if DLin and Kurt also lose. Matt can’t afford a second.', '2026-11-25T15:20-06:00'],
+      ['Jerger', 'Jerger comes in off a season-high 148.80 and can clinch a playoff spot before December with a win and some help. DLin needs this one more: a loss drops DLin’s playoff odds to 2%.', '2026-11-25T15:20-06:00'],
+      ['Pablo', 'Geno scored 26.04 on Pablo’s bench in Week 3 while Stroud started for 11.68, and Tony won by 9.04. Tony clinches a bye with a win, so the rematch doubles as Pablo’s chance to make Tony wait.', '2026-11-25T15:20-06:00'],
+      ['Mr. G', 'Kurt won the Week 3 meeting by 60.82. Mr. G gets a shot at payback, and Kurt’s playoff odds ride on it: 24% with a win, 5% with a loss.', '2026-11-25T15:20-06:00'],
+      ['Colin', 'Colin lost to Andy by 3.84 in Week 3 with Burrow’s 22.58 on the bench while Mahomes started for 16.94, a swap that would have won it. Burrow is now the season’s best boom, and Andy has clinched: Colin is the one still playing for a playoff spot.', '2026-11-25T15:20-06:00']
+    ],
     // Week 11: written by Claude at Matt's request (Wed Nov 18, after waivers) from the fact sheet
     // (.claude/booth-facts build, Yahoo read Wed 6:28 PM, check.js win and playoff odds), two graders a round.
     11: [
