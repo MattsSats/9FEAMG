@@ -1,10 +1,10 @@
 {
-  "asOf": "2026-11-25T14:19:00-06:00",
+  "asOf": "2026-11-25T20:27:04.819Z",
   "source": "Signed-in Yahoo Fantasy league 935526 team roster pages (full reconcile)",
   "week": 12,
   "baseline": "yahoo-live",
   "baselineAvailable": true,
-  "baselineNote": "Rosters from Yahoo's Week 12 matchup pages (read in the built-in browser), with every player's Yahoo projection (proj) and injury tag (inj) as of Wed Nov 25, 2:19 PM CT.",
+  "baselineNote": "Rosters from Yahoo's Week 12 matchup pages (read in the built-in browser), with every player's Yahoo projection (proj) and injury tag (inj) as of Wed Nov 25, 2:26 PM CT.",
   "teams": [
     {
       "id": "1",
@@ -389,13 +389,6 @@
           "proj": 0
         },
         {
-          "name": "Spencer Shrader",
-          "pos": "K",
-          "slot": "bench",
-          "nfl": "Ind",
-          "proj": 7.86
-        },
-        {
           "name": "Davante Adams",
           "pos": "WR",
           "slot": "IR",
@@ -403,6 +396,13 @@
           "proj": 0,
           "inj": "IR",
           "espn": 0
+        },
+        {
+          "name": "Spencer Shrader",
+          "pos": "K",
+          "slot": "bench",
+          "nfl": "Ind",
+          "proj": 7.86
         }
       ]
     },
@@ -467,6 +467,7 @@
           "slot": "starter",
           "nfl": "Was",
           "proj": 11.46,
+          "inj": "Q",
           "espn": 10.58
         },
         {
@@ -926,13 +927,6 @@
           "espn": 11.21
         },
         {
-          "name": "Seahawks",
-          "pos": "DEF",
-          "slot": "bench",
-          "nfl": "Sea",
-          "proj": 5.49
-        },
-        {
           "name": "Woody Marks",
           "pos": "RB",
           "slot": "IR",
@@ -949,6 +943,13 @@
           "proj": 0,
           "inj": "IR",
           "espn": 0
+        },
+        {
+          "name": "Seahawks",
+          "pos": "DEF",
+          "slot": "bench",
+          "nfl": "Sea",
+          "proj": 5.49
         }
       ]
     },
@@ -992,12 +993,12 @@
           "espn": 16.8
         },
         {
-          "name": "DeVonta Smith",
+          "name": "Christian Watson",
           "pos": "WR",
           "slot": "starter",
-          "nfl": "Phi",
-          "proj": 13.26,
-          "espn": 11.67
+          "nfl": "GB",
+          "proj": 13.88,
+          "espn": 11.29
         },
         {
           "name": "Trey McBride",
@@ -1008,12 +1009,12 @@
           "espn": 11.24
         },
         {
-          "name": "Christian Watson",
+          "name": "Quinshon Judkins",
           "pos": "WRT",
           "slot": "starter",
-          "nfl": "GB",
-          "proj": 13.88,
-          "espn": 11.29
+          "nfl": "Cle",
+          "proj": 11.86,
+          "espn": 14.56
         },
         {
           "name": "Jake Bates",
@@ -1030,6 +1031,14 @@
           "proj": 5.25
         },
         {
+          "name": "DeVonta Smith",
+          "pos": "WR",
+          "slot": "bench",
+          "nfl": "Phi",
+          "proj": 13.26,
+          "espn": 11.67
+        },
+        {
           "name": "Garrett Wilson",
           "pos": "WR",
           "slot": "bench",
@@ -1044,14 +1053,6 @@
           "nfl": "Buf",
           "proj": 7.4,
           "espn": 7.21
-        },
-        {
-          "name": "Quinshon Judkins",
-          "pos": "RB",
-          "slot": "bench",
-          "nfl": "Cle",
-          "proj": 11.86,
-          "espn": 14.56
         },
         {
           "name": "Jordan Love",
@@ -2116,7 +2117,7 @@
   ],
   "espn": {
     "week": 12,
-    "asOf": "2026-11-25T20:21:16.388Z",
+    "asOf": "2026-11-25T20:28:18.549Z",
     "source": "ESPN fantasy projections, half-PPR (average of ESPN standard and PPR)"
   }
 }
