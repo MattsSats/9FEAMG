@@ -901,6 +901,18 @@ window.SEASON = {
       DLin: '4–6 with the season’s highest score, 155.42, and the whole waiver budget still unspent. Toilet Bowl King, saving up and scoring big.',
       Kurt: 'Seven losses, all of them to one of the week’s five best scores. Average Sports Enthusiast keeps drawing the above-average ones.',
       'Mr. G': 'Drew the week’s top score five times in ten weeks; nobody else has drawn it more than twice. Definitely not a Boomer, definitely everyone’s favorite opponent.'
+    },
+    11: {
+      Tony: 'Tony added Matthew Golden off waivers, and Golden has 134.40 points in nine starts since, the best pickup in the league. 11 Shots In, and the best one came off the waiver wire.',
+      Andy: 'Gibbs has 258.70 points for Andy, the most by any player for one team, while Waddle has 17.00 on 53.70 projected, the league’s worst season-long bust. One of Andy’s stars is doing the work of two.',
+      Jerger: 'Jerger lost Week 10 with 134.62, a score that beat six of the other nine teams, the unluckiest loss of the season. Andy picked that week for a season high; the champ picked the wrong week to be good.',
+      Tristan: 'Tristan is 4th at 6–5 with three weeks left, and Week 1’s 144.36 is still Squirtle Squad’s best score. The season high is aging; the record is holding.',
+      Matt: 'CMC’s 44.30 for Matt in Week 10 is the best start of the season; Jefferson is 30.47 under projection for the year, the second-biggest season bust. Matt’s roster has the season’s best day and one of its worst seasons.',
+      Kurt: 'Zay Flowers scored 0.00 on a 15.49 projection for Kurt in Week 8, the worst single-week bust of the season. Average Sports Enthusiast; that week, Flowers wasn’t even average.',
+      DLin: '4–7 on exactly 4.00 expected wins, the only team in the league with zero luck either way. Toilet Bowl King, no excuses and no gifts.',
+      Pablo: 'Opponents have scored 1,135.64 against Pablo, the second-fewest in the league. He was #1, and the schedule still treats Pablo like a #1.',
+      Colin: 'Joe Burrow has 219.44 points on 169.58 projected for Colin, the best season-long boom in the league. C Lambs Biggest Hater found a quarterback to love.',
+      'Mr. G': 'Mr. G is 2–9 on 3.56 expected wins, the second-worst luck in the league. Definitely not a Boomer, and owed about a win and a half.'
     }
   }
 };
