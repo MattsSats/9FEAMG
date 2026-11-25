@@ -334,6 +334,13 @@ window.SEASON = {
       ['Andy', 'Corum scored 19.40 for Jerger, just as Jerger promised. Gibbs scored 40.70 for Andy, and Andy won by 18.76. It was, as advertised, gibbing time.', '2026-11-16T22:34-06:00'],
       ['Tony', 'Tony benched Hampton’s 17.00, started Allgeier for 1.40 and lost to Colin by 10.72 with the week’s lowest score. 11 Shots In, and the best one stayed on the bench.', '2026-11-16T22:34-06:00'],
       ['DLin', 'The Booth took Mr. G at 59%. DLin answered with 155.42, the highest score of the season, 0.90 past Tony’s Week 2. Toilet Bowl King, scoring like the other bowl.', '2026-11-16T22:34-06:00']
+    ],
+    11: [
+      ['Andy', 'Andy’s kicker and defense scored 33.00 between them, more than Matt’s three starting receivers combined (22.20). Andy beat Matt with help from the two spots nobody drafts early.', '2026-11-25T15:45-06:00'],
+      ['Jerger', 'Tristan posted the week’s third-best score and still lost, because Jerger picked this week for a season high and the week’s best. Kelce scored 22.40 for Jerger on a 9.92 projection. The projection owes Kelce an apology.', '2026-11-25T15:45-06:00'],
+      ['Tony', 'Josh Allen managed 14.16 for Tony, and Jonah Coleman made up for it with 32.90 out of the flex, more by himself than Tony’s 21.36 margin over Mr. G. The league’s luckiest team didn’t need its quarterback this week.', '2026-11-25T15:45-06:00'],
+      ['Kurt', 'Kurt landed within 1.18 of Kurt’s season average, as the league’s most consistent team does, and that was enough on a week DLin scored ninth of ten. Average Sports Enthusiast had an average week, and average was plenty.', '2026-11-25T15:45-06:00'],
+      ['Pablo', 'Pablo benched Jeanty (25.40) and McConkey (18.20), 43.60 between them, and still beat Colin by 43.16. Colin’s score was the lowest of the season. One lineup was enough; Pablo had two.', '2026-11-25T15:45-06:00']
     ]
   },
   // The day each week's previews were written; each line's own time (third field) wins when it has one.
