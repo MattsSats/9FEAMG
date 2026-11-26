@@ -40,6 +40,15 @@ for (const m of MGR) if ((S.scores[m] || []).length != NF) bad.push(`${m} has ${
 for (let w = 1; w <= NF; w++) if (!S.schedule[w]) bad.push(`Week ${w} has final scores but no schedule.`);
 if (LW && LW <= R && LW != NF + 1) warn.push(`live.week is ${LW} but ${NF} weeks are final.`);
 if (LW && !S.schedule[LW]) bad.push(`live.week ${LW} has no schedule.`);
+// A half-done sync (Nov 22, 2026: rosters and the status line said "Thursday final" while the live
+// scores and asOf were still Wednesday's): once a live-week game has kicked off, season.js's own live
+// block must have been read from Yahoo after that kickoff. Checked on season.js alone (S0), since
+// mergeYahoo stamps Yahoo's syncedAt over asOf and would hide it.
+const L0 = S0.live, kicked = L0?.week ? (S0.nfl?.[L0.week]?.games || []).map(g => kickoffAt(S0, L0.week, g)).filter(d => d && d <= Date.now()) : [];
+if (kicked.length) {
+  const last = new Date(Math.max(...kicked)), at = Date.parse(L0.asOf), ct = d => d.toLocaleString('en-US', { timeZone: 'America/Chicago', weekday: 'short', hour: 'numeric', minute: '2-digit' });
+  if (!(at >= last)) bad.push(`live.asOf (${isNaN(at) ? 'missing' : ct(new Date(at))}) is older than the Week ${L0.week} game that kicked off ${ct(last)}: refresh live.scores, playerPoints and asOf from Yahoo before pushing.`);
+}
 if (LW && !S.nfl?.[LW]) warn.push(`No nfl[${LW}] (ESPN schedule): kickoff times and bye alerts fall back to Sunday noon / Monday night.`);
 if (st.maxOk === false) warn.push('Some final weeks have no box score, so Max PF and bench points are blank.');
 // Booth lines run in schedule order: line i is about matchup i.
