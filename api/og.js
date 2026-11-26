@@ -1,10 +1,9 @@
 // /api/og?slug=w4-the-truce : a 1200x630 preview image of one parlay's legs,
 // drawn from the live data/season.js, so odds and HIT/MISS results show up
 // without regenerating anything.
-import { ImageResponse } from '@vercel/og';
 import { loadSeason, findParlay, describe } from './_parlays.js';
 import { readJson } from './_yahoo.js';
-import { C, F, h, fonts } from './_ogkit.js';
+import { C, F, h, fonts, ImageResponse } from './_ogkit.js';
 
 // Open pills use surface2 so they stand out from the page instead of white on cream.
 // A push (a tie the book voids) drops out of the price, like the site's PUSH tag.

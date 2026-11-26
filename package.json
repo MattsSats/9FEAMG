@@ -7,11 +7,13 @@
     "bundle": "node build.cjs"
   },
   "dependencies": {
+    "@resvg/resvg-wasm": "^2.6.2",
     "@vercel/blob": "^2.8.0",
     "@vercel/functions": "^2.2.13",
-    "@vercel/og": "^0.8.6"
+    "satori": "^0.33.5"
   },
   "overrides": {
-    "zod": "^4.6.6"
+    "zod": "^4.6.6",
+    "fflate": "^0.8.3"
   }
 }

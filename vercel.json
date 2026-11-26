@@ -22,10 +22,10 @@
   ],
   "functions": {
     "api/og.js": {
-      "includeFiles": "api/_fonts/**"
+      "includeFiles": "{api/_fonts/**,node_modules/harfbuzzjs/hb.wasm,node_modules/@resvg/resvg-wasm/index_bg.wasm}"
     },
     "api/section.js": {
-      "includeFiles": "api/_fonts/**"
+      "includeFiles": "{api/_fonts/**,node_modules/harfbuzzjs/hb.wasm,node_modules/@resvg/resvg-wasm/index_bg.wasm}"
     },
     "api/league.js": {
       "maxDuration": 60
