@@ -1,11 +1,13 @@
-// /api/pundits : Jerger's preview picks ("the experts") and Tristan's power rankings, set on the site
+// /api/pundits : Jerger's preview picks ("the experts") and Tristan's or Colin's power rankings, set on the site
 // by whoever has that team picked (Matt, Oct 20, 2026: honor system plus a change log, like taps).
-//   GET  -> { picks: { [week]: [name per matchup, schedule order] }, ranks: { [week]: [10 names] }, log: [entry] }.
+//   GET  -> { picks: { [week]: [name per matchup, schedule order] }, ranks: { [week]: [10 names] },
+//        ranksBy: { [week]: 'Tristan' | 'Colin' } (a week without one is Tristan's, from before Nov 25, 2026), log: [entry] }.
 //        Public. The site lays these over data/season.js (expertPicks, chatRanks), week by week.
 //   POST { manager: 'Jerger', week, i, pick } -> sets the pick for matchup i of the live week (pick: null clears it). Open until
 //        the week's first kickoff (punditOpen in api/_shared.js), like the Booth's own picks.
-//   POST { manager: 'Tristan', week, order } -> sets the rankings for the last final week (all ten
-//        managers once each). Open until the next week's first kickoff.
+//   POST { manager: 'Tristan' | 'Colin', week, order } -> sets the rankings for the last final week (all ten
+//        managers once each). Open until the next week's first kickoff. One of them a week: once Tristan or Colin
+//        has that week (here or in data/season.js chatRanks), the other gets a 409.
 // Every change is logged ({ m, a: 'pick'|'ranks', w, i?, v, at }), the last 100, so a stray edit shows.
 // Stored in the private Blob store next to the taps: pundits.json. Simultaneous saves both land
 // (api/_yahoo.js updateJson).
@@ -18,7 +20,7 @@ const PATH = 'pundits.json';
 const json = (body, status = 200) => new Response(JSON.stringify(body), {
   status, headers: { 'content-type': 'application/json', 'cache-control': 'no-store' }
 });
-const view = d => ({ picks: d?.picks || {}, ranks: d?.ranks || {}, log: d?.log || [] });
+const view = d => ({ picks: d?.picks || {}, ranks: d?.ranks || {}, ranksBy: d?.ranksBy || {}, log: d?.log || [] });
 
 export default {
   async fetch(request) {
@@ -37,7 +39,7 @@ export default {
     const manager = MANAGERS.find(m => m == b.manager), week = +b.week;
     const kind = b.order ? 'ranks' : 'picks';
     if (!manager || !Number.isInteger(week)) return json({ error: 'Pick who you are first.' }, 400);
-    if (manager != PUNDIT_OF[kind]) return json({ error: kind == 'picks' ? 'Only Jerger posts the experts’ picks.' : 'Only Tristan posts these rankings.' }, 403);
+    if (!PUNDIT_OF[kind].includes(manager)) return json({ error: kind == 'picks' ? 'Only Jerger posts the experts’ picks.' : 'Only Tristan or Colin posts these rankings.' }, 403);
 
     let season;
     try { season = await loadSeason(url.origin); } catch { return json({ error: 'Couldn’t load the league. Try again.' }, 502); }
@@ -52,26 +54,31 @@ export default {
     } else {
       const all = season.managers.map(x => x.m), order = Array.isArray(b.order) ? b.order : [];
       if (order.length != all.length || all.some(m => !order.includes(m))) return json({ error: 'Rank all ten teams once each.' }, 400);
+      const other = season.chatRanks?.[week]?.by;
+      if (other && other != manager) return json({ error: `${other} already posted the Week ${week} rankings.` }, 409);
       entry = { m: manager, a: 'ranks', w: week, v: order };
     }
 
     try {
       const doc = await updateJson(PATH, d => {
         d ||= { picks: {}, ranks: {}, log: [] };
-        d.picks ||= {}; d.ranks ||= {}; d.log ||= [];
+        d.picks ||= {}; d.ranks ||= {}; d.ranksBy ||= {}; d.log ||= [];
         if (kind == 'picks') {
           const list = d.picks[week] || season.schedule[week].map(() => null);
           if (list[entry.i] == entry.v) return d;
           list[entry.i] = entry.v; d.picks[week] = list;
         } else {
+          const by = d.ranks[week] ? d.ranksBy[week] || 'Tristan' : null;
+          if (by && by != manager) throw Object.assign(new Error(`${by} already posted the Week ${week} rankings.`), { taken: true });
           if (JSON.stringify(d.ranks[week]) == JSON.stringify(entry.v)) return d;
-          d.ranks[week] = entry.v;
+          d.ranks[week] = entry.v; d.ranksBy[week] = manager;
         }
         d.log = [...d.log, { ...entry, at: new Date().toISOString() }].slice(-100);
         return d;
       });
       return json(view(doc));
     } catch (e) {
+      if (e?.taken) return json({ error: e.message }, 409);
       console.error('pundits save failed:', e?.name, e?.message);
       return json({ error: 'Couldn’t save that. Try again.' }, 503);
     }

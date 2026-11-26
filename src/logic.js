@@ -1308,13 +1308,14 @@ class Component extends DCLogic {
     // Power rankings, with movement since the week before.
     const prevRank = NF > 1 ? Object.fromEntries(power(NF - 1).map((r, i) => [r.m, i + 1])) : {};
     // The group chat's own power rankings for the same week (chatRanks: { by, order }), when someone has
-    // posted them. Rankings Tristan set on the site (/api/pundits, an order) are his.
-    const TR = { ...(D.chatRanks || {}), ...Object.fromEntries(Object.entries(S.pundits?.ranks || {}).map(([w, o]) => [w, { by: 'Tristan', order: o }])) };
-    const triBy = TR[NF]?.by || '', triMine = triBy == 'Tristan' ? TR[NF].order : null;
+    // posted them. Rankings set on the site (/api/pundits: an order, and ranksBy says whose; none means Tristan's).
+    const TR = { ...(D.chatRanks || {}), ...Object.fromEntries(Object.entries(S.pundits?.ranks || {}).map(([w, o]) => [w, { by: S.pundits.ranksBy?.[w] || 'Tristan', order: o }])) };
+    const triBy = TR[NF]?.by || '', triMine = triBy && triBy == S.reqMgr ? TR[NF].order : null;
     const triRank = TR[NF] ? Object.fromEntries(TR[NF].order.map((m, i) => [m, i + 1])) : null;
     const triHead = triBy.toUpperCase();
-    // Tristan, with Tristan picked in Pick team: reorder the ten and save, until next week's first kickoff.
-    const triCan = NF > 0 && S.reqMgr == 'Tristan' && punditOpen(D, 'ranks', NF);
+    // Tristan or Colin, picked in Pick team: reorder the ten and save, until next week's first kickoff. One of
+    // them a week: once one has posted that week's rankings, the other's editor stays hidden.
+    const triCan = NF > 0 && PUNDIT_OF.ranks.includes(S.reqMgr) && (!triBy || triBy == S.reqMgr) && punditOpen(D, 'ranks', NF);
     const triOrder = S.triEdit;
     // Prep for Tristan's write-ups: the site's rank, record, luck and the week's score with its rank.
     const siteRank = NF ? Object.fromEntries(power(NF).map((r, i) => [r.m, i + 1])) : {};
@@ -1326,7 +1327,7 @@ class Component extends DCLogic {
       show: true, open: !!triOrder, label: triMine ? `Edit your Week ${NF} rankings` : `Post your Week ${NF} rankings`,
       start: () => this.setState({ triEdit: triMine ? [...triMine] : power(NF).map(r => r.m) }),
       cancel: () => this.setState({ triEdit: null }),
-      save: () => this.savePundit({ manager: 'Tristan', week: NF, order: triOrder }, 'Rankings saved. They show beside the site’s now.'),
+      save: () => this.savePundit({ manager: S.reqMgr, week: NF, order: triOrder }, 'Rankings saved. They show beside the site’s now.'),
       saveLabel: S.punditBusy ? 'Saving…' : 'Save rankings',
       lock: (k => k ? `Open until kickoff, ${new Date(k).toLocaleString('en-US', { weekday: 'short', hour: 'numeric', minute: '2-digit', timeZone: 'America/Chicago' }).replace(',', '')}` : '')(weekFirstKick(D, NF + 1)),
       rows: (triOrder || []).map((m, i) => ({ rank: i + 1, m, init: INIT[m], color: col(m), facts: triFacts[m], up: () => triMove(i, -1), down: () => triMove(i, 1), upOp: i == 0 ? '.3' : '1', downOp: i == triOrder.length - 1 ? '.3' : '1' })),
