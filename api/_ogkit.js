@@ -49,7 +49,8 @@ export function mgrColor(hue, L = 0.61, Ch = 0.12) {
 // from @vercel/og, which does the same two steps; its 1.0.2+ Node build crashes on import
 // ("Dynamic require of fs", a missing hb.wasm), and 0.x pins a Satori with an SVG escaping
 // advisory (GHSA-wx4j-mvgx-mqwp), so the site calls Satori and resvg itself (Matt, Nov 26, 2026).
-// Written as new URL(import.meta.resolve(...)) so Vercel's file tracing ships the .wasm with the functions.
+// Vercel's file tracing misses this .wasm and harfbuzzjs's hb.wasm (Satori's text shaper), so
+// vercel.json lists both under includeFiles for api/og.js and api/section.js.
 const resvgReady = readFile(new URL(import.meta.resolve('@resvg/resvg-wasm/index_bg.wasm'))).then(initWasm);
 // Any emoji in a name or note come in as Twemoji pictures, as @vercel/og drew them.
 const emojiCode = s => [...(s.includes('\u200d') ? s : s.replace(/\ufe0f/g, ''))].map(c => c.codePointAt(0).toString(16)).join('-');
