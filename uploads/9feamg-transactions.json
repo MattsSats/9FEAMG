@@ -1,5 +1,53 @@
 [
   {
+    "when": "Nov 26, 12:55 pm",
+    "yahooTeam": "Squirtle Squad",
+    "manager": "Tristan",
+    "action": "add",
+    "player": "Patriots",
+    "nfl": "NE",
+    "pos": "DEF",
+    "faab": null,
+    "via": "Free Agency",
+    "notes": "Yahoo facts Thu Nov 26, 3:02 PM CT"
+  },
+  {
+    "when": "Nov 26, 12:55 pm",
+    "yahooTeam": "Squirtle Squad",
+    "manager": "Tristan",
+    "action": "drop",
+    "player": "Adonai Mitchell",
+    "nfl": "NYJ",
+    "pos": "WR",
+    "faab": null,
+    "via": "Waivers",
+    "notes": "Yahoo facts Thu Nov 26, 3:02 PM CT"
+  },
+  {
+    "when": "Nov 26, 12:47 pm",
+    "yahooTeam": "Average Sports Enthusiast",
+    "manager": "Kurt",
+    "action": "drop",
+    "player": "Rachaad White",
+    "nfl": "Was",
+    "pos": "RB",
+    "faab": null,
+    "via": "Waivers",
+    "notes": "Yahoo facts Thu Nov 26, 3:02 PM CT"
+  },
+  {
+    "when": "Nov 26, 11:44 am",
+    "yahooTeam": "Definitely not a Boomer",
+    "manager": "Mr. G",
+    "action": "drop",
+    "player": "Bo Nix",
+    "nfl": "Den",
+    "pos": "QB",
+    "faab": null,
+    "via": "Waivers",
+    "notes": "Yahoo facts Thu Nov 26, 3:02 PM CT"
+  },
+  {
     "when": "Nov 25, 10:27 pm",
     "yahooTeam": "Toilet Bowl King",
     "manager": "DLin",
