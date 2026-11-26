@@ -79,7 +79,7 @@ window.SEASON = {
     9: { Tony: 125.52, Tristan: 111.17, Andy: 123.81, Matt: 122.55, Kurt: 116.03, Jerger: 113.86, 'Mr. G': 117.83, Colin: 117.16, DLin: 102.26, Pablo: 108.12 },
     10: { Tony: 128.93, Tristan: 116.84, Andy: 123.25, Matt: 123.77, Kurt: 108.66, Jerger: 114.16, 'Mr. G': 113.09, Colin: 118.05, DLin: 105.83, Pablo: 99.15 },
     11: { Tony: 125.65, Tristan: 126.69, Andy: 120.21, Matt: 123.38, Kurt: 102.56, Jerger: 121.04, 'Mr. G': 122.13, Colin: 115.18, DLin: 111.93, Pablo: 107.51 },
-    12: { Tony: 118.6, Tristan: 112.73, Andy: 122.34, Matt: 120.5, Kurt: 102.79, Jerger: 111.94, 'Mr. G': 113.44, Colin: 112.17, DLin: 110.03, Pablo: 98.58 }
+    12: { Tony: 118.59, Tristan: 112.71, Andy: 122.33, Matt: 120.49, Kurt: 102.88, Jerger: 112.25, 'Mr. G': 113.59, Colin: 112.09, DLin: 110.14, Pablo: 98.57 }
   },
 
   // Final scores (Yahoo, two decimals), one per completed week.
@@ -99,19 +99,19 @@ window.SEASON = {
   // The week in progress. Set to null between weeks.
   live: {
     week: 12,
-    status: 'Live · Wednesday final (LAR 26, GB 13) · Thursday next',
+    status: 'Live · Wednesday final (LAR 26, GB 13) · Thanksgiving: CHI @ DET noon, PHI @ DAL 3:30, KC @ BUF 7:20',
     // When these numbers were pulled from Yahoo (Central); shows as "Scores as of Thu 10:19 PM".
-    asOf: '2026-11-26T05:12:00-06:00',
+    asOf: '2026-11-26T10:15:00-06:00',
     // [current points, projected final]
-    // Yahoo as of Thu Nov 26, 5:12 AM CT (Week 12 matchup pages).
+    // Yahoo as of Thu Nov 26, 10:15 AM CT (Week 12 matchup pages).
     scores: {
-      Matt: [17.50, 117.41], Tristan: [0.00, 111.24],
-      Jerger: [27.50, 130.89], DLin: [0.00, 112.91],
-      Tony: [4.40, 114.62], Pablo: [11.00, 107.79],
-      Kurt: [0.00, 103.25], 'Mr. G': [0.00, 111.66],
-      Colin: [14.50, 114.36], Andy: [0.00, 121.59]
+      Matt: [17.50, 117.42], Tristan: [0.00, 111.22],
+      Jerger: [27.50, 131.25], DLin: [0.00, 112.98],
+      Tony: [4.40, 114.63], Pablo: [11.00, 107.85],
+      Kurt: [0.00, 103.33], 'Mr. G': [0.00, 111.85],
+      Colin: [14.50, 114.28], Andy: [0.00, 121.62]
     },
-    yahooWin: { Tony: 56, Tristan: 44, Andy: 56, Matt: 56, Kurt: 42, Jerger: 65, 'Mr. G': 58, Colin: 44, DLin: 35, Pablo: 44 },
+    yahooWin: { Tony: 56, Tristan: 44, Andy: 56, Matt: 56, Kurt: 42, Jerger: 66, 'Mr. G': 58, Colin: 44, DLin: 34, Pablo: 44 },
     // Points so far for every player whose game has started (starters and bench).
     // Players listed in inProgress are still playing; the rest are final.
     playerPoints: {
@@ -123,7 +123,7 @@ window.SEASON = {
     // Players Matt reported leaving their game before ESPN's play-by-play logged it (Yahoo name: when, Central).
     // Counted at their points from then, unless ESPN later says they returned (addLiveProj in api/yahoo/sync.js).
     leftGame: { 'Brock Bowers': '2026-11-15T16:04-06:00' },
-    sheetNote: 'Yahoo as of Thu 5:12 AM CT. Orange = points so far; the rest are projections.'
+    sheetNote: 'Yahoo as of Thu 10:15 AM CT. Orange = points so far; the rest are projections.'
   },
 
   // The NFL week: every game ('Sun 12:00 PM · CHI @ GB', kickoff Central, same form as parlay legs)
