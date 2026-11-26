@@ -5,13 +5,12 @@
 // function with &img=1). Known preview bots get just that; anyone else gets the tags and is sent
 // on to the chart on the site (/#<chart>) by a script in the page (goTo in _parlays.js).
 // Numbers come from the live data/season.js and box scores, so the image is always current.
-import { ImageResponse } from '@vercel/og';
 import { loadSeason, escapeHtml, hash, anchorFor, describe, BOTS, goTo } from './_parlays.js';
 import { readJson, readData, dataOrigin } from './_yahoo.js';
 import { seasonStats, loadBox, powerRanks } from './_stats.js';
 import { loadTx, wireOf } from './_wire.js';
 import { lineupIssues, playoffOdds, oddsPct, pickChip, seasonAwards, awardHeadline, raceText, matchupOdds, pointSources, liveRosters, faabOf, roastOf, playoffBracket, byStandings, paRankLabel, spreadDots, scatterPad } from './_shared.js';
-import { C, F, h, fonts, mgrColor } from './_ogkit.js';
+import { C, F, h, fonts, mgrColor, ImageResponse } from './_ogkit.js';
 
 const CHARTS = { luck: 'Luck', xw: 'Expected wins', src: 'Where the points come from', bench: 'Points left on bench', pfpa: 'Points for vs against', ledger: 'Parlay ledger' };
 const f1 = n => n.toFixed(1), f2 = n => n.toFixed(2);
