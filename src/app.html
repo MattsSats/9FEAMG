@@ -383,7 +383,12 @@ button{font-family:inherit;color:inherit}
 .ls-counts{font-family:'JetBrains Mono';font-size:10.5px;color:var(--muted);margin-top:2px;white-space:nowrap}
 .ls-bar{display:flex;gap:2px;height:4px;margin-top:9px;border-radius:2px;overflow:hidden}
 .ls-bar>span{display:block;height:100%;transition:width .4s}
-.ls-body{padding:2px 12px 0}
+/* Side margin of the lineup sheet (Matt, Nov 26, 2026: up from 12px so the green live stripes at the
+   row edges stand clear of the sheet edge). The header uses it too, so names line up with the rows. */
+.sheet{--lsX:18px}
+@media (max-width:480px){.sheet{--lsX:16px}}
+@media (max-width:380px){.sheet{--lsX:14px}} /* small phones: names already near wrapping */
+.ls-body{padding:2px var(--lsX) 0}
 .ls-row{display:grid;grid-template-columns:minmax(0,1fr) 36px minmax(0,1fr);column-gap:4px;align-items:stretch;border-bottom:1px solid var(--line)}
 .ls-side{display:grid;column-gap:4px;align-items:center;min-width:0;padding:6px 4px;border-radius:6px}
 /* A player whose game is on (Nov 22, 2026): a green stripe on the outer edge of his half (red once he's left
@@ -2610,7 +2615,7 @@ button{font-family:inherit;color:inherit}
     <div sc-camel-on-click="{{ closeSheet }}" style="position:absolute;inset:0;background:rgba(0,0,0,.55)"></div>
     <div class="sheet" style="position:relative;width:100%;max-height:86vh;overflow-y:auto;background:var(--bg);border-radius:22px 22px 0 0;border-top:1px solid var(--line);padding-bottom:28px">
      <div data-shot="sheet" style="background:var(--bg)">
-      <div style="position:sticky;top:0;background:var(--bg);padding:10px 12px 10px;border-bottom:1px solid var(--line);z-index:2">
+      <div style="position:sticky;top:0;background:var(--bg);padding:10px var(--lsX) 10px;border-bottom:1px solid var(--line);z-index:2">
         <div class="no-shot" style="width:40px;height:4px;border-radius:2px;background:var(--line);margin:0 auto 10px"></div>
         <div style="display:flex;align-items:center;gap:8px">
           <span style="font-family:'JetBrains Mono';font-size:11px;letter-spacing:.1em;color:var(--accentInk);font-weight:600">{{ sheet.title }}</span>
