@@ -1,5 +1,29 @@
 [
   {
+    "when": "Nov 27, 4:28 pm",
+    "yahooTeam": "Average Sports Enthusiast",
+    "manager": "Kurt",
+    "action": "add",
+    "player": "Deshaun Watson",
+    "nfl": "Cle",
+    "pos": "QB",
+    "faab": null,
+    "via": "Free Agency",
+    "notes": "Yahoo facts Fri Nov 27, 5:33 PM CT"
+  },
+  {
+    "when": "Nov 27, 4:28 pm",
+    "yahooTeam": "Average Sports Enthusiast",
+    "manager": "Kurt",
+    "action": "drop",
+    "player": "Courtland Sutton",
+    "nfl": "Den",
+    "pos": "WR",
+    "faab": null,
+    "via": "Waivers",
+    "notes": "Yahoo facts Fri Nov 27, 5:33 PM CT"
+  },
+  {
     "when": "Nov 27, 1:47 pm",
     "yahooTeam": "Squirtle Squad",
     "manager": "Tristan",
