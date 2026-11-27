@@ -79,7 +79,7 @@ window.SEASON = {
     9: { Tony: 125.52, Tristan: 111.17, Andy: 123.81, Matt: 122.55, Kurt: 116.03, Jerger: 113.86, 'Mr. G': 117.83, Colin: 117.16, DLin: 102.26, Pablo: 108.12 },
     10: { Tony: 128.93, Tristan: 116.84, Andy: 123.25, Matt: 123.77, Kurt: 108.66, Jerger: 114.16, 'Mr. G': 113.09, Colin: 118.05, DLin: 105.83, Pablo: 99.15 },
     11: { Tony: 125.65, Tristan: 126.69, Andy: 120.21, Matt: 123.38, Kurt: 102.56, Jerger: 121.04, 'Mr. G': 122.13, Colin: 115.18, DLin: 111.93, Pablo: 107.51 },
-    12: { Tony: 118.33, Tristan: 113.87, Andy: 122.43, Matt: 120.63, Kurt: 102.94, Jerger: 112.24, 'Mr. G': 113.61, Colin: 112.11, DLin: 110.22, Pablo: 98.43 }
+    12: { Tony: 117.89, Tristan: 113.79, Andy: 122.57, Matt: 120.43, Kurt: 102.8, Jerger: 112.18, 'Mr. G': 113.74, Colin: 111.77, DLin: 109.23, Pablo: 98.55 }
   },
 
   // Final scores (Yahoo, two decimals), one per completed week.
@@ -99,35 +99,37 @@ window.SEASON = {
   // The week in progress. Set to null between weeks.
   live: {
     week: 12,
-    status: 'Live · Thanksgiving: CHI @ DET final (CHI 39, DET 35) · PHI @ DAL in the 1st · KC @ BUF 7:20',
+    status: 'Live · Thanksgiving: CHI @ DET final (CHI 39, DET 35) · PHI @ DAL final (PHI 39, DAL 38) · KC @ BUF in the 1st',
     // When these numbers were pulled from Yahoo (Central); shows as "Scores as of Thu 10:19 PM".
-    asOf: '2026-11-26T15:49:00-06:00',
+    asOf: '2026-11-26T19:35:00-06:00',
     // [current points, projected final]
-    // Yahoo as of Thu Nov 26, 3:49 PM CT (Week 12 matchup pages).
+    // Yahoo as of Thu Nov 26, 7:35 PM CT (Week 12 matchup pages).
     scores: {
-      Matt: [27.50, 119.08], Tristan: [36.10, 128.52],
-      Jerger: [27.70, 130.60], DLin: [16.82, 109.60],
-      Tony: [4.40, 114.53], Pablo: [11.00, 107.47],
-      Kurt: [10.00, 92.06], 'Mr. G': [19.80, 115.40],
-      Colin: [14.50, 114.29], Andy: [77.40, 151.40]
+      Matt: [27.50, 118.79], Tristan: [36.10, 126.04],
+      Jerger: [72.94, 135.88], DLin: [36.02, 105.57],
+      Tony: [5.72, 114.17], Pablo: [21.00, 108.54],
+      Kurt: [10.70, 80.16], 'Mr. G': [49.90, 130.28],
+      Colin: [14.50, 113.26], Andy: [77.40, 150.17]
     },
-    yahooWin: { Tony: 57, Tristan: 59, Andy: 84, Matt: 41, Kurt: 26, Jerger: 68, 'Mr. G': 74, Colin: 16, DLin: 32, Pablo: 43 },
+    yahooWin: { Tony: 55, Tristan: 57, Andy: 84, Matt: 43, Kurt: 6, Jerger: 79, 'Mr. G': 94, Colin: 16, DLin: 21, Pablo: 45 },
     // Points so far for every player whose game has started (starters and bench).
     // Players listed in inProgress are still playing; the rest are final.
     playerPoints: {
-      'Matthew Golden': 4.40, 'Rome Odunze': 23.70, 'Sam LaPorta': 12.40, 'Jahmyr Gibbs': 45.70,
-      "D'Andre Swift": 25.70, 'Luther Burden III': 6.00, 'Christian Watson': 14.50, 'Jake Bates': 10.00,
-      'Packers': 3.00, 'Jordan Love': 10.62, 'Eagles': 10.00, 'Jameson Williams': 11.00,
-      'Colston Loveland': -1.00, 'Dak Prescott': 0.20, 'Blake Corum': 27.50, 'Tucker Kraft': 1.90,
-      'Javonte Williams': 1.70, 'Amon-Ra St. Brown': 18.10, 'Kyren Williams': 14.50, 'Kyle Monangai': 15.40,
-      'Jared Goff': 16.82, 'Rams': 11.00, 'Caleb Williams': 25.30, 'Cairo Santos': 8.00,
-      'Bears': 2.00
+      'Josh Allen': 1.32, 'Matthew Golden': 4.40, 'Rome Odunze': 23.70, 'Sam LaPorta': 12.40,
+      'Jahmyr Gibbs': 45.70, "D'Andre Swift": 25.70, 'Luther Burden III': 6.00, 'Christian Watson': 14.50,
+      'Jake Bates': 10.00, 'Packers': 3.00, 'DeVonta Smith': 37.50, 'Khalil Shakir': 0.00,
+      'Jordan Love': 10.62, 'Eagles': 9.00, 'Saquon Barkley': 0.70, 'Jameson Williams': 11.00,
+      'Colston Loveland': -1.00, 'Dak Prescott': 26.54, 'James Cook III': 2.00, 'Blake Corum': 27.50,
+      'CeeDee Lamb': 16.90, 'Tucker Kraft': 1.90, 'Javonte Williams': 31.80, 'Amon-Ra St. Brown': 18.10,
+      'Kyren Williams': 14.50, 'Kyle Monangai': 15.40, 'Jared Goff': 16.82, 'George Pickens': 9.20,
+      'Chiefs': 10.00, 'Dallas Goedert': 1.40, 'Brandon Aubrey': 10.00, 'Rams': 11.00,
+      'Caleb Williams': 25.30, 'Cairo Santos': 8.00, 'Bears': 2.00
     },
-    inProgress: ['Eagles', 'Dak Prescott', 'Javonte Williams'],
+    inProgress: ['Josh Allen', 'Khalil Shakir', 'James Cook III', 'Chiefs'],
     // Players Matt reported leaving their game before ESPN's play-by-play logged it (Yahoo name: when, Central).
     // Counted at their points from then, unless ESPN later says they returned (addLiveProj in api/yahoo/sync.js).
     leftGame: { 'Brock Bowers': '2026-11-15T16:04-06:00' },
-    sheetNote: 'Yahoo as of Thu 3:49 PM CT. Orange = points so far; the rest are projections.'
+    sheetNote: 'Yahoo as of Thu 7:35 PM CT. Orange = points so far; the rest are projections.'
   },
 
   // The NFL week: every game ('Sun 12:00 PM · CHI @ GB', kickoff Central, same form as parlay legs)
