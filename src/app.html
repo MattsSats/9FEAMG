@@ -385,9 +385,9 @@ button{font-family:inherit;color:inherit}
 .ls-bar>span{display:block;height:100%;transition:width .4s}
 /* Side margin of the lineup sheet (Matt, Nov 26, 2026: up from 12px so the green live stripes at the
    row edges stand clear of the sheet edge). The header uses it too, so names line up with the rows. */
-.sheet{--lsX:18px}
-@media (max-width:480px){.sheet{--lsX:16px}}
-@media (max-width:380px){.sheet{--lsX:14px}} /* small phones: names already near wrapping */
+.sheet,[data-shot="sheet"]{--lsX:18px}
+@media (max-width:480px){.sheet,[data-shot="sheet"]{--lsX:16px}}
+@media (max-width:380px){.sheet,[data-shot="sheet"]{--lsX:14px}} /* small phones: names already near wrapping */
 .ls-body{padding:2px var(--lsX) 0}
 .ls-row{display:grid;grid-template-columns:minmax(0,1fr) 36px minmax(0,1fr);column-gap:4px;align-items:stretch;border-bottom:1px solid var(--line)}
 .ls-side{display:grid;column-gap:4px;align-items:center;min-width:0;padding:6px 4px;border-radius:6px}
